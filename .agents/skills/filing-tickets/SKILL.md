@@ -54,14 +54,45 @@ and every `gh` recipe this skill names. The probe is silent on the happy paths, 
 
 ## The ticket
 
+Every ticket wears the same two headings, whether it came out of a review report, a grilling session or a one-line ask.
+`to-tickets` publishes this shape too, so nobody has to work out which skill wrote which issue. An **epic** is the
+exception: its body is a spec, not a ticket.
+
+````markdown
+## What to build
+
+The end-to-end behaviour this ticket makes work, told from outside the code — not a layer-by-layer implementation
+list.
+
+## Acceptance criteria
+
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+---
+
+🤖&nbsp;&nbsp;_Written by Claude Opus 5_
+````
+
 - **Title**: plain, and it states the change.
-- **Body**: **self-contained.** The analysis that produced it gets deleted, so the body carries the whole argument —
-  file and line, what is wrong, why it is wrong, and what "done" looks like.
-- **Provenance**: one prose line at most, _"found during an architecture review, 2026-08-03"_. The only reason to
-  record a source is to go back and read it, and the source is thrown away.
+- **Self-contained.** The analysis that produced it gets deleted, so _What to build_ carries the whole argument: what
+  is wrong, why that is worth anyone's afternoon, and what the code does instead.
+- **Acceptance criteria are how you discharge test 2 of the bar.** Each one checkable by a reader who never saw the
+  analysis. A criterion that needs the review report reopened to evaluate is not yet a criterion.
+- **Name the thing, not where it lives.** A symbol, a component, a command — not `label_width_calculator.py:40-41`.
+  Line numbers go stale before anyone picks the ticket up, and this is the rule `CONTEXT.md` and the ADRs already run
+  on. A code snippet earns its place only where it pins a decision prose cannot — a state machine, a schema, a type
+  shape — trimmed to the decision rather than left as a working demo.
+- **One fresh context window.** A ticket an agent cannot finish in one is an epic, and the work is its children.
+- **Relationships go through the API, never into the prose.** A parent is a sub-issue link, a blocker is a `blocked_by`
+  edge, and `docs/agents/issue-tracker.md` has both calls. The graph moves as tickets close and get reparented, and a
+  sentence in a body does not, so a body that names its own edges is wrong within a week with nothing to catch it.
+  `what-next` computes the frontier off the API for the same reason.
+- **Provenance**: one line at most, at the end of _What to build_ — _"found during an architecture review,
+  2026-08-03"_. The only reason to record a source is to go back and read it, and the source is thrown away.
+- **Platform**: when the work can only be done on one OS, _What to build_ says which. `what-next` reads this.
 - **Footer**: on the private tracker, the body ends with the agent footer, and so does every comment you leave —
   including the closing one. `docs/agents/issue-tracker.md` has the exact line.
-- **Platform**: when the work can only be done on one OS, the body says which. `what-next` reads this.
 - **Labels**: one readiness label, and nothing else. Area labels are not used — the body says what a ticket touches
   better than `python` vs `qml` does, and most work crosses both anyway.
 
@@ -90,8 +121,6 @@ none, because it sends the recommendation the wrong way.
 - **The rule that keeps a hierarchy honest**: _finishing the children finishes the parent._ Where that sentence is
   false it is not a sub-issue. Grouping by topic, or by which afternoon the findings came from, is the mistake to watch
   for.
-- **Order is recorded, not implied.** A grilling session that produces ordered tickets records the order through the
-  dependencies API, which is what lets `what-next` compute whether a ticket is startable.
 - **Every filed issue goes on the board.**
 
 ## Declines
@@ -146,6 +175,8 @@ without it you will re-file things that were filed, fixed or declined months ago
 - Every finding left through exactly one of the four outlets, and the ones that left through outlet 4 were said out
   loud.
 - Every filed ticket clears all three tests, and its body still stands once the analysis behind it is deleted.
+- Every filed ticket carries the two headings, with acceptance criteria a stranger can check, and every edge it has —
+  parent, blockers — recorded through the API rather than written in the body.
 - Every childless ticket carries exactly one readiness label, and every epic carries none.
 - Every body and every comment you wrote on the private tracker ends with the agent footer.
 - Every filed issue is on the board.
