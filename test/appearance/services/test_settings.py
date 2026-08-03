@@ -50,17 +50,19 @@ def test_unreadable_color_scheme_preference_falls_back_to_system(appearance_sett
     assert appearance_settings_service.color_scheme_preference == SYSTEM
 
 
-def test_accent_color_preference_for_reports_no_preference_when_nothing_stored(appearance_settings_service):
-    assert appearance_settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
-    assert appearance_settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
+def test_accent_color_preference_reports_no_preference_when_nothing_stored(appearance_settings_service):
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(LIGHT) == NO_PREFERENCE
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == NO_PREFERENCE
 
 
 def test_set_accent_color_preference_stores_one_value_per_color_scheme(appearance_settings_service):
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
     appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#3f51b5"))
 
-    assert appearance_settings_service.accent_color_preference_for(LIGHT) == AccentColor("#ff5722")
-    assert appearance_settings_service.accent_color_preference_for(DARK) == AccentColor("#3f51b5")
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(LIGHT) == AccentColor(
+        "#ff5722"
+    )
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == AccentColor("#3f51b5")
 
 
 def test_set_accent_color_preference_to_no_preference_clears_the_stored_entry(appearance_settings_service):
@@ -68,7 +70,7 @@ def test_set_accent_color_preference_to_no_preference_clears_the_stored_entry(ap
 
     appearance_settings_service.set_accent_color_preference(DARK, NO_PREFERENCE)
 
-    assert appearance_settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == NO_PREFERENCE
 
 
 def test_set_accent_color_preference_writes_into_the_appearance_ini_section(

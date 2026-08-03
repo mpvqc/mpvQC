@@ -288,8 +288,8 @@ def test_set_accent_color_writes_the_selected_schemes_entry_only(make_view_model
 
     view_model.setAccentColor("#d2")
 
-    assert appearance_settings_service.accent_color_preference_for(DARK) == AccentColor("#d2")
-    assert appearance_settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == AccentColor("#d2")
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(LIGHT) == NO_PREFERENCE
     assert view_model.accentColorIndex == 1
 
 
@@ -298,8 +298,8 @@ def test_set_accent_color_under_system_writes_nothing(make_view_model, appearanc
 
     view_model.setAccentColor("#d2")
 
-    assert appearance_settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
-    assert appearance_settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == NO_PREFERENCE
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(LIGHT) == NO_PREFERENCE
 
 
 def test_props_swap_completes_before_the_first_emission(make_view_model, appearance_settings_service):
@@ -364,8 +364,8 @@ def test_reject_restores_the_preference_and_both_accents(make_view_model, appear
     view_model.reject()
 
     assert appearance_settings_service.color_scheme_preference == DARK
-    assert appearance_settings_service.accent_color_preference_for(LIGHT) == AccentColor("#l1")
-    assert appearance_settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(LIGHT) == AccentColor("#l1")
+    assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == NO_PREFERENCE
     assert view_model.colorSchemePreferenceIndex == 2
     assert view_model.accentColorIndex == 0
     assert view_model.accentColorSectionVisible is True

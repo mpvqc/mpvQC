@@ -318,7 +318,7 @@ class MpvqcTestSettings(QObject):
     @Slot(str, result=str)
     def accentColor(self, color_scheme: str) -> str:
         settings = inject.instance(AppearanceSettingsService)
-        preference = settings.accent_color_preference_for(parse_color_scheme(color_scheme))
+        preference = settings.appearance_preference.accent_color_preference_for(parse_color_scheme(color_scheme))
         match preference:
             case NoPreference():
                 return ""

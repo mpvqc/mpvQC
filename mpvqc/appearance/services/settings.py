@@ -45,8 +45,8 @@ class AppearanceSettingsService(QObject):
     def appearance_preference(self) -> AppearancePreference:
         return AppearancePreference(
             color_scheme_preference=self.color_scheme_preference,
-            light_accent_color_preference=self.accent_color_preference_for(_LIGHT),
-            dark_accent_color_preference=self.accent_color_preference_for(_DARK),
+            light_accent_color_preference=self._accent_color_preference_for(_LIGHT),
+            dark_accent_color_preference=self._accent_color_preference_for(_DARK),
         )
 
     @property
@@ -61,16 +61,8 @@ class AppearanceSettingsService(QObject):
         self._store_color_scheme_preference(preference)
         self.appearance_preference_changed.emit(self.appearance_preference)
 
-    def accent_color_preference_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
-        key = _accent_color_key(color_scheme)
-        if self._qsettings.contains(key):
-            value = self._qsettings.value(key, type=str)
-            if isinstance(value, str):
-                return AccentColor(value)
-        return NoPreference()
-
     def set_accent_color_preference(self, color_scheme: ColorScheme, preference: AccentColorPreference) -> None:
-        if self.accent_color_preference_for(color_scheme) == preference:
+        if self._accent_color_preference_for(color_scheme) == preference:
             return
         self._store_accent_color_preference(color_scheme, preference)
         self.appearance_preference_changed.emit(self.appearance_preference)
@@ -82,6 +74,14 @@ class AppearanceSettingsService(QObject):
         self._store_accent_color_preference(_LIGHT, appearance_preference.light_accent_color_preference)
         self._store_accent_color_preference(_DARK, appearance_preference.dark_accent_color_preference)
         self.appearance_preference_changed.emit(self.appearance_preference)
+
+    def _accent_color_preference_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
+        key = _accent_color_key(color_scheme)
+        if self._qsettings.contains(key):
+            value = self._qsettings.value(key, type=str)
+            if isinstance(value, str):
+                return AccentColor(value)
+        return NoPreference()
 
     def _store_color_scheme_preference(self, preference: ColorSchemePreference) -> None:
         self._qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, format_color_scheme_preference(preference))
