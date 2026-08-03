@@ -104,6 +104,7 @@ class ColorSchemeService(QObject):
         self._push_preference()
         self._publish()
 
+    @Slot()
     def _on_system_color_scheme_changed(self) -> None:
         self._publish()
 
