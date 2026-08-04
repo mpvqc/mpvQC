@@ -37,7 +37,7 @@ ItemDelegate {
 
             Label {
                 text: root.text
-                color: MpvqcTheme.palette.foreground
+                color: MpvqcAppearance.palette.foreground
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 horizontalAlignment: Text.AlignLeft
 
@@ -47,7 +47,7 @@ ItemDelegate {
             Label {
                 objectName: "supportingLabel"
                 text: root.supportingText
-                color: MpvqcTheme.palette.hint
+                color: MpvqcAppearance.palette.hint
                 font.pointSize: root.font.pointSize - 1
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignLeft
@@ -63,7 +63,7 @@ ItemDelegate {
             icon.source: MpvqcIcons.openInNew
             icon.width: 18
             icon.height: 18
-            iconColor: MpvqcTheme.palette.hint
+            iconColor: MpvqcAppearance.palette.hint
         }
     }
 

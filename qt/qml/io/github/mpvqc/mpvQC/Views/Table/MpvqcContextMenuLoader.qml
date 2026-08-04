@@ -92,7 +92,7 @@ Loader {
                 text: qsTranslate("CommentTable", "Delete Comment")
                 icon.source: MpvqcIcons.delete_
 
-                M.Material.foreground: MpvqcTheme.palette.error
+                M.Material.foreground: MpvqcAppearance.palette.error
 
                 onTriggered: {
                     root._actionTriggered = true;

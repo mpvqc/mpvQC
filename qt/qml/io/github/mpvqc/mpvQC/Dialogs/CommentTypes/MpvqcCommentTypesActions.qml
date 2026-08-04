@@ -72,7 +72,7 @@ Column {
             source: MpvqcIcons.delete_
         }
 
-        M.Material.foreground: MpvqcTheme.palette.error
+        M.Material.foreground: MpvqcAppearance.palette.error
 
         onPressed: root.deleteRequested()
     }

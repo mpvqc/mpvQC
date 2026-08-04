@@ -21,7 +21,7 @@ MenuBar {
         id: _menuBarItem
 
         background: Rectangle {
-            color: _menuBarItem.highlighted ? MpvqcTheme.hoverHighlight : "transparent"
+            color: _menuBarItem.highlighted ? MpvqcAppearance.hoverHighlight : "transparent"
             topLeftRadius: !MpvqcWindowUtility.isMirrored && _menuBarItem.x <= 0 ? MpvqcWindowUtility.windowRadius : 0
             topRightRadius: MpvqcWindowUtility.isMirrored && _menuBarItem.x + _menuBarItem.width >= root.width ? MpvqcWindowUtility.windowRadius : 0
         }

@@ -16,7 +16,6 @@ ListView {
 
     required property real rowHeight
 
-    readonly property var mpvqcTheme: MpvqcTheme
     readonly property int _animationDuration: 50
     readonly property int _appearDuration: 180
     readonly property int _staggerInterval: 15
@@ -129,7 +128,7 @@ ListView {
             x: LayoutMirroring.enabled ? _scrollBar.visibleWidth : 0
             width: parent.width - _scrollBar.visibleWidth
             height: parent.height
-            color: root.mpvqcTheme.palette.rowSelected
+            color: MpvqcAppearance.palette.rowSelected
             radius: M.Material.ExtraSmallScale
             visible: !root._moving
         }
@@ -141,9 +140,9 @@ ListView {
         required property var modelData
         required property int index
 
-        readonly property color foregroundColor: root.mpvqcTheme.palette.foreground
-        readonly property color stripeColor: root.mpvqcTheme.listStripe
-        readonly property color backgroundColor: ListView.isCurrentItem ? (root._moving ? root.mpvqcTheme.palette.rowSelected : "transparent") : index % 2 === 1 ? stripeColor : "transparent"
+        readonly property color foregroundColor: MpvqcAppearance.palette.foreground
+        readonly property color stripeColor: MpvqcAppearance.listStripe
+        readonly property color backgroundColor: ListView.isCurrentItem ? (root._moving ? MpvqcAppearance.palette.rowSelected : "transparent") : index % 2 === 1 ? stripeColor : "transparent"
 
         width: ListView.view.width
         height: root.rowHeight
@@ -169,7 +168,7 @@ ListView {
             verticalAlignment: Text.AlignVCenter
         }
 
-        M.Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.palette.rowSelectedText : foregroundColor
+        M.Material.foreground: ListView.isCurrentItem ? MpvqcAppearance.palette.rowSelectedText : foregroundColor
         M.Material.background: backgroundColor
 
         onPressed: root.currentIndex = index

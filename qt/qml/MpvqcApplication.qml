@@ -26,10 +26,10 @@ ApplicationWindow {
 
     font: MpvqcFonts.applicationFont
 
-    M.Material.theme: MpvqcTheme.isDark ? M.Material.Dark : M.Material.Light
-    M.Material.accent: MpvqcTheme.palette.accent
-    M.Material.background: MpvqcTheme.palette.background
-    M.Material.foreground: MpvqcTheme.palette.foreground
+    M.Material.theme: MpvqcAppearance.isDark ? M.Material.Dark : M.Material.Light
+    M.Material.accent: MpvqcAppearance.palette.accent
+    M.Material.background: MpvqcAppearance.palette.background
+    M.Material.foreground: MpvqcAppearance.palette.foreground
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true

@@ -29,13 +29,13 @@ T.ToolTip {
         text: control.text
         font: MpvqcFonts.applicationFont
         wrapMode: Text.Wrap
-        color: MpvqcTheme.palette.tooltipText
+        color: MpvqcAppearance.palette.tooltipText
     }
 
     background: Rectangle {
         implicitHeight: control.Material.tooltipHeight
         width: control.implicitWidth
-        color: MpvqcTheme.palette.tooltipBackground
+        color: MpvqcAppearance.palette.tooltipBackground
         radius: 12
     }
 

@@ -84,7 +84,7 @@ ListView {
     highlight: Rectangle {
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
-        color: MpvqcTheme.palette.rowSelected
+        color: MpvqcAppearance.palette.rowSelected
     }
 
     delegate: MpvqcCommentListDelegate {

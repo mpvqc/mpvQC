@@ -21,8 +21,8 @@ Item {
     readonly property alias commentLabel: _commentLabel
     property alias scrollBarWidth: _scrollBarSpacer.width
 
-    readonly property color backgroundColor: MpvqcTheme.palette.rowBackground(index)
-    readonly property color foregroundColor: ListView.isCurrentItem ? MpvqcTheme.palette.rowSelectedText : MpvqcTheme.palette.rowForeground(index)
+    readonly property color backgroundColor: MpvqcAppearance.palette.rowBackground(index)
+    readonly property color foregroundColor: ListView.isCurrentItem ? MpvqcAppearance.palette.rowSelectedText : MpvqcAppearance.palette.rowForeground(index)
 
     readonly property int horizontalItemPadding: 14
     readonly property int verticalItemPadding: 13
@@ -178,7 +178,7 @@ Item {
         Rectangle {
             id: _scrollBarSpacer
             height: root.height
-            color: MpvqcTheme.palette.background
+            color: MpvqcAppearance.palette.background
         }
     }
 

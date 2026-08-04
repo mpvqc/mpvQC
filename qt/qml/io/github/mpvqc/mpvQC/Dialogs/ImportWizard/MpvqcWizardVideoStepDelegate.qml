@@ -36,7 +36,7 @@ ItemDelegate {
             active: root.selected
             activeIcon: MpvqcIcons.radioButtonChecked
             inactiveIcon: MpvqcIcons.radioButtonUnchecked
-            iconColor: MpvqcTheme.palette.foreground
+            iconColor: MpvqcAppearance.palette.foreground
             iconSize: root.iconSize
             activationDuration: 150
             deactivationDuration: 75
@@ -67,7 +67,7 @@ ItemDelegate {
             objectName: "fromDocumentIcon"
 
             visible: root.foundInDocument
-            iconColor: MpvqcTheme.palette.hint
+            iconColor: MpvqcAppearance.palette.hint
             icon.source: MpvqcIcons.description
             icon.width: root.iconSize
             icon.height: root.iconSize
@@ -83,7 +83,7 @@ ItemDelegate {
             objectName: "fromSubtitleIcon"
 
             visible: root.foundInSubtitle
-            iconColor: MpvqcTheme.palette.hint
+            iconColor: MpvqcAppearance.palette.hint
             icon.source: MpvqcIcons.subtitles
             icon.width: root.iconSize
             icon.height: root.iconSize

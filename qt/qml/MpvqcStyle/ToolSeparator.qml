@@ -20,6 +20,6 @@ T.ToolSeparator {
     contentItem: Rectangle {
         implicitWidth: control.vertical ? 1 : 38
         implicitHeight: control.vertical ? 38 : 1
-        color: MpvqcTheme.palette.separator
+        color: MpvqcAppearance.palette.separator
     }
 }

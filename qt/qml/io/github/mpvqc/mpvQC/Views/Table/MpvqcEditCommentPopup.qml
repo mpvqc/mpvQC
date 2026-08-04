@@ -44,12 +44,12 @@ Popup {
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
 
-        selectionColor: MpvqcTheme.palette.rowSelected
-        selectedTextColor: MpvqcTheme.palette.rowSelectedText
+        selectionColor: MpvqcAppearance.palette.rowSelected
+        selectedTextColor: MpvqcAppearance.palette.rowSelectedText
 
         background: Rectangle {
             anchors.fill: parent
-            color: MpvqcTheme.palette.rowBackground(root.currentListIndex)
+            color: MpvqcAppearance.palette.rowBackground(root.currentListIndex)
         }
 
         ContextMenu.menu: null
