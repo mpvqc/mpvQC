@@ -258,7 +258,6 @@ jobs:
             --noinclude-data-files='PySide6/qml/QtQuick/Pdf/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Scene2D/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Scene3D/*' \
-            --noinclude-data-files='PySide6/qml/QtQuick/Shapes/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Timeline/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/VectorImage/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/VirtualKeyboard/*' \
@@ -282,7 +281,6 @@ jobs:
             --noinclude-dlls='PySide6/qml/QtQuick/Pdf/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Scene2D/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Scene3D/*' \
-            --noinclude-dlls='PySide6/qml/QtQuick/Shapes/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Timeline/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/VectorImage/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/VirtualKeyboard/*' \
@@ -334,7 +332,6 @@ jobs:
             --noinclude-dlls='qt6quickcontrols2universal*.dll' \
             --noinclude-dlls='qt6quickcontrols2windows*.dll' \
             --noinclude-dlls='qt6quickparticles.dll' \
-            --noinclude-dlls='qt6quickshapes.dll' \
             --noinclude-dlls='qt6quicktest.dll' \
             --noinclude-dlls='qt6quicktimeline.dll' \
             --noinclude-dlls='qt6quicktimelineblendtrees.dll' \

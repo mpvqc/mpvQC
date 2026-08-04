@@ -13,7 +13,7 @@ MpvqcOverlayLoader {
 
     readonly property var _urlsByKind: ({
             [MpvqcDialogKind.DialogKind.ABOUT]: Qt.resolvedUrl("About/MpvqcAboutDialog.qml"),
-            [MpvqcDialogKind.DialogKind.APPEARANCE]: Qt.resolvedUrl("MpvqcAppearanceDialog.qml"),
+            [MpvqcDialogKind.DialogKind.APPEARANCE]: Qt.resolvedUrl("Appearance/MpvqcAppearanceDialog.qml"),
             [MpvqcDialogKind.DialogKind.BACKUP_SETTINGS]: Qt.resolvedUrl("MpvqcBackupDialog.qml"),
             [MpvqcDialogKind.DialogKind.COMMENT_TYPES]: Qt.resolvedUrl("CommentTypes/MpvqcCommentTypesDialog.qml"),
             [MpvqcDialogKind.DialogKind.EDIT_INPUT_CONFIG]: Qt.resolvedUrl("MpvqcEditInputDialog.qml"),
