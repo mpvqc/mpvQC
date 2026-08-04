@@ -54,28 +54,6 @@ def test_backup_enabled_signal_emission(settings_service, make_spy):
     assert spy.count() == 1
 
 
-def test_theme_identifier_default(settings_service):
-    assert settings_service.theme_identifier == "material-you-dark"
-
-
-def test_theme_identifier_set_and_get(settings_service):
-    test_theme = "custom-theme"
-    settings_service.theme_identifier = test_theme
-    assert settings_service.theme_identifier == test_theme
-
-
-def test_theme_identifier_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.theme_identifier_changed)
-
-    test_theme = "new-theme"
-    settings_service.theme_identifier = test_theme
-    assert spy.count() == 1
-    assert spy.at(0, 0) == test_theme
-
-    settings_service.theme_identifier = test_theme
-    assert spy.count() == 1
-
-
 def test_backup_interval_default(settings_service):
     assert settings_service.backup_interval == 60
 
@@ -118,13 +96,3 @@ def test_time_display_mode_signal_emission(settings_service, make_spy):
 
     settings_service.time_display_mode = test_mode
     assert spy.count() == 1
-
-
-def test_multiple_property_changes(settings_service):
-    settings_service.backup_interval = 30
-    settings_service.theme_identifier = "test-theme"
-    settings_service.time_display_mode = 1
-
-    assert settings_service.backup_interval == 30
-    assert settings_service.theme_identifier == "test-theme"
-    assert settings_service.time_display_mode == 1

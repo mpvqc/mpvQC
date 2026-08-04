@@ -28,8 +28,6 @@ from .reverse_translator import ReverseTranslatorService as ReverseTranslatorSer
 from .settings import SettingsService as SettingsService
 from .settings_file import SettingsFileService as SettingsFileService
 from .state import StateService as StateService
-from .theme import ThemePalette as ThemePalette
-from .theme import ThemeService as ThemeService
 from .time_format_policy import TimeFormatPolicyService as TimeFormatPolicyService
 from .type_mapper import TypeMapperService as TypeMapperService
 from .version_checker import VersionCheckerService as VersionCheckerService

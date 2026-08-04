@@ -28,10 +28,6 @@ if TYPE_CHECKING:
     from PySide6.QtCore import SignalInstance
 
 
-def default_theme_identifier() -> str:
-    return "material-you-dark"
-
-
 def default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
 
@@ -234,22 +230,6 @@ class SettingsService(QObject):
         signal=lambda s: s.layout_orientation_changed,
     )
 
-    theme_identifier_changed = Signal(str)
-    theme_identifier = _Setting(
-        "Theme/themeIdentifier",
-        default=default_theme_identifier,
-        type_=str,
-        signal=lambda s: s.theme_identifier_changed,
-    )
-
-    primary_color_changed = Signal(str)
-    primary_color = _Setting(
-        "Theme/primaryColor",
-        default="#3f51b5",
-        type_=str,
-        signal=lambda s: s.primary_color_changed,
-    )
-
     window_title_format_changed = Signal(int)
     window_title_format = _Setting(
         "Window/titleFormat",
@@ -261,10 +241,6 @@ class SettingsService(QObject):
     def __init__(self, qsettings: QSettings, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self.qsettings = qsettings
-
-    @staticmethod
-    def default_theme_identifier() -> str:
-        return default_theme_identifier()
 
     @staticmethod
     def default_comment_types() -> list[str]:
