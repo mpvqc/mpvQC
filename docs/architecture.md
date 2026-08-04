@@ -41,14 +41,22 @@ View models are Python `QObject` subclasses exposed to QML via PySide6's `@QmlEl
 signal/slot world and the underlying services: a view model pulls in services with `inject.attr`, exposes the data the
 view needs as Qt properties, and turns user actions (`Slot`s) into service calls. They register into a single QML module
 that follows the same reverse-DNS convention as the QML-side modules. The folder layout under `mpvqc/viewmodels/` groups
-files by the consuming QML module.
+files by the consuming QML module. Not every view model lives there, though: see feature packages below.
 
 ### Services: `mpvqc/services/`
 
 Services hold the application's logic and own its mutable state. QML never talks to them directly: they are Python
 classes that other services and view models pull in via `inject.attr`. A few define Qt types that view models hand
 through to QML, such as the comment store and its selection state. Each service sits in its own module or package, and
-`mpvqc/injections.py` registers the bindings for the inject container.
+`mpvqc/injections.py` binds them for the inject container. It is also the composition root: a feature package brings
+its own bindings, and `mpvqc/injections.py` calls them.
+
+### Feature packages: `mpvqc/<feature>/`
+
+Some areas are grouped by what they are about instead of by layer. A feature package holds its own domain types and the
+services, models, and view models the area owns, and brings its own bindings. It also owns the settings keys its area
+means, reading the file through the shared settings file service. A layer packages hold everything no feature package
+has claimed.
 
 ### Bootstrap
 
