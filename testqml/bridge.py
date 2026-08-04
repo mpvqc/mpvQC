@@ -5,13 +5,21 @@
 import os
 import uuid
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, assert_never
 from zipfile import ZipFile
 
 import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
+from mpvqc.appearance.domain import (
+    AccentColor,
+    NoPreference,
+    format_color_scheme_preference,
+    parse_color_scheme,
+)
+from mpvqc.appearance.services import AppearanceSettingsService
+from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
@@ -26,7 +34,6 @@ from mpvqc.services import (
 from mpvqc.viewmodels import (
     MpvqcLabelWidthCalculatorViewModel,
     MpvqcTableUtilityViewModel,
-    MpvqcThemeViewModel,
     MpvqcWindowViewModel,
 )
 from testqml import import_wizard_fixtures
@@ -119,9 +126,9 @@ _SWAPPED_VIEW_MODELS = (
     ),
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Utility",
-        "MpvqcTheme",
+        "MpvqcAppearance",
         "_viewModel",
-        MpvqcThemeViewModel,
+        MpvqcPaletteViewModel,
     ),
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Utility",
@@ -305,12 +312,20 @@ class MpvqcTestSettings(QObject):
         return inject.instance(SettingsService).backup_interval
 
     @Slot(result=str)
-    def themeIdentifier(self) -> str:
-        return inject.instance(SettingsService).theme_identifier
+    def colorSchemePreference(self) -> str:
+        return format_color_scheme_preference(inject.instance(AppearanceSettingsService).color_scheme_preference)
 
-    @Slot(result=str)
-    def primaryColor(self) -> str:
-        return inject.instance(SettingsService).primary_color
+    @Slot(str, result=str)
+    def accentColor(self, color_scheme: str) -> str:
+        settings = inject.instance(AppearanceSettingsService)
+        preference = settings.appearance_preference.accent_color_preference_for(parse_color_scheme(color_scheme))
+        match preference:
+            case NoPreference():
+                return ""
+            case AccentColor():
+                return preference.identifier
+            case _:
+                assert_never(preference)
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:

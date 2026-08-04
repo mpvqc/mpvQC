@@ -137,6 +137,25 @@ QtObject {
             return root.testCase.findChild(control, "messageBoxLoader");
         }
 
+        // View delegates hang off their view visually only, so findChild walks past them.
+        // Popups are no items, so the search enters them through their content item.
+        function visualChild(item: var, objectName: string): Item {
+            if (!item) {
+                return null;
+            }
+            if (item.objectName === objectName) {
+                return item;
+            }
+            const kids = item.children ?? [item.contentItem];
+            for (let i = 0; i < kids.length; i++) {
+                const found = visualChild(kids[i], objectName);
+                if (found) {
+                    return found;
+                }
+            }
+            return null;
+        }
+
         function openedDialog(control: Item, name: string): QtObject {
             root.testCase.tryVerify(() => {
                 const dlg = root.testCase.findChild(control, name);
