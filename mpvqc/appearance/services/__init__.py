@@ -4,3 +4,4 @@
 
 from .palette_catalog import PaletteCatalogService as PaletteCatalogService
 from .palette_catalog import PaletteFamily as PaletteFamily
+from .settings import AppearanceSettingsService as AppearanceSettingsService
