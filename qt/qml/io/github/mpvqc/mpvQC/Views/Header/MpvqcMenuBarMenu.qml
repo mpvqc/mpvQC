@@ -14,8 +14,8 @@ MpvqcMenu {
     icon.width: 24
     icon.height: 24
 
-    M.Material.background: MpvqcTheme.palette.menuBackground
-    M.Material.foreground: MpvqcTheme.palette.foreground
+    M.Material.background: MpvqcAppearance.palette.menuBackground
+    M.Material.foreground: MpvqcAppearance.palette.foreground
 
     onAboutToShow: {
         x = isMirrored ? -width + parent.width : 0;

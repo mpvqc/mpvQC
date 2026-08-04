@@ -64,7 +64,7 @@ ScrollView {
 
             Label {
                 text: root.viewModel.applicationVersion
-                color: MpvqcTheme.palette.hint
+                color: MpvqcAppearance.palette.hint
 
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 4
@@ -73,7 +73,7 @@ ScrollView {
             Label {
                 //: This text is part of the software license description
                 text: qsTranslate("AboutDialog", "Copyright © mpvQC Developers")
-                color: MpvqcTheme.palette.hint
+                color: MpvqcAppearance.palette.hint
 
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 2

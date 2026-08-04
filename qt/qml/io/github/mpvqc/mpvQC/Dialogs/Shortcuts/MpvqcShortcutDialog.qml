@@ -89,7 +89,7 @@ MpvqcDialog {
                     required property string section
 
                     text: section
-                    color: MpvqcTheme.palette.accent
+                    color: MpvqcAppearance.palette.accent
                     width: parent ? parent.width : 0
                     font.pointSize: 12
                     topPadding: 24
@@ -121,7 +121,7 @@ MpvqcDialog {
                     icon.source: MpvqcIcons.search
                     icon.width: 32
                     icon.height: 32
-                    iconColor: MpvqcTheme.palette.hint
+                    iconColor: MpvqcAppearance.palette.hint
 
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -129,7 +129,7 @@ MpvqcDialog {
                 Label {
                     //: Shown in the keyboard shortcut dialog when the search matches no shortcut
                     text: qsTranslate("ShortcutsDialog", "No shortcuts found")
-                    color: MpvqcTheme.palette.hint
+                    color: MpvqcAppearance.palette.hint
 
                     anchors.horizontalCenter: parent.horizontalCenter
                 }

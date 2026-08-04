@@ -33,7 +33,7 @@ RowLayout {
             source: MpvqcIcons.tooltip2
             width: 18
             height: 18
-            color: MpvqcTheme.palette.hint
+            color: MpvqcAppearance.palette.hint
         }
 
         Layout.preferredWidth: visible ? implicitWidth : 0

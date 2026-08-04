@@ -41,7 +41,7 @@ Dialog {
 
     footer: MpvqcKeyboardFocusableButtonBox {}
 
-    M.Material.background: MpvqcTheme.palette.dialogBackground
+    M.Material.background: MpvqcAppearance.palette.dialogBackground
 
     MpvqcModalOverlayTracker {
         open: root.modal && root.visible

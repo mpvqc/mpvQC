@@ -17,7 +17,7 @@ Row {
     readonly property MpvqcWindowButtonsViewModel viewModel: MpvqcWindowButtonsViewModel {}
 
     // Deliberate platform polish: Windows paints its close button in its own
-    // caption red, every other desktop uses the theme's error color.
+    // caption red, every other desktop uses the palette's error color.
     readonly property bool isWindows: Qt.platform.os === "windows"
 
     signal minimizeRequested
@@ -37,7 +37,7 @@ Row {
 
         background: Rectangle {
             implicitWidth: _minimizeButton.M.Material.touchTarget
-            color: _minimizeButton.hovered ? MpvqcTheme.hoverHighlight : "transparent"
+            color: _minimizeButton.hovered ? MpvqcAppearance.hoverHighlight : "transparent"
         }
 
         onClicked: root.minimizeRequested()
@@ -59,7 +59,7 @@ Row {
 
         background: Rectangle {
             implicitWidth: _maximizeButton.M.Material.touchTarget
-            color: _maximizeButton.hovered ? MpvqcTheme.hoverHighlight : "transparent"
+            color: _maximizeButton.hovered ? MpvqcAppearance.hoverHighlight : "transparent"
         }
 
         onClicked: root.toggleMaximizeRequested()
@@ -69,9 +69,9 @@ Row {
         id: _closeButton
         objectName: "closeButton"
 
-        readonly property color hoverIconColor: root.isWindows ? "#FFFFFD" : MpvqcTheme.palette.errorText
-        readonly property color idleIconColor: MpvqcTheme.palette.foreground
-        readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcTheme.palette.error
+        readonly property color hoverIconColor: root.isWindows ? "#FFFFFD" : MpvqcAppearance.palette.errorText
+        readonly property color idleIconColor: MpvqcAppearance.palette.foreground
+        readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcAppearance.palette.error
 
         visible: root.viewModel.showCloseButton
         height: root.height

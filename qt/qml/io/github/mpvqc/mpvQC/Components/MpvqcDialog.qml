@@ -23,7 +23,7 @@ Dialog {
     z: MpvqcConstants.zModal
     closePolicy: Popup.CloseOnEscape
 
-    M.Material.background: MpvqcTheme.palette.dialogBackground
+    M.Material.background: MpvqcAppearance.palette.dialogBackground
 
     MpvqcModalOverlayTracker {
         open: root.modal && root.visible

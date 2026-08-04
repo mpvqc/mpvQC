@@ -35,7 +35,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: MpvqcTheme.palette.headerBackground
+        color: MpvqcAppearance.palette.headerBackground
         topLeftRadius: MpvqcWindowUtility.windowRadius
         topRightRadius: MpvqcWindowUtility.windowRadius
     }

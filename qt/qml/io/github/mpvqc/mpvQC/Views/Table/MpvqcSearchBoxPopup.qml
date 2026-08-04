@@ -81,8 +81,8 @@ Popup {
         }
     }
 
-    M.Material.background: MpvqcTheme.palette.popupBackground
-    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.background: MpvqcAppearance.palette.popupBackground
+    M.Material.foreground: MpvqcAppearance.palette.popupText
     M.Material.roundedScale: M.Material.SmallScale
 
     onAboutToShow: {
@@ -120,7 +120,7 @@ Popup {
                 source: MpvqcIcons.search
                 height: 24
                 width: 24
-                color: MpvqcTheme.palette.hint
+                color: MpvqcAppearance.palette.hint
             }
 
             Layout.leftMargin: 8
@@ -159,7 +159,7 @@ Popup {
         Label {
             objectName: "statusLabel"
             text: root.viewModel.statusLabel
-            color: MpvqcTheme.palette.hint
+            color: MpvqcAppearance.palette.hint
             Layout.leftMargin: 4
             Layout.rightMargin: 4
         }

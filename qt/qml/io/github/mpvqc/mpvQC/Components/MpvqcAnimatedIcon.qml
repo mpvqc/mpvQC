@@ -17,7 +17,7 @@ Item {
     property int iconSize: 24
     property int activationDuration: 100
     property int deactivationDuration: 50
-    property color iconColor: MpvqcTheme.palette.accent
+    property color iconColor: MpvqcAppearance.palette.accent
 
     implicitWidth: iconSize
     implicitHeight: iconSize

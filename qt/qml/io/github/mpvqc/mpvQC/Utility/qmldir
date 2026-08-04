@@ -12,6 +12,4 @@ singleton MpvqcFonts MpvqcFonts.qml
 singleton MpvqcIcons MpvqcIcons.qml
 singleton MpvqcLabelWidthCalculator MpvqcLabelWidthCalculator.qml
 singleton MpvqcModalState MpvqcModalState.qml
-singleton MpvqcTheme MpvqcTheme.qml
-singleton MpvqcTheme MpvqcTheme.qml
 singleton MpvqcWindowUtility MpvqcWindowUtility.qml

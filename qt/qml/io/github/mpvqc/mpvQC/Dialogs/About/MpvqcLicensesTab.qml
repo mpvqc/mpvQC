@@ -24,7 +24,7 @@ ScrollView {
     readonly property bool isScrollBarShown: contentHeight > height
 
     component MpvqcSectionTitle: Label {
-        color: MpvqcTheme.palette.accent
+        color: MpvqcAppearance.palette.accent
         font.pointSize: root.font.pointSize - 1
         font.weight: Font.DemiBold
         horizontalAlignment: Text.AlignLeft
