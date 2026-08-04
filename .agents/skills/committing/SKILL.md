@@ -57,6 +57,8 @@ fault, no talk of reporting anything upstream.
 
 When a larger chunk of work is done, offer to push, and to write the manual checks with the `manual-checks` skill.
 
+Work that traces to a ticket: once it is pushed, the ticket gets its closing comment — see the `filing-tickets` skill.
+
 ## Done when
 
 - The new files this change brings are added, and nothing else is.
