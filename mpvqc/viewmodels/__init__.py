@@ -13,7 +13,6 @@ from .message_boxes import MpvqcResetMessageBoxViewModel as MpvqcResetMessageBox
 from .message_boxes import MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionCheckMessageBoxViewModel
 from .utility import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .utility import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
-from .utility import MpvqcThemeViewModel as MpvqcThemeViewModel
 from .utility import MpvqcWindowViewModel as MpvqcWindowViewModel
 from .views import MpvqcBackupTimerViewModel as MpvqcBackupTimerViewModel
 from .views import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
