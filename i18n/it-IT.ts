@@ -79,11 +79,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Theme</source>
+        <source>Color scheme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Color</source>
+        <source>Accent color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
