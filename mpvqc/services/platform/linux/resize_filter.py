@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast, override
 
-from PySide6.QtCore import QEvent, QObject, Qt
+from PySide6.QtCore import QEvent, QObject, Qt, Slot
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QMouseEvent, QWindow
@@ -70,6 +70,7 @@ class WindowResizeFilter(QObject):
     def set_drop_shadow_margin(self, margin: int) -> None:
         self._drop_shadow_margin = margin
 
+    @Slot()
     def _clear_cursor_override(self) -> None:
         if self._cursor_override_active:
             self._app.restoreOverrideCursor()
