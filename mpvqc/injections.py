@@ -5,6 +5,7 @@
 import inject
 
 import mpvqc.services as s
+from mpvqc.appearance.injections import bindings as appearance_bindings
 
 
 def _settings_service() -> s.SettingsService:
@@ -12,6 +13,8 @@ def _settings_service() -> s.SettingsService:
 
 
 def bindings(binder: inject.Binder) -> None:
+    appearance_bindings(binder)
+
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
     binder.bind_to_constructor(s.CommentsService, s.CommentsService)
