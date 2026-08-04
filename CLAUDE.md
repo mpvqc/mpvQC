@@ -21,15 +21,19 @@
 - Prefer the correct term over the term already in the repo. When a name contradicts the spec or the project it refers
   to, rename it and record the term in `CONTEXT.md`. Don't keep a wrong name to match other wrong names.
 - Don't use structural comments like `# region` or `# ---`.
-- Avoid comments unless absolutely necessary. In any case, keep them short.
 - Run background work through `SerialJobRunner` from `mpvqc/jobs.py`. Don't use `QThreadPool`, locks, or private queued
   signals in services directly.
 - Prefer code the type checker can verify:
   - Use closures instead of `functools.partial`
   - Don't use getattr
-- Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix. Helpers that aren't in
-  `injections.py` live at the top level of `mpvqc/`.
+- A feature package under `mpvqc/<feature>/` bundles everything one area needs: `domain.py` at its root, plus role
+  directories (`services/`, `models/`, `viewmodels/`) for what the area owns. It contributes its own bindings and the
+  composition root calls them.
+- Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
+  has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
+- Load the `load-bearing-comments` skill before adding a comment or docstring, and when reviewing code.
 - Load the `writing-qml` skill before writing or editing a QML file.
+- Load the `writing-view-models` skill before writing or editing a view model that reads service state.
 
 ## Testing
 
@@ -42,6 +46,7 @@
   `viewModel` QML property.
 - In ADRs and `CONTEXT.md`, name the thing, not where it lives. Paths and file names go stale, so describe the component
   or the command instead. Setup and workflow docs are the exception: there the path is the point.
+- Load the `writing-glossary` skill before adding or changing a term in `CONTEXT.md`.
 
 ## Committing
 
@@ -51,14 +56,14 @@
 
 ### Issue tracker
 
-User reports and triage live on GitHub Issues; larger chunks of work are planned as local markdown under
-`.scratch/<feature>/`, and internally found bugs go to `.scratch/bugs/` — never to the public tracker. See
-`docs/agents/issue-tracker.md`.
+Three destinations: the public GitHub tracker for user reports and triage, a private tracker for every internal work
+item, and `.scratch/` for disposable artifacts. Nothing with a status stays local, and an agent never opens an issue on
+the public tracker. Load the `filing-tickets` skill before filing anything; `docs/agents/issue-tracker.md` decides where
+it goes.
 
 ### Triage labels
 
-Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See
-`docs/agents/triage-labels.md`.
+The label vocabulary of each tracker, and which of those labels exist today. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 

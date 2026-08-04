@@ -1,17 +1,31 @@
 # Triage Labels
 
-The skills speak in terms of five canonical triage roles. This file maps those roles to the actual label strings used on
-the public GitHub tracker (`mpvqc/mpvQC`), where triage happens.
+The skills speak in terms of triage roles. This file maps them to the label strings on each of the two trackers.
+Neither tracker uses area labels or issue types.
 
-| Label in mattpocock/skills | Label in our tracker | Meaning                                  |
-| -------------------------- | -------------------- | ---------------------------------------- |
-| `needs-triage`             | `needs-triage`       | Maintainer needs to evaluate this issue  |
-| `needs-info`               | `needs-info`         | Waiting on reporter for more information |
-| `ready-for-agent`          | `ready-for-agent`    | Fully specified, ready for an AFK agent  |
-| `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
-| `wontfix`                  | `wontfix`            | Will not be actioned                     |
+## `mpvqc/mpvQC` (public tracker)
 
-When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this
-table.
+Triage happens here. `gh label list --repo mpvqc/mpvQC` shows which of these exist today.
 
-Edit the right-hand column to match whatever vocabulary you actually use.
+| Role              | Meaning                                  |
+| ----------------- | ---------------------------------------- |
+| `needs-triage`    | Maintainer needs to evaluate this issue  |
+| `wontfix`         | Will not be actioned                     |
+| `needs-info`      | Waiting on reporter for more information |
+| `ready-for-agent` | An agent can take it unattended          |
+| `ready-for-human` | Requires a human, not an agent           |
+
+`gh issue edit --add-label` fails on a label that does not exist. When `needs-info`, `ready-for-agent`, or
+`ready-for-human` is genuinely the right outcome, create it first with
+`gh label create <name> --repo mpvqc/mpvQC --description "..."` and tell the user.
+
+## `mpvqc/internal-tickets` (private tracker)
+
+`gh label list --repo mpvqc/internal-tickets` shows which of these exist today, and every other `gh` call against this
+tracker needs the same `--repo`. Which label a ticket gets is the `filing-tickets` skill's call.
+
+| Label             | Meaning                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------ |
+| `ready-for-agent` | An agent can take it unattended                                                      |
+| `ready-for-human` | Requires a human, not an agent                                                       |
+| `needs-grilling`  | Qualifier alongside a readiness label: accepted finding, not yet broken down          |

@@ -527,6 +527,7 @@ $RECYCLE.BIN/
 /.claude/skills
 /.flatpak-builder
 /.qtcreator
+/.scratch/
 /appdata
 /build-dir
 /docs/dev
