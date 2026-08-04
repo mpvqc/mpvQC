@@ -130,6 +130,7 @@ files = [
     "mpvqc/appearance/__init__.py",
     "mpvqc/appearance/domain.py",
     "mpvqc/appearance/services/__init__.py",
+    "mpvqc/appearance/services/color_scheme.py",
     "mpvqc/appearance/services/palette_catalog.py",
     "mpvqc/appearance/services/settings.py",
     "mpvqc/application.py",
