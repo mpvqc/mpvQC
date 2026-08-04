@@ -8,7 +8,6 @@ import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast, overload
 
-import inject
 from PySide6.QtCore import (
     QT_TRANSLATE_NOOP,
     QLocale,
@@ -22,9 +21,6 @@ from PySide6.QtCore import (
 
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
-
-from .application_paths import ApplicationPathsService
-from .type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -102,9 +98,6 @@ class _Setting[T]:
 
 
 class SettingsService(QObject):
-    _paths = inject.attr(ApplicationPathsService)
-    _type_mapper = inject.attr(TypeMapperService)
-
     backup_enabled_changed = Signal(bool)
     backup_enabled = _Setting(
         "Backup/enabled",
@@ -265,10 +258,9 @@ class SettingsService(QObject):
         signal=lambda s: s.window_title_format_changed,
     )
 
-    def __init__(self, parent: QObject | None = None, ini_file: str | None = None) -> None:
+    def __init__(self, qsettings: QSettings, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        file = ini_file if ini_file is not None else self._type_mapper.map_path_to_str(self._paths.file_settings)
-        self.qsettings = QSettings(file, QSettings.Format.IniFormat)
+        self.qsettings = qsettings
 
     @staticmethod
     def default_theme_identifier() -> str:

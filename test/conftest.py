@@ -19,6 +19,7 @@ from mpvqc.services import (
     InternationalizationService,
     PlayerService,
     ResourceService,
+    SettingsFileService,
     SettingsService,
     StateService,
     TimeFormatterService,
@@ -175,9 +176,14 @@ def configure_state(state_service) -> Callable:
 
 
 @pytest.fixture
-def settings_service(tmp_path, type_mapper):
+def settings_file(tmp_path, type_mapper) -> SettingsFileService:
     file = tmp_path / "test_settings.ini"
-    return SettingsService(ini_file=type_mapper.map_path_to_str(file))
+    return SettingsFileService(ini_file=type_mapper.map_path_to_str(file))
+
+
+@pytest.fixture
+def settings_service(settings_file) -> SettingsService:
+    return SettingsService(settings_file.qsettings)
 
 
 @pytest.fixture(autouse=True)
