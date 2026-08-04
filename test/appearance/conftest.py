@@ -7,7 +7,13 @@ from typing import override
 
 import pytest
 
+from mpvqc.appearance.services import AppearanceSettingsService
 from mpvqc.services import ResourceService
+
+
+@pytest.fixture
+def appearance_settings_service(settings_file) -> AppearanceSettingsService:
+    return AppearanceSettingsService(settings_file.qsettings)
 
 
 class FakeResourceService(ResourceService):

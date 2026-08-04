@@ -131,6 +131,7 @@ files = [
     "mpvqc/appearance/domain.py",
     "mpvqc/appearance/services/__init__.py",
     "mpvqc/appearance/services/palette_catalog.py",
+    "mpvqc/appearance/services/settings.py",
     "mpvqc/application.py",
     "mpvqc/build.py",
     "mpvqc/close_event_filter.py",
