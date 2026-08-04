@@ -25,19 +25,17 @@ Run the formatter before committing.
 - [ ] NOTICE.txt verified:
   - [ ] All dependencies match `pyproject.toml`
   - [ ] License identifiers match each package's actual metadata, not the project's umbrella license
-  - [ ] `REUSE.toml` aggregate and `LICENSES/` texts are in sync: `reuse lint`
-- [ ] New screenshots created (both light and dark themes) for Website and Flatpak
+  - [ ] `REUSE.toml` aggregate and `LICENSES/` texts are in sync: `uvx reuse lint`
+- [ ] New screenshots created (both light and dark color schemes) for Website and Flatpak
 - [ ] Release notes drafted
 
 ### Verify build and manual testing
 
-This is the final gate before tagging.
-
-- [ ] libmpv in CI updated: `.github/workflows/release.yml`
+- [ ] libmpv in CI updated: `.github/actions/install-libmpv/action.yml`
   - Visit <https://github.com/shinchiro/mpv-winbuild-cmake/releases>
   - Find latest `mpv-dev-x86_64-*-git-*.7z` asset
   - Copy URL and SHA256 hash
-  - Update `LIBMPV_URL` and `LIBMPV_SHA256` in workflow file
+  - Update the `default` values of the action's `url` and `sha256` inputs
 - [ ] CI verified green: <https://github.com/mpvqc/mpvQC/actions>
 - [ ] Manual testing on Windows (areas the test suite cannot exercise):
   - [ ] Video playback works
@@ -46,17 +44,17 @@ This is the final gate before tagging.
   - [ ] Minimize a maximized window with the title-bar button: it restores from the taskbar as maximized
   - [ ] Enter and exit fullscreen from both a normal and a maximized window: both transitions are clean
   - [ ] Press Win+D while fullscreen: restoring the window returns it to fullscreen
-- [ ] Manual testing on Linux (on the locally built Flatpak):
-  - [ ] Flatpak builds locally
-  - [ ] Flatpak installs locally
-  - [ ] Flatpak runs locally
+  - [ ] With the app running, switching the app mode under Settings → Personalization → Colors retints it live
+  - [ ] An explicit Light or Dark under Options → Appearance... survives that switch untouched
+- [ ] Manual testing on Linux, on a locally built Flatpak (see below):
+  - [ ] Flatpak builds, installs and runs locally
   - [ ] Windows manual tests above also pass on Linux
-  - [ ] Window chrome verified on both setups (see below)
+  - [ ] Window chrome and color scheme verified on both setups
 
-#### Window chrome verification
+#### Window chrome and color scheme verification
 
-The Linux window chrome (drop shadow, rounded corners, frameless resizing) is self-drawn and compositor-dependent, so CI
-cannot cover it. Verify it on the locally built Flatpak before tagging, on both setups:
+The Linux window chrome is self-drawn and compositor-dependent, and the color scheme comes from the desktop's settings
+portal. CI runs neither, so verify both on the locally built Flatpak, on both setups:
 
 ##### Desktop environment (e.g. GNOME, KDE Plasma)
 
@@ -65,6 +63,11 @@ cannot cover it. Verify it on the locally built Flatpak before tagging, on both 
 - [ ] Menu bar, close button and footer hover highlights stay within the rounded corners
 - [ ] Maximize, fullscreen and back to normal land in the expected state (no flicker back to normal)
 - [ ] Window drags to the top edge and resizes from every edge and corner
+- [ ] With the app running, a desktop flip retints it live: on GNOME
+      `gsettings set org.gnome.desktop.interface color-scheme prefer-dark`, on KDE Plasma
+      `plasma-apply-colorscheme BreezeDark` (`prefer-light` and `BreezeLight` flip back)
+- [ ] An explicit Light or Dark under Options → Appearance... survives that flip untouched
+- [ ] On GNOME, `gsettings set org.gnome.desktop.interface color-scheme default` renders light
 
 ##### Tiling compositor (e.g. Sway, Hyprland, niri)
 
@@ -75,21 +78,22 @@ cannot cover it. Verify it on the locally built Flatpak before tagging, on both 
 
 ### Tag and CI build
 
-- [ ] Create annotated tag: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
-- [ ] Push tag to trigger CI: `git push origin vX.Y.Z`
-- [ ] Download `mpvQC-X.Y.Z-{commit}-win-x86_64.zip`
-- [ ] Downloaded Windows build reports `mpvqc-github` (version line in Help → About)
-- [ ] Download `release-build-linux.zip`
+- [ ] Create annotated tag: `git tag -a VERSION -m "Release VERSION"`
+- [ ] Push tag to trigger CI: `git push origin VERSION`
+
+The rest comes off the Actions run for that tag, at <https://github.com/mpvqc/mpvQC/actions>:
+
+- [ ] Download `mpvQC-VERSION-{commit}-win-x86_64.zip`
+- [ ] Downloaded Windows build reports `mpvqc-github` (version line in Help → About mpvQC...)
 - [ ] Download `release-build-windows.zip`
-- [ ] Download complete CI build-log and upload to release issue on GitHub
+- [ ] Download the complete build log and attach it to the `Release VERSION` issue on
+      <https://github.com/mpvqc/mpvQC/issues>
 
 ### GitHub release
 
 - [ ] Draft new release on GitHub
-- [ ] Upload all three artifacts
+- [ ] Upload both artifacts
 - [ ] Publish release
-
-With this, the Windows release process is complete. Additional steps are required for Linux, detailed below.
 
 ## Post-release
 
@@ -97,19 +101,20 @@ With this, the Windows release process is complete. Additional steps are require
 
 These steps apply to the [mpvQC-flatpak](https://github.com/mpvqc/mpvQC-flatpak) repository.
 
-- [ ] In the manifest update the mpvQC source tag to `vX.Y.Z`
+- [ ] In the manifest point the mpvQC source `tag` and `commit` at `VERSION`
 - [ ] Update `io.github.mpvqc.mpvQC.metainfo.xml`:
   - [ ] Bump the top-level `version`
-  - [ ] Add a `<release version="X.Y.Z" date="YYYY-MM-DD">` entry with changelog
+  - [ ] Add a `<release version="VERSION" date="YYYY-MM-DD">` entry with changelog
   - [ ] Update screenshots if UI changed
 - [ ] Commit changes to mpvQC-flatpak repository
-- [ ] Trigger a new flatpak build **manually** via GitHub Actions in the `Build Flatpak` section.
+- [ ] Run the `Build Flatpak` workflow manually from the Actions tab (it only triggers on workflow dispatch)
 - [ ] Updated Flatpak reports `mpvqc-flatpak`: `flatpak run io.github.mpvqc.mpvQC --version`
 
-Once the build succeeds, it will be automatically committed to the flatpak repository. Users will receive the new
-version via regular updates.
+When the build succeeds, the workflow commits the result to the flatpak repository.
 
 ### Website update
+
+These steps apply to the [mpvqc.github.io](https://github.com/mpvqc/mpvqc.github.io) repository.
 
 - [ ] Screenshots updated
 - [ ] Version endpoint updated: `static/api/v1/public/version`
