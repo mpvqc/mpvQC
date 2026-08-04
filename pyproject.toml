@@ -137,6 +137,7 @@ files = [
     "mpvqc/appearance/services/palette_catalog.py",
     "mpvqc/appearance/services/settings.py",
     "mpvqc/appearance/viewmodels/__init__.py",
+    "mpvqc/appearance/viewmodels/dialog.py",
     "mpvqc/appearance/viewmodels/palette.py",
     "mpvqc/application.py",
     "mpvqc/build.py",
