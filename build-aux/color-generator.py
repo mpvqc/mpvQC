@@ -69,7 +69,7 @@ def generate(colors: list[str], dark: bool, contrast: float) -> None:
         mdc = MaterialDynamicColors(spec=spec_version)
         color_map[seed] = generate_palette_from(scheme, mdc)
 
-    update_theme_file(color_map, dark)
+    update_palette_catalog_file(color_map, dark)
 
 
 def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) -> dict[str, str]:
@@ -85,20 +85,33 @@ def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) 
     return result
 
 
-def update_theme_file(color_map: dict[str, dict[str, str]], dark: bool) -> None:
-    path = Path() / ".." / "data" / "themes.json"
+def update_palette_catalog_file(color_map: dict[str, dict[str, str]], dark: bool) -> None:
+    path = Path() / ".." / "data" / "palette-catalog.json"
     path = path.resolve()
 
     with Path(path).open(encoding="utf-8") as f:
         file = json.load(f)
 
-    theme = "material-you-dark" if dark else "material-you"
+    color_scheme = "dark" if dark else "light"
 
     for idx, item in enumerate(file):
-        if theme == item["identifier"]:
+        if color_scheme == item["color_scheme"]:
             file[idx]["palettes"] = [{"identifier": seed, "colors": palette} for seed, palette in color_map.items()]
 
+    validate_default_accent_colors(file)
+
     Path(path).write_text(json.dumps(file, indent=4), encoding="utf-8")
+
+
+def validate_default_accent_colors(palette_families: list[dict]) -> None:
+    for palette_family in palette_families:
+        accent_colors = {palette["identifier"] for palette in palette_family["palettes"]}
+        if palette_family["default_accent_color"] not in accent_colors:
+            print(
+                f"The {palette_family['color_scheme']} palette family: "
+                f"default_accent_color {palette_family['default_accent_color']} is not among its accent colors"
+            )
+            sys.exit(1)
 
 
 if __name__ == "__main__":
