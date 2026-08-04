@@ -136,6 +136,8 @@ files = [
     "mpvqc/appearance/services/color_scheme.py",
     "mpvqc/appearance/services/palette_catalog.py",
     "mpvqc/appearance/services/settings.py",
+    "mpvqc/appearance/viewmodels/__init__.py",
+    "mpvqc/appearance/viewmodels/palette.py",
     "mpvqc/application.py",
     "mpvqc/build.py",
     "mpvqc/close_event_filter.py",
