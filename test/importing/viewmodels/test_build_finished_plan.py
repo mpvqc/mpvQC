@@ -12,8 +12,6 @@ import pytest
 from PySide6.QtCore import QObject
 
 from mpvqc.datamodels import Comment
-from mpvqc.dialogs.import_wizard import build_finished_plan
-from mpvqc.dialogs.import_wizard.steps import build_session_step, build_subtitles_step, build_video_step
 from mpvqc.enums import SessionMode
 from mpvqc.importing.domain import (
     FinishedPlan,
@@ -24,11 +22,17 @@ from mpvqc.importing.domain import (
     subtitles,
     video,
 )
+from mpvqc.importing.viewmodels import (
+    build_finished_plan,
+    build_session_step,
+    build_subtitles_step,
+    build_video_step,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from mpvqc.dialogs.import_wizard.steps import (
+    from mpvqc.importing.viewmodels import (
         MpvqcImportWizardSessionStepViewModel,
         MpvqcImportWizardSubtitlesStepViewModel,
         MpvqcImportWizardVideoStepViewModel,

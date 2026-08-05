@@ -11,7 +11,6 @@ import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject
 
-from mpvqc.dialogs.import_wizard import MpvqcImportWizardRequestRelayViewModel
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
     RejectedDocument,
@@ -22,6 +21,7 @@ from mpvqc.importing.domain import (
     video,
 )
 from mpvqc.importing.services import ImporterService
+from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel
 from mpvqc.services import SettingsService
 
 

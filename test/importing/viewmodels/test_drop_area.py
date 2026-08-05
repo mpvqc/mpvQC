@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtCore import QUrl
 
 from mpvqc.importing.services import ImporterService, MimetypeProviderService
-from mpvqc.viewmodels import MpvqcDropAreaViewModel
+from mpvqc.importing.viewmodels import MpvqcDropAreaViewModel
 
 
 @pytest.fixture

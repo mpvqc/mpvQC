@@ -11,7 +11,6 @@ from typing import NamedTuple
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.dialogs.import_wizard import FooterState, PrimaryAction, WizardDialogPolicy
 from mpvqc.enums import StepKind
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
@@ -23,6 +22,7 @@ from mpvqc.importing.domain import (
     subtitles,
     video,
 )
+from mpvqc.importing.viewmodels import FooterState, PrimaryAction, WizardDialogPolicy
 
 VIDEO_A = Path("/movies/a.mp4")
 SUB_A = Path("/work/a.en.srt")

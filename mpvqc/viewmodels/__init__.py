@@ -3,10 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .app import MpvqcAppViewModel as MpvqcAppViewModel
-from .app import MpvqcDropAreaViewModel as MpvqcDropAreaViewModel
 from .app import MpvqcResizeViewModel as MpvqcResizeViewModel
 from .file_dialogs import MpvqcExportFileDialogViewModel as MpvqcExportFileDialogViewModel
-from .file_dialogs import MpvqcImportFileDialogViewModel as MpvqcImportFileDialogViewModel
 from .message_boxes import MpvqcMessageBoxRequestRelayViewModel as MpvqcMessageBoxRequestRelayViewModel
 from .message_boxes import MpvqcQuitMessageBoxViewModel as MpvqcQuitMessageBoxViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel as MpvqcResetMessageBoxViewModel

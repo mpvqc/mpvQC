@@ -13,7 +13,7 @@ from PySide6.QtQml import QmlElement, QmlUncreatable
 from mpvqc.importing.domain import compute_steps
 from mpvqc.importing.services import ImporterService
 
-from .dialog_policy import PrimaryAction, WizardDialogPolicy
+from .plan import build_finished_plan
 from .steps import (
     MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
@@ -24,7 +24,7 @@ from .steps import (
     build_subtitles_step,
     build_video_step,
 )
-from .wizard_helpers import build_finished_plan
+from .wizard_dialog_policy import PrimaryAction, WizardDialogPolicy
 
 if TYPE_CHECKING:
     from mpvqc.importing.domain import UnfinishedPlan

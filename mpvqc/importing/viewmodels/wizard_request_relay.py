@@ -13,7 +13,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.importing.domain import UnfinishedPlan, compute_steps
 from mpvqc.importing.services import ImporterService
 
-from .wizard_viewmodel import MpvqcImportWizardViewModel
+from .wizard import MpvqcImportWizardViewModel
 
 logger = logging.getLogger(__name__)
 
