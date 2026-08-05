@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .documents import parse_classic as parse_classic
-from .documents import parse_v1 as parse_v1
 from .importer import ImporterService as ImporterService
 from .mimetype_provider import MimetypeProviderService as MimetypeProviderService
 from .plan import plan_import as plan_import

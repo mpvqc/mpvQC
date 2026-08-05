@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .documents import ParsedDocument as ParsedDocument
+from .documents import parse_classic as parse_classic
+from .documents import parse_v1 as parse_v1
 from .plan import ErrorsAbsent as ErrorsAbsent
 from .plan import ErrorsPresent as ErrorsPresent
 from .plan import FinishedPlan as FinishedPlan

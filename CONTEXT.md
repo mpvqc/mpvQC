@@ -5,6 +5,10 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 
 ## Import pipeline
 
+- **Classic document**: mpvQC's original import document format: a text file, superseded by the v1 document but still
+  read on import.
+- **v1 document**: mpvQC's current import document format, versioned so a future format can succeed it without
+  breaking documents already written.
 - **Concern**: one dimension of an import that may need user input: session, video, subtitles. Each is a tagged union
   named concern-first, such as `SessionMerge` and `SessionUnresolved`: resolved variants for the concern, and its own
   `Unresolved` variant carrying the data a user needs to decide.

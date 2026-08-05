@@ -9,10 +9,8 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument
-
-from .documents import parse_classic, parse_v1
-from .parsed import ParsedDocument
+from mpvqc.importing.domain import DocumentRejectionReason, ParsedDocument, RejectedDocument, parse_classic, parse_v1
+from mpvqc.services.reverse_translator import ReverseTranslatorService
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -69,7 +67,7 @@ def read_documents(documents: list[Path]) -> DocumentImportResult:
 
 def _parse_document(content: str, document: Path) -> ParsedDocument | DocumentRejectionReason:
     if content.startswith("[FILE]"):
-        return parse_classic(content)
+        return parse_classic(content, ReverseTranslatorService.lookup)
 
     try:
         data = json.loads(content)
@@ -87,7 +85,7 @@ def _parse_document(content: str, document: Path) -> ParsedDocument | DocumentRe
             return DocumentRejectionReason.INVALID
         case 1:
             try:
-                return parse_v1(data)
+                return parse_v1(data, ReverseTranslatorService.lookup)
             except ValueError:
                 logger.exception("Malformed version 1 document: %s", document)
                 return DocumentRejectionReason.INVALID
