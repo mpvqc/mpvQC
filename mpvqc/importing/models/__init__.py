@@ -5,4 +5,4 @@
 from .errors import MpvqcImportErrorsModel as MpvqcImportErrorsModel
 from .settings import MpvqcImportSettingsModel as MpvqcImportSettingsModel
 from .subtitles import MpvqcImportSubtitlesModel as MpvqcImportSubtitlesModel
-from .video import MpvqcImportVideosModel as MpvqcImportVideosModel
+from .videos import MpvqcImportVideosModel as MpvqcImportVideosModel
