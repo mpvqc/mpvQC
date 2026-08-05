@@ -10,10 +10,9 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import compute_steps
+from mpvqc.importing.domain import compute_steps, finish_plan
 from mpvqc.importing.services import ImporterService
 
-from .plan import build_finished_plan
 from .steps import (
     MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
@@ -137,5 +136,10 @@ class MpvqcImportWizardViewModel(QObject):
         self.rejectRequested.emit()
 
     def _commit(self) -> None:
-        plan = build_finished_plan(self._unfinished_plan, self._session_step, self._video_step, self._subtitles_step)
+        plan = finish_plan(
+            self._unfinished_plan,
+            session=self._session_step.resolved if self._session_step is not None else None,
+            video=self._video_step.resolved if self._video_step is not None else None,
+            subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
+        )
         self._importer.execute(plan)

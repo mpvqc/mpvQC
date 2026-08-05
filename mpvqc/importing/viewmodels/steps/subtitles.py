@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, assert_never
-
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
@@ -17,10 +15,6 @@ from mpvqc.importing.domain import (
     SubtitlesUnresolved,
 )
 from mpvqc.importing.models import MpvqcImportSubtitlesModel
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -63,8 +57,9 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
         self._subtitles.set_all_checked(not all_checked)
 
     @property
-    def checked_paths(self) -> tuple[Path, ...]:
-        return self._subtitles.checked_paths
+    def resolved(self) -> SubtitlesResolved:
+        checked = self._subtitles.checked_paths
+        return SubtitlesLoad(paths=checked) if checked else SubtitlesSkip()
 
     @Slot()
     def _emit_tri_state_changed(self) -> None:
@@ -75,20 +70,3 @@ def build_subtitles_step(parent: QObject, concern: SubtitlesConcern) -> MpvqcImp
     if isinstance(concern, SubtitlesUnresolved):
         return MpvqcImportWizardSubtitlesStepViewModel(parent, concern)
     return None
-
-
-def resolve_subtitles(
-    subtitles_step: MpvqcImportWizardSubtitlesStepViewModel | None,
-    concern: SubtitlesConcern,
-) -> SubtitlesResolved:
-    match concern:
-        case SubtitlesLoad() | SubtitlesSkip():
-            return concern
-        case SubtitlesUnresolved() if subtitles_step is not None:
-            checked = subtitles_step.checked_paths
-            return SubtitlesLoad(paths=checked) if checked else SubtitlesSkip()
-        case SubtitlesUnresolved():
-            msg = "SubtitlesUnresolved reached commit without a subtitles step view-model"
-            raise RuntimeError(msg)
-        case _:
-            assert_never(concern)

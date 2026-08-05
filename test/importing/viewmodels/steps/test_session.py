@@ -7,7 +7,7 @@ from PySide6.QtCore import QObject
 
 from mpvqc.importing.domain import SessionMerge, SessionReplace, SessionUnresolved
 from mpvqc.importing.enums import MpvqcImportWizardSessionMode
-from mpvqc.importing.viewmodels import build_session_step, resolve_session
+from mpvqc.importing.viewmodels import build_session_step
 
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
 
@@ -75,9 +75,3 @@ def test_an_unknown_mode_leaves_the_step_untouched(step, make_spy):
 
     assert step.resolved == SessionReplace()
     assert spy.count() == 0
-
-
-def test_resolve_session_reports_what_the_step_holds(step):
-    step.resolved = SessionReplace()
-
-    assert resolve_session(step, UNRESOLVED) == SessionReplace()

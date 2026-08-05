@@ -11,7 +11,7 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **ImportErrors**: whether an import scan rejected any documents: `ErrorsAbsent`, or `ErrorsPresent` naming the ones
   it rejected. Not a Concern: the errors step only shows them, the user decides nothing about it.
 - **Resolve**: turn a Concern into one of its resolved variants, either from settings and scan results (`make_plan`) or
-  from wizard input (`build_finished_plan`).
+  from wizard input (`finish_plan`).
 - **UnfinishedPlan**: scan output with at least one Concern unresolved, or ImportErrors present. Presented to the user
   as the import wizard.
 - **FinishedPlan**: every Concern resolved. The only input `ImporterService.execute()` accepts.

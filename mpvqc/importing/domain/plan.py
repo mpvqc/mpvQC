@@ -139,6 +139,58 @@ def make_plan(
             )
 
 
+def finish_plan(
+    plan: UnfinishedPlan,
+    *,
+    session: SessionResolved | None = None,
+    video: VideoResolved | None = None,
+    subtitles: SubtitlesResolved | None = None,
+) -> FinishedPlan:
+    return FinishedPlan(
+        comments=plan.comments,
+        session=_finish_session(plan.session, session),
+        video=_finish_video(plan.video, video),
+        subtitles=_finish_subtitles(plan.subtitles, subtitles),
+    )
+
+
+def _finish_session(concern: SessionConcern, answer: SessionResolved | None) -> SessionResolved:
+    match concern:
+        case SessionMerge() | SessionReplace():
+            return concern
+        case SessionUnresolved():
+            return _require_answer(answer)
+        case _:
+            assert_never(concern)
+
+
+def _finish_video(concern: VideoConcern, answer: VideoResolved | None) -> VideoResolved:
+    match concern:
+        case VideoLoad() | VideoSkip():
+            return concern
+        case VideoUnresolved():
+            return _require_answer(answer)
+        case _:
+            assert_never(concern)
+
+
+def _finish_subtitles(concern: SubtitlesConcern, answer: SubtitlesResolved | None) -> SubtitlesResolved:
+    match concern:
+        case SubtitlesLoad() | SubtitlesSkip():
+            return concern
+        case SubtitlesUnresolved():
+            return _require_answer(answer)
+        case _:
+            assert_never(concern)
+
+
+def _require_answer[T](answer: T | None) -> T:
+    if answer is None:
+        msg = "cannot finish a plan while a concern is unresolved"
+        raise RuntimeError(msg)
+    return answer
+
+
 def _resolve_errors(scan: ScanResult) -> ImportErrors:
     if not scan.rejected_documents:
         return ErrorsAbsent()

@@ -23,6 +23,7 @@ from .plan import VideoLoad as VideoLoad
 from .plan import VideoResolved as VideoResolved
 from .plan import VideoSkip as VideoSkip
 from .plan import VideoUnresolved as VideoUnresolved
+from .plan import finish_plan as finish_plan
 from .plan import make_plan as make_plan
 from .scan import DocumentRejectionReason as DocumentRejectionReason
 from .scan import RejectedDocument as RejectedDocument
