@@ -6,9 +6,10 @@ from __future__ import annotations
 
 import json
 import logging
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from mpvqc.datamodels import DocumentImportResult, DocumentRejectionReason, RejectedDocument
+from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument
 
 from .documents import parse_classic, parse_v1
 from .parsed import ParsedDocument
@@ -16,7 +17,18 @@ from .parsed import ParsedDocument
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from mpvqc.datamodels import Comment
+
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class DocumentImportResult:
+    valid_documents: tuple[Path, ...]
+    rejected_documents: tuple[RejectedDocument, ...]
+    existing_videos: tuple[Path, ...]
+    existing_subtitles: tuple[Path, ...]
+    comments: tuple[Comment, ...]
 
 
 def read_documents(documents: list[Path]) -> DocumentImportResult:

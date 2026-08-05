@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, assert_never, override
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.services.importer import subtitles
+from mpvqc.importing.domain import subtitles
 
 if TYPE_CHECKING:
     from pathlib import Path

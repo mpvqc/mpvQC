@@ -9,15 +9,14 @@ from typing import TYPE_CHECKING, assert_never, override
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QCoreApplication, QObject, Qt
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.datamodels import DocumentRejectionReason
-from mpvqc.services.importer import errors
+from mpvqc.importing.domain import DocumentRejectionReason, errors
 
 if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
-    from mpvqc.datamodels import RejectedDocument
+    from mpvqc.importing.domain import RejectedDocument
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

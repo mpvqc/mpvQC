@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, assert_never, override
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QObject, Qt, Signal
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.services.importer import video
+from mpvqc.importing.domain import video
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
-    from mpvqc.datamodels import VideoSource
+    from mpvqc.importing.domain import VideoSource
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

@@ -11,10 +11,17 @@ import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject
 
-from mpvqc.datamodels import DocumentRejectionReason, RejectedDocument
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardRequestRelayViewModel
+from mpvqc.importing.domain import (
+    DocumentRejectionReason,
+    RejectedDocument,
+    UnfinishedPlan,
+    errors,
+    session,
+    subtitles,
+    video,
+)
 from mpvqc.services import ImporterService, SettingsService
-from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 
 
 @pytest.fixture

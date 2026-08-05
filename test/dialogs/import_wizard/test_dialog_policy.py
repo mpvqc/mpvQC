@@ -10,10 +10,19 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment, DocumentRejectionReason, RejectedDocument, VideoSource
+from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import FooterState, PrimaryAction, WizardDialogPolicy
 from mpvqc.enums import StepKind
-from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
+from mpvqc.importing.domain import (
+    DocumentRejectionReason,
+    RejectedDocument,
+    UnfinishedPlan,
+    VideoSource,
+    errors,
+    session,
+    subtitles,
+    video,
+)
 
 VIDEO_A = Path("/movies/a.mp4")
 SUB_A = Path("/work/a.en.srt")

@@ -11,11 +11,19 @@ from typing import TYPE_CHECKING, NamedTuple
 import pytest
 from PySide6.QtCore import QObject
 
-from mpvqc.datamodels import Comment, VideoSource
-from mpvqc.dialogs.import_wizard import build_finished_plan, compute_steps, has_valid_content
+from mpvqc.datamodels import Comment
+from mpvqc.dialogs.import_wizard import build_finished_plan
 from mpvqc.dialogs.import_wizard.steps import build_session_step, build_subtitles_step, build_video_step
-from mpvqc.enums import SessionMode, StepKind
-from mpvqc.services.importer import FinishedPlan, UnfinishedPlan, errors, session, subtitles, video
+from mpvqc.enums import SessionMode
+from mpvqc.importing.domain import (
+    FinishedPlan,
+    UnfinishedPlan,
+    VideoSource,
+    errors,
+    session,
+    subtitles,
+    video,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -38,107 +46,6 @@ ALL_RESOLVED = UnfinishedPlan(
     subtitles=subtitles.Skip(),
     errors=errors.Absent(),
 )
-
-
-class StepCase(NamedTuple):
-    name: str
-    plan: UnfinishedPlan
-    expected: tuple[StepKind, ...]
-
-
-COMPUTE_STEPS_CASES = [
-    StepCase(
-        name="all resolved",
-        plan=ALL_RESOLVED,
-        expected=(),
-    ),
-    StepCase(
-        name="errors only",
-        plan=replace(ALL_RESOLVED, errors=errors.Present(rejected_documents=())),
-        expected=(StepKind.ERRORS,),
-    ),
-    StepCase(
-        name="session only",
-        plan=replace(ALL_RESOLVED, session=session.Unresolved(incoming_comment_count=1)),
-        expected=(StepKind.SESSION,),
-    ),
-    StepCase(
-        name="video only",
-        plan=replace(ALL_RESOLVED, video=video.Unresolved(candidates=(VID_A_DOC,))),
-        expected=(StepKind.VIDEO,),
-    ),
-    StepCase(
-        name="subtitles only",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Unresolved(candidates=(SUB_A,))),
-        expected=(StepKind.SUBTITLES,),
-    ),
-    StepCase(
-        name="canonical order across all four",
-        plan=UnfinishedPlan(
-            comments=(),
-            session=session.Unresolved(incoming_comment_count=1),
-            video=video.Unresolved(candidates=(VID_A_DOC,)),
-            subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Present(rejected_documents=()),
-        ),
-        expected=(StepKind.ERRORS, StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
-    ),
-]
-
-
-@pytest.mark.parametrize("case", COMPUTE_STEPS_CASES, ids=lambda c: c.name)
-def test_compute_steps(case: StepCase) -> None:
-    assert compute_steps(case.plan) == case.expected
-
-
-class ContentCase(NamedTuple):
-    name: str
-    plan: UnfinishedPlan
-    expected: bool
-
-
-HAS_VALID_CONTENT_CASES = [
-    ContentCase(
-        name="nothing valid",
-        plan=ALL_RESOLVED,
-        expected=False,
-    ),
-    ContentCase(
-        name="comments present",
-        plan=replace(ALL_RESOLVED, comments=(COMMENT,)),
-        expected=True,
-    ),
-    ContentCase(
-        name="video.Load resolved",
-        plan=replace(ALL_RESOLVED, video=video.Load(path=VIDEO_A)),
-        expected=True,
-    ),
-    ContentCase(
-        name="subtitles.Load with paths",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Load(paths=(SUB_A,))),
-        expected=True,
-    ),
-    ContentCase(
-        name="video.Unresolved does not count",
-        plan=replace(ALL_RESOLVED, video=video.Unresolved(candidates=(VID_A_DOC,))),
-        expected=False,
-    ),
-    ContentCase(
-        name="subtitles.Unresolved does not count",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Unresolved(candidates=(SUB_A,))),
-        expected=False,
-    ),
-    ContentCase(
-        name="subtitles.Skip does not count",
-        plan=ALL_RESOLVED,
-        expected=False,
-    ),
-]
-
-
-@pytest.mark.parametrize("case", HAS_VALID_CONTENT_CASES, ids=lambda c: c.name)
-def test_has_valid_content(case: ContentCase) -> None:
-    assert has_valid_content(case.plan) is case.expected
 
 
 class _Steps(NamedTuple):

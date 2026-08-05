@@ -4,26 +4,15 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from mpvqc.datamodels import SubtitleSource, VideoSource
+from mpvqc.importing.domain import ScanResult, SubtitleSource, VideoSource
 
 from .reader import read_documents
 from .subtitle_videos import find_videos_in_subtitles
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-    from mpvqc.datamodels import Comment, RejectedDocument
-
-
-@dataclass(frozen=True)
-class ScanResult:
-    videos: tuple[VideoSource, ...]
-    subtitles: tuple[SubtitleSource, ...]
-    comments: tuple[Comment, ...]
-    rejected_documents: tuple[RejectedDocument, ...]
 
 
 def scan(documents: list[Path], videos: list[Path], subtitles: list[Path]) -> ScanResult:

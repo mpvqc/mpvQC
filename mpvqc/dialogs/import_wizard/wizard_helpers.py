@@ -6,39 +6,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from mpvqc.enums import StepKind
-from mpvqc.services.importer import FinishedPlan, errors, session, subtitles, video
+from mpvqc.importing.domain import FinishedPlan
 
 from .steps import resolve_session, resolve_subtitles, resolve_video
 
 if TYPE_CHECKING:
-    from mpvqc.services.importer import UnfinishedPlan
+    from mpvqc.importing.domain import UnfinishedPlan
 
     from .steps import (
         MpvqcImportWizardSessionStepViewModel,
         MpvqcImportWizardSubtitlesStepViewModel,
         MpvqcImportWizardVideoStepViewModel,
-    )
-
-
-def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
-    steps: list[StepKind] = []
-    if isinstance(unfinished_plan.errors, errors.Present):
-        steps.append(StepKind.ERRORS)
-    if isinstance(unfinished_plan.session, session.Unresolved):
-        steps.append(StepKind.SESSION)
-    if isinstance(unfinished_plan.video, video.Unresolved):
-        steps.append(StepKind.VIDEO)
-    if isinstance(unfinished_plan.subtitles, subtitles.Unresolved):
-        steps.append(StepKind.SUBTITLES)
-    return tuple(steps)
-
-
-def has_valid_content(unfinished_plan: UnfinishedPlan) -> bool:
-    return (
-        bool(unfinished_plan.comments)
-        or isinstance(unfinished_plan.video, video.Load)
-        or isinstance(unfinished_plan.subtitles, subtitles.Load)
     )
 
 

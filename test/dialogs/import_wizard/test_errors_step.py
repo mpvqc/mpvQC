@@ -6,9 +6,8 @@ from pathlib import Path
 
 from PySide6.QtCore import QObject
 
-from mpvqc.datamodels import DocumentRejectionReason, RejectedDocument
 from mpvqc.dialogs.import_wizard.steps.errors import MpvqcImportErrorsModel, build_errors_step
-from mpvqc.services.importer import errors
+from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument, errors
 
 REJECTED = (
     RejectedDocument(Path("/work/broken.qc"), DocumentRejectionReason.INVALID),

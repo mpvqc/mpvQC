@@ -26,9 +26,11 @@
 - Prefer code the type checker can verify:
   - Use closures instead of `functools.partial`
   - Don't use getattr
-- A feature package under `mpvqc/<feature>/` bundles everything one area needs: `domain.py` at its root, plus role
-  directories (`services/`, `models/`, `viewmodels/`) for what the area owns. It contributes its own bindings and the
-  composition root calls them.
+- A feature package under `mpvqc/<feature>/` bundles everything one area needs: its domain, plus role directories
+  (`services/`, `models/`, `viewmodels/`) for what the area owns. It contributes its own bindings and the composition
+  root calls them.
+- A feature's domain always imports as `mpvqc.<feature>.domain`: a single module while that fits, a package once it
+  does not. A package re-exports the flat vocabulary from its `__init__`, so call sites never say which one it is.
 - Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
   has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
 - Load the `load-bearing-comments` skill before adding a comment or docstring, and when reviewing code.

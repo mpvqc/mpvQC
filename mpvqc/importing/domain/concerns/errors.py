@@ -8,8 +8,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from mpvqc.datamodels import RejectedDocument
-    from mpvqc.services.importer.scanner import ScanResult
+    from mpvqc.importing.domain.scan import RejectedDocument, ScanResult
 
 
 @dataclass(frozen=True)

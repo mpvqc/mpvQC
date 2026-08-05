@@ -10,6 +10,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
+from mpvqc.importing.domain import compute_steps
 from mpvqc.services import ImporterService
 
 from .dialog_policy import PrimaryAction, WizardDialogPolicy
@@ -23,10 +24,10 @@ from .steps import (
     build_subtitles_step,
     build_video_step,
 )
-from .wizard_helpers import build_finished_plan, compute_steps
+from .wizard_helpers import build_finished_plan
 
 if TYPE_CHECKING:
-    from mpvqc.services.importer import UnfinishedPlan
+    from mpvqc.importing.domain import UnfinishedPlan
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

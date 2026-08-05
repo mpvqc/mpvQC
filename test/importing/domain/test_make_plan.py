@@ -9,24 +9,22 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import (
-    Comment,
+from mpvqc.datamodels import Comment
+from mpvqc.importing.domain import (
     DocumentRejectionReason,
+    FinishedPlan,
     ImportFoundVideo,
     RejectedDocument,
-    SubtitleSource,
-    VideoSource,
-)
-from mpvqc.services.importer import (
-    FinishedPlan,
     ScanResult,
+    SubtitleSource,
     UnfinishedPlan,
+    VideoSource,
     errors,
+    make_plan,
     session,
     subtitles,
     video,
 )
-from mpvqc.services.importer.plan import make_plan
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

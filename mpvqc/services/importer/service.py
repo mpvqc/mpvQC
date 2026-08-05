@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 
-from mpvqc.datamodels import ImportFoundVideo
+from mpvqc.importing.domain import FinishedPlan, ImportFoundVideo, UnfinishedPlan, session, subtitles, video
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
@@ -18,8 +18,7 @@ from mpvqc.services.resetter import ResetService
 from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
-from .concerns import session, subtitles, video
-from .plan import FinishedPlan, UnfinishedPlan, plan_import
+from .plan import plan_import
 
 if TYPE_CHECKING:
     from pathlib import Path

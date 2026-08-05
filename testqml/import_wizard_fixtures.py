@@ -6,8 +6,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from mpvqc.datamodels import Comment, DocumentRejectionReason, RejectedDocument, VideoSource
-from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
+from mpvqc.datamodels import Comment
+from mpvqc.importing.domain import (
+    DocumentRejectionReason,
+    RejectedDocument,
+    UnfinishedPlan,
+    VideoSource,
+    errors,
+    session,
+    subtitles,
+    video,
+)
 from testqml.injections import TEMP_ROOT
 
 if TYPE_CHECKING:

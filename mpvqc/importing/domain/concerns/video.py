@@ -7,13 +7,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, assert_never
 
-from mpvqc.datamodels import ImportFoundVideo
+from mpvqc.importing.domain.settings import ImportFoundVideo
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mpvqc.datamodels import VideoSource
-    from mpvqc.services.importer.scanner import ScanResult
+    from mpvqc.importing.domain.scan import ScanResult, VideoSource
 
 
 @dataclass(frozen=True)

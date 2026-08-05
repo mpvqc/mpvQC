@@ -19,8 +19,9 @@ from PySide6.QtCore import (
     Signal,
 )
 
-from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
+from mpvqc.datamodels import LANGUAGES
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
+from mpvqc.importing.domain import ImportFoundVideo
 
 if TYPE_CHECKING:
     from collections.abc import Callable
