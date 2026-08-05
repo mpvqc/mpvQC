@@ -27,8 +27,9 @@
   - Use closures instead of `functools.partial`
   - Don't use getattr
 - A feature package under `mpvqc/<feature>/` bundles everything one area needs: its domain, plus role directories
-  (`services/`, `models/`, `viewmodels/`, `enums/`) for what the area owns. It contributes its own bindings and the
-  composition root calls them.
+  (`services/`, `models/`, `viewmodels/`, `enums/`) for what the area owns. Its root exports `bindings` and
+  `register_qml_types` from its `wiring.py`, and the roots call them. A `wiring.py` names no `mpvqc` module and no
+  `PySide6` at module level; each function imports what it needs when it runs.
 - A domain imports no Qt and no injection. QML-registered enums live in the feature's `enums/`, never in its domain.
 - A feature's domain is a `domain` module at the package root, one file or a package as the area needs. It always
   imports as `mpvqc.<feature>.domain`, and a package re-exports the flat vocabulary from its `__init__`, so call sites

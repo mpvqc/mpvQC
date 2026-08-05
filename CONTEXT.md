@@ -1,6 +1,7 @@
 # Domain glossary
 
-Terms the code uses. Keep entries short. Add a term when you name a module after a concept that is not listed here.
+Terms the code uses. Keep entries short. Add a term when you name a module after a domain concept that is not listed
+here. Architecture vocabulary is not domain vocabulary: it lives in `docs/architecture.md` and the ADRs.
 
 ## Import pipeline
 

@@ -28,7 +28,7 @@ class MpvqcTestSetup(QObject):
         # startup.configure_logging()
         configure_injections()
         startup.configure_environment_variables()
-        startup.import_mpvqc_bindings()
+        startup.register_qml_types()
 
         engine.rootContext().setContextProperty("mpvqcTestMode", True)
 

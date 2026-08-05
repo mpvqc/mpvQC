@@ -5,8 +5,8 @@
 import inject
 
 import mpvqc.services as s
-from mpvqc.appearance.injections import bindings as appearance_bindings
-from mpvqc.importing.injections import bindings as importing_bindings
+from mpvqc.appearance import bindings as appearance_bindings
+from mpvqc.importing import bindings as importing_bindings
 
 
 def _settings_service() -> s.SettingsService:
