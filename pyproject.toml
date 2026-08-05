@@ -191,7 +191,7 @@ files = [
     "mpvqc/importing/viewmodels/drop_area.py",
     "mpvqc/importing/viewmodels/file_dialogs.py",
     "mpvqc/importing/viewmodels/plan.py",
-    "mpvqc/importing/viewmodels/settings.py",
+    "mpvqc/importing/viewmodels/settings_dialog.py",
     "mpvqc/importing/viewmodels/steps/__init__.py",
     "mpvqc/importing/viewmodels/steps/errors.py",
     "mpvqc/importing/viewmodels/steps/session.py",

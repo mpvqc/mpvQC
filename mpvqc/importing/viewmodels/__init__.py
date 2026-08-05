@@ -5,7 +5,7 @@
 from .drop_area import MpvqcDropAreaViewModel as MpvqcDropAreaViewModel
 from .file_dialogs import MpvqcImportFileDialogViewModel as MpvqcImportFileDialogViewModel
 from .plan import build_finished_plan as build_finished_plan
-from .settings import MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel
+from .settings_dialog import MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel
 from .steps import MpvqcImportWizardErrorsStepViewModel as MpvqcImportWizardErrorsStepViewModel
 from .steps import MpvqcImportWizardSessionStepViewModel as MpvqcImportWizardSessionStepViewModel
 from .steps import MpvqcImportWizardSubtitlesStepViewModel as MpvqcImportWizardSubtitlesStepViewModel
