@@ -11,7 +11,7 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import compute_steps
-from mpvqc.services import ImporterService
+from mpvqc.importing.services import ImporterService
 
 from .dialog_policy import PrimaryAction, WizardDialogPolicy
 from .steps import (

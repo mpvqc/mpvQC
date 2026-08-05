@@ -21,7 +21,8 @@ from mpvqc.importing.domain import (
     subtitles,
     video,
 )
-from mpvqc.services import ImporterService, SettingsService
+from mpvqc.importing.services import ImporterService
+from mpvqc.services import SettingsService
 
 
 @pytest.fixture

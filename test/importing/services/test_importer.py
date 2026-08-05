@@ -22,8 +22,8 @@ from mpvqc.importing.domain import (
     subtitles,
     video,
 )
+from mpvqc.importing.services import ImporterService
 from mpvqc.services.comments import CommentsService
-from mpvqc.services.importer import ImporterService
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.settings import SettingsService
@@ -324,7 +324,7 @@ def test_open_routes_resolvable_scan_to_execute(
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    monkeypatch.setattr("mpvqc.services.importer.service.plan_import", lambda *_args, **_kwargs: NOOP_PLAN)
+    monkeypatch.setattr("mpvqc.importing.services.importer.plan_import", lambda *_args, **_kwargs: NOOP_PLAN)
     unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -341,7 +341,7 @@ def test_open_routes_unresolvable_scan_to_wizard(
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    monkeypatch.setattr("mpvqc.services.importer.service.plan_import", lambda *_args, **_kwargs: UNRESOLVED_PLAN)
+    monkeypatch.setattr("mpvqc.importing.services.importer.plan_import", lambda *_args, **_kwargs: UNRESOLVED_PLAN)
     unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -362,7 +362,7 @@ def test_open_recovers_when_scan_raises(
         msg = "scan exploded"
         raise RuntimeError(msg)
 
-    monkeypatch.setattr("mpvqc.services.importer.service.plan_import", raise_scan_error)
+    monkeypatch.setattr("mpvqc.importing.services.importer.plan_import", raise_scan_error)
 
     service.open([], [], [])
     manual_executor.drain()

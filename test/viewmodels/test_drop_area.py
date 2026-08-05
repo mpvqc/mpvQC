@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
-from mpvqc.services import ImporterService, MimetypeProviderService
+from mpvqc.importing.services import ImporterService, MimetypeProviderService
 from mpvqc.viewmodels import MpvqcDropAreaViewModel
 
 

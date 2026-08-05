@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.services.importer.reader import read_documents
+from mpvqc.importing.services import read_documents
 
 DOCUMENT_WITH_MALFORMED_LINES = """\
 [FILE]

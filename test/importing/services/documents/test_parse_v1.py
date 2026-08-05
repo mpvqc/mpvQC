@@ -12,7 +12,7 @@ from typing import NamedTuple
 import pytest
 
 from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument
-from mpvqc.services.importer.reader import read_documents
+from mpvqc.importing.services import read_documents
 
 DOCUMENT_FORMAT_README = Path(__file__).parents[4] / "docs" / "document-format" / "README.md"
 

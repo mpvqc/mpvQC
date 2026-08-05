@@ -8,8 +8,8 @@ import re
 from pathlib import Path
 
 from mpvqc.datamodels import Comment
+from mpvqc.importing.services.parsed import ParsedDocument
 from mpvqc.services.formatter_time import TimeFormatterService
-from mpvqc.services.importer.parsed import ParsedDocument
 from mpvqc.services.reverse_translator import ReverseTranslatorService
 
 _REGEX_TIME = re.compile(r"^\d{2}:[0-5]\d:[0-5]\d\.\d{3}$")

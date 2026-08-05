@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.services.importer.reader import read_documents
+from mpvqc.importing.services import read_documents
 
 
 def test_import_document_with_existing_video(

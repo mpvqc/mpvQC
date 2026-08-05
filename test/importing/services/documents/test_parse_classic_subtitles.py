@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.services.importer.reader import read_documents
+from mpvqc.importing.services import read_documents
 
 DOCUMENT_NO_SUBTITLES = """\
 [FILE]

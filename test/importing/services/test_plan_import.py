@@ -16,7 +16,7 @@ from mpvqc.importing.domain import (
     subtitles,
     video,
 )
-from mpvqc.services.importer.plan import plan_import
+from mpvqc.importing.services import plan_import
 
 if TYPE_CHECKING:
     from pathlib import Path
