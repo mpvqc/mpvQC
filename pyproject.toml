@@ -191,6 +191,7 @@ files = [
     "mpvqc/importing/services/plan.py",
     "mpvqc/importing/services/reader.py",
     "mpvqc/importing/services/scanner.py",
+    "mpvqc/importing/services/settings.py",
     "mpvqc/importing/services/subtitle_videos.py",
     "mpvqc/injections.py",
     "mpvqc/jobs.py",

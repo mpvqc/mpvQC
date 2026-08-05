@@ -6,7 +6,8 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import SettingsService
+from mpvqc.importing.domain import ImportFoundVideo
+from mpvqc.importing.services import ImportSettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -14,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcImportSettingsDialogViewModel(QObject):
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ImportSettingsService)
 
     importFoundVideoChanged = Signal(int)
 
@@ -24,12 +25,13 @@ class MpvqcImportSettingsDialogViewModel(QObject):
 
     @Property(int, notify=importFoundVideoChanged)
     def importFoundVideo(self) -> int:
-        return self._temp_import_found_video
+        return self._temp_import_found_video.value
 
     @importFoundVideo.setter
     def importFoundVideo(self, value: int) -> None:
-        if self._temp_import_found_video != value:
-            self._temp_import_found_video = value
+        setting = ImportFoundVideo(value)
+        if self._temp_import_found_video != setting:
+            self._temp_import_found_video = setting
             self.importFoundVideoChanged.emit(value)
 
     @Slot()

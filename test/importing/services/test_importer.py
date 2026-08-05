@@ -22,11 +22,10 @@ from mpvqc.importing.domain import (
     subtitles,
     video,
 )
-from mpvqc.importing.services import ImporterService
+from mpvqc.importing.services import ImporterService, ImportSettingsService
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
-from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
 if TYPE_CHECKING:
@@ -41,9 +40,9 @@ def player_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def settings_service_mock() -> MagicMock:
-    mock = MagicMock(spec_set=SettingsService)
-    mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME.value
+def import_settings_service_mock() -> MagicMock:
+    mock = MagicMock(spec_set=ImportSettingsService)
+    mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME
     return mock
 
 
@@ -67,14 +66,14 @@ def reset_service_mock() -> MagicMock:
 @pytest.fixture(autouse=True)
 def configure_inject(
     player_service_mock: MagicMock,
-    settings_service_mock: MagicMock,
+    import_settings_service_mock: MagicMock,
     state_service_mock: MagicMock,
     comments_service_mock: MagicMock,
     reset_service_mock: MagicMock,
 ) -> None:
     def config(binder: inject.Binder) -> None:
         binder.bind(PlayerService, player_service_mock)
-        binder.bind(SettingsService, settings_service_mock)
+        binder.bind(ImportSettingsService, import_settings_service_mock)
         binder.bind(StateService, state_service_mock)
         binder.bind(CommentsService, comments_service_mock)
         binder.bind(ResetService, reset_service_mock)

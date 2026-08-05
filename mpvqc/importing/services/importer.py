@@ -10,15 +10,15 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 
-from mpvqc.importing.domain import FinishedPlan, ImportFoundVideo, UnfinishedPlan, session, subtitles, video
+from mpvqc.importing.domain import FinishedPlan, UnfinishedPlan, session, subtitles, video
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
-from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
 from .plan import plan_import
+from .settings import ImportSettingsService
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 class ImporterService(QObject):
     _player = inject.attr(PlayerService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ImportSettingsService)
     _state = inject.attr(StateService)
     _comments = inject.attr(CommentsService)
     _resetter = inject.attr(ResetService)
@@ -66,7 +66,7 @@ class ImporterService(QObject):
 
         # Capture on the GUI thread
         has_existing_comments = self._comments.count > 0
-        found_video_setting = ImportFoundVideo(self._settings.import_found_video)
+        found_video_setting = self._settings.import_found_video
         current_video = self._player.path
 
         def build_plan() -> FinishedPlan | UnfinishedPlan:

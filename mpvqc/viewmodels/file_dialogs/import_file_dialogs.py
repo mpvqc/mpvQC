@@ -6,8 +6,8 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.services import ImporterService, MimetypeProviderService
-from mpvqc.services import SettingsService, TypeMapperService
+from mpvqc.importing.services import ImporterService, ImportSettingsService, MimetypeProviderService
+from mpvqc.services import TypeMapperService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,7 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportFileDialogViewModel(QObject):
     _importer = inject.attr(ImporterService)
     _mimetype_provider = inject.attr(MimetypeProviderService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ImportSettingsService)
     _type_mapper = inject.attr(TypeMapperService)
 
     lastDirectoryVideoChanged = Signal(QUrl)

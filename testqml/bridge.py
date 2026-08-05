@@ -22,6 +22,7 @@ from mpvqc.appearance.services import AppearanceSettingsService
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
+from mpvqc.importing.services import ImportSettingsService
 from mpvqc.services import (
     ApplicationPathsService,
     CommentsService,
@@ -333,7 +334,7 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=int)
     def importFoundVideo(self) -> int:
-        return inject.instance(SettingsService).import_found_video
+        return inject.instance(ImportSettingsService).import_found_video.value
 
     @Slot(result=str)
     def nickname(self) -> str:
