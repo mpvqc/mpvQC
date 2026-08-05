@@ -22,9 +22,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class ImportOptionsModel(QAbstractListModel):
-    """Model to display in the import settings dialog to let the user choose if found videos should be opened"""
-
+class MpvqcImportSettingsModel(QAbstractListModel):
     TextRole = Qt.ItemDataRole.UserRole + 1
     ValueRole = Qt.ItemDataRole.UserRole + 2
 
