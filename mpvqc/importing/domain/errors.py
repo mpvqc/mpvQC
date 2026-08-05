@@ -8,23 +8,23 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain.scan import RejectedDocument, ScanResult
+    from .scan import RejectedDocument, ScanResult
 
 
 @dataclass(frozen=True)
-class Absent:
+class ErrorsAbsent:
     pass
 
 
 @dataclass(frozen=True)
-class Present:
+class ErrorsPresent:
     rejected_documents: tuple[RejectedDocument, ...]
 
 
-type Concern = Absent | Present
+type ImportErrors = ErrorsAbsent | ErrorsPresent
 
 
-def resolve(scan: ScanResult) -> Concern:
+def resolve_errors(scan: ScanResult) -> ImportErrors:
     if not scan.rejected_documents:
-        return Absent()
-    return Present(rejected_documents=scan.rejected_documents)
+        return ErrorsAbsent()
+    return ErrorsPresent(rejected_documents=scan.rejected_documents)

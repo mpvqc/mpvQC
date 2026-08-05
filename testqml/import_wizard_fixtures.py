@@ -9,10 +9,11 @@ from typing import TYPE_CHECKING
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
+    ErrorsAbsent,
+    ErrorsPresent,
     RejectedDocument,
     UnfinishedPlan,
     VideoSource,
-    errors,
     session,
     subtitles,
     video,
@@ -32,7 +33,7 @@ def _path(name: str) -> Path:
 def video_choice() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(),
-        errors=errors.Absent(),
+        errors=ErrorsAbsent(),
         session=session.Merge(),
         video=video.Unresolved(
             candidates=(
@@ -47,7 +48,7 @@ def video_choice() -> UnfinishedPlan:
 def all_steps() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(Comment(time=0, comment_type="Translation", comment="incoming"),),
-        errors=errors.Present(
+        errors=ErrorsPresent(
             rejected_documents=(RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),)
         ),
         session=session.Unresolved(incoming_comment_count=5),
@@ -64,7 +65,7 @@ def all_steps() -> UnfinishedPlan:
 def subtitles_only() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(),
-        errors=errors.Absent(),
+        errors=ErrorsAbsent(),
         session=session.Merge(),
         video=video.Skip(),
         subtitles=subtitles.Unresolved(
@@ -80,7 +81,7 @@ def subtitles_only() -> UnfinishedPlan:
 def errors_only() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(),
-        errors=errors.Present(
+        errors=ErrorsPresent(
             rejected_documents=(
                 RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),
                 RejectedDocument(_path("future.json"), DocumentRejectionReason.UNSUPPORTED_VERSION),

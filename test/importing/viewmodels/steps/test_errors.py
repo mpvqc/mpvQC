@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QObject
 
-from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument, errors
+from mpvqc.importing.domain import DocumentRejectionReason, ErrorsAbsent, ErrorsPresent, RejectedDocument
 from mpvqc.importing.viewmodels import build_errors_step
 
 REJECTED = (
@@ -15,8 +15,8 @@ REJECTED = (
 )
 
 
-def test_build_errors_step_only_for_present_concern(qt_app):
+def test_build_errors_step_only_for_present_errors(qt_app):
     parent = QObject()
 
-    assert build_errors_step(parent, errors.Present(rejected_documents=REJECTED)) is not None
-    assert build_errors_step(parent, errors.Absent()) is None
+    assert build_errors_step(parent, ErrorsPresent(rejected_documents=REJECTED)) is not None
+    assert build_errors_step(parent, ErrorsAbsent()) is None

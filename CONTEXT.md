@@ -5,16 +5,18 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 
 ## Import pipeline
 
-- **Concern**: one dimension of an import that may need user input (`errors`, `session`, `video`, `subtitles`). Each is
-  a tagged union with resolved variants (such as `Merge`, `Load`, `Skip`) and an `Unresolved` variant carrying the data
-  a user needs to decide.
+- **Concern**: one dimension of an import that may need user input (`session`, `video`, `subtitles`). Each is a tagged
+  union with resolved variants (such as `Merge`, `Load`, `Skip`) and an `Unresolved` variant carrying the data a user
+  needs to decide.
+- **ImportErrors**: whether an import scan rejected any documents: `ErrorsAbsent`, or `ErrorsPresent` naming the ones
+  it rejected. Not a Concern: the errors step only shows them, the user decides nothing about it.
 - **Resolve**: turn a Concern into one of its resolved variants, either from settings and scan results (`make_plan`) or
   from wizard input (`build_finished_plan`).
-- **UnfinishedPlan**: scan output with at least one Concern unresolved or errors present. Presented to the user as the
-  import wizard.
+- **UnfinishedPlan**: scan output with at least one Concern unresolved, or ImportErrors present. Presented to the user
+  as the import wizard.
 - **FinishedPlan**: every Concern resolved. The only input `ImporterService.execute()` accepts.
-- **Wizard step**: one page of the import wizard, one per unresolved Concern, in canonical order: errors, session,
-  video, subtitles.
+- **Wizard step**: one page of the import wizard, one per unresolved Concern plus one when ImportErrors is present, in
+  canonical order: errors, session, video, subtitles.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
 

@@ -13,11 +13,12 @@ import pytest
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
+    ErrorsAbsent,
+    ErrorsPresent,
     RejectedDocument,
     StepKind,
     UnfinishedPlan,
     VideoSource,
-    errors,
     session,
     subtitles,
     video,
@@ -34,10 +35,10 @@ EMPTY = UnfinishedPlan(
     session=session.Merge(),
     video=video.Skip(),
     subtitles=subtitles.Skip(),
-    errors=errors.Absent(),
+    errors=ErrorsAbsent(),
 )
 
-PRESENT_ERRORS = errors.Present(
+PRESENT_ERRORS = ErrorsPresent(
     rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
 )
 UNRESOLVED_VIDEO = video.Unresolved(candidates=(VID_A_DOC,))

@@ -7,7 +7,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .concerns import errors, session, subtitles, video
+from .concerns import session, subtitles, video
+from .errors import ErrorsAbsent, ImportErrors, resolve_errors
 
 if TYPE_CHECKING:
     from mpvqc.datamodels import Comment
@@ -30,7 +31,7 @@ class UnfinishedPlan:
     session: session.Concern
     video: video.Concern
     subtitles: subtitles.Concern
-    errors: errors.Concern
+    errors: ImportErrors
 
 
 def make_plan(
@@ -40,14 +41,14 @@ def make_plan(
     has_existing_comments: bool,
     any_candidate_loaded: bool,
 ) -> FinishedPlan | UnfinishedPlan:
-    errors_outcome = errors.resolve(scan_result)
+    errors_outcome = resolve_errors(scan_result)
     session_outcome = session.resolve(scan_result, has_existing_comments=has_existing_comments)
     video_outcome = video.resolve(scan_result, setting=found_video_setting, any_candidate_loaded=any_candidate_loaded)
     subtitles_outcome = subtitles.resolve(scan_result, video_concern=video_outcome)
 
     match (errors_outcome, session_outcome, video_outcome, subtitles_outcome):
         case (
-            errors.Absent(),
+            ErrorsAbsent(),
             session.Merge() as s,
             video.Load() | video.Skip() as v,
             subtitles.Load() | subtitles.Skip() as sub,

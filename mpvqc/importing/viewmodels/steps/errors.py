@@ -7,7 +7,7 @@ from __future__ import annotations
 from PySide6.QtCore import Property, QAbstractItemModel, QObject
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import errors
+from mpvqc.importing.domain import ErrorsPresent, ImportErrors
 from mpvqc.importing.models import MpvqcImportErrorsModel
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -17,7 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 @QmlUncreatable("constructed by MpvqcImportWizardViewModel")
 class MpvqcImportWizardErrorsStepViewModel(QObject):
-    def __init__(self, parent: QObject, inputs: errors.Present) -> None:
+    def __init__(self, parent: QObject, inputs: ErrorsPresent) -> None:
         super().__init__(parent)
         self._documents = MpvqcImportErrorsModel(inputs.rejected_documents)
 
@@ -26,7 +26,7 @@ class MpvqcImportWizardErrorsStepViewModel(QObject):
         return self._documents
 
 
-def build_errors_step(parent: QObject, concern: errors.Concern) -> MpvqcImportWizardErrorsStepViewModel | None:
-    if isinstance(concern, errors.Present):
-        return MpvqcImportWizardErrorsStepViewModel(parent, concern)
+def build_errors_step(parent: QObject, errors: ImportErrors) -> MpvqcImportWizardErrorsStepViewModel | None:
+    if isinstance(errors, ErrorsPresent):
+        return MpvqcImportWizardErrorsStepViewModel(parent, errors)
     return None

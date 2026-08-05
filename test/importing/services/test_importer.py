@@ -13,11 +13,11 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
+    ErrorsAbsent,
     FinishedPlan,
     ImportFoundVideo,
     UnfinishedPlan,
     VideoSource,
-    errors,
     session,
     subtitles,
     video,
@@ -312,7 +312,7 @@ UNRESOLVED_PLAN = UnfinishedPlan(
     session=session.Merge(),
     video=video.Unresolved(candidates=(VideoSource(path=V, found_in_document=True),)),
     subtitles=subtitles.Skip(),
-    errors=errors.Absent(),
+    errors=ErrorsAbsent(),
 )
 
 

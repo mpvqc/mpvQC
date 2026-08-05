@@ -12,11 +12,12 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
+    ErrorsAbsent,
+    ErrorsPresent,
     StepKind,
     UnfinishedPlan,
     VideoSource,
     compute_steps,
-    errors,
     has_valid_content,
     session,
     subtitles,
@@ -33,7 +34,7 @@ ALL_RESOLVED = UnfinishedPlan(
     session=session.Merge(),
     video=video.Skip(),
     subtitles=subtitles.Skip(),
-    errors=errors.Absent(),
+    errors=ErrorsAbsent(),
 )
 
 
@@ -51,7 +52,7 @@ COMPUTE_STEPS_CASES = [
     ),
     StepCase(
         name="errors only",
-        plan=replace(ALL_RESOLVED, errors=errors.Present(rejected_documents=())),
+        plan=replace(ALL_RESOLVED, errors=ErrorsPresent(rejected_documents=())),
         expected=(StepKind.ERRORS,),
     ),
     StepCase(
@@ -76,7 +77,7 @@ COMPUTE_STEPS_CASES = [
             session=session.Unresolved(incoming_comment_count=1),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Present(rejected_documents=()),
+            errors=ErrorsPresent(rejected_documents=()),
         ),
         expected=(StepKind.ERRORS, StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
     ),

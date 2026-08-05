@@ -13,10 +13,10 @@ from PySide6.QtCore import QObject
 
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
+    ErrorsAbsent,
     FinishedPlan,
     UnfinishedPlan,
     VideoSource,
-    errors,
     session,
     subtitles,
     video,
@@ -47,7 +47,7 @@ ALL_RESOLVED = UnfinishedPlan(
     session=session.Merge(),
     video=video.Skip(),
     subtitles=subtitles.Skip(),
-    errors=errors.Absent(),
+    errors=ErrorsAbsent(),
 )
 
 

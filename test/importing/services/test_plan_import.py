@@ -8,10 +8,10 @@ import json
 from typing import TYPE_CHECKING
 
 from mpvqc.importing.domain import (
+    ErrorsPresent,
     FinishedPlan,
     ImportFoundVideo,
     UnfinishedPlan,
-    errors,
     session,
     subtitles,
     video,
@@ -60,5 +60,5 @@ def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> No
     )
 
     assert isinstance(plan, UnfinishedPlan)
-    assert isinstance(plan.errors, errors.Present)
+    assert isinstance(plan.errors, ErrorsPresent)
     assert plan.errors.rejected_documents[0].path == document

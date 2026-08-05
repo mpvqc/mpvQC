@@ -13,9 +13,10 @@ from PySide6.QtCore import QCoreApplication, QEvent, QObject
 
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
+    ErrorsAbsent,
+    ErrorsPresent,
     RejectedDocument,
     UnfinishedPlan,
-    errors,
     session,
     subtitles,
     video,
@@ -62,7 +63,7 @@ def test_releases_view_model_after_wizard(relay):
         session=session.Merge(),
         video=video.Skip(),
         subtitles=subtitles.Skip(),
-        errors=errors.Present(
+        errors=ErrorsPresent(
             rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
         ),
     )
@@ -82,7 +83,7 @@ def test_does_not_request_wizard_when_plan_has_no_steps(relay, importer_service_
         session=session.Merge(),
         video=video.Skip(),
         subtitles=subtitles.Skip(),
-        errors=errors.Absent(),
+        errors=ErrorsAbsent(),
     )
 
     relay._request_import_wizard(unfinished_plan)

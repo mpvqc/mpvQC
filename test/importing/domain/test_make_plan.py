@@ -12,6 +12,8 @@ import pytest
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
+    ErrorsAbsent,
+    ErrorsPresent,
     FinishedPlan,
     ImportFoundVideo,
     RejectedDocument,
@@ -19,7 +21,6 @@ from mpvqc.importing.domain import (
     SubtitleSource,
     UnfinishedPlan,
     VideoSource,
-    errors,
     make_plan,
     session,
     subtitles,
@@ -144,7 +145,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -155,7 +156,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -198,7 +199,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Unresolved(candidates=(SUB_A, SUB_B)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -290,7 +291,7 @@ EXPLICIT_RESOURCE_IMPORTS = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_EXPLICIT, VID_B_EXPLICIT)),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -301,7 +302,7 @@ EXPLICIT_RESOURCE_IMPORTS = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_EXPLICIT, VID_B_EXPLICIT)),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
 ]
@@ -323,7 +324,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -335,7 +336,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -348,7 +349,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -373,7 +374,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -385,7 +386,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -398,7 +399,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -414,7 +415,7 @@ EXISTING_COMMENTS_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=3),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
 ]
@@ -435,7 +436,7 @@ ERROR_IMPORTS = [
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
@@ -446,7 +447,7 @@ ERROR_IMPORTS = [
             session=session.Merge(),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN, REJECTED_B_INVALID)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN, REJECTED_B_INVALID)),
         ),
     ),
     Scenario(
@@ -457,7 +458,7 @@ ERROR_IMPORTS = [
             session=session.Merge(),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Present(rejected_documents=(REJECTED_B_UNSUPPORTED,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_B_UNSUPPORTED,)),
         ),
     ),
     Scenario(
@@ -468,7 +469,7 @@ ERROR_IMPORTS = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Skip(),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
@@ -481,7 +482,7 @@ ERROR_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
@@ -498,7 +499,7 @@ ERROR_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Unresolved(candidates=(VID_A_DOC, VID_B_DOC)),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
@@ -509,7 +510,7 @@ ERROR_IMPORTS = [
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
@@ -520,7 +521,7 @@ ERROR_IMPORTS = [
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
+            errors=ErrorsPresent(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
 ]
@@ -564,7 +565,7 @@ ALREADY_LOADED_VIDEO = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC, VID_B_DOC)),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -601,7 +602,7 @@ ALREADY_LOADED_VIDEO = [
             session=session.Unresolved(incoming_comment_count=3),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -614,7 +615,7 @@ ALREADY_LOADED_VIDEO = [
             session=session.Unresolved(incoming_comment_count=3),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -628,7 +629,7 @@ ALREADY_LOADED_VIDEO = [
             session=session.Unresolved(incoming_comment_count=3),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
 ]
@@ -658,7 +659,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_EXPLICIT, VID_B_EXPLICIT)),
             subtitles=subtitles.Skip(),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -705,7 +706,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_SUB,)),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -727,7 +728,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_SUB,)),
             subtitles=subtitles.Load(paths=(SUB_A, SUB_B)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -738,7 +739,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_SUB, VID_B_SUB)),
             subtitles=subtitles.Load(paths=(SUB_A, SUB_B)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -759,7 +760,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -788,7 +789,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
     Scenario(
@@ -817,7 +818,7 @@ MIXED_PROVENANCE = [
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Absent(),
+            errors=ErrorsAbsent(),
         ),
     ),
 ]

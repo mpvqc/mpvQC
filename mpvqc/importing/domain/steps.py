@@ -7,7 +7,8 @@ from __future__ import annotations
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING
 
-from .concerns import errors, session, subtitles, video
+from .concerns import session, subtitles, video
+from .errors import ErrorsPresent
 
 if TYPE_CHECKING:
     from .plan import UnfinishedPlan
@@ -22,7 +23,7 @@ class StepKind(IntEnum):
 
 def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
     steps: list[StepKind] = []
-    if isinstance(unfinished_plan.errors, errors.Present):
+    if isinstance(unfinished_plan.errors, ErrorsPresent):
         steps.append(StepKind.ERRORS)
     if isinstance(unfinished_plan.session, session.Unresolved):
         steps.append(StepKind.SESSION)
