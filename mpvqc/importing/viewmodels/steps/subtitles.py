@@ -9,7 +9,13 @@ from typing import TYPE_CHECKING, assert_never
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import subtitles
+from mpvqc.importing.domain import (
+    SubtitlesConcern,
+    SubtitlesLoad,
+    SubtitlesResolved,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
+)
 from mpvqc.importing.models import MpvqcImportSubtitlesModel
 
 if TYPE_CHECKING:
@@ -25,7 +31,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportWizardSubtitlesStepViewModel(QObject):
     selectAllTriStateChanged = Signal(int)
 
-    def __init__(self, parent: QObject, inputs: subtitles.Unresolved) -> None:
+    def __init__(self, parent: QObject, inputs: SubtitlesUnresolved) -> None:
         super().__init__(parent)
         self._subtitles = MpvqcImportSubtitlesModel(inputs.candidates)
         self._subtitles.dataChanged.connect(self._emit_tri_state_changed)
@@ -65,24 +71,24 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
         self.selectAllTriStateChanged.emit(self.selectAllTriState)
 
 
-def build_subtitles_step(parent: QObject, concern: subtitles.Concern) -> MpvqcImportWizardSubtitlesStepViewModel | None:
-    if isinstance(concern, subtitles.Unresolved):
+def build_subtitles_step(parent: QObject, concern: SubtitlesConcern) -> MpvqcImportWizardSubtitlesStepViewModel | None:
+    if isinstance(concern, SubtitlesUnresolved):
         return MpvqcImportWizardSubtitlesStepViewModel(parent, concern)
     return None
 
 
 def resolve_subtitles(
     subtitles_step: MpvqcImportWizardSubtitlesStepViewModel | None,
-    concern: subtitles.Concern,
-) -> subtitles.Resolved:
+    concern: SubtitlesConcern,
+) -> SubtitlesResolved:
     match concern:
-        case subtitles.Load() | subtitles.Skip():
+        case SubtitlesLoad() | SubtitlesSkip():
             return concern
-        case subtitles.Unresolved() if subtitles_step is not None:
+        case SubtitlesUnresolved() if subtitles_step is not None:
             checked = subtitles_step.checked_paths
-            return subtitles.Load(paths=checked) if checked else subtitles.Skip()
-        case subtitles.Unresolved():
-            msg = "subtitles.Unresolved reached commit without a subtitles step view-model"
+            return SubtitlesLoad(paths=checked) if checked else SubtitlesSkip()
+        case SubtitlesUnresolved():
+            msg = "SubtitlesUnresolved reached commit without a subtitles step view-model"
             raise RuntimeError(msg)
         case _:
             assert_never(concern)

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, override
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.domain import ImportFoundVideo
+from mpvqc.importing.domain import LoadFoundVideo
 
 if TYPE_CHECKING:
     from typing import Any
@@ -31,15 +31,15 @@ class MpvqcImportSettingsModel(QAbstractListModel):
         self._items = [
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Always"),
-                "value": ImportFoundVideo.ALWAYS.value,
+                "value": LoadFoundVideo.ALWAYS.value,
             },
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Ask every time"),
-                "value": ImportFoundVideo.ASK_EVERY_TIME.value,
+                "value": LoadFoundVideo.ASK_EVERY_TIME.value,
             },
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Never"),
-                "value": ImportFoundVideo.NEVER.value,
+                "value": LoadFoundVideo.NEVER.value,
             },
         ]
 

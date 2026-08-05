@@ -16,12 +16,16 @@ from mpvqc.importing.domain import (
     ErrorsAbsent,
     ErrorsPresent,
     RejectedDocument,
+    SessionMerge,
+    SessionUnresolved,
     StepKind,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
     UnfinishedPlan,
+    VideoLoad,
+    VideoSkip,
     VideoSource,
-    session,
-    subtitles,
-    video,
+    VideoUnresolved,
 )
 from mpvqc.importing.viewmodels import FooterState, PrimaryAction, WizardDialogPolicy
 
@@ -32,18 +36,18 @@ COMMENT = Comment(time=0, comment_type="", comment="")
 
 EMPTY = UnfinishedPlan(
     comments=(),
-    session=session.Merge(),
-    video=video.Skip(),
-    subtitles=subtitles.Skip(),
+    session=SessionMerge(),
+    video=VideoSkip(),
+    subtitles=SubtitlesSkip(),
     errors=ErrorsAbsent(),
 )
 
 PRESENT_ERRORS = ErrorsPresent(
     rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
 )
-UNRESOLVED_VIDEO = video.Unresolved(candidates=(VID_A_DOC,))
-UNRESOLVED_SUBS = subtitles.Unresolved(candidates=(SUB_A,))
-UNRESOLVED_SESSION = session.Unresolved(incoming_comment_count=1)
+UNRESOLVED_VIDEO = VideoUnresolved(candidates=(VID_A_DOC,))
+UNRESOLVED_SUBS = SubtitlesUnresolved(candidates=(SUB_A,))
+UNRESOLVED_SESSION = SessionUnresolved(incoming_comment_count=1)
 
 
 class FooterCase(NamedTuple):
@@ -64,7 +68,7 @@ CASES = [
     ),
     FooterCase(
         name="errors-only, valid content survives -> Confirm import, cancel shown",
-        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=video.Load(path=VIDEO_A)),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
         steps=(StepKind.ERRORS,),
         index=0,
         expected=FooterState("Confirm import", PrimaryAction.ACCEPT, show_cancel=True, show_back=False),
@@ -169,7 +173,7 @@ TITLE_CASES = [
     ),
     TitleCase(
         name="errors-only, valid content survives -> Confirm Import",
-        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=video.Load(path=VIDEO_A)),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
         steps=(StepKind.ERRORS,),
         expected="Confirm Import",
     ),

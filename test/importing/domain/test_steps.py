@@ -14,14 +14,19 @@ from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     ErrorsAbsent,
     ErrorsPresent,
+    SessionMerge,
+    SessionUnresolved,
     StepKind,
+    SubtitlesLoad,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
     UnfinishedPlan,
+    VideoLoad,
+    VideoSkip,
     VideoSource,
+    VideoUnresolved,
     compute_steps,
     has_valid_content,
-    session,
-    subtitles,
-    video,
 )
 
 VIDEO_A = Path("/movies/a.mp4")
@@ -31,9 +36,9 @@ COMMENT = Comment(time=0, comment_type="", comment="")
 
 ALL_RESOLVED = UnfinishedPlan(
     comments=(),
-    session=session.Merge(),
-    video=video.Skip(),
-    subtitles=subtitles.Skip(),
+    session=SessionMerge(),
+    video=VideoSkip(),
+    subtitles=SubtitlesSkip(),
     errors=ErrorsAbsent(),
 )
 
@@ -57,26 +62,26 @@ COMPUTE_STEPS_CASES = [
     ),
     StepCase(
         name="session only",
-        plan=replace(ALL_RESOLVED, session=session.Unresolved(incoming_comment_count=1)),
+        plan=replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1)),
         expected=(StepKind.SESSION,),
     ),
     StepCase(
         name="video only",
-        plan=replace(ALL_RESOLVED, video=video.Unresolved(candidates=(VID_A_DOC,))),
+        plan=replace(ALL_RESOLVED, video=VideoUnresolved(candidates=(VID_A_DOC,))),
         expected=(StepKind.VIDEO,),
     ),
     StepCase(
         name="subtitles only",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Unresolved(candidates=(SUB_A,))),
+        plan=replace(ALL_RESOLVED, subtitles=SubtitlesUnresolved(candidates=(SUB_A,))),
         expected=(StepKind.SUBTITLES,),
     ),
     StepCase(
         name="canonical order across all four",
         plan=UnfinishedPlan(
             comments=(),
-            session=session.Unresolved(incoming_comment_count=1),
-            video=video.Unresolved(candidates=(VID_A_DOC,)),
-            subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
+            session=SessionUnresolved(incoming_comment_count=1),
+            video=VideoUnresolved(candidates=(VID_A_DOC,)),
+            subtitles=SubtitlesUnresolved(candidates=(SUB_A,)),
             errors=ErrorsPresent(rejected_documents=()),
         ),
         expected=(StepKind.ERRORS, StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
@@ -107,27 +112,27 @@ HAS_VALID_CONTENT_CASES = [
         expected=True,
     ),
     ContentCase(
-        name="video.Load resolved",
-        plan=replace(ALL_RESOLVED, video=video.Load(path=VIDEO_A)),
+        name="VideoLoad resolved",
+        plan=replace(ALL_RESOLVED, video=VideoLoad(path=VIDEO_A)),
         expected=True,
     ),
     ContentCase(
-        name="subtitles.Load with paths",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Load(paths=(SUB_A,))),
+        name="SubtitlesLoad with paths",
+        plan=replace(ALL_RESOLVED, subtitles=SubtitlesLoad(paths=(SUB_A,))),
         expected=True,
     ),
     ContentCase(
-        name="video.Unresolved does not count",
-        plan=replace(ALL_RESOLVED, video=video.Unresolved(candidates=(VID_A_DOC,))),
+        name="VideoUnresolved does not count",
+        plan=replace(ALL_RESOLVED, video=VideoUnresolved(candidates=(VID_A_DOC,))),
         expected=False,
     ),
     ContentCase(
-        name="subtitles.Unresolved does not count",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Unresolved(candidates=(SUB_A,))),
+        name="SubtitlesUnresolved does not count",
+        plan=replace(ALL_RESOLVED, subtitles=SubtitlesUnresolved(candidates=(SUB_A,))),
         expected=False,
     ),
     ContentCase(
-        name="subtitles.Skip does not count",
+        name="SubtitlesSkip does not count",
         plan=ALL_RESOLVED,
         expected=False,
     ),

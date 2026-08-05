@@ -9,7 +9,7 @@ from typing import assert_never
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import session
+from mpvqc.importing.domain import SessionConcern, SessionMerge, SessionReplace, SessionResolved, SessionUnresolved
 from mpvqc.importing.enums import MpvqcImportWizardSessionMode
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -21,17 +21,17 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportWizardSessionStepViewModel(QObject):
     modeChanged = Signal(int)
 
-    def __init__(self, parent: QObject, inputs: session.Unresolved) -> None:
+    def __init__(self, parent: QObject, inputs: SessionUnresolved) -> None:
         super().__init__(parent)
         self._incoming_comment_count = inputs.incoming_comment_count
-        self._resolved: session.Resolved = session.Merge()
+        self._resolved: SessionResolved = SessionMerge()
 
     @property
-    def resolved(self) -> session.Resolved:
+    def resolved(self) -> SessionResolved:
         return self._resolved
 
     @resolved.setter
-    def resolved(self, value: session.Resolved) -> None:
+    def resolved(self, value: SessionResolved) -> None:
         if self._resolved == value:
             return
         self._resolved = value
@@ -53,43 +53,43 @@ class MpvqcImportWizardSessionStepViewModel(QObject):
             return
 
 
-def build_session_step(parent: QObject, concern: session.Concern) -> MpvqcImportWizardSessionStepViewModel | None:
-    if isinstance(concern, session.Unresolved):
+def build_session_step(parent: QObject, concern: SessionConcern) -> MpvqcImportWizardSessionStepViewModel | None:
+    if isinstance(concern, SessionUnresolved):
         return MpvqcImportWizardSessionStepViewModel(parent, concern)
     return None
 
 
 def resolve_session(
     session_step: MpvqcImportWizardSessionStepViewModel | None,
-    concern: session.Concern,
-) -> session.Resolved:
+    concern: SessionConcern,
+) -> SessionResolved:
     match concern:
-        case session.Merge() | session.Replace():
+        case SessionMerge() | SessionReplace():
             return concern
-        case session.Unresolved() if session_step is not None:
+        case SessionUnresolved() if session_step is not None:
             return session_step.resolved
-        case session.Unresolved():
-            msg = "session.Unresolved reached commit without a session step view-model"
+        case SessionUnresolved():
+            msg = "SessionUnresolved reached commit without a session step view-model"
             raise RuntimeError(msg)
         case _:
             assert_never(concern)
 
 
-def _to_mode(resolved: session.Resolved) -> MpvqcImportWizardSessionMode.SessionMode:
+def _to_mode(resolved: SessionResolved) -> MpvqcImportWizardSessionMode.SessionMode:
     match resolved:
-        case session.Merge():
+        case SessionMerge():
             return MpvqcImportWizardSessionMode.SessionMode.MERGE
-        case session.Replace():
+        case SessionReplace():
             return MpvqcImportWizardSessionMode.SessionMode.REPLACE
         case _:
             assert_never(resolved)
 
 
-def _to_resolved(mode: MpvqcImportWizardSessionMode.SessionMode) -> session.Resolved:
+def _to_resolved(mode: MpvqcImportWizardSessionMode.SessionMode) -> SessionResolved:
     match mode:
         case MpvqcImportWizardSessionMode.SessionMode.MERGE:
-            return session.Merge()
+            return SessionMerge()
         case MpvqcImportWizardSessionMode.SessionMode.REPLACE:
-            return session.Replace()
+            return SessionReplace()
         case _:
             assert_never(mode)

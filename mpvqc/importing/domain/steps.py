@@ -7,8 +7,7 @@ from __future__ import annotations
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING
 
-from .concerns import session, subtitles, video
-from .errors import ErrorsPresent
+from .plan import ErrorsPresent, SessionUnresolved, SubtitlesLoad, SubtitlesUnresolved, VideoLoad, VideoUnresolved
 
 if TYPE_CHECKING:
     from .plan import UnfinishedPlan
@@ -25,11 +24,11 @@ def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
     steps: list[StepKind] = []
     if isinstance(unfinished_plan.errors, ErrorsPresent):
         steps.append(StepKind.ERRORS)
-    if isinstance(unfinished_plan.session, session.Unresolved):
+    if isinstance(unfinished_plan.session, SessionUnresolved):
         steps.append(StepKind.SESSION)
-    if isinstance(unfinished_plan.video, video.Unresolved):
+    if isinstance(unfinished_plan.video, VideoUnresolved):
         steps.append(StepKind.VIDEO)
-    if isinstance(unfinished_plan.subtitles, subtitles.Unresolved):
+    if isinstance(unfinished_plan.subtitles, SubtitlesUnresolved):
         steps.append(StepKind.SUBTITLES)
     return tuple(steps)
 
@@ -37,6 +36,6 @@ def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
 def has_valid_content(unfinished_plan: UnfinishedPlan) -> bool:
     return (
         bool(unfinished_plan.comments)
-        or isinstance(unfinished_plan.video, video.Load)
-        or isinstance(unfinished_plan.subtitles, subtitles.Load)
+        or isinstance(unfinished_plan.video, VideoLoad)
+        or isinstance(unfinished_plan.subtitles, SubtitlesLoad)
     )

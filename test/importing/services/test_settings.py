@@ -5,7 +5,7 @@
 import pytest
 from PySide6.QtCore import QSettings, QStandardPaths, QUrl
 
-from mpvqc.importing.domain import ImportFoundVideo
+from mpvqc.importing.domain import LoadFoundVideo
 from mpvqc.importing.services import ImportSettingsService
 
 ELSEWHERE = QUrl.fromLocalFile("/elsewhere")
@@ -25,10 +25,10 @@ def import_section(tmp_path) -> str:
 
 
 def test_import_found_video_defaults_to_ask_every_time(import_settings_service):
-    assert import_settings_service.import_found_video == ImportFoundVideo.ASK_EVERY_TIME
+    assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME
 
 
-@pytest.mark.parametrize("setting", list(ImportFoundVideo))
+@pytest.mark.parametrize("setting", list(LoadFoundVideo))
 def test_import_found_video_set_and_get(import_settings_service, setting):
     import_settings_service.import_found_video = setting
 
@@ -39,18 +39,18 @@ def test_import_found_video_set_and_get(import_settings_service, setting):
 def test_unreadable_import_found_video_falls_back_to_ask_every_time(import_settings_service, settings_file, stored):
     settings_file.qsettings.setValue("Import/importFoundVideo", stored)
 
-    assert import_settings_service.import_found_video == ImportFoundVideo.ASK_EVERY_TIME
+    assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME
 
 
 def test_import_found_video_write_emits_once(import_settings_service, make_spy):
     spy = make_spy(import_settings_service.import_found_video_changed)
 
-    import_settings_service.import_found_video = ImportFoundVideo.ALWAYS
+    import_settings_service.import_found_video = LoadFoundVideo.ALWAYS
 
     assert spy.count() == 1
-    assert spy.at(0, 0) is ImportFoundVideo.ALWAYS
+    assert spy.at(0, 0) is LoadFoundVideo.ALWAYS
 
-    import_settings_service.import_found_video = ImportFoundVideo.ALWAYS
+    import_settings_service.import_found_video = LoadFoundVideo.ALWAYS
     assert spy.count() == 1
 
 
@@ -123,7 +123,7 @@ def test_last_directory_subtitles_write_emits_once(import_settings_service, make
 def test_every_write_lands_under_its_stored_key_in_the_import_ini_section(
     import_settings_service, settings_file, tmp_path
 ):
-    import_settings_service.import_found_video = ImportFoundVideo.NEVER
+    import_settings_service.import_found_video = LoadFoundVideo.NEVER
     import_settings_service.last_directory_video = ELSEWHERE
     import_settings_service.last_directory_documents = ELSEWHERE
     import_settings_service.last_directory_subtitles = ELSEWHERE
@@ -148,7 +148,7 @@ def test_a_settings_file_from_the_previous_build_reads_back_unchanged(settings_f
     reopened = QSettings(str(tmp_path / "test_settings.ini"), QSettings.Format.IniFormat)
     service = ImportSettingsService(reopened)
 
-    assert service.import_found_video == ImportFoundVideo.ALWAYS
+    assert service.import_found_video == LoadFoundVideo.ALWAYS
     assert service.last_directory_video == QUrl.fromLocalFile("/videos")
     assert service.last_directory_documents == QUrl.fromLocalFile("/documents")
     assert service.last_directory_subtitles == QUrl.fromLocalFile("/subtitles")

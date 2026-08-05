@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, assert_never
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Signal
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import video
+from mpvqc.importing.domain import VideoConcern, VideoLoad, VideoResolved, VideoSkip, VideoUnresolved
 from mpvqc.importing.models import MpvqcImportVideosModel
 
 if TYPE_CHECKING:
@@ -25,7 +25,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportWizardVideoStepViewModel(QObject):
     selectedIndexChanged = Signal(int)
 
-    def __init__(self, parent: QObject, inputs: video.Unresolved) -> None:
+    def __init__(self, parent: QObject, inputs: VideoUnresolved) -> None:
         super().__init__(parent)
         self._candidates = MpvqcImportVideosModel(inputs.candidates)
         self._selected_index = 0
@@ -50,22 +50,22 @@ class MpvqcImportWizardVideoStepViewModel(QObject):
         return self._candidates.path_at(self._selected_index)
 
 
-def build_video_step(parent: QObject, concern: video.Concern) -> MpvqcImportWizardVideoStepViewModel | None:
-    if isinstance(concern, video.Unresolved):
+def build_video_step(parent: QObject, concern: VideoConcern) -> MpvqcImportWizardVideoStepViewModel | None:
+    if isinstance(concern, VideoUnresolved):
         return MpvqcImportWizardVideoStepViewModel(parent, concern)
     return None
 
 
-def resolve_video(video_step: MpvqcImportWizardVideoStepViewModel | None, concern: video.Concern) -> video.Resolved:
+def resolve_video(video_step: MpvqcImportWizardVideoStepViewModel | None, concern: VideoConcern) -> VideoResolved:
     match concern:
-        case video.Load() | video.Skip():
+        case VideoLoad() | VideoSkip():
             return concern
-        case video.Unresolved() if video_step is not None:
+        case VideoUnresolved() if video_step is not None:
             if path := video_step.selected_path:
-                return video.Load(path=path)
-            return video.Skip()
-        case video.Unresolved():
-            msg = "video.Unresolved reached commit without a video step view-model"
+                return VideoLoad(path=path)
+            return VideoSkip()
+        case VideoUnresolved():
+            msg = "VideoUnresolved reached commit without a video step view-model"
             raise RuntimeError(msg)
         case _:
             assert_never(concern)

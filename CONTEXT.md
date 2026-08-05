@@ -5,9 +5,9 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 
 ## Import pipeline
 
-- **Concern**: one dimension of an import that may need user input (`session`, `video`, `subtitles`). Each is a tagged
-  union with resolved variants (such as `Merge`, `Load`, `Skip`) and an `Unresolved` variant carrying the data a user
-  needs to decide.
+- **Concern**: one dimension of an import that may need user input: session, video, subtitles. Each is a tagged union
+  named concern-first, such as `SessionMerge` and `SessionUnresolved`: resolved variants for the concern, and its own
+  `Unresolved` variant carrying the data a user needs to decide.
 - **ImportErrors**: whether an import scan rejected any documents: `ErrorsAbsent`, or `ErrorsPresent` naming the ones
   it rejected. Not a Concern: the errors step only shows them, the user decides nothing about it.
 - **Resolve**: turn a Concern into one of its resolved variants, either from settings and scan results (`make_plan`) or

@@ -16,10 +16,10 @@ from mpvqc.importing.domain import (
     ErrorsAbsent,
     ErrorsPresent,
     RejectedDocument,
+    SessionMerge,
+    SubtitlesSkip,
     UnfinishedPlan,
-    session,
-    subtitles,
-    video,
+    VideoSkip,
 )
 from mpvqc.importing.services import ImporterService
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel
@@ -60,9 +60,9 @@ def test_releases_view_model_after_wizard(relay):
 
     unfinished_plan = UnfinishedPlan(
         comments=(),
-        session=session.Merge(),
-        video=video.Skip(),
-        subtitles=subtitles.Skip(),
+        session=SessionMerge(),
+        video=VideoSkip(),
+        subtitles=SubtitlesSkip(),
         errors=ErrorsPresent(
             rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
         ),
@@ -80,9 +80,9 @@ def test_does_not_request_wizard_when_plan_has_no_steps(relay, importer_service_
 
     unfinished_plan = UnfinishedPlan(
         comments=(),
-        session=session.Merge(),
-        video=video.Skip(),
-        subtitles=subtitles.Skip(),
+        session=SessionMerge(),
+        video=VideoSkip(),
+        subtitles=SubtitlesSkip(),
         errors=ErrorsAbsent(),
     )
 

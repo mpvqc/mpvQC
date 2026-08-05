@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
     from pathlib import Path
 
-    from mpvqc.importing.domain import FinishedPlan, ImportFoundVideo, UnfinishedPlan
+    from mpvqc.importing.domain import FinishedPlan, LoadFoundVideo, UnfinishedPlan
 
 
 def plan_import(
@@ -22,7 +22,7 @@ def plan_import(
     video_paths: list[Path],
     subtitle_paths: list[Path],
     *,
-    found_video_setting: ImportFoundVideo,
+    found_video_setting: LoadFoundVideo,
     has_existing_comments: bool,
     is_any_candidate_loaded: Callable[[Iterable[Path]], bool],
 ) -> FinishedPlan | UnfinishedPlan:

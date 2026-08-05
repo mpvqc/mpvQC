@@ -15,11 +15,17 @@ from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     ErrorsAbsent,
     FinishedPlan,
+    SessionMerge,
+    SessionReplace,
+    SessionUnresolved,
+    SubtitlesLoad,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
     UnfinishedPlan,
+    VideoLoad,
+    VideoSkip,
     VideoSource,
-    session,
-    subtitles,
-    video,
+    VideoUnresolved,
 )
 from mpvqc.importing.viewmodels import (
     build_finished_plan,
@@ -44,9 +50,9 @@ COMMENT = Comment(time=0, comment_type="", comment="")
 
 ALL_RESOLVED = UnfinishedPlan(
     comments=(),
-    session=session.Merge(),
-    video=video.Skip(),
-    subtitles=subtitles.Skip(),
+    session=SessionMerge(),
+    video=VideoSkip(),
+    subtitles=SubtitlesSkip(),
     errors=ErrorsAbsent(),
 )
 
@@ -58,7 +64,7 @@ class _Steps(NamedTuple):
 
     def choose_replace(self) -> None:
         assert self.session is not None
-        self.session.resolved = session.Replace()
+        self.session.resolved = SessionReplace()
 
     def select_skip_video(self) -> None:
         assert self.video is not None
@@ -85,63 +91,63 @@ BUILD_FINISHED_PLAN_CASES = [
         plan=replace(
             ALL_RESOLVED,
             comments=(COMMENT,),
-            session=session.Replace(),
-            video=video.Load(path=VIDEO_A),
-            subtitles=subtitles.Load(paths=(SUB_A,)),
+            session=SessionReplace(),
+            video=VideoLoad(path=VIDEO_A),
+            subtitles=SubtitlesLoad(paths=(SUB_A,)),
         ),
         configure=None,
         expected=FinishedPlan(
             comments=(COMMENT,),
-            session=session.Replace(),
-            video=video.Load(path=VIDEO_A),
-            subtitles=subtitles.Load(paths=(SUB_A,)),
+            session=SessionReplace(),
+            video=VideoLoad(path=VIDEO_A),
+            subtitles=SubtitlesLoad(paths=(SUB_A,)),
         ),
     ),
     CommitCase(
         name="unresolved session defaults to merge",
-        plan=replace(ALL_RESOLVED, session=session.Unresolved(incoming_comment_count=1)),
+        plan=replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1)),
         configure=None,
-        expected=FinishedPlan(comments=(), session=session.Merge(), video=video.Skip(), subtitles=subtitles.Skip()),
+        expected=FinishedPlan(comments=(), session=SessionMerge(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     CommitCase(
         name="session step switched to replace",
-        plan=replace(ALL_RESOLVED, session=session.Unresolved(incoming_comment_count=1)),
+        plan=replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1)),
         configure=_Steps.choose_replace,
-        expected=FinishedPlan(comments=(), session=session.Replace(), video=video.Skip(), subtitles=subtitles.Skip()),
+        expected=FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     CommitCase(
         name="unresolved video defaults to first candidate",
-        plan=replace(ALL_RESOLVED, video=video.Unresolved(candidates=(VID_A_DOC,))),
+        plan=replace(ALL_RESOLVED, video=VideoUnresolved(candidates=(VID_A_DOC,))),
         configure=None,
         expected=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Load(path=VIDEO_A),
-            subtitles=subtitles.Skip(),
+            session=SessionMerge(),
+            video=VideoLoad(path=VIDEO_A),
+            subtitles=SubtitlesSkip(),
         ),
     ),
     CommitCase(
         name="video step skip entry selected",
-        plan=replace(ALL_RESOLVED, video=video.Unresolved(candidates=(VID_A_DOC,))),
+        plan=replace(ALL_RESOLVED, video=VideoUnresolved(candidates=(VID_A_DOC,))),
         configure=_Steps.select_skip_video,
-        expected=FinishedPlan(comments=(), session=session.Merge(), video=video.Skip(), subtitles=subtitles.Skip()),
+        expected=FinishedPlan(comments=(), session=SessionMerge(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     CommitCase(
         name="unresolved subtitles default to all checked",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Unresolved(candidates=(SUB_A,))),
+        plan=replace(ALL_RESOLVED, subtitles=SubtitlesUnresolved(candidates=(SUB_A,))),
         configure=None,
         expected=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Skip(),
-            subtitles=subtitles.Load(paths=(SUB_A,)),
+            session=SessionMerge(),
+            video=VideoSkip(),
+            subtitles=SubtitlesLoad(paths=(SUB_A,)),
         ),
     ),
     CommitCase(
         name="subtitles step all unchecked",
-        plan=replace(ALL_RESOLVED, subtitles=subtitles.Unresolved(candidates=(SUB_A,))),
+        plan=replace(ALL_RESOLVED, subtitles=SubtitlesUnresolved(candidates=(SUB_A,))),
         configure=_Steps.uncheck_all_subtitles,
-        expected=FinishedPlan(comments=(), session=session.Merge(), video=video.Skip(), subtitles=subtitles.Skip()),
+        expected=FinishedPlan(comments=(), session=SessionMerge(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
 ]
 
@@ -161,6 +167,6 @@ def test_build_finished_plan(case: CommitCase, qt_app) -> None:
 
 
 def test_build_finished_plan_requires_step_viewmodels() -> None:
-    plan = replace(ALL_RESOLVED, session=session.Unresolved(incoming_comment_count=1))
+    plan = replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1))
     with pytest.raises(RuntimeError):
         build_finished_plan(plan, None, None, None)

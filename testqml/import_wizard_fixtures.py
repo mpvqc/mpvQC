@@ -12,11 +12,14 @@ from mpvqc.importing.domain import (
     ErrorsAbsent,
     ErrorsPresent,
     RejectedDocument,
+    SessionMerge,
+    SessionUnresolved,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
     UnfinishedPlan,
+    VideoSkip,
     VideoSource,
-    session,
-    subtitles,
-    video,
+    VideoUnresolved,
 )
 from testqml.injections import TEMP_ROOT
 
@@ -34,14 +37,14 @@ def video_choice() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(),
         errors=ErrorsAbsent(),
-        session=session.Merge(),
-        video=video.Unresolved(
+        session=SessionMerge(),
+        video=VideoUnresolved(
             candidates=(
                 VideoSource(path=_path("a.mp4"), explicitly_provided=True),
                 VideoSource(path=_path("b.mp4"), explicitly_provided=True),
             )
         ),
-        subtitles=subtitles.Skip(),
+        subtitles=SubtitlesSkip(),
     )
 
 
@@ -51,14 +54,14 @@ def all_steps() -> UnfinishedPlan:
         errors=ErrorsPresent(
             rejected_documents=(RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),)
         ),
-        session=session.Unresolved(incoming_comment_count=5),
-        video=video.Unresolved(
+        session=SessionUnresolved(incoming_comment_count=5),
+        video=VideoUnresolved(
             candidates=(
                 VideoSource(path=_path("a.mp4"), explicitly_provided=True),
                 VideoSource(path=_path("b.mp4"), explicitly_provided=True),
             )
         ),
-        subtitles=subtitles.Unresolved(candidates=(_path("track.srt"),)),
+        subtitles=SubtitlesUnresolved(candidates=(_path("track.srt"),)),
     )
 
 
@@ -66,9 +69,9 @@ def subtitles_only() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(),
         errors=ErrorsAbsent(),
-        session=session.Merge(),
-        video=video.Skip(),
-        subtitles=subtitles.Unresolved(
+        session=SessionMerge(),
+        video=VideoSkip(),
+        subtitles=SubtitlesUnresolved(
             candidates=(
                 _path("a.srt"),
                 _path("b.srt"),
@@ -87,9 +90,9 @@ def errors_only() -> UnfinishedPlan:
                 RejectedDocument(_path("future.json"), DocumentRejectionReason.UNSUPPORTED_VERSION),
             )
         ),
-        session=session.Merge(),
-        video=video.Skip(),
-        subtitles=subtitles.Skip(),
+        session=SessionMerge(),
+        video=VideoSkip(),
+        subtitles=SubtitlesSkip(),
     )
 
 

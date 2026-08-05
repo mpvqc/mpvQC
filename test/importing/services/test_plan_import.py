@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING
 from mpvqc.importing.domain import (
     ErrorsPresent,
     FinishedPlan,
-    ImportFoundVideo,
+    LoadFoundVideo,
+    SessionMerge,
+    SubtitlesSkip,
     UnfinishedPlan,
-    session,
-    subtitles,
-    video,
+    VideoSkip,
 )
 from mpvqc.importing.services import plan_import
 
@@ -33,7 +33,7 @@ def test_valid_document_composes_into_a_finished_plan(tmp_path: Path) -> None:
         [document],
         [],
         [],
-        found_video_setting=ImportFoundVideo.ASK_EVERY_TIME,
+        found_video_setting=LoadFoundVideo.ASK_EVERY_TIME,
         has_existing_comments=False,
         is_any_candidate_loaded=lambda _paths: False,
     )
@@ -41,9 +41,9 @@ def test_valid_document_composes_into_a_finished_plan(tmp_path: Path) -> None:
     assert isinstance(plan, FinishedPlan)
     assert len(plan.comments) == 1
     assert plan.comments[0].comment == "A comment"
-    assert plan.session == session.Merge()
-    assert plan.video == video.Skip()
-    assert plan.subtitles == subtitles.Skip()
+    assert plan.session == SessionMerge()
+    assert plan.video == VideoSkip()
+    assert plan.subtitles == SubtitlesSkip()
 
 
 def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> None:
@@ -54,7 +54,7 @@ def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> No
         [document],
         [],
         [],
-        found_video_setting=ImportFoundVideo.ASK_EVERY_TIME,
+        found_video_setting=LoadFoundVideo.ASK_EVERY_TIME,
         has_existing_comments=False,
         is_any_candidate_loaded=lambda _paths: False,
     )

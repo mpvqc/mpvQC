@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, QStandardPaths, QUrl, Signal
 
-from mpvqc.importing.domain import ImportFoundVideo
+from mpvqc.importing.domain import LoadFoundVideo
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -31,7 +31,7 @@ def _documents_location() -> QUrl:
 
 
 class ImportSettingsService(QObject):
-    import_found_video_changed = Signal(ImportFoundVideo)
+    import_found_video_changed = Signal(LoadFoundVideo)
     last_directory_video_changed = Signal(QUrl)
     last_directory_documents_changed = Signal(QUrl)
     last_directory_subtitles_changed = Signal(QUrl)
@@ -41,16 +41,16 @@ class ImportSettingsService(QObject):
         self._qsettings = qsettings
 
     @property
-    def import_found_video(self) -> ImportFoundVideo:
+    def import_found_video(self) -> LoadFoundVideo:
         # Reading with type=int would coerce a corrupted value to 0, which means ALWAYS
         stored = self._stored(_IMPORT_FOUND_VIDEO_KEY)
         if isinstance(stored, str | int):
             with suppress(ValueError):
-                return ImportFoundVideo(int(stored))
-        return ImportFoundVideo.ASK_EVERY_TIME
+                return LoadFoundVideo(int(stored))
+        return LoadFoundVideo.ASK_EVERY_TIME
 
     @import_found_video.setter
-    def import_found_video(self, setting: ImportFoundVideo) -> None:
+    def import_found_video(self, setting: LoadFoundVideo) -> None:
         if self.import_found_video == setting:
             return
         self._qsettings.setValue(_IMPORT_FOUND_VIDEO_KEY, setting.value)

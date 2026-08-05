@@ -10,7 +10,16 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 
-from mpvqc.importing.domain import FinishedPlan, UnfinishedPlan, session, subtitles, video
+from mpvqc.importing.domain import (
+    FinishedPlan,
+    SessionMerge,
+    SessionReplace,
+    SubtitlesLoad,
+    SubtitlesSkip,
+    UnfinishedPlan,
+    VideoLoad,
+    VideoSkip,
+)
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
@@ -93,25 +102,25 @@ class ImporterService(QObject):
 
     @Slot(FinishedPlan)
     def execute(self, plan: FinishedPlan) -> None:
-        is_new_video = isinstance(plan.video, video.Load) and not self._player.is_any_video_loaded([plan.video.path])
+        is_new_video = isinstance(plan.video, VideoLoad) and not self._player.is_any_video_loaded([plan.video.path])
 
         match plan.session:
-            case session.Replace():
+            case SessionReplace():
                 self._resetter.reset()
-            case session.Merge():
+            case SessionMerge():
                 pass
 
         if plan.comments:
             self._comments.import_comments(plan.comments)
 
         match (plan.video, plan.subtitles):
-            case (video.Load(path=v), subtitles.Load(paths=s)):
+            case (VideoLoad(path=v), SubtitlesLoad(paths=s)):
                 self._player.open_media(video=v, subtitles=s)
-            case (video.Load(path=v), subtitles.Skip()):
+            case (VideoLoad(path=v), SubtitlesSkip()):
                 self._player.open_media(video=v, subtitles=())
-            case (video.Skip(), subtitles.Load(paths=s)):
+            case (VideoSkip(), SubtitlesLoad(paths=s)):
                 self._player.open_media(video=None, subtitles=s)
-            case (video.Skip(), subtitles.Skip()):
+            case (VideoSkip(), SubtitlesSkip()):
                 pass
 
         self._notify_state(plan, is_new_video=is_new_video)

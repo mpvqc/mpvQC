@@ -15,12 +15,16 @@ from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     ErrorsAbsent,
     FinishedPlan,
-    ImportFoundVideo,
+    LoadFoundVideo,
+    SessionMerge,
+    SessionReplace,
+    SubtitlesLoad,
+    SubtitlesSkip,
     UnfinishedPlan,
+    VideoLoad,
+    VideoSkip,
     VideoSource,
-    session,
-    subtitles,
-    video,
+    VideoUnresolved,
 )
 from mpvqc.importing.services import ImporterService, ImportSettingsService
 from mpvqc.services.comments import CommentsService
@@ -42,7 +46,7 @@ def player_service_mock() -> MagicMock:
 @pytest.fixture
 def import_settings_service_mock() -> MagicMock:
     mock = MagicMock(spec_set=ImportSettingsService)
-    mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME
+    mock.import_found_video = LoadFoundVideo.ASK_EVERY_TIME
     return mock
 
 
@@ -88,9 +92,9 @@ def service(manual_executor: ManualJobExecutor) -> ImporterService:
 
 NOOP_PLAN = FinishedPlan(
     comments=(),
-    session=session.Merge(),
-    video=video.Skip(),
-    subtitles=subtitles.Skip(),
+    session=SessionMerge(),
+    video=VideoSkip(),
+    subtitles=SubtitlesSkip(),
 )
 
 
@@ -138,9 +142,9 @@ DISPATCH_CASES = [
         name="video and subtitles both load",
         plan=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Load(path=V),
-            subtitles=subtitles.Load(paths=(S1, S2)),
+            session=SessionMerge(),
+            video=VideoLoad(path=V),
+            subtitles=SubtitlesLoad(paths=(S1, S2)),
         ),
         expected={"video": V, "subtitles": (S1, S2)},
     ),
@@ -148,9 +152,9 @@ DISPATCH_CASES = [
         name="video loads, subtitles skipped",
         plan=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Load(path=V),
-            subtitles=subtitles.Skip(),
+            session=SessionMerge(),
+            video=VideoLoad(path=V),
+            subtitles=SubtitlesSkip(),
         ),
         expected={"video": V, "subtitles": ()},
     ),
@@ -158,9 +162,9 @@ DISPATCH_CASES = [
         name="subtitles load without a video",
         plan=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Skip(),
-            subtitles=subtitles.Load(paths=(S1,)),
+            session=SessionMerge(),
+            video=VideoSkip(),
+            subtitles=SubtitlesLoad(paths=(S1,)),
         ),
         expected={"video": None, "subtitles": (S1,)},
     ),
@@ -198,9 +202,9 @@ RECORD_IMPORT_CASES = [
         name="new video, no comments: records",
         plan=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Load(path=V),
-            subtitles=subtitles.Skip(),
+            session=SessionMerge(),
+            video=VideoLoad(path=V),
+            subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=False,
         expected_record=True,
@@ -209,9 +213,9 @@ RECORD_IMPORT_CASES = [
         name="re-import of current video, no comments: skips (preserves document)",
         plan=FinishedPlan(
             comments=(),
-            session=session.Merge(),
-            video=video.Load(path=V),
-            subtitles=subtitles.Skip(),
+            session=SessionMerge(),
+            video=VideoLoad(path=V),
+            subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=True,
         expected_record=False,
@@ -220,9 +224,9 @@ RECORD_IMPORT_CASES = [
         name="re-import of current video with comments: records",
         plan=FinishedPlan(
             comments=(MagicMock(),),
-            session=session.Merge(),
-            video=video.Load(path=V),
-            subtitles=subtitles.Skip(),
+            session=SessionMerge(),
+            video=VideoLoad(path=V),
+            subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=True,
         expected_record=True,
@@ -231,9 +235,9 @@ RECORD_IMPORT_CASES = [
         name="no video, has comments: records",
         plan=FinishedPlan(
             comments=(MagicMock(),),
-            session=session.Merge(),
-            video=video.Skip(),
-            subtitles=subtitles.Skip(),
+            session=SessionMerge(),
+            video=VideoSkip(),
+            subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=False,
         expected_record=True,
@@ -271,7 +275,7 @@ def test_execute_replace_session_resets_application(
     service: ImporterService,
     reset_service_mock: MagicMock,
 ) -> None:
-    plan = FinishedPlan(comments=(), session=session.Replace(), video=video.Skip(), subtitles=subtitles.Skip())
+    plan = FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip())
 
     service.execute(plan)
 
@@ -291,7 +295,7 @@ def test_execute_imports_comments(
     service: ImporterService,
     comments_service_mock: MagicMock,
 ) -> None:
-    plan = FinishedPlan(comments=COMMENTS, session=session.Merge(), video=video.Skip(), subtitles=subtitles.Skip())
+    plan = FinishedPlan(comments=COMMENTS, session=SessionMerge(), video=VideoSkip(), subtitles=SubtitlesSkip())
 
     service.execute(plan)
 
@@ -309,9 +313,9 @@ def test_execute_without_comments_imports_nothing(
 
 UNRESOLVED_PLAN = UnfinishedPlan(
     comments=(),
-    session=session.Merge(),
-    video=video.Unresolved(candidates=(VideoSource(path=V, found_in_document=True),)),
-    subtitles=subtitles.Skip(),
+    session=SessionMerge(),
+    video=VideoUnresolved(candidates=(VideoSource(path=V, found_in_document=True),)),
+    subtitles=SubtitlesSkip(),
     errors=ErrorsAbsent(),
 )
 
