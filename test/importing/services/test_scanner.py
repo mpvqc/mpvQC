@@ -11,7 +11,8 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument, SubtitleSource, VideoSource
-from mpvqc.importing.services import DocumentImportResult, scanner
+from mpvqc.importing.services import scanner
+from mpvqc.importing.services.reader import DocumentImportResult
 
 DOC_A = Path("/work/a.qc")
 DOC_B = Path("/work/b.qc")

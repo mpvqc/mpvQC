@@ -13,7 +13,7 @@ import pytest
 from jsonschema import Draft202012Validator, ValidationError
 
 from mpvqc.datamodels import Comment
-from mpvqc.importing.services import read_documents
+from mpvqc.importing.services.reader import read_documents
 from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
 
 SCHEMA = Path(__file__).parents[3] / "docs" / "document-format" / "v1.json"
