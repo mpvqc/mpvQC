@@ -12,7 +12,6 @@ import pytest
 from PySide6.QtCore import QObject
 
 from mpvqc.datamodels import Comment
-from mpvqc.enums import SessionMode
 from mpvqc.importing.domain import (
     FinishedPlan,
     UnfinishedPlan,
@@ -59,8 +58,7 @@ class _Steps(NamedTuple):
 
     def choose_replace(self) -> None:
         assert self.session is not None
-        # pyrefly: ignore [bad-assignment]
-        self.session.mode = SessionMode.REPLACE.value
+        self.session.resolved = session.Replace()
 
     def select_skip_video(self) -> None:
         assert self.video is not None

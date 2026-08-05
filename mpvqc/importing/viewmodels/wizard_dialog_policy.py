@@ -10,8 +10,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication
 
-from mpvqc.enums import StepKind
-from mpvqc.importing.domain import has_valid_content
+from mpvqc.importing.domain import StepKind, has_valid_content
 
 if TYPE_CHECKING:
     from mpvqc.importing.domain import UnfinishedPlan

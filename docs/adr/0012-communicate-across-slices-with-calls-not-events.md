@@ -21,9 +21,14 @@ Which role may import what from another slice:
 | From         | May import from another slice                             |
 | ------------ | --------------------------------------------------------- |
 | `domain/`    | `domain/` only                                            |
-| `models/`    | `domain/` only                                            |
+| `enums/`     | `domain/` only                                            |
+| `models/`    | `domain/`, `enums/`                                       |
 | `services/`  | `services/`, `domain/`                                    |
-| `viewmodels/`| `services/`, `domain/`. Never `viewmodels/` or `models/`  |
+| `viewmodels/`| `services/`, `domain/`, `enums/`. Never `viewmodels/` or `models/` |
+
+A domain also has a floor the table cannot state, since most of what it must not import is not another slice at all: a
+domain imports no Qt and no injection. That is what ruled out naming a QML-registered enum, and ADR 0013 records the
+role that holds those instead.
 
 Nobody imports another slice's internals. Cross-slice use cases live in view models, which may command several slices'
 services: services never know their coordinators. Presentation never crosses slices in Python; views compose views in

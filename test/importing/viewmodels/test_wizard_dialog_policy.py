@@ -11,10 +11,10 @@ from typing import NamedTuple
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.enums import StepKind
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
     RejectedDocument,
+    StepKind,
     UnfinishedPlan,
     VideoSource,
     errors,

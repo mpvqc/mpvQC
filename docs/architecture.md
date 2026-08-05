@@ -54,9 +54,10 @@ its own bindings, and `mpvqc/injections.py` calls them.
 ### Feature packages: `mpvqc/<feature>/`
 
 Some areas are grouped by what they are about instead of by layer. A feature package holds its own domain types and the
-services, models, and view models the area owns, and brings its own bindings. It also owns the settings keys its area
-means, reading the file through the shared settings file service. The layer packages hold everything no feature package
-has claimed.
+services, models, view models, and QML enums the area owns, and brings its own bindings. It also owns the settings keys
+its area means, reading the file through the shared settings file service. The layer packages hold everything no
+feature package has claimed. A domain imports no Qt, so the QML enums that name its vocabulary sit in their own role
+directory.
 
 ### Bootstrap
 

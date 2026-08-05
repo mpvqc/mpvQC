@@ -4,14 +4,20 @@
 
 from __future__ import annotations
 
+from enum import IntEnum, auto
 from typing import TYPE_CHECKING
-
-from mpvqc.enums import StepKind
 
 from .concerns import errors, session, subtitles, video
 
 if TYPE_CHECKING:
     from .plan import UnfinishedPlan
+
+
+class StepKind(IntEnum):
+    ERRORS = auto()
+    SESSION = auto()
+    VIDEO = auto()
+    SUBTITLES = auto()
 
 
 def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:

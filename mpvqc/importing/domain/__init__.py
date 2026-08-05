@@ -15,5 +15,6 @@ from .scan import ScanResult as ScanResult
 from .scan import SubtitleSource as SubtitleSource
 from .scan import VideoSource as VideoSource
 from .settings import ImportFoundVideo as ImportFoundVideo
+from .steps import StepKind as StepKind
 from .steps import compute_steps as compute_steps
 from .steps import has_valid_content as has_valid_content

@@ -87,6 +87,7 @@ def import_mpvqc_bindings() -> None:
     import mpvqc.appearance.viewmodels  # ruff: ignore[unused-import]
     import mpvqc.dialogs  # ruff: ignore[unused-import]
     import mpvqc.enums  # ruff: ignore[unused-import]
+    import mpvqc.importing.enums  # ruff: ignore[unused-import]
     import mpvqc.importing.models  # ruff: ignore[unused-import]
     import mpvqc.importing.viewmodels  # ruff: ignore[unused-import]
     import mpvqc.models  # ruff: ignore[unused-import]
