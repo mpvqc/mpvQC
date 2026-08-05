@@ -20,15 +20,11 @@ from mpvqc.importing.domain import (
 )
 from mpvqc.importing.services import ImporterService
 
-from .steps import (
+from .wizard_steps import (
     MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
     MpvqcImportWizardSubtitlesStepViewModel,
     MpvqcImportWizardVideoStepViewModel,
-    build_errors_step,
-    build_session_step,
-    build_subtitles_step,
-    build_video_step,
 )
 
 if TYPE_CHECKING:
@@ -56,10 +52,10 @@ class MpvqcImportWizardViewModel(QObject):
         self._steps = compute_steps(unfinished_plan)
         self._close_only = is_close_only(unfinished_plan, self._steps)
 
-        self._errors_step = build_errors_step(self, unfinished_plan.errors)
-        self._session_step = build_session_step(self, unfinished_plan.session)
-        self._video_step = build_video_step(self, unfinished_plan.video)
-        self._subtitles_step = build_subtitles_step(self, unfinished_plan.subtitles)
+        self._errors_step = MpvqcImportWizardErrorsStepViewModel.build(self, unfinished_plan.errors)
+        self._session_step = MpvqcImportWizardSessionStepViewModel.build(self, unfinished_plan.session)
+        self._video_step = MpvqcImportWizardVideoStepViewModel.build(self, unfinished_plan.video)
+        self._subtitles_step = MpvqcImportWizardSubtitlesStepViewModel.build(self, unfinished_plan.subtitles)
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepIndex(self) -> int:
