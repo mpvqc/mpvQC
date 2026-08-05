@@ -18,7 +18,7 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Wizard step**: one page of the import wizard, one per unresolved Concern plus one when ImportErrors is present, in
   canonical order: errors, session, video, subtitles.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
-  close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
+  close the wizard.
 
 ## Comments
 

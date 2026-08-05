@@ -30,6 +30,10 @@ from .scan import RejectedDocument as RejectedDocument
 from .scan import ScanResult as ScanResult
 from .scan import SubtitleSource as SubtitleSource
 from .scan import VideoSource as VideoSource
-from .steps import StepKind as StepKind
-from .steps import compute_steps as compute_steps
-from .steps import has_valid_content as has_valid_content
+from .wizard import FooterState as FooterState
+from .wizard import PrimaryAction as PrimaryAction
+from .wizard import PrimaryLabel as PrimaryLabel
+from .wizard import StepKind as StepKind
+from .wizard import compute_footer_state as compute_footer_state
+from .wizard import compute_steps as compute_steps
+from .wizard import is_close_only as is_close_only

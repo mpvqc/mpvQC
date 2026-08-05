@@ -7,10 +7,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, assert_never
 
 import inject
-from PySide6.QtCore import Property, QObject, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import compute_steps, finish_plan
+from mpvqc.importing.domain import (
+    PrimaryAction,
+    PrimaryLabel,
+    compute_footer_state,
+    compute_steps,
+    finish_plan,
+    is_close_only,
+)
 from mpvqc.importing.services import ImporterService
 
 from .steps import (
@@ -23,10 +30,9 @@ from .steps import (
     build_subtitles_step,
     build_video_step,
 )
-from .wizard_dialog_policy import PrimaryAction, WizardDialogPolicy
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import UnfinishedPlan
+    from mpvqc.importing.domain import FooterState, UnfinishedPlan
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -48,7 +54,7 @@ class MpvqcImportWizardViewModel(QObject):
         self._current_step_index = 0
 
         self._steps = compute_steps(unfinished_plan)
-        self._policy = WizardDialogPolicy(unfinished_plan, self._steps)
+        self._close_only = is_close_only(unfinished_plan, self._steps)
 
         self._errors_step = build_errors_step(self, unfinished_plan.errors)
         self._session_step = build_session_step(self, unfinished_plan.session)
@@ -75,19 +81,23 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Property(str, constant=True, final=True)
     def title(self) -> str:
-        return self._policy.title
+        if self._close_only:
+            #: Title of the import wizard dialog when no valid content can be imported
+            return QCoreApplication.translate("ImportWizardDialog", "Import Error")
+        #: Title of the import wizard dialog
+        return QCoreApplication.translate("ImportWizardDialog", "Confirm Import")
 
     @Property(str, notify=currentStepChanged, final=True)
     def primaryLabel(self) -> str:
-        return self._policy.state_for(self._current_step_index).primary_label
+        return self._primary_label_text(self._footer_state().primary_label)
 
     @Property(bool, notify=currentStepChanged, final=True)
     def showBack(self) -> bool:
-        return self._policy.state_for(self._current_step_index).show_back
+        return self._footer_state().show_back
 
     @Property(bool, notify=currentStepChanged, final=True)
     def showCancel(self) -> bool:
-        return self._policy.state_for(self._current_step_index).show_cancel
+        return self._footer_state().show_cancel
 
     @Property(MpvqcImportWizardErrorsStepViewModel, constant=True, final=True)
     def errorsStepViewModel(self) -> MpvqcImportWizardErrorsStepViewModel | None:
@@ -119,7 +129,7 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Slot()
     def primaryClicked(self) -> None:
-        action = self._policy.state_for(self._current_step_index).primary_action
+        action = self._footer_state().primary_action
         match action:
             case PrimaryAction.ADVANCE:
                 self.next()
@@ -143,3 +153,24 @@ class MpvqcImportWizardViewModel(QObject):
             subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
         )
         self._importer.execute(plan)
+
+    def _footer_state(self) -> FooterState:
+        return compute_footer_state(self._unfinished_plan, self._steps, self._current_step_index)
+
+    @staticmethod
+    def _primary_label_text(label: PrimaryLabel) -> str:
+        match label:
+            case PrimaryLabel.CLOSE:
+                #: Primary button when the wizard only lists unreadable documents
+                return QCoreApplication.translate("ImportWizardDialog", "Close")
+            case PrimaryLabel.CONFIRM:
+                #: Primary button on the last step when nothing valid has been resolved yet
+                return QCoreApplication.translate("ImportWizardDialog", "Confirm")
+            case PrimaryLabel.CONFIRM_IMPORT:
+                #: Primary button finalizing the import on the last wizard step
+                return QCoreApplication.translate("ImportWizardDialog", "Confirm import")
+            case PrimaryLabel.NEXT:
+                #: Primary button advancing to the next wizard step
+                return QCoreApplication.translate("ImportWizardDialog", "Next")
+            case _:
+                assert_never(label)
