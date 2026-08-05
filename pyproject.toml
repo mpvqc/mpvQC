@@ -191,6 +191,7 @@ files = [
     "mpvqc/importing/wiring.py",
     "mpvqc/injections.py",
     "mpvqc/jobs.py",
+    "mpvqc/languages.py",
     "mpvqc/logging_utils.py",
     "mpvqc/models/__init__.py",
     "mpvqc/models/dependencies.py",
