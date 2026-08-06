@@ -31,7 +31,7 @@ MpvqcDialog {
             id: _stepIndicator
             objectName: "stepIndicator"
 
-            stepKinds: root.viewModel.stepKinds
+            steps: root.viewModel.steps
             currentStepIndex: root.viewModel.currentStepIndex
             visible: root.viewModel.showStepIndicator
 

@@ -19,8 +19,13 @@ from mpvqc.importing.domain import (
     VideoSource,
     VideoUnresolved,
 )
-from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection, MpvqcImportWizardSessionMode
+from mpvqc.importing.enums import (
+    MpvqcImportWizardNavigationDirection,
+    MpvqcImportWizardSessionMode,
+    MpvqcImportWizardStepKind,
+)
 from mpvqc.importing.viewmodels import (
+    MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
     MpvqcImportWizardSubtitlesStepViewModel,
     MpvqcImportWizardVideoStepViewModel,
@@ -43,6 +48,7 @@ from test.importing.plans import (
 
 NavigationDirection = MpvqcImportWizardNavigationDirection.NavigationDirection
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
+StepKind = MpvqcImportWizardStepKind.StepKind
 
 ERRORS_ONLY = plan_with(errors=PRESENT_ERRORS)
 ERRORS_THEN_VIDEO = plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO)
@@ -114,45 +120,53 @@ def test_the_footer_follows_the_current_step(qt_app) -> None:
     assert view_model.showBack is True
 
 
-class BuiltSteps(NamedTuple):
-    errors: bool
-    session: bool
-    video: bool
-    subtitles: bool
+STEP_VIEW_MODEL_BY_KIND = {
+    StepKind.ERRORS: MpvqcImportWizardErrorsStepViewModel,
+    StepKind.SESSION: MpvqcImportWizardSessionStepViewModel,
+    StepKind.VIDEO: MpvqcImportWizardVideoStepViewModel,
+    StepKind.SUBTITLES: MpvqcImportWizardSubtitlesStepViewModel,
+}
 
 
-class StepViewModelCase(NamedTuple):
+class StepsCase(NamedTuple):
     name: str
     plan: UnfinishedPlan
-    expected: BuiltSteps
+    expected_kinds: list[StepKind]
 
 
-STEP_VIEW_MODEL_CASES = [
-    StepViewModelCase(
-        name="every step routes to its own view model",
+STEPS_CASES = [
+    StepsCase(
+        name="every step appears as its own view model, in step order",
         plan=ALL_UNRESOLVED,
-        expected=BuiltSteps(errors=True, session=True, video=True, subtitles=True),
+        expected_kinds=[StepKind.ERRORS, StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES],
     ),
-    StepViewModelCase(
-        name="a step the wizard does not show stays unbuilt",
+    StepsCase(
+        name="a step the wizard does not show is absent from the list",
         plan=ERRORS_ONLY,
-        expected=BuiltSteps(errors=True, session=False, video=False, subtitles=False),
+        expected_kinds=[StepKind.ERRORS],
     ),
 ]
 
 
-@pytest.mark.parametrize("case", STEP_VIEW_MODEL_CASES, ids=lambda c: c.name)
-def test_builds_only_the_step_view_models_the_wizard_shows(qt_app, case: StepViewModelCase) -> None:
+@pytest.mark.parametrize("case", STEPS_CASES, ids=lambda c: c.name)
+def test_steps_hold_one_view_model_per_wizard_step(qt_app, case: StepsCase) -> None:
+    # Held for the whole test: the steps are parented to the wizard, and a collected wizard takes them with it.
     view_model = make_wizard(case.plan).view_model
+    steps = view_model.property("steps")
 
-    built = BuiltSteps(
-        errors=view_model.errorsStepViewModel is not None,
-        session=view_model.sessionStepViewModel is not None,
-        video=view_model.videoStepViewModel is not None,
-        subtitles=view_model.subtitlesStepViewModel is not None,
-    )
+    assert [step.kind for step in steps] == case.expected_kinds
+    assert [type(step) for step in steps] == [STEP_VIEW_MODEL_BY_KIND[kind] for kind in case.expected_kinds]
 
-    assert built == case.expected
+
+def test_each_step_carries_its_indicator_label(qt_app) -> None:
+    view_model = make_wizard(ALL_UNRESOLVED).view_model
+
+    assert [step.property("indicatorLabel") for step in view_model.property("steps")] == [
+        "Errors",
+        "Session",
+        "Video",
+        "Subtitles",
+    ]
 
 
 def test_primary_click_advances_while_steps_remain(qt_app, make_spy) -> None:

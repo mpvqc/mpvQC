@@ -8,13 +8,12 @@ import QtQuick
 import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Components
-import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 Item {
     id: root
 
-    required property var stepKinds
+    required property var steps
     required property int currentStepIndex
     readonly property int glyphSize: 20
     readonly property int fadeWidth: 96
@@ -39,7 +38,7 @@ Item {
         interactive: false
         boundsBehavior: Flickable.StopAtBounds
 
-        model: root.stepKinds
+        model: root.steps
 
         currentIndex: root.currentStepIndex
         highlight: Item {}
@@ -53,9 +52,9 @@ Item {
             id: _entry
 
             required property int index
-            required property int modelData
+            required property var modelData
 
-            readonly property bool isLast: _entry.index === root.stepKinds.length - 1
+            readonly property bool isLast: _entry.index === root.steps.length - 1
             readonly property bool isCompleted: _entry.index < root.currentStepIndex
             readonly property bool isCurrent: _entry.index === root.currentStepIndex
 
@@ -89,23 +88,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
 
                         horizontalAlignment: Text.AlignLeft
-                        text: {
-                            switch (_entry.modelData) {
-                            case MpvqcImportWizardStepKind.StepKind.ERRORS:
-                                //: Step indicator label for the errors step
-                                return qsTranslate("ImportWizardDialog", "Errors");
-                            case MpvqcImportWizardStepKind.StepKind.SESSION:
-                                //: Step indicator label for the session step
-                                return qsTranslate("ImportWizardDialog", "Session");
-                            case MpvqcImportWizardStepKind.StepKind.VIDEO:
-                                //: Step indicator label for the video step
-                                return qsTranslate("ImportWizardDialog", "Video");
-                            case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
-                                //: Step indicator label for the subtitles step
-                                return qsTranslate("ImportWizardDialog", "Subtitles");
-                            }
-                            return "";
-                        }
+                        text: _entry.modelData.indicatorLabel
                     }
                 }
 

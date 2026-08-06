@@ -50,23 +50,28 @@ class MpvqcImportWizardViewModel(QObject):
         self._pending = pending
         self._state = make_wizard_state(pending.plan)
 
-        self._errors_step: MpvqcImportWizardErrorsStepViewModel | None = None
         self._session_step: MpvqcImportWizardSessionStepViewModel | None = None
         self._video_step: MpvqcImportWizardVideoStepViewModel | None = None
         self._subtitles_step: MpvqcImportWizardSubtitlesStepViewModel | None = None
 
+        step_view_models: list[QObject] = []
         for step in self._state.steps:
             match step:
                 case ErrorsStep():
-                    self._errors_step = MpvqcImportWizardErrorsStepViewModel(self, step.errors)
+                    step_view_models.append(MpvqcImportWizardErrorsStepViewModel(self, step.errors))
                 case SessionStep():
                     self._session_step = MpvqcImportWizardSessionStepViewModel(self, step.session)
+                    step_view_models.append(self._session_step)
                 case VideoStep():
                     self._video_step = MpvqcImportWizardVideoStepViewModel(self, step.video)
+                    step_view_models.append(self._video_step)
                 case SubtitlesStep():
                     self._subtitles_step = MpvqcImportWizardSubtitlesStepViewModel(self, step.subtitles)
+                    step_view_models.append(self._subtitles_step)
                 case _:
                     assert_never(step)
+
+        self._steps = tuple(step_view_models)
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepIndex(self) -> int:
@@ -77,8 +82,8 @@ class MpvqcImportWizardViewModel(QObject):
         self._move_to(self._state.jump_to(value))
 
     @Property(list, constant=True, final=True)
-    def stepKinds(self) -> list[int]:
-        return [int(kind) for kind in self._state.step_kinds]
+    def steps(self) -> list[QObject]:
+        return list(self._steps)
 
     @Property(str, constant=True, final=True)
     def title(self) -> str:
@@ -103,22 +108,6 @@ class MpvqcImportWizardViewModel(QObject):
     @Property(bool, constant=True, final=True)
     def showStepIndicator(self) -> bool:
         return self._state.multi_step
-
-    @Property(MpvqcImportWizardErrorsStepViewModel, constant=True, final=True)
-    def errorsStepViewModel(self) -> MpvqcImportWizardErrorsStepViewModel | None:
-        return self._errors_step
-
-    @Property(MpvqcImportWizardSessionStepViewModel, constant=True, final=True)
-    def sessionStepViewModel(self) -> MpvqcImportWizardSessionStepViewModel | None:
-        return self._session_step
-
-    @Property(MpvqcImportWizardVideoStepViewModel, constant=True, final=True)
-    def videoStepViewModel(self) -> MpvqcImportWizardVideoStepViewModel | None:
-        return self._video_step
-
-    @Property(MpvqcImportWizardSubtitlesStepViewModel, constant=True, final=True)
-    def subtitlesStepViewModel(self) -> MpvqcImportWizardSubtitlesStepViewModel | None:
-        return self._subtitles_step
 
     @Slot()
     def next(self) -> None:

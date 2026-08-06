@@ -157,7 +157,9 @@ TestCase {
 
         function sessionMode(dlg: QtObject, mode: string): void {
             const expected = mode === "replace" ? MpvqcImportWizardSessionMode.SessionMode.REPLACE : MpvqcImportWizardSessionMode.SessionMode.MERGE;
-            testCase.tryCompare(dlg.viewModel.sessionStepViewModel, "mode", expected);
+            const sessionStep = dlg.viewModel.steps.find(step => step.kind === MpvqcImportWizardStepKind.StepKind.SESSION);
+            testCase.verify(sessionStep, "session step not found");
+            testCase.tryCompare(sessionStep, "mode", expected);
             const radio = testCase.find.sessionRadio(dlg, mode);
             testCase.tryVerify(() => radio.selected === true);
         }

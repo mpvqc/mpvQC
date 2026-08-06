@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import assert_never
 
-from PySide6.QtCore import Property, QAbstractItemModel, QObject, Qt, Signal, Slot
+from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import (
@@ -24,7 +24,7 @@ from mpvqc.importing.domain import (
     VideoSkip,
     VideoUnresolved,
 )
-from mpvqc.importing.enums import MpvqcImportWizardSessionMode
+from mpvqc.importing.enums import MpvqcImportWizardSessionMode, MpvqcImportWizardStepKind
 from mpvqc.importing.models import ErrorsModel, SubtitlesModel, VideosModel
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -37,6 +37,15 @@ class MpvqcImportWizardErrorsStepViewModel(QObject):
     def __init__(self, parent: QObject, inputs: ErrorsPresent) -> None:
         super().__init__(parent)
         self._documents = ErrorsModel(inputs.rejected_documents)
+
+    @Property(int, constant=True, final=True)
+    def kind(self) -> int:
+        return MpvqcImportWizardStepKind.StepKind.ERRORS
+
+    @Property(str, constant=True, final=True)
+    def indicatorLabel(self) -> str:
+        #: Step indicator label for the errors step
+        return QCoreApplication.translate("ImportWizardDialog", "Errors")
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def documents(self) -> ErrorsModel:
@@ -52,6 +61,15 @@ class MpvqcImportWizardSessionStepViewModel(QObject):
         super().__init__(parent)
         self._incoming_comment_count = inputs.incoming_comment_count
         self._resolved: SessionResolved = SessionMerge()
+
+    @Property(int, constant=True, final=True)
+    def kind(self) -> int:
+        return MpvqcImportWizardStepKind.StepKind.SESSION
+
+    @Property(str, constant=True, final=True)
+    def indicatorLabel(self) -> str:
+        #: Step indicator label for the session step
+        return QCoreApplication.translate("ImportWizardDialog", "Session")
 
     @property
     def resolved(self) -> SessionResolved:
@@ -110,6 +128,15 @@ class MpvqcImportWizardVideoStepViewModel(QObject):
         self._candidates = VideosModel(inputs.candidates)
         self._selected_index = 0
 
+    @Property(int, constant=True, final=True)
+    def kind(self) -> int:
+        return MpvqcImportWizardStepKind.StepKind.VIDEO
+
+    @Property(str, constant=True, final=True)
+    def indicatorLabel(self) -> str:
+        #: Step indicator label for the video step
+        return QCoreApplication.translate("ImportWizardDialog", "Video")
+
     @Property(QAbstractItemModel, constant=True, final=True)
     def candidates(self) -> VideosModel:
         return self._candidates
@@ -141,6 +168,15 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
         super().__init__(parent)
         self._subtitles = SubtitlesModel(inputs.candidates)
         self._subtitles.dataChanged.connect(self._emit_tri_state_changed)
+
+    @Property(int, constant=True, final=True)
+    def kind(self) -> int:
+        return MpvqcImportWizardStepKind.StepKind.SUBTITLES
+
+    @Property(str, constant=True, final=True)
+    def indicatorLabel(self) -> str:
+        #: Step indicator label for the subtitles step
+        return QCoreApplication.translate("ImportWizardDialog", "Subtitles")
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def subtitles(self) -> SubtitlesModel:

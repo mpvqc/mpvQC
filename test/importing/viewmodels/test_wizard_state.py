@@ -9,13 +9,13 @@ from typing import TYPE_CHECKING, NamedTuple
 import pytest
 
 from mpvqc.importing.domain import ErrorsPresent, SubtitlesLoad, UnfinishedPlan, VideoLoad
+from mpvqc.importing.enums import MpvqcImportWizardStepKind
 from mpvqc.importing.viewmodels import (
     ErrorsStep,
     FooterState,
     PrimaryAction,
     PrimaryLabel,
     SessionStep,
-    StepKind,
     SubtitlesStep,
     VideoStep,
     WizardState,
@@ -35,6 +35,8 @@ from test.importing.plans import (
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+StepKind = MpvqcImportWizardStepKind.StepKind
 
 
 def test_steps_carry_the_unresolved_data_in_canonical_order() -> None:

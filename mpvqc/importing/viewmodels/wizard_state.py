@@ -16,16 +16,10 @@ from mpvqc.importing.domain import (
     VideoLoad,
     VideoUnresolved,
 )
+from mpvqc.importing.enums import MpvqcImportWizardStepKind
 
 if TYPE_CHECKING:
     from mpvqc.importing.domain import UnfinishedPlan
-
-
-class StepKind(IntEnum):
-    ERRORS = auto()
-    SESSION = auto()
-    VIDEO = auto()
-    SUBTITLES = auto()
 
 
 class PrimaryLabel(IntEnum):
@@ -51,25 +45,25 @@ class FooterState:
 
 @dataclass(frozen=True, slots=True)
 class ErrorsStep:
-    kind: ClassVar[StepKind] = StepKind.ERRORS
+    kind: ClassVar[MpvqcImportWizardStepKind.StepKind] = MpvqcImportWizardStepKind.StepKind.ERRORS
     errors: ErrorsPresent
 
 
 @dataclass(frozen=True, slots=True)
 class SessionStep:
-    kind: ClassVar[StepKind] = StepKind.SESSION
+    kind: ClassVar[MpvqcImportWizardStepKind.StepKind] = MpvqcImportWizardStepKind.StepKind.SESSION
     session: SessionUnresolved
 
 
 @dataclass(frozen=True, slots=True)
 class VideoStep:
-    kind: ClassVar[StepKind] = StepKind.VIDEO
+    kind: ClassVar[MpvqcImportWizardStepKind.StepKind] = MpvqcImportWizardStepKind.StepKind.VIDEO
     video: VideoUnresolved
 
 
 @dataclass(frozen=True, slots=True)
 class SubtitlesStep:
-    kind: ClassVar[StepKind] = StepKind.SUBTITLES
+    kind: ClassVar[MpvqcImportWizardStepKind.StepKind] = MpvqcImportWizardStepKind.StepKind.SUBTITLES
     subtitles: SubtitlesUnresolved
 
 
@@ -87,7 +81,7 @@ class WizardState:
         return self.steps[self.current_index]
 
     @property
-    def step_kinds(self) -> tuple[StepKind, ...]:
+    def step_kinds(self) -> tuple[MpvqcImportWizardStepKind.StepKind, ...]:
         return tuple(step.kind for step in self.steps)
 
     @property
@@ -132,7 +126,7 @@ def _derive_steps(unfinished_plan: UnfinishedPlan) -> tuple[WizardStep, ...]:
 
 
 def _is_close_only(state: WizardState) -> bool:
-    return state.step_kinds == (StepKind.ERRORS,) and not _has_valid_content(state.plan)
+    return state.step_kinds == (MpvqcImportWizardStepKind.StepKind.ERRORS,) and not _has_valid_content(state.plan)
 
 
 def _compute_footer_state(state: WizardState) -> FooterState:

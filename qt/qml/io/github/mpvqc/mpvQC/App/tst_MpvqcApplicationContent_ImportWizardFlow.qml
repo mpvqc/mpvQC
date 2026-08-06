@@ -130,7 +130,7 @@ TestCase {
         it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument(), it.bridge.importArtifact("subtitle_basic.ass")]);
 
         const wizard = it.wizard.opened(control);
-        compare(wizard.viewModel.stepKinds.length, 1, "explicit sub should bypass Subtitles step");
+        compare(wizard.viewModel.steps.length, 1, "explicit sub should bypass Subtitles step");
 
         it.wizard.clickPrimary(wizard);
         tryVerify(() => !wizard.opened);
@@ -147,12 +147,12 @@ TestCase {
         it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument()]);
 
         const wizard = it.wizard.opened(control);
-        compare(wizard.viewModel.stepKinds.length, 1);
+        compare(wizard.viewModel.steps.length, 1);
 
         it.imports.dropFiles(control, [it.bridge.importComplexDocument()]);
 
         verify(wizard.opened, "wizard should remain open");
-        compare(wizard.viewModel.stepKinds.length, 1, "second drop should not replace wizard");
+        compare(wizard.viewModel.steps.length, 1, "second drop should not replace wizard");
     }
 
     function test_nativeClose_dismissesAndFreesTheNextImport(): void {
@@ -162,14 +162,14 @@ TestCase {
         it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument()]);
 
         const firstWizard = it.wizard.opened(control);
-        compare(firstWizard.viewModel.stepKinds.length, 1);
+        compare(firstWizard.viewModel.steps.length, 1);
         firstWizard.reject();
         tryVerify(() => !dialogLoader.active);
 
         it.imports.dropFiles(control, [it.bridge.importComplexDocument()]);
 
         const secondWizard = it.wizard.opened(control);
-        compare(secondWizard.viewModel.stepKinds.length, 2, "second wizard should reflect complex doc");
+        compare(secondWizard.viewModel.steps.length, 2, "second wizard should reflect complex doc");
     }
 
     function test_invalidDocument_opensCloseOnlyWizard(): void {
