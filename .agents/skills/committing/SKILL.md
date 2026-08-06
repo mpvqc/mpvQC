@@ -16,6 +16,10 @@ already tracks is read whether or not its changes are staged.
 Leave everything else where it is. The tree can hold new or already-staged files belonging to other work, and they
 stay out of this commit.
 
+Now run `just build-develop`. It rewrites the pyside6 project file list in `pyproject.toml` from what is on disk, and
+nothing else does: a file this change adds, removes, or renames leaves that list stale, and nothing warns. The rewrite
+belongs in this commit. It has to run before the formatter, which is what formats the list it wrote.
+
 Then run `just fmt`. It has to come back clean, not merely run. It works over the whole repo and several of its hooks
 rewrite files in place, so check what it touched: a fix that lands outside this change is someone else's, and it stays
 out of the commit too.
@@ -62,6 +66,7 @@ When a larger chunk of work is done, offer to push, and to write the manual chec
 ## Done when
 
 - The new files this change brings are added, and nothing else is.
+- `just build-develop` ran, and the file list it rewrote in `pyproject.toml` is in the commit.
 - `just fmt` came back clean, and whatever it rewrote outside this change stayed out of the commit.
 - Each doc in the table that the change reaches now describes what the code does.
 - The message claims only what was verified, in everyday words, and names no culprit.
