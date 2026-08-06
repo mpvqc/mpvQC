@@ -2,12 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from enum import IntEnum
+from enum import IntEnum, auto
 
 from PySide6.QtCore import QEnum, QObject
 from PySide6.QtQml import QmlElement
-
-from mpvqc.importing import domain
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportWizardStepKind(QObject):
     @QEnum
     class StepKind(IntEnum):
-        ERRORS = domain.StepKind.ERRORS
-        SESSION = domain.StepKind.SESSION
-        VIDEO = domain.StepKind.VIDEO
-        SUBTITLES = domain.StepKind.SUBTITLES
+        ERRORS = auto()
+        SESSION = auto()
+        VIDEO = auto()
+        SUBTITLES = auto()

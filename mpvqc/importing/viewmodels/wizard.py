@@ -10,18 +10,18 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.domain import finish_plan
+from mpvqc.importing.services import ImporterService
+
+from .wizard_state import (
     ErrorsStep,
     PrimaryAction,
     PrimaryLabel,
     SessionStep,
     SubtitlesStep,
     VideoStep,
-    finish_plan,
     make_wizard_state,
 )
-from mpvqc.importing.services import ImporterService
-
 from .wizard_steps import (
     MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
@@ -30,7 +30,9 @@ from .wizard_steps import (
 )
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import UnfinishedPlan, WizardState
+    from mpvqc.importing.domain import UnfinishedPlan
+
+    from .wizard_state import WizardState
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

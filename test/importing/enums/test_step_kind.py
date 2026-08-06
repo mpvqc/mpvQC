@@ -4,11 +4,11 @@
 
 from __future__ import annotations
 
-from mpvqc.importing.domain import StepKind
 from mpvqc.importing.enums import MpvqcImportWizardStepKind
+from mpvqc.importing.viewmodels.wizard_state import StepKind
 
 
-def test_step_kind_covers_the_domain_enum() -> None:
+def test_step_kind_covers_the_wizard_state_enum() -> None:
     assert [(member.name, member.value) for member in MpvqcImportWizardStepKind.StepKind] == [
         (member.name, member.value) for member in StepKind
     ]

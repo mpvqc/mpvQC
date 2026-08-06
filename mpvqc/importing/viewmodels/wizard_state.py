@@ -8,10 +8,17 @@ from dataclasses import dataclass, replace
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING, ClassVar
 
-from .plan import ErrorsPresent, SessionUnresolved, SubtitlesLoad, SubtitlesUnresolved, VideoLoad, VideoUnresolved
+from mpvqc.importing.domain import (
+    ErrorsPresent,
+    SessionUnresolved,
+    SubtitlesLoad,
+    SubtitlesUnresolved,
+    VideoLoad,
+    VideoUnresolved,
+)
 
 if TYPE_CHECKING:
-    from .plan import UnfinishedPlan
+    from mpvqc.importing.domain import UnfinishedPlan
 
 
 class StepKind(IntEnum):
