@@ -14,6 +14,7 @@ from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     FinishedPlan,
     LoadFoundVideo,
+    PendingImport,
     SessionMerge,
     SessionReplace,
     SubtitlesLoad,
@@ -301,7 +302,7 @@ def test_open_without_comments_imports_nothing(
     comments_service_mock.import_comments.assert_not_called()
 
 
-def test_open_hands_a_plan_needing_decisions_to_the_wizard(
+def test_open_announces_a_pending_import_for_a_plan_needing_decisions(
     qt_app,
     manual_executor: ManualJobExecutor,
     make_importer,
@@ -309,14 +310,19 @@ def test_open_hands_a_plan_needing_decisions_to_the_wizard(
     player_service_mock: MagicMock,
 ) -> None:
     service = make_importer(NEEDS_A_VIDEO_CHOICE)
-    spy = make_spy(service.unfinished_plan_ready)
+    spy = make_spy(service.pending_import_ready)
 
     service.open([], [], [])
     manual_executor.drain()
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NEEDS_A_VIDEO_CHOICE
+    assert spy.at(invocation=0, argument=0).plan == NEEDS_A_VIDEO_CHOICE
     player_service_mock.open_media.assert_not_called()
+
+
+class AnnouncedImport(NamedTuple):
+    service: ImporterService
+    pending: PendingImport
 
 
 @pytest.fixture
@@ -324,71 +330,60 @@ def pending_importer(
     qt_app,
     manual_executor: ManualJobExecutor,
     make_importer: Callable[[FinishedPlan | UnfinishedPlan], ImporterService],
-) -> ImporterService:
+    make_spy,
+) -> AnnouncedImport:
     service = make_importer(NEEDS_A_VIDEO_CHOICE)
+    spy = make_spy(service.pending_import_ready)
     service.open([], [], [])
     manual_executor.drain()
-    return service
+    return AnnouncedImport(service, spy.at(invocation=0, argument=0))
 
 
-def test_finish_pending_resolves_the_plan_with_the_answers_it_is_given(
-    pending_importer: ImporterService,
+def test_finishing_the_announced_import_executes_the_resolved_plan(
+    pending_importer: AnnouncedImport,
     player_service_mock: MagicMock,
 ) -> None:
-    pending_importer.finish_pending(video=VideoLoad(path=VIDEO_A))
+    pending_importer.pending.finish(video=VideoLoad(path=VIDEO_A))
 
     player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
 
 
 def test_dismiss_after_finish_changes_nothing(
-    pending_importer: ImporterService,
+    pending_importer: AnnouncedImport,
     manual_executor: ManualJobExecutor,
     make_spy,
     player_service_mock: MagicMock,
 ) -> None:
     # One close both finishes and dismisses, so the trailing dismissal must neither undo the import nor latch.
-    pending_importer.finish_pending(video=VideoLoad(path=VIDEO_A))
-    pending_importer.dismiss_pending()
-    spy = make_spy(pending_importer.unfinished_plan_ready)
+    pending_importer.pending.finish(video=VideoLoad(path=VIDEO_A))
+    pending_importer.pending.dismiss()
+    spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.open([], [], [])
+    pending_importer.service.open([], [], [])
     manual_executor.drain()
 
     player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
     assert spy.count() == 1
 
 
-def test_finishing_without_a_pending_import_is_logged(
-    pending_importer: ImporterService,
-    player_service_mock: MagicMock,
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    pending_importer.dismiss_pending()
-
-    pending_importer.finish_pending(video=VideoLoad(path=VIDEO_A))
-
-    player_service_mock.open_media.assert_not_called()
-    assert "no import is pending" in caplog.text
-
-
 def test_dismiss_never_reaches_the_player(
-    pending_importer: ImporterService,
+    pending_importer: AnnouncedImport,
     player_service_mock: MagicMock,
 ) -> None:
-    pending_importer.dismiss_pending()
+    pending_importer.pending.dismiss()
 
     player_service_mock.open_media.assert_not_called()
 
 
 def test_a_second_open_while_a_decision_is_pending_is_dropped(
-    pending_importer: ImporterService,
+    pending_importer: AnnouncedImport,
     manual_executor: ManualJobExecutor,
     make_spy,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    spy = make_spy(pending_importer.unfinished_plan_ready)
+    spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.open([], [], [])
+    pending_importer.service.open([], [], [])
     manual_executor.drain()
 
     assert spy.count() == 0
@@ -396,46 +391,45 @@ def test_a_second_open_while_a_decision_is_pending_is_dropped(
 
 
 def test_an_open_after_a_finish_proceeds(
-    pending_importer: ImporterService,
+    pending_importer: AnnouncedImport,
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    pending_importer.finish_pending(video=VideoSkip())
-    spy = make_spy(pending_importer.unfinished_plan_ready)
+    pending_importer.pending.finish(video=VideoSkip())
+    spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.open([], [], [])
+    pending_importer.service.open([], [], [])
     manual_executor.drain()
 
     assert spy.count() == 1
 
 
 def test_an_open_after_a_dismissal_proceeds(
-    pending_importer: ImporterService,
+    pending_importer: AnnouncedImport,
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    pending_importer.dismiss_pending()
-    spy = make_spy(pending_importer.unfinished_plan_ready)
+    pending_importer.pending.dismiss()
+    spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.open([], [], [])
+    pending_importer.service.open([], [], [])
     manual_executor.drain()
 
     assert spy.count() == 1
 
 
-def test_dismiss_with_nothing_pending_leaves_a_running_scan_alone(
-    qt_app,
+def test_a_late_dismissal_leaves_a_running_scan_alone(
+    pending_importer: AnnouncedImport,
     manual_executor: ManualJobExecutor,
-    make_importer,
     make_spy,
 ) -> None:
-    service = make_importer(NEEDS_A_VIDEO_CHOICE)
-    spy = make_spy(service.unfinished_plan_ready)
-    # The scan is queued but undrained, so the importer is Scanning with nothing to dismiss yet.
-    service.open([], [], [])
+    pending_importer.pending.dismiss()
+    spy = make_spy(pending_importer.service.pending_import_ready)
+    # The next scan is queued but undrained, so it is still in flight when the duplicate dismissal arrives.
+    pending_importer.service.open([], [], [])
 
-    service.dismiss_pending()
-    service.open([], [], [])
+    pending_importer.pending.dismiss()
+    pending_importer.service.open([], [], [])
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -458,7 +452,7 @@ def test_open_recovers_when_the_scan_raises(
         return NEEDS_A_VIDEO_CHOICE
 
     service = ImporterService(manual_executor, plan=explode_once)
-    spy = make_spy(service.unfinished_plan_ready)
+    spy = make_spy(service.pending_import_ready)
 
     service.open([], [], [])
     manual_executor.drain()

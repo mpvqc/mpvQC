@@ -10,9 +10,10 @@ import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 
-from mpvqc.importing.domain import UnfinishedPlan
+from mpvqc.importing.domain import PendingImport
 from mpvqc.importing.services import ImporterService
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
+from test.importing.pending import record_pending
 from test.importing.plans import PRESENT_ERRORS, plan_with
 
 NEEDS_A_DECISION = plan_with(errors=PRESENT_ERRORS)
@@ -20,7 +21,7 @@ NEEDS_A_DECISION = plan_with(errors=PRESENT_ERRORS)
 
 class ImporterSignals(QObject):
     # A MagicMock cannot carry a Qt signal, so the substituted importer borrows a real one from here.
-    unfinished_plan_ready = Signal(UnfinishedPlan)
+    pending_import_ready = Signal(PendingImport)
 
 
 @pytest.fixture
@@ -31,7 +32,7 @@ def importer_signals(qt_app) -> ImporterSignals:
 @pytest.fixture
 def importer_service_mock(importer_signals) -> MagicMock:
     service = MagicMock(spec_set=ImporterService)
-    service.unfinished_plan_ready = importer_signals.unfinished_plan_ready
+    service.pending_import_ready = importer_signals.pending_import_ready
     return service
 
 
@@ -55,14 +56,15 @@ def _assert_view_model_collected(ref: weakref.ref) -> None:
     assert ref() is None
 
 
-def test_requests_a_wizard_for_a_plan_with_decisions(relay, importer_service_mock, make_spy):
+def test_requests_a_wizard_for_a_pending_import(relay, importer_service_mock, make_spy):
+    setup = record_pending(NEEDS_A_DECISION)
     spy = make_spy(relay.importWizardRequested)
 
-    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
+    importer_service_mock.pending_import_ready.emit(setup.pending)
 
     assert spy.count() == 1
     assert isinstance(spy.at(invocation=0, argument=0), MpvqcImportWizardViewModel)
-    importer_service_mock.dismiss_pending.assert_not_called()
+    assert setup.dismissals == []
 
 
 def test_releases_the_wizard_view_model(relay, importer_service_mock):
@@ -70,22 +72,27 @@ def test_releases_the_wizard_view_model(relay, importer_service_mock):
     captured: list[weakref.ref] = []
     relay.importWizardRequested.connect(lambda view_model: captured.append(weakref.ref(view_model)))
 
-    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
+    importer_service_mock.pending_import_ready.emit(record_pending(NEEDS_A_DECISION).pending)
     relay.releaseWizardViewModel()
 
     _assert_view_model_collected(captured[0])
 
 
 def test_release_dismisses_the_pending_import(relay, importer_service_mock):
-    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
+    setup = record_pending(NEEDS_A_DECISION)
+    importer_service_mock.pending_import_ready.emit(setup.pending)
 
     relay.releaseWizardViewModel()
 
-    importer_service_mock.dismiss_pending.assert_called_once_with()
+    assert setup.dismissals == [True]
 
 
-def test_release_without_a_wizard_open_still_dismisses(relay, importer_service_mock):
+def test_a_second_release_forwards_nothing(relay, importer_service_mock):
     # The app shell releases from a close handler every dialog shares, so most releases meet no wizard.
+    setup = record_pending(NEEDS_A_DECISION)
+    importer_service_mock.pending_import_ready.emit(setup.pending)
+
+    relay.releaseWizardViewModel()
     relay.releaseWizardViewModel()
 
-    importer_service_mock.dismiss_pending.assert_called_once_with()
+    assert setup.dismissals == [True]

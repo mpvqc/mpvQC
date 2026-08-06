@@ -3,15 +3,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from typing import NamedTuple
-from unittest.mock import MagicMock
 
-import inject
 import pytest
 from PySide6.QtCore import QObject
 
 from mpvqc.importing.domain import (
+    FinishedPlan,
+    SessionMerge,
     SessionReplace,
     SubtitlesLoad,
+    SubtitlesSkip,
     SubtitlesUnresolved,
     UnfinishedPlan,
     VideoLoad,
@@ -19,13 +20,13 @@ from mpvqc.importing.domain import (
     VideoUnresolved,
 )
 from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection, MpvqcImportWizardSessionMode
-from mpvqc.importing.services import ImporterService
 from mpvqc.importing.viewmodels import (
     MpvqcImportWizardSessionStepViewModel,
     MpvqcImportWizardSubtitlesStepViewModel,
     MpvqcImportWizardVideoStepViewModel,
     MpvqcImportWizardViewModel,
 )
+from test.importing.pending import record_pending
 from test.importing.plans import (
     ALL_UNRESOLVED,
     COMMENT,
@@ -50,17 +51,15 @@ VIDEO_WITH_COMMENTS = plan_with(comments=(COMMENT,), video=UNRESOLVED_VIDEO)
 THREE_STEPS = plan_with(errors=PRESENT_ERRORS, session=UNRESOLVED_SESSION, video=UNRESOLVED_VIDEO)
 
 
-@pytest.fixture
-def importer_service_mock() -> MagicMock:
-    return MagicMock(spec_set=ImporterService)
+class WizardSetup(NamedTuple):
+    view_model: MpvqcImportWizardViewModel
+    finished: list[FinishedPlan]
+    dismissals: list[bool]
 
 
-@pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, importer_service_mock):
-    def custom(binder: inject.Binder):
-        binder.bind(ImporterService, importer_service_mock)
-
-    common_bindings_with(custom)
+def make_wizard(plan: UnfinishedPlan) -> WizardSetup:
+    recorded = record_pending(plan)
+    return WizardSetup(MpvqcImportWizardViewModel(None, recorded.pending), recorded.finished, recorded.dismissals)
 
 
 class PrimaryLabelCase(NamedTuple):
@@ -95,16 +94,16 @@ PRIMARY_LABEL_CASES = [
 
 @pytest.mark.parametrize("case", PRIMARY_LABEL_CASES, ids=lambda c: c.name)
 def test_each_primary_label_maps_to_its_text(qt_app, case: PrimaryLabelCase) -> None:
-    assert MpvqcImportWizardViewModel(None, case.plan).primaryLabel == case.expected
+    assert make_wizard(case.plan).view_model.primaryLabel == case.expected
 
 
 def test_the_title_follows_close_only(qt_app) -> None:
-    assert MpvqcImportWizardViewModel(None, ERRORS_ONLY).title == "Import Error"
-    assert MpvqcImportWizardViewModel(None, VIDEO_ONLY).title == "Confirm Import"
+    assert make_wizard(ERRORS_ONLY).view_model.title == "Import Error"
+    assert make_wizard(VIDEO_ONLY).view_model.title == "Confirm Import"
 
 
 def test_the_footer_follows_the_current_step(qt_app) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     assert view_model.primaryLabel == "Next"
     assert view_model.showBack is False
     assert view_model.showCancel is True
@@ -144,7 +143,7 @@ STEP_VIEW_MODEL_CASES = [
 
 @pytest.mark.parametrize("case", STEP_VIEW_MODEL_CASES, ids=lambda c: c.name)
 def test_builds_only_the_step_view_models_the_wizard_shows(qt_app, case: StepViewModelCase) -> None:
-    view_model = MpvqcImportWizardViewModel(None, case.plan)
+    view_model = make_wizard(case.plan).view_model
 
     built = BuiltSteps(
         errors=view_model.errorsStepViewModel is not None,
@@ -156,77 +155,89 @@ def test_builds_only_the_step_view_models_the_wizard_shows(qt_app, case: StepVie
     assert built == case.expected
 
 
-def test_primary_click_advances_while_steps_remain(qt_app, importer_service_mock, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
-    accept_spy = make_spy(view_model.acceptRequested)
-    reject_spy = make_spy(view_model.rejectRequested)
+def test_primary_click_advances_while_steps_remain(qt_app, make_spy) -> None:
+    setup = make_wizard(ERRORS_THEN_VIDEO)
+    accept_spy = make_spy(setup.view_model.acceptRequested)
+    reject_spy = make_spy(setup.view_model.rejectRequested)
 
-    view_model.primaryClicked()
+    setup.view_model.primaryClicked()
 
-    assert view_model.currentStepIndex == 1
+    assert setup.view_model.currentStepIndex == 1
     assert accept_spy.count() == 0
     assert reject_spy.count() == 0
-    importer_service_mock.finish_pending.assert_not_called()
+    assert setup.finished == []
 
 
-def test_primary_click_accepts_on_the_last_step(qt_app, importer_service_mock, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, VIDEO_WITH_COMMENTS)
-    accept_spy = make_spy(view_model.acceptRequested)
-    reject_spy = make_spy(view_model.rejectRequested)
+def test_primary_click_accepts_on_the_last_step(qt_app, make_spy) -> None:
+    setup = make_wizard(VIDEO_WITH_COMMENTS)
+    accept_spy = make_spy(setup.view_model.acceptRequested)
+    reject_spy = make_spy(setup.view_model.rejectRequested)
 
-    view_model.primaryClicked()
+    setup.view_model.primaryClicked()
 
     assert accept_spy.count() == 1
     assert reject_spy.count() == 0
-    # Session and subtitles never got a step, so the wizard has no answer to report for them.
-    importer_service_mock.finish_pending.assert_called_once_with(
-        session=None,
-        video=VideoLoad(path=VIDEO_A),
-        subtitles=None,
-    )
+    # The dialog's accepted handler reports the outcome, so the click itself delivers nothing.
+    assert setup.finished == []
+    assert setup.dismissals == []
 
 
-def test_accepting_reports_before_it_asks_the_dialog_to_close(qt_app, importer_service_mock) -> None:
-    # The close runs the app shell's dismissal, and on Windows it runs inside this emit: a report that came
-    # afterwards would meet an importer with nothing pending, and the confirmed import would be dropped.
-    view_model = MpvqcImportWizardViewModel(None, VIDEO_WITH_COMMENTS)
-    reported_by_close: list[bool] = []
-    view_model.acceptRequested.connect(lambda: reported_by_close.append(importer_service_mock.finish_pending.called))
+def test_finish_delivers_the_resolved_plan(qt_app) -> None:
+    setup = make_wizard(VIDEO_WITH_COMMENTS)
 
-    view_model.primaryClicked()
+    setup.view_model.finish()
 
-    assert reported_by_close == [True]
+    assert setup.finished == [
+        FinishedPlan(
+            comments=(COMMENT,),
+            session=SessionMerge(),
+            video=VideoLoad(path=VIDEO_A),
+            subtitles=SubtitlesSkip(),
+        )
+    ]
+    assert setup.dismissals == []
 
 
-def test_primary_click_rejects_when_the_wizard_only_closes(qt_app, importer_service_mock, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_ONLY)
-    accept_spy = make_spy(view_model.acceptRequested)
-    reject_spy = make_spy(view_model.rejectRequested)
+def test_dismiss_delivers_the_dismissal(qt_app) -> None:
+    setup = make_wizard(VIDEO_WITH_COMMENTS)
 
-    view_model.primaryClicked()
+    setup.view_model.dismiss()
+
+    assert setup.finished == []
+    assert setup.dismissals == [True]
+
+
+def test_primary_click_rejects_when_the_wizard_only_closes(qt_app, make_spy) -> None:
+    setup = make_wizard(ERRORS_ONLY)
+    accept_spy = make_spy(setup.view_model.acceptRequested)
+    reject_spy = make_spy(setup.view_model.rejectRequested)
+
+    setup.view_model.primaryClicked()
 
     assert reject_spy.count() == 1
     assert accept_spy.count() == 0
-    importer_service_mock.finish_pending.assert_not_called()
+    assert setup.finished == []
 
 
-def test_cancel_click_rejects(qt_app, importer_service_mock, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, VIDEO_WITH_COMMENTS)
-    reject_spy = make_spy(view_model.rejectRequested)
+def test_cancel_click_rejects(qt_app, make_spy) -> None:
+    setup = make_wizard(VIDEO_WITH_COMMENTS)
+    reject_spy = make_spy(setup.view_model.rejectRequested)
 
-    view_model.cancelClicked()
+    setup.view_model.cancelClicked()
 
     assert reject_spy.count() == 1
-    importer_service_mock.finish_pending.assert_not_called()
+    # The dialog's rejected handler reports the dismissal, so the click itself delivers nothing.
+    assert setup.finished == []
+    assert setup.dismissals == []
 
 
 def test_show_step_indicator_follows_the_step_count(qt_app) -> None:
-    assert MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO).showStepIndicator is True
-    assert MpvqcImportWizardViewModel(None, ERRORS_ONLY).showStepIndicator is False
+    assert make_wizard(ERRORS_THEN_VIDEO).view_model.showStepIndicator is True
+    assert make_wizard(ERRORS_ONLY).view_model.showStepIndicator is False
 
 
 def test_back_returns_to_the_previous_step(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     view_model.next()
     spy = make_spy(view_model.currentStepChanged)
 
@@ -237,7 +248,7 @@ def test_back_returns_to_the_previous_step(qt_app, make_spy) -> None:
 
 
 def test_back_on_the_first_step_stays_put(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     spy = make_spy(view_model.currentStepChanged)
 
     view_model.back()
@@ -247,7 +258,7 @@ def test_back_on_the_first_step_stays_put(qt_app, make_spy) -> None:
 
 
 def test_next_navigates_forward(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     spy = make_spy(view_model.navigated)
 
     view_model.next()
@@ -257,7 +268,7 @@ def test_next_navigates_forward(qt_app, make_spy) -> None:
 
 
 def test_back_navigates_back(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     view_model.next()
     spy = make_spy(view_model.navigated)
 
@@ -268,7 +279,7 @@ def test_back_navigates_back(qt_app, make_spy) -> None:
 
 
 def test_jump_ahead_navigates_forward_once(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, THREE_STEPS)
+    view_model = make_wizard(THREE_STEPS).view_model
     spy = make_spy(view_model.navigated)
 
     view_model.setProperty("currentStepIndex", 2)
@@ -278,7 +289,7 @@ def test_jump_ahead_navigates_forward_once(qt_app, make_spy) -> None:
 
 
 def test_jump_back_navigates_back_once(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, THREE_STEPS)
+    view_model = make_wizard(THREE_STEPS).view_model
     view_model.setProperty("currentStepIndex", 2)
     spy = make_spy(view_model.navigated)
 
@@ -289,7 +300,7 @@ def test_jump_back_navigates_back_once(qt_app, make_spy) -> None:
 
 
 def test_staying_put_emits_no_navigation(qt_app, make_spy) -> None:
-    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     spy = make_spy(view_model.navigated)
 
     view_model.back()
@@ -306,7 +317,7 @@ def step_view_model[T: QObject](wizard: MpvqcImportWizardViewModel, step_type: t
     return step
 
 
-def test_accepting_reports_the_step_answers_to_the_importer(qt_app, importer_service_mock) -> None:
+def test_finish_reports_the_step_answers(qt_app) -> None:
     plan = plan_with(
         comments=(COMMENT,),
         session=UNRESOLVED_SESSION,
@@ -318,19 +329,22 @@ def test_accepting_reports_the_step_answers_to_the_importer(qt_app, importer_ser
         ),
         subtitles=SubtitlesUnresolved(candidates=(SUB_A, SUB_B)),
     )
-    view_model = MpvqcImportWizardViewModel(None, plan)
+    setup = make_wizard(plan)
 
     # Every answer differs from the step's default, so no value below can come from anywhere but the step.
-    step_view_model(view_model, MpvqcImportWizardSessionStepViewModel).setProperty("mode", SessionMode.REPLACE.value)
-    step_view_model(view_model, MpvqcImportWizardVideoStepViewModel).setProperty("selectedIndex", 1)
-    step_view_model(view_model, MpvqcImportWizardSubtitlesStepViewModel).toggle(0)
-
-    view_model.next()
-    view_model.next()
-    view_model.primaryClicked()
-
-    importer_service_mock.finish_pending.assert_called_once_with(
-        session=SessionReplace(),
-        video=VideoLoad(path=VIDEO_B),
-        subtitles=SubtitlesLoad(paths=(SUB_B,)),
+    step_view_model(setup.view_model, MpvqcImportWizardSessionStepViewModel).setProperty(
+        "mode", SessionMode.REPLACE.value
     )
+    step_view_model(setup.view_model, MpvqcImportWizardVideoStepViewModel).setProperty("selectedIndex", 1)
+    step_view_model(setup.view_model, MpvqcImportWizardSubtitlesStepViewModel).toggle(0)
+
+    setup.view_model.finish()
+
+    assert setup.finished == [
+        FinishedPlan(
+            comments=(COMMENT,),
+            session=SessionReplace(),
+            video=VideoLoad(path=VIDEO_B),
+            subtitles=SubtitlesLoad(paths=(SUB_B,)),
+        )
+    ]

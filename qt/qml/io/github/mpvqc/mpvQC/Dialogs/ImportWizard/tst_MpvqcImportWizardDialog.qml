@@ -297,11 +297,23 @@ TestCase {
         verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
     }
 
-    function test_cancelClosesTheDialog(): void {
+    function test_cancelClosesTheDialogAndDismissesTheImport(): void {
         const dlg = open.scenario("all-steps");
 
         click.cancel(dlg);
 
         tryCompare(dlg, "opened", false);
+        compare(bridge.wizardOutcome().outcome, "dismissed");
+    }
+
+    function test_confirmReportsThePickedVideo(): void {
+        const dlg = open.scenario("video-choice");
+
+        pick.video(dlg, 1);
+        click.primary(dlg);
+
+        tryCompare(dlg, "opened", false);
+        compare(bridge.wizardOutcome().outcome, "finished");
+        compare(bridge.wizardOutcome().video, "b.mp4");
     }
 }

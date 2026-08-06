@@ -64,6 +64,9 @@ MpvqcDialog {
         onPrimaryClicked: root.viewModel.primaryClicked()
     }
 
+    onAccepted: root.viewModel.finish()
+    onRejected: root.viewModel.dismiss()
+
     Connections {
         target: root.viewModel
         function onAcceptRequested(): void {

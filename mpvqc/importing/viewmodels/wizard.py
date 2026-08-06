@@ -6,12 +6,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, assert_never
 
-import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection
-from mpvqc.importing.services import ImporterService
 
 from .wizard_state import (
     ErrorsStep,
@@ -30,7 +28,7 @@ from .wizard_steps import (
 )
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import UnfinishedPlan
+    from mpvqc.importing.domain import PendingImport
 
     from .wizard_state import WizardState
 
@@ -40,18 +38,17 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-@QmlUncreatable("constructed by MpvqcImportWizardRequestRelayViewModel with an UnfinishedPlan")
+@QmlUncreatable("constructed by MpvqcImportWizardRequestRelayViewModel with a PendingImport")
 class MpvqcImportWizardViewModel(QObject):
-    _importer = inject.attr(ImporterService)
-
     currentStepChanged = Signal()
     navigated = Signal(int)
     acceptRequested = Signal()
     rejectRequested = Signal()
 
-    def __init__(self, parent: QObject | None, unfinished_plan: UnfinishedPlan) -> None:
+    def __init__(self, parent: QObject | None, pending: PendingImport) -> None:
         super().__init__(parent)
-        self._state = make_wizard_state(unfinished_plan)
+        self._pending = pending
+        self._state = make_wizard_state(pending.plan)
 
         self._errors_step: MpvqcImportWizardErrorsStepViewModel | None = None
         self._session_step: MpvqcImportWizardSessionStepViewModel | None = None
@@ -138,7 +135,6 @@ class MpvqcImportWizardViewModel(QObject):
             case PrimaryAction.ADVANCE:
                 self.next()
             case PrimaryAction.ACCEPT:
-                self._commit()
                 self.acceptRequested.emit()
             case PrimaryAction.REJECT:
                 self.rejectRequested.emit()
@@ -148,6 +144,18 @@ class MpvqcImportWizardViewModel(QObject):
     @Slot()
     def cancelClicked(self) -> None:
         self.rejectRequested.emit()
+
+    @Slot()
+    def finish(self) -> None:
+        self._pending.finish(
+            session=self._session_step.resolved if self._session_step is not None else None,
+            video=self._video_step.resolved if self._video_step is not None else None,
+            subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
+        )
+
+    @Slot()
+    def dismiss(self) -> None:
+        self._pending.dismiss()
 
     def _move_to(self, state: WizardState) -> None:
         if state.current_index == self._state.current_index:
@@ -160,13 +168,6 @@ class MpvqcImportWizardViewModel(QObject):
         self._state = state
         self.currentStepChanged.emit()
         self.navigated.emit(direction.value)
-
-    def _commit(self) -> None:
-        self._importer.finish_pending(
-            session=self._session_step.resolved if self._session_step is not None else None,
-            video=self._video_step.resolved if self._video_step is not None else None,
-            subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
-        )
 
     @staticmethod
     def _primary_label_text(label: PrimaryLabel) -> str:

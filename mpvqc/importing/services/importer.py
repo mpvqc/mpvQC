@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol
 
 import inject
@@ -13,6 +12,7 @@ from PySide6.QtCore import QObject, Signal
 
 from mpvqc.importing.domain import (
     FinishedPlan,
+    PendingImport,
     SessionMerge,
     SessionReplace,
     SubtitlesLoad,
@@ -20,7 +20,6 @@ from mpvqc.importing.domain import (
     UnfinishedPlan,
     VideoLoad,
     VideoSkip,
-    finish_plan,
 )
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.comments import CommentsService
@@ -35,31 +34,11 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
     from pathlib import Path
 
-    from mpvqc.importing.domain import (
-        LoadFoundVideo,
-        SessionResolved,
-        SubtitlesResolved,
-        VideoResolved,
-    )
+    from mpvqc.importing.domain import LoadFoundVideo
     from mpvqc.jobs import JobExecutor, Result
 
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass(frozen=True)
-class Idle:
-    pass
-
-
-@dataclass(frozen=True)
-class Scanning:
-    pass
-
-
-@dataclass(frozen=True)
-class Pending:
-    plan: UnfinishedPlan
 
 
 class Planning(Protocol):
@@ -82,28 +61,25 @@ class ImporterService(QObject):
     _comments = inject.attr(CommentsService)
     _resetter = inject.attr(ResetService)
 
-    unfinished_plan_ready = Signal(UnfinishedPlan)
+    pending_import_ready = Signal(PendingImport)
 
     def __init__(self, executor: JobExecutor | None = None, plan: Planning = plan) -> None:
         super().__init__()
-        self._import: Idle | Scanning | Pending = Idle()
+        self._busy = False
         self._plan = plan
         self._jobs = SerialJobRunner(executor)
 
     def open(self, document_paths: list[Path], video_paths: list[Path], subtitle_paths: list[Path]) -> None:
-        match self._import:
-            case Idle():
-                self._start_scan(document_paths, video_paths, subtitle_paths)
-            case Scanning() | Pending():
-                logger.warning(
-                    "Skipping import while another is in progress; documents=%s videos=%s subtitles=%s",
-                    document_paths,
-                    video_paths,
-                    subtitle_paths,
-                )
+        if self._busy:
+            logger.warning(
+                "Skipping import while another is in progress; documents=%s videos=%s subtitles=%s",
+                document_paths,
+                video_paths,
+                subtitle_paths,
+            )
+            return
 
-    def _start_scan(self, document_paths: list[Path], video_paths: list[Path], subtitle_paths: list[Path]) -> None:
-        self._import = Scanning()
+        self._busy = True
 
         # Capture on the GUI thread
         has_existing_comments = self._comments.count > 0
@@ -125,36 +101,20 @@ class ImporterService(QObject):
                 case Ok(FinishedPlan() as plan):
                     self._execute(plan)
                 case Ok(UnfinishedPlan() as plan):
-                    self._import = Pending(plan)
-                    self.unfinished_plan_ready.emit(plan)
+                    self.pending_import_ready.emit(
+                        PendingImport(plan, on_finished=self._execute, on_dismissed=self._abandon)
+                    )
                 case Err(error):
-                    self._import = Idle()
+                    self._busy = False
                     logger.error("Import scan failed", exc_info=error)
 
         self._jobs.run(work=build_plan, on_result=on_result)
 
-    def finish_pending(
-        self,
-        *,
-        session: SessionResolved | None = None,
-        video: VideoResolved | None = None,
-        subtitles: SubtitlesResolved | None = None,
-    ) -> None:
-        match self._import:
-            case Pending(plan=pending):
-                self._execute(finish_plan(pending, session=session, video=video, subtitles=subtitles))
-            case Idle() | Scanning():
-                logger.warning("Dropping an import's answers; no import is pending")
-
-    def dismiss_pending(self) -> None:
-        match self._import:
-            case Pending():
-                self._import = Idle()
-            case Idle() | Scanning():
-                pass
+    def _abandon(self) -> None:
+        self._busy = False
 
     def _execute(self, plan: FinishedPlan) -> None:
-        self._import = Idle()
+        self._busy = False
 
         is_new_video = isinstance(plan.video, VideoLoad) and not self._player.is_any_video_loaded([plan.video.path])
 

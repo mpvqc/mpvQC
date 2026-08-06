@@ -21,6 +21,13 @@ from mpvqc.appearance.domain import (
 from mpvqc.appearance.services import AppearanceSettingsService
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.datamodels import Comment
+from mpvqc.importing.domain import (
+    FinishedPlan,
+    PendingImport,
+    SessionReplace,
+    SubtitlesLoad,
+    VideoLoad,
+)
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
 from mpvqc.services import (
@@ -148,8 +155,13 @@ _SWAPPED_VIEW_MODELS = (
 
 @QmlElement
 class MpvqcTestBridge(QObject):
+    def __init__(self, parent: QObject | None = None) -> None:
+        super().__init__(parent)
+        self._wizard_outcome: dict = {"outcome": "none"}
+
     @Slot()
     def resetState(self) -> None:
+        self._wizard_outcome = {"outcome": "none"}
         configure_injections()
         rebind_main_window()
         self._recreate_and_replace_singleton_view_models()
@@ -299,7 +311,27 @@ class MpvqcTestBridge(QObject):
     @Slot(str, result=MpvqcImportWizardViewModel)
     def buildWizardViewModel(self, scenario: str) -> MpvqcImportWizardViewModel:
         plan = import_wizard_fixtures.build(scenario)
-        return MpvqcImportWizardViewModel(self, plan)
+        self._wizard_outcome = {"outcome": "none"}
+
+        def on_finished(finished: FinishedPlan) -> None:
+            self._wizard_outcome = {
+                "outcome": "finished",
+                "video": finished.video.path.name if isinstance(finished.video, VideoLoad) else "",
+                "subtitles": [path.name for path in finished.subtitles.paths]
+                if isinstance(finished.subtitles, SubtitlesLoad)
+                else [],
+                "replace": isinstance(finished.session, SessionReplace),
+            }
+
+        def on_dismissed() -> None:
+            self._wizard_outcome = {"outcome": "dismissed"}
+
+        pending = PendingImport(plan, on_finished=on_finished, on_dismissed=on_dismissed)
+        return MpvqcImportWizardViewModel(self, pending)
+
+    @Slot(result=dict)
+    def wizardOutcome(self) -> dict:
+        return self._wizard_outcome
 
 
 @QmlElement

@@ -161,6 +161,7 @@ files = [
     "mpvqc/importing/domain/documents.py",
     "mpvqc/importing/domain/errors.py",
     "mpvqc/importing/domain/kind.py",
+    "mpvqc/importing/domain/pending.py",
     "mpvqc/importing/domain/plan.py",
     "mpvqc/importing/domain/scan.py",
     "mpvqc/importing/domain/session.py",

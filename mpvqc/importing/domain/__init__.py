@@ -12,6 +12,7 @@ from .kind import DOCUMENT_EXTENSIONS as DOCUMENT_EXTENSIONS
 from .kind import SUBTITLE_EXTENSIONS as SUBTITLE_EXTENSIONS
 from .kind import ClassifiedPaths as ClassifiedPaths
 from .kind import classify_paths as classify_paths
+from .pending import PendingImport as PendingImport
 from .plan import FinishedPlan as FinishedPlan
 from .plan import UnfinishedPlan as UnfinishedPlan
 from .plan import finish_plan as finish_plan
