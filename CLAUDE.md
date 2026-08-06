@@ -63,8 +63,8 @@
 
 Three destinations: the public GitHub tracker for user reports and triage, a private tracker for every internal work
 item, and `.scratch/` for disposable artifacts. Nothing with a status stays local, and an agent never opens an issue on
-the public tracker. Load the `filing-tickets` skill before filing anything; `docs/agents/issue-tracker.md` decides where
-it goes.
+the public tracker. Load the `filing-tickets` skill before filing anything and when picking up a tracked ticket;
+`docs/agents/issue-tracker.md` decides where it goes.
 
 ### Triage labels
 

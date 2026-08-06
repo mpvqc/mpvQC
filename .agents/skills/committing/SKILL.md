@@ -55,9 +55,9 @@ fault, no talk of reporting anything upstream.
 
 ## After
 
-When a larger chunk of work is done, offer to push, and to write the manual checks with the `manual-checks` skill.
+A ticket this commit completes gets its closing comment now — see the `filing-tickets` skill.
 
-Work that traces to a ticket: once it is pushed, the ticket gets its closing comment — see the `filing-tickets` skill.
+When a larger chunk of work is done, offer to push, and to write the manual checks with the `manual-checks` skill.
 
 ## Done when
 
@@ -65,3 +65,4 @@ Work that traces to a ticket: once it is pushed, the ticket gets its closing com
 - `just fmt` came back clean, and whatever it rewrote outside this change stayed out of the commit.
 - Each doc in the table that the change reaches now describes what the code does.
 - The message claims only what was verified, in everyday words, and names no culprit.
+- A ticket this commit completes is closed.

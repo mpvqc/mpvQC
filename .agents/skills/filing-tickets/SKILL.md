@@ -1,6 +1,6 @@
 ---
 name: filing-tickets
-description: File a ticket where it belongs, in the shape the tracker expects. Use when the user directs you to file something, to file the findings from a review report, to record a finding they rejected, or to close out a ticket whose work has landed. Fires only when directed.
+description: File a ticket where it belongs, in the shape the tracker expects. Use when the user directs you to file something, to file the findings from a review report, to record a finding they rejected, when you pick up a ticket to work on, or when a commit completes a ticket. Filing fires only when directed.
 ---
 
 # Filing tickets
@@ -141,11 +141,21 @@ gh issue close <n> --repo mpvqc/internal-tickets --reason "not planned" --commen
 - Where the same argument keeps coming back and keeps being re-argued, it graduates to an **ADR**. ADRs are numbered
   and curated, so inflation shows.
 
-## Closing a ticket
+## Working a ticket
 
-**A ticket closes when the work is done and pushed, not when it is merged.** Many tickets land on one feature branch,
-and the branch merges once the user has tested it, sometimes through a different PR, sometimes as a cherry-pick. Merge
-state belongs to the branch rather than to twelve tickets, and it already has a perfect display: the open PR list.
+The board is only worth reading while it tells the truth, so a ticket moves the moment the work does — claim, update,
+close, each at its own moment:
+
+**Claim**: picking up a ticket, set the board `Status` to `In Progress` before starting. That is the claim signal —
+branch names cannot carry it, because many tickets share one branch.
+
+**Update**: comment the ticket when the work shifts under it — a decision taken, a dead end hit, scope cut or grown.
+The bar: a reader who opens only the ticket knows where the work stands.
+
+**Close**: a ticket closes with the commit that completes it, not when it is merged. Many tickets land on one feature
+branch, and the branch merges once the user has tested it, sometimes through a different PR, sometimes as a
+cherry-pick. Merge state belongs to the branch rather than to twelve tickets, and it already has a perfect display:
+the open PR list.
 
 The closing comment records **branch and SHA**:
 
@@ -159,9 +169,6 @@ keep resolving.
 **The link runs from the internal ticket out to the public side, and only that way.** Keep internal issue references
 out of public PRs and commit messages: they are plain, permanent text that everyone can read and nobody outside can
 open.
-
-**Claiming**: an agent picking up a ticket sets the board `Status` to `In Progress` before starting. That is the claim
-signal — branch names cannot carry it, because many tickets share one branch.
 
 ## Filing a batch
 
@@ -180,3 +187,4 @@ without it you will re-file things that were filed, fixed or declined months ago
 - Every childless ticket carries exactly one readiness label, and every epic carries none.
 - Every body and every comment you wrote on the private tracker ends with the agent footer.
 - Every filed issue is on the board.
+- A ticket you picked up is `In Progress` on the board, and a ticket a commit completed is closed with branch and SHA.
