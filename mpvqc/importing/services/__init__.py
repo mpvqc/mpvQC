@@ -6,7 +6,6 @@ from .glob_patterns import document_file_glob_pattern as document_file_glob_patt
 from .glob_patterns import subtitle_file_glob_pattern as subtitle_file_glob_pattern
 from .glob_patterns import video_file_glob_pattern as video_file_glob_pattern
 from .importer import ImporterService as ImporterService
-from .mime_type_provider import MimeTypeProviderService as MimeTypeProviderService
 from .planning import plan as plan
 from .reader import read_documents as read_documents
 from .scanner import scan as scan

@@ -174,7 +174,6 @@ files = [
     "mpvqc/importing/services/__init__.py",
     "mpvqc/importing/services/glob_patterns.py",
     "mpvqc/importing/services/importer.py",
-    "mpvqc/importing/services/mime_type_provider.py",
     "mpvqc/importing/services/planning.py",
     "mpvqc/importing/services/reader.py",
     "mpvqc/importing/services/scanner.py",
