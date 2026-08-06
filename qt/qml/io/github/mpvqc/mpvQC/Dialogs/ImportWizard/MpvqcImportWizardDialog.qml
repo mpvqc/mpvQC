@@ -33,6 +33,7 @@ MpvqcDialog {
 
             stepKinds: root.viewModel.stepKinds
             currentStepIndex: root.viewModel.currentStepIndex
+            visible: root.viewModel.showStepIndicator
 
             Layout.fillWidth: true
             Layout.topMargin: 32

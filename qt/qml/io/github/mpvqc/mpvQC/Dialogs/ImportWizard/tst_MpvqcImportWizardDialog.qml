@@ -82,9 +82,14 @@ TestCase {
             return btn;
         }
 
-        function stepEntryAt(dlg: QtObject, index: int): Item {
+        function stepIndicator(dlg: QtObject): Item {
             const indicator = testCase.findChild(dlg.contentItem, "stepIndicator");
             testCase.verify(indicator, "stepIndicator not found");
+            return indicator;
+        }
+
+        function stepEntryAt(dlg: QtObject, index: int): Item {
+            const indicator = testCase.find.stepIndicator(dlg);
             const entries = testCase._collectAll(indicator, "stepEntry");
             testCase.verify(entries.length > index, `stepEntry ${index} not found (have ${entries.length})`);
             return entries[index];
@@ -229,6 +234,7 @@ TestCase {
 
     function test_navigationViaAllMechanismsKeepsPerStepSelections(): void {
         const dlg = open.scenario("all-steps");
+        verify(find.stepIndicator(dlg).visible, "step indicator should show with more than one step");
         expect.currentStep(dlg, 0);
 
         click.next(dlg);
@@ -317,6 +323,7 @@ TestCase {
         verify(!find.cancelButton(dlg).visible, "cancel should be hidden in close-only mode");
         verify(!find.backButton(dlg).visible, "back should be hidden on first step");
         verify(find.primaryButton(dlg).visible, "primary should be visible");
+        verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
 
         click.primary(dlg);
 
@@ -331,6 +338,7 @@ TestCase {
         verify(!find.cancelButton(dlg).visible, "cancel should be hidden in confirm-only mode");
         verify(!find.backButton(dlg).visible, "back should be hidden on first step");
         verify(find.primaryButton(dlg).visible, "primary should be visible");
+        verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
     }
 
     function test_cancelDiscardsSelectionsAndImportsNothing(): void {

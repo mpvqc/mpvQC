@@ -91,6 +91,10 @@ class WizardState:
         return tuple(step.kind for step in self.steps)
 
     @property
+    def multi_step(self) -> bool:
+        return len(self.steps) > 1
+
+    @property
     def close_only(self) -> bool:
         return _is_close_only(self)
 
@@ -155,7 +159,7 @@ def _compute_footer_state(state: WizardState) -> FooterState:
     return FooterState(
         primary_label=label,
         primary_action=action,
-        show_cancel=has_content or len(state.steps) > 1,
+        show_cancel=has_content or state.multi_step,
         show_back=state.current_index > 0,
     )
 

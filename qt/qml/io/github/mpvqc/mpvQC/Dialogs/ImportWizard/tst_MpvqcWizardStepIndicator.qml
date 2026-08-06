@@ -55,39 +55,6 @@ TestCase {
         return found;
     }
 
-    function test_hiddenWhenFewerThanTwoSteps_data() {
-        return [
-            {
-                tag: "zero",
-                kinds: [],
-                expectVisible: false
-            },
-            {
-                tag: "one",
-                kinds: [MpvqcImportWizardStepKind.StepKind.ERRORS],
-                expectVisible: false
-            },
-            {
-                tag: "two",
-                kinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.VIDEO],
-                expectVisible: true
-            },
-            {
-                tag: "four",
-                kinds: testCase.allKinds,
-                expectVisible: true
-            },
-        ];
-    }
-
-    function test_hiddenWhenFewerThanTwoSteps(data): void {
-        const indicator = makeControl({
-            stepKinds: data.kinds,
-            currentStepIndex: 0
-        });
-        compare(indicator.visible, data.expectVisible);
-    }
-
     function test_activeStateIconCountsReflectStepState_data() {
         return [
             {

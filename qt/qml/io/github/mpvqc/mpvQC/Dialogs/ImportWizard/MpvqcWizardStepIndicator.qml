@@ -22,7 +22,6 @@ Item {
 
     signal stepClicked(index: int)
 
-    visible: root.stepKinds.length >= 2
     implicitHeight: _list.implicitHeight
 
     ListView {

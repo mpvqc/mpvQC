@@ -267,6 +267,11 @@ def test_cancel_click_rejects(qt_app, importer_service_mock, make_spy) -> None:
     importer_service_mock.execute.assert_not_called()
 
 
+def test_show_step_indicator_follows_the_step_count(qt_app) -> None:
+    assert MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO).showStepIndicator is True
+    assert MpvqcImportWizardViewModel(None, ERRORS_ONLY).showStepIndicator is False
+
+
 def test_back_returns_to_the_previous_step(qt_app, make_spy) -> None:
     view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
     view_model.next()

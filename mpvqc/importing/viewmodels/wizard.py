@@ -104,6 +104,10 @@ class MpvqcImportWizardViewModel(QObject):
     def showCancel(self) -> bool:
         return self._state.footer.show_cancel
 
+    @Property(bool, constant=True, final=True)
+    def showStepIndicator(self) -> bool:
+        return self._state.multi_step
+
     @Property(MpvqcImportWizardErrorsStepViewModel, constant=True, final=True)
     def errorsStepViewModel(self) -> MpvqcImportWizardErrorsStepViewModel | None:
         return self._errors_step

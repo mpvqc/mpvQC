@@ -170,6 +170,36 @@ def test_transitions(case: TransitionCase) -> None:
     assert case.move(start).current_index == case.expected
 
 
+class MultiStepCase(NamedTuple):
+    name: str
+    plan: UnfinishedPlan
+    expected: bool
+
+
+MULTI_STEP_CASES = [
+    MultiStepCase(
+        name="one step",
+        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
+        expected=False,
+    ),
+    MultiStepCase(
+        name="two steps",
+        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
+        expected=True,
+    ),
+    MultiStepCase(
+        name="four steps",
+        plan=ALL_UNRESOLVED,
+        expected=True,
+    ),
+]
+
+
+@pytest.mark.parametrize("case", MULTI_STEP_CASES, ids=lambda c: c.name)
+def test_multi_step(case: MultiStepCase) -> None:
+    assert make_wizard_state(case.plan).multi_step is case.expected
+
+
 class CloseOnlyCase(NamedTuple):
     name: str
     plan: UnfinishedPlan
