@@ -20,6 +20,7 @@ from mpvqc.importing.domain import (
     UnfinishedPlan,
     VideoLoad,
     VideoSkip,
+    make_plan,
 )
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.comments import CommentsService
@@ -27,31 +28,21 @@ from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.state import StateService
 
-from .planning import plan
+from .scan import scan
 from .settings import ImportSettingsService
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
     from pathlib import Path
 
-    from mpvqc.importing.domain import LoadFoundVideo
+    from mpvqc.importing.domain import ScanResult
     from mpvqc.jobs import JobExecutor, Result
 
 
 logger = logging.getLogger(__name__)
 
 
-class Planning(Protocol):
-    def __call__(
-        self,
-        document_paths: list[Path],
-        video_paths: list[Path],
-        subtitle_paths: list[Path],
-        *,
-        found_video_setting: LoadFoundVideo,
-        has_existing_comments: bool,
-        is_any_candidate_loaded: Callable[[Iterable[Path]], bool],
-    ) -> FinishedPlan | UnfinishedPlan: ...
+class Scanning(Protocol):
+    def __call__(self, documents: list[Path], videos: list[Path], subtitles: list[Path], /) -> ScanResult: ...
 
 
 class ImporterService(QObject):
@@ -63,10 +54,10 @@ class ImporterService(QObject):
 
     pending_import_ready = Signal(PendingImport)
 
-    def __init__(self, executor: JobExecutor | None = None, plan: Planning = plan) -> None:
+    def __init__(self, executor: JobExecutor | None = None, scan: Scanning = scan) -> None:
         super().__init__()
         self._busy = False
-        self._plan = plan
+        self._scan = scan
         self._jobs = SerialJobRunner(executor)
 
     def open(self, document_paths: list[Path], video_paths: list[Path], subtitle_paths: list[Path]) -> None:
@@ -87,13 +78,14 @@ class ImporterService(QObject):
         current_video = self._player.path
 
         def build_plan() -> FinishedPlan | UnfinishedPlan:
-            return self._plan(
-                document_paths,
-                video_paths,
-                subtitle_paths,
+            scan_result = self._scan(document_paths, video_paths, subtitle_paths)
+            return make_plan(
+                scan_result,
                 found_video_setting=found_video_setting,
                 has_existing_comments=has_existing_comments,
-                is_any_candidate_loaded=lambda paths: PlayerService.is_video_path_loaded(current_video, paths),
+                any_candidate_loaded=PlayerService.is_video_path_loaded(
+                    current_video, (v.path for v in scan_result.videos)
+                ),
             )
 
         def on_result(result: Result[FinishedPlan | UnfinishedPlan]) -> None:

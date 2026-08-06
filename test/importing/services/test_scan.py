@@ -4,23 +4,15 @@
 
 from __future__ import annotations
 
-import json
 from typing import TYPE_CHECKING
 
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
-    ErrorsPresent,
-    FinishedPlan,
-    LoadFoundVideo,
     RejectedDocument,
-    SessionMerge,
     SubtitleSource,
-    SubtitlesSkip,
-    UnfinishedPlan,
-    VideoSkip,
     VideoSource,
 )
-from mpvqc.importing.services import plan, scan
+from mpvqc.importing.services import scan
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -36,48 +28,6 @@ def write_subtitle_referencing(tmp_path: Path, name: str, video: Path) -> Path:
     file_path = tmp_path / name
     file_path.write_text(f"[Script Info]\nVideo File: {video}\n", encoding="utf-8-sig")
     return file_path
-
-
-def test_valid_document_composes_into_a_finished_plan(tmp_path: Path) -> None:
-    document = tmp_path / "document.json"
-    document.write_text(
-        json.dumps({"version": 1, "comments": [{"time": "00:00:01.000", "type": "Phrasing", "text": "A comment"}]}),
-        encoding="utf-8",
-    )
-
-    result = plan(
-        [document],
-        [],
-        [],
-        found_video_setting=LoadFoundVideo.ASK_EVERY_TIME,
-        has_existing_comments=False,
-        is_any_candidate_loaded=lambda _paths: False,
-    )
-
-    assert isinstance(result, FinishedPlan)
-    assert len(result.comments) == 1
-    assert result.comments[0].comment == "A comment"
-    assert result.session == SessionMerge()
-    assert result.video == VideoSkip()
-    assert result.subtitles == SubtitlesSkip()
-
-
-def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> None:
-    document = tmp_path / "broken.json"
-    document.write_text(json.dumps({"comments": []}), encoding="utf-8")
-
-    result = plan(
-        [document],
-        [],
-        [],
-        found_video_setting=LoadFoundVideo.ASK_EVERY_TIME,
-        has_existing_comments=False,
-        is_any_candidate_loaded=lambda _paths: False,
-    )
-
-    assert isinstance(result, UnfinishedPlan)
-    assert isinstance(result.errors, ErrorsPresent)
-    assert result.errors.rejected_documents[0].path == document
 
 
 def test_doc_video_gets_doc_flag(tmp_path: Path) -> None:
