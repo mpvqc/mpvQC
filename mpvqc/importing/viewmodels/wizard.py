@@ -11,6 +11,7 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import finish_plan
+from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection
 from mpvqc.importing.services import ImporterService
 
 from .wizard_state import (
@@ -45,6 +46,7 @@ class MpvqcImportWizardViewModel(QObject):
     _importer = inject.attr(ImporterService)
 
     currentStepChanged = Signal()
+    navigated = Signal(int)
     acceptRequested = Signal()
     rejectRequested = Signal()
 
@@ -147,8 +149,14 @@ class MpvqcImportWizardViewModel(QObject):
     def _move_to(self, state: WizardState) -> None:
         if state.current_index == self._state.current_index:
             return
+        direction = (
+            MpvqcImportWizardNavigationDirection.NavigationDirection.FORWARD
+            if state.current_index > self._state.current_index
+            else MpvqcImportWizardNavigationDirection.NavigationDirection.BACK
+        )
         self._state = state
         self.currentStepChanged.emit()
+        self.navigated.emit(direction.value)
 
     def _commit(self) -> None:
         plan = finish_plan(

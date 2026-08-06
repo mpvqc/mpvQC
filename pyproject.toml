@@ -164,6 +164,7 @@ files = [
     "mpvqc/importing/domain/scan.py",
     "mpvqc/importing/domain/video_reference.py",
     "mpvqc/importing/enums/__init__.py",
+    "mpvqc/importing/enums/navigation_direction.py",
     "mpvqc/importing/enums/session_mode.py",
     "mpvqc/importing/enums/step_kind.py",
     "mpvqc/importing/models/__init__.py",

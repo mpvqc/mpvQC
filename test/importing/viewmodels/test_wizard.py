@@ -30,7 +30,7 @@ from mpvqc.importing.domain import (
     VideoSource,
     VideoUnresolved,
 )
-from mpvqc.importing.enums import MpvqcImportWizardSessionMode
+from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection, MpvqcImportWizardSessionMode
 from mpvqc.importing.services import ImporterService
 from mpvqc.importing.viewmodels import (
     MpvqcImportWizardSessionStepViewModel,
@@ -39,6 +39,7 @@ from mpvqc.importing.viewmodels import (
     MpvqcImportWizardViewModel,
 )
 
+NavigationDirection = MpvqcImportWizardNavigationDirection.NavigationDirection
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
 
 VIDEO_A = Path("/movies/a.mp4")
@@ -284,6 +285,61 @@ def test_back_on_the_first_step_stays_put(qt_app, make_spy) -> None:
     view_model.back()
 
     assert view_model.currentStepIndex == 0
+    assert spy.count() == 0
+
+
+THREE_STEPS = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, session=UNRESOLVED_SESSION, video=UNRESOLVED_VIDEO)
+
+
+def test_next_navigates_forward(qt_app, make_spy) -> None:
+    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    spy = make_spy(view_model.navigated)
+
+    view_model.next()
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == NavigationDirection.FORWARD
+
+
+def test_back_navigates_back(qt_app, make_spy) -> None:
+    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    view_model.next()
+    spy = make_spy(view_model.navigated)
+
+    view_model.back()
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == NavigationDirection.BACK
+
+
+def test_jump_ahead_navigates_forward_once(qt_app, make_spy) -> None:
+    view_model = MpvqcImportWizardViewModel(None, THREE_STEPS)
+    spy = make_spy(view_model.navigated)
+
+    view_model.setProperty("currentStepIndex", 2)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == NavigationDirection.FORWARD
+
+
+def test_jump_back_navigates_back_once(qt_app, make_spy) -> None:
+    view_model = MpvqcImportWizardViewModel(None, THREE_STEPS)
+    view_model.setProperty("currentStepIndex", 2)
+    spy = make_spy(view_model.navigated)
+
+    view_model.setProperty("currentStepIndex", 0)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == NavigationDirection.BACK
+
+
+def test_staying_put_emits_no_navigation(qt_app, make_spy) -> None:
+    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
+    spy = make_spy(view_model.navigated)
+
+    view_model.back()
+    view_model.setProperty("currentStepIndex", 0)
+
     assert spy.count() == 0
 
 

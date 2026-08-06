@@ -16,8 +16,6 @@ StackView {
     readonly property real slideDistance: width / 4
     property int animationDuration: 120
 
-    property int _lastIndex: 0
-
     function _stepComponentFor(kind: int): Component {
         switch (kind) {
         case MpvqcImportWizardStepKind.StepKind.ERRORS:
@@ -113,15 +111,11 @@ StackView {
     Connections {
         target: root.viewModel
 
-        function onCurrentStepChanged() {
-            const currentIndex = root.viewModel.currentStepIndex;
-            const kind = root.viewModel.stepKinds[currentIndex];
-            if (currentIndex > root._lastIndex) {
-                root.replace(root._stepComponentFor(kind), {}, StackView.PushTransition);
-            } else if (currentIndex < root._lastIndex) {
-                root.replace(root._stepComponentFor(kind), {}, StackView.PopTransition);
-            }
-            root._lastIndex = currentIndex;
+        function onNavigated(direction: int) {
+            const kind = root.viewModel.stepKinds[root.viewModel.currentStepIndex];
+            const forward = direction === MpvqcImportWizardNavigationDirection.NavigationDirection.FORWARD;
+            const operation = forward ? StackView.PushTransition : StackView.PopTransition;
+            root.replace(root._stepComponentFor(kind), {}, operation);
         }
     }
 
