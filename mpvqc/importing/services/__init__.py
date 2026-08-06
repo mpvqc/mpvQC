@@ -5,7 +5,6 @@
 from .importer import ImporterService as ImporterService
 from .mimetype_provider import MimetypeProviderService as MimetypeProviderService
 from .plan import plan_import as plan_import
-from .reader import DocumentImportResult as DocumentImportResult
 from .reader import read_documents as read_documents
 from .scanner import scan as scan
 from .settings import ImportSettingsService as ImportSettingsService
