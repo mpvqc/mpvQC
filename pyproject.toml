@@ -172,6 +172,7 @@ files = [
     "mpvqc/importing/models/subtitles.py",
     "mpvqc/importing/models/videos.py",
     "mpvqc/importing/services/__init__.py",
+    "mpvqc/importing/services/glob_patterns.py",
     "mpvqc/importing/services/importer.py",
     "mpvqc/importing/services/mime_type_provider.py",
     "mpvqc/importing/services/planning.py",
