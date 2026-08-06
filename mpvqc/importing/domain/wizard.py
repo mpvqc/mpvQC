@@ -4,9 +4,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import IntEnum, auto
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from .plan import ErrorsPresent, SessionUnresolved, SubtitlesLoad, SubtitlesUnresolved, VideoLoad, VideoUnresolved
 
@@ -42,17 +42,90 @@ class FooterState:
     show_back: bool
 
 
-def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
-    steps: list[StepKind] = []
+@dataclass(frozen=True, slots=True)
+class ErrorsStep:
+    kind: ClassVar[StepKind] = StepKind.ERRORS
+    errors: ErrorsPresent
+
+
+@dataclass(frozen=True, slots=True)
+class SessionStep:
+    kind: ClassVar[StepKind] = StepKind.SESSION
+    session: SessionUnresolved
+
+
+@dataclass(frozen=True, slots=True)
+class VideoStep:
+    kind: ClassVar[StepKind] = StepKind.VIDEO
+    video: VideoUnresolved
+
+
+@dataclass(frozen=True, slots=True)
+class SubtitlesStep:
+    kind: ClassVar[StepKind] = StepKind.SUBTITLES
+    subtitles: SubtitlesUnresolved
+
+
+type WizardStep = ErrorsStep | SessionStep | VideoStep | SubtitlesStep
+
+
+@dataclass(frozen=True, slots=True)
+class WizardState:
+    plan: UnfinishedPlan
+    steps: tuple[WizardStep, ...]
+    current_index: int
+
+    @property
+    def current_step(self) -> WizardStep:
+        return self.steps[self.current_index]
+
+    @property
+    def step_kinds(self) -> tuple[StepKind, ...]:
+        return tuple(step.kind for step in self.steps)
+
+    @property
+    def close_only(self) -> bool:
+        return is_close_only(self.plan, self.step_kinds)
+
+    @property
+    def footer(self) -> FooterState:
+        return compute_footer_state(self.plan, self.step_kinds, self.current_index)
+
+    def advance(self) -> WizardState:
+        return self.jump_to(self.current_index + 1)
+
+    def back(self) -> WizardState:
+        return self.jump_to(self.current_index - 1)
+
+    def jump_to(self, index: int) -> WizardState:
+        if not 0 <= index < len(self.steps):
+            return self
+        return replace(self, current_index=index)
+
+
+def make_wizard_state(unfinished_plan: UnfinishedPlan) -> WizardState:
+    steps = _derive_steps(unfinished_plan)
+    if not steps:
+        msg = "cannot open a wizard on a plan with nothing to decide"
+        raise ValueError(msg)
+    return WizardState(plan=unfinished_plan, steps=steps, current_index=0)
+
+
+def _derive_steps(unfinished_plan: UnfinishedPlan) -> tuple[WizardStep, ...]:
+    steps: list[WizardStep] = []
     if isinstance(unfinished_plan.errors, ErrorsPresent):
-        steps.append(StepKind.ERRORS)
+        steps.append(ErrorsStep(unfinished_plan.errors))
     if isinstance(unfinished_plan.session, SessionUnresolved):
-        steps.append(StepKind.SESSION)
+        steps.append(SessionStep(unfinished_plan.session))
     if isinstance(unfinished_plan.video, VideoUnresolved):
-        steps.append(StepKind.VIDEO)
+        steps.append(VideoStep(unfinished_plan.video))
     if isinstance(unfinished_plan.subtitles, SubtitlesUnresolved):
-        steps.append(StepKind.SUBTITLES)
+        steps.append(SubtitlesStep(unfinished_plan.subtitles))
     return tuple(steps)
+
+
+def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
+    return tuple(step.kind for step in _derive_steps(unfinished_plan))
 
 
 def is_close_only(unfinished_plan: UnfinishedPlan, steps: tuple[StepKind, ...]) -> bool:

@@ -26,6 +26,8 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **FinishedPlan**: every Concern resolved. The only input the importer executes.
 - **Wizard step**: one page of the import wizard: one per unresolved Concern, plus an errors page when documents were
   rejected. Canonical order: errors, session, video, subtitles.
+- **Wizard state**: where the import wizard stands at one moment: the import it is deciding, and which Wizard step the
+  user is on. Everything the wizard shows follows from it.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. One decision sets both the title and the footer.
 - **MIME type**: the standard label for a file format, a type and a subtype joined by a slash, such as `video/mp4`.

@@ -39,10 +39,17 @@ from .scan import SubtitleSource as SubtitleSource
 from .scan import VideoSource as VideoSource
 from .video_reference import SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS as SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS
 from .video_reference import parse_video_references as parse_video_references
+from .wizard import ErrorsStep as ErrorsStep
 from .wizard import FooterState as FooterState
 from .wizard import PrimaryAction as PrimaryAction
 from .wizard import PrimaryLabel as PrimaryLabel
+from .wizard import SessionStep as SessionStep
 from .wizard import StepKind as StepKind
+from .wizard import SubtitlesStep as SubtitlesStep
+from .wizard import VideoStep as VideoStep
+from .wizard import WizardState as WizardState
+from .wizard import WizardStep as WizardStep
 from .wizard import compute_footer_state as compute_footer_state
 from .wizard import compute_steps as compute_steps
 from .wizard import is_close_only as is_close_only
+from .wizard import make_wizard_state as make_wizard_state

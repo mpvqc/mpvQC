@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from pathlib import Path
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
@@ -15,25 +15,31 @@ from mpvqc.importing.domain import (
     DocumentRejectionReason,
     ErrorsAbsent,
     ErrorsPresent,
+    ErrorsStep,
     FooterState,
     PrimaryAction,
     PrimaryLabel,
     RejectedDocument,
     SessionMerge,
+    SessionStep,
     SessionUnresolved,
     StepKind,
     SubtitlesLoad,
     SubtitlesSkip,
+    SubtitlesStep,
     SubtitlesUnresolved,
     UnfinishedPlan,
     VideoLoad,
     VideoSkip,
     VideoSource,
+    VideoStep,
     VideoUnresolved,
-    compute_footer_state,
-    compute_steps,
-    is_close_only,
+    WizardState,
+    make_wizard_state,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 VIDEO_A = Path("/movies/a.mp4")
 SUB_A = Path("/work/a.en.srt")
@@ -55,6 +61,30 @@ UNRESOLVED_VIDEO = VideoUnresolved(candidates=(VID_A_DOC,))
 UNRESOLVED_SUBS = SubtitlesUnresolved(candidates=(SUB_A,))
 UNRESOLVED_SESSION = SessionUnresolved(incoming_comment_count=1)
 
+ALL_UNRESOLVED = UnfinishedPlan(
+    comments=(),
+    session=UNRESOLVED_SESSION,
+    video=UNRESOLVED_VIDEO,
+    subtitles=UNRESOLVED_SUBS,
+    errors=PRESENT_ERRORS,
+)
+
+
+def test_creation_rejects_a_plan_with_nothing_to_decide() -> None:
+    with pytest.raises(ValueError, match="nothing to decide"):
+        make_wizard_state(ALL_RESOLVED)
+
+
+def test_steps_carry_the_unresolved_data_in_canonical_order() -> None:
+    state = make_wizard_state(ALL_UNRESOLVED)
+
+    assert state.steps == (
+        ErrorsStep(PRESENT_ERRORS),
+        SessionStep(UNRESOLVED_SESSION),
+        VideoStep(UNRESOLVED_VIDEO),
+        SubtitlesStep(UNRESOLVED_SUBS),
+    )
+
 
 class StepCase(NamedTuple):
     name: str
@@ -62,12 +92,7 @@ class StepCase(NamedTuple):
     expected: tuple[StepKind, ...]
 
 
-COMPUTE_STEPS_CASES = [
-    StepCase(
-        name="all resolved",
-        plan=ALL_RESOLVED,
-        expected=(),
-    ),
+STEP_CASES = [
     StepCase(
         name="errors only",
         plan=replace(ALL_RESOLVED, errors=ErrorsPresent(rejected_documents=())),
@@ -75,7 +100,7 @@ COMPUTE_STEPS_CASES = [
     ),
     StepCase(
         name="session only",
-        plan=replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1)),
+        plan=replace(ALL_RESOLVED, session=UNRESOLVED_SESSION),
         expected=(StepKind.SESSION,),
     ),
     StepCase(
@@ -90,27 +115,62 @@ COMPUTE_STEPS_CASES = [
     ),
     StepCase(
         name="canonical order across all four",
-        plan=UnfinishedPlan(
-            comments=(),
-            session=UNRESOLVED_SESSION,
-            video=UNRESOLVED_VIDEO,
-            subtitles=UNRESOLVED_SUBS,
-            errors=ErrorsPresent(rejected_documents=()),
-        ),
+        plan=ALL_UNRESOLVED,
         expected=(StepKind.ERRORS, StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
     ),
 ]
 
 
-@pytest.mark.parametrize("case", COMPUTE_STEPS_CASES, ids=lambda c: c.name)
-def test_compute_steps(case: StepCase) -> None:
-    assert compute_steps(case.plan) == case.expected
+@pytest.mark.parametrize("case", STEP_CASES, ids=lambda c: c.name)
+def test_step_kinds(case: StepCase) -> None:
+    assert make_wizard_state(case.plan).step_kinds == case.expected
+
+
+def test_a_new_wizard_starts_on_its_first_step() -> None:
+    state = make_wizard_state(ALL_UNRESOLVED)
+
+    assert state.current_index == 0
+    assert state.current_step == ErrorsStep(PRESENT_ERRORS)
+
+
+def test_current_step_follows_the_index() -> None:
+    state = make_wizard_state(ALL_UNRESOLVED)
+
+    assert state.advance().current_step == SessionStep(UNRESOLVED_SESSION)
+    assert state.jump_to(3).current_step == SubtitlesStep(UNRESOLVED_SUBS)
+
+
+class TransitionCase(NamedTuple):
+    name: str
+    start: int
+    move: Callable[[WizardState], WizardState]
+    expected: int
+
+
+TRANSITION_CASES = [
+    TransitionCase(name="advance", start=0, move=lambda s: s.advance(), expected=1),
+    TransitionCase(name="advance off the last step clamps", start=3, move=lambda s: s.advance(), expected=3),
+    TransitionCase(name="back", start=2, move=lambda s: s.back(), expected=1),
+    TransitionCase(name="back off the first step clamps", start=0, move=lambda s: s.back(), expected=0),
+    TransitionCase(name="jump forward", start=0, move=lambda s: s.jump_to(3), expected=3),
+    TransitionCase(name="jump backward", start=3, move=lambda s: s.jump_to(1), expected=1),
+    TransitionCase(name="jump to the current step", start=2, move=lambda s: s.jump_to(2), expected=2),
+    TransitionCase(name="jump below the first step clamps", start=2, move=lambda s: s.jump_to(-1), expected=2),
+    TransitionCase(name="jump past the last step clamps", start=2, move=lambda s: s.jump_to(4), expected=2),
+]
+
+
+@pytest.mark.parametrize("case", TRANSITION_CASES, ids=lambda c: c.name)
+def test_transitions(case: TransitionCase) -> None:
+    start = make_wizard_state(ALL_UNRESOLVED).jump_to(case.start)
+    assert start.current_index == case.start
+
+    assert case.move(start).current_index == case.expected
 
 
 class CloseOnlyCase(NamedTuple):
     name: str
     plan: UnfinishedPlan
-    steps: tuple[StepKind, ...]
     expected: bool
 
 
@@ -118,103 +178,89 @@ CLOSE_ONLY_CASES = [
     CloseOnlyCase(
         name="errors-only, nothing valid survives -> close-only",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
-        steps=(StepKind.ERRORS,),
         expected=True,
     ),
     CloseOnlyCase(
         name="errors-only, comments present -> not close-only",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, comments=(COMMENT,)),
-        steps=(StepKind.ERRORS,),
         expected=False,
     ),
     CloseOnlyCase(
         name="errors-only, VideoLoad resolved -> not close-only",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
-        steps=(StepKind.ERRORS,),
         expected=False,
     ),
     CloseOnlyCase(
         name="errors-only, SubtitlesLoad resolved -> not close-only",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, subtitles=SubtitlesLoad(paths=(SUB_A,))),
-        steps=(StepKind.ERRORS,),
         expected=False,
     ),
     CloseOnlyCase(
         name="errors+video, nothing valid -> not close-only, more than one step",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
-        steps=(StepKind.ERRORS, StepKind.VIDEO),
         expected=False,
     ),
 ]
 
 
 @pytest.mark.parametrize("case", CLOSE_ONLY_CASES, ids=lambda c: c.name)
-def test_is_close_only(case: CloseOnlyCase) -> None:
-    assert is_close_only(case.plan, case.steps) is case.expected
+def test_close_only(case: CloseOnlyCase) -> None:
+    assert make_wizard_state(case.plan).close_only is case.expected
 
 
 class FooterCase(NamedTuple):
     name: str
     plan: UnfinishedPlan
-    steps: tuple[StepKind, ...]
     index: int
     expected: FooterState
 
 
-FOOTER_STATE_CASES = [
+FOOTER_CASES = [
     FooterCase(
         name="errors-only, no content -> Close + reject, no cancel",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
-        steps=(StepKind.ERRORS,),
         index=0,
         expected=FooterState(PrimaryLabel.CLOSE, PrimaryAction.REJECT, show_cancel=False, show_back=False),
     ),
     FooterCase(
         name="errors-only, valid content survives -> Confirm import, cancel shown",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
-        steps=(StepKind.ERRORS,),
         index=0,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="video-only, no content -> Confirm + accept, no cancel",
         plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO),
-        steps=(StepKind.VIDEO,),
         index=0,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=False, show_back=False),
     ),
     FooterCase(
         name="video-only, comments present -> Confirm import, cancel shown",
         plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
-        steps=(StepKind.VIDEO,),
         index=0,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, no content, on errors step -> Next, cancel shown (multi-step exit)",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
-        steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=0,
         expected=FooterState(PrimaryLabel.NEXT, PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, no content, on video (terminal) -> Confirm + accept, cancel shown",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
-        steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
     FooterCase(
         name="errors+video, with comments, on errors step -> Next, cancel shown",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
-        steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=0,
         expected=FooterState(PrimaryLabel.NEXT, PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, with comments, on video step -> Confirm import",
         plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
-        steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
@@ -227,7 +273,6 @@ FOOTER_STATE_CASES = [
             subtitles=UNRESOLVED_SUBS,
             comments=(COMMENT,),
         ),
-        steps=(StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
         index=0,
         expected=FooterState(PrimaryLabel.NEXT, PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
@@ -240,20 +285,21 @@ FOOTER_STATE_CASES = [
             subtitles=UNRESOLVED_SUBS,
             comments=(COMMENT,),
         ),
-        steps=(StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
         index=2,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
     FooterCase(
         name="video+subs unresolved, no comments, on subtitles (last) -> Confirm, cancel shown",
         plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, subtitles=UNRESOLVED_SUBS),
-        steps=(StepKind.VIDEO, StepKind.SUBTITLES),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
 ]
 
 
-@pytest.mark.parametrize("case", FOOTER_STATE_CASES, ids=lambda c: c.name)
-def test_footer_state(case: FooterCase) -> None:
-    assert compute_footer_state(case.plan, case.steps, case.index) == case.expected
+@pytest.mark.parametrize("case", FOOTER_CASES, ids=lambda c: c.name)
+def test_footer(case: FooterCase) -> None:
+    state = make_wizard_state(case.plan).jump_to(case.index)
+    assert state.current_index == case.index
+
+    assert state.footer == case.expected
