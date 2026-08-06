@@ -14,6 +14,9 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   read on import.
 - **v1 document**: mpvQC's current import document format, versioned so a future format can succeed it without
   breaking documents already written.
+- **Scan**: reading what an import was handed and following every video and subtitle named by what it reads. Each file
+  it turns up is kept with where it came from: handed in, named by a document, or named by a subtitle. A scan decides
+  nothing; the plan is made from its result.
 - **Concern**: one dimension of an import that may need user input: session, video, subtitles. Each is a tagged union
   named concern-first, such as `SessionMerge` and `SessionUnresolved`: resolved variants for the concern, and its own
   `Unresolved` variant carrying the data a user needs to decide.
