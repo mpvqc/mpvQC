@@ -22,7 +22,7 @@ class _SubtitleEntry:
     checked: bool
 
 
-class MpvqcImportSubtitlesModel(QAbstractListModel):
+class SubtitlesModel(QAbstractListModel):
     FilenameRole = Qt.ItemDataRole.UserRole + 1
     IsCheckedRole = Qt.ItemDataRole.UserRole + 2
 

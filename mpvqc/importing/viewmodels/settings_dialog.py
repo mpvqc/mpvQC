@@ -17,23 +17,23 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportSettingsDialogViewModel(QObject):
     _settings = inject.attr(ImportSettingsService)
 
-    importFoundVideoChanged = Signal(int)
+    loadFoundVideoChanged = Signal(int)
 
     def __init__(self, /) -> None:
         super().__init__()
-        self._temp_import_found_video = self._settings.import_found_video
+        self._temp_load_found_video = self._settings.import_found_video
 
-    @Property(int, notify=importFoundVideoChanged)
-    def importFoundVideo(self) -> int:
-        return self._temp_import_found_video.value
+    @Property(int, notify=loadFoundVideoChanged)
+    def loadFoundVideo(self) -> int:
+        return self._temp_load_found_video.value
 
-    @importFoundVideo.setter
-    def importFoundVideo(self, value: int) -> None:
+    @loadFoundVideo.setter
+    def loadFoundVideo(self, value: int) -> None:
         setting = LoadFoundVideo(value)
-        if self._temp_import_found_video != setting:
-            self._temp_import_found_video = setting
-            self.importFoundVideoChanged.emit(value)
+        if self._temp_load_found_video != setting:
+            self._temp_load_found_video = setting
+            self.loadFoundVideoChanged.emit(value)
 
     @Slot()
     def accept(self) -> None:
-        self._settings.import_found_video = self._temp_import_found_video
+        self._settings.import_found_video = self._temp_load_found_video

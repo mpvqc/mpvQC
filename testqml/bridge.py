@@ -333,7 +333,7 @@ class MpvqcTestSettings(QObject):
         return list(inject.instance(SettingsService).comment_types)
 
     @Slot(result=int)
-    def importFoundVideo(self) -> int:
+    def loadFoundVideo(self) -> int:
         return inject.instance(ImportSettingsService).import_found_video.value
 
     @Slot(result=str)

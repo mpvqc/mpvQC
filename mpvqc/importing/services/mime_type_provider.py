@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from typing import Final
 
 
-class MimetypeProviderService:
+class MimeTypeProviderService:
     DOCUMENT_FILE_EXTENSIONS: Final[frozenset[str]] = frozenset({"txt", "json"})
 
     # fmt: off

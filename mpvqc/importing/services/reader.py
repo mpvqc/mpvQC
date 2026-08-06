@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class DocumentImportResult:
+class ReadDocumentsResult:
     valid_documents: tuple[Path, ...]
     rejected_documents: tuple[RejectedDocument, ...]
     existing_videos: tuple[Path, ...]
@@ -29,7 +29,7 @@ class DocumentImportResult:
     comments: tuple[Comment, ...]
 
 
-def read_documents(documents: list[Path]) -> DocumentImportResult:
+def read_documents(documents: list[Path]) -> ReadDocumentsResult:
     valid_docs = []
     rejected_docs = []
     existing_vids = []
@@ -56,7 +56,7 @@ def read_documents(documents: list[Path]) -> DocumentImportResult:
                 existing_subs.extend(s for s in parsed.subtitles if s.is_file())
                 all_comments.extend(parsed.comments)
 
-    return DocumentImportResult(
+    return ReadDocumentsResult(
         valid_documents=tuple(valid_docs),
         rejected_documents=tuple(rejected_docs),
         existing_videos=tuple(existing_vids),

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from mpvqc.importing.models import MpvqcImportSubtitlesModel
+from mpvqc.importing.models import SubtitlesModel
 
 SUBTITLES = (
     Path("/work/one.srt"),
@@ -17,8 +17,8 @@ SUBTITLES = (
 
 @pytest.fixture
 def make_model():
-    def _make(subtitles: tuple[Path, ...] = SUBTITLES) -> MpvqcImportSubtitlesModel:
-        return MpvqcImportSubtitlesModel(subtitles)
+    def _make(subtitles: tuple[Path, ...] = SUBTITLES) -> SubtitlesModel:
+        return SubtitlesModel(subtitles)
 
     return _make
 
@@ -34,9 +34,7 @@ def test_subtitles_start_out_checked(make_model):
 def test_subtitles_expose_their_filenames(make_model):
     model = make_model()
 
-    filenames = [
-        model.data(model.index(row, 0), MpvqcImportSubtitlesModel.FilenameRole) for row in range(model.rowCount())
-    ]
+    filenames = [model.data(model.index(row, 0), SubtitlesModel.FilenameRole) for row in range(model.rowCount())]
 
     assert filenames == ["one.srt", "two.srt", "three.srt"]
 
@@ -47,13 +45,13 @@ def test_toggle_flips_the_row_alone_and_notifies_for_it(qt_app, make_model, make
 
     model.toggle(1)
 
-    assert model.data(model.index(0, 0), MpvqcImportSubtitlesModel.IsCheckedRole) is True
-    assert model.data(model.index(1, 0), MpvqcImportSubtitlesModel.IsCheckedRole) is False
-    assert model.data(model.index(2, 0), MpvqcImportSubtitlesModel.IsCheckedRole) is True
+    assert model.data(model.index(0, 0), SubtitlesModel.IsCheckedRole) is True
+    assert model.data(model.index(1, 0), SubtitlesModel.IsCheckedRole) is False
+    assert model.data(model.index(2, 0), SubtitlesModel.IsCheckedRole) is True
     assert spy.count() == 1
     assert spy.at(0, 0).row() == 1
     assert spy.at(0, 1).row() == 1
-    assert spy.at(0, 2) == [MpvqcImportSubtitlesModel.IsCheckedRole]
+    assert spy.at(0, 2) == [SubtitlesModel.IsCheckedRole]
 
 
 def test_toggle_twice_returns_the_row_to_checked(make_model):
@@ -62,7 +60,7 @@ def test_toggle_twice_returns_the_row_to_checked(make_model):
     model.toggle(0)
     model.toggle(0)
 
-    assert model.data(model.index(0, 0), MpvqcImportSubtitlesModel.IsCheckedRole) is True
+    assert model.data(model.index(0, 0), SubtitlesModel.IsCheckedRole) is True
 
 
 def test_toggle_outside_the_rows_does_nothing(qt_app, make_model, make_spy):
@@ -87,7 +85,7 @@ def test_set_all_checked_false_unchecks_every_row(qt_app, make_model, make_spy):
     assert spy.count() == 1
     assert spy.at(0, 0).row() == 0
     assert spy.at(0, 1).row() == 2
-    assert spy.at(0, 2) == [MpvqcImportSubtitlesModel.IsCheckedRole]
+    assert spy.at(0, 2) == [SubtitlesModel.IsCheckedRole]
 
 
 def test_set_all_checked_true_rechecks_every_row(qt_app, make_model, make_spy):
@@ -100,7 +98,7 @@ def test_set_all_checked_true_rechecks_every_row(qt_app, make_model, make_spy):
     assert model.checked_count == 3
     assert model.checked_paths == SUBTITLES
     assert spy.count() == 1
-    assert spy.at(0, 2) == [MpvqcImportSubtitlesModel.IsCheckedRole]
+    assert spy.at(0, 2) == [SubtitlesModel.IsCheckedRole]
 
 
 def test_set_all_checked_on_an_empty_model_does_nothing(qt_app, make_model, make_spy):

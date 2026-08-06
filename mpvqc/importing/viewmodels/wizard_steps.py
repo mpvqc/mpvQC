@@ -29,7 +29,7 @@ from mpvqc.importing.domain import (
     VideoUnresolved,
 )
 from mpvqc.importing.enums import MpvqcImportWizardSessionMode
-from mpvqc.importing.models import MpvqcImportErrorsModel, MpvqcImportSubtitlesModel, MpvqcImportVideosModel
+from mpvqc.importing.models import ErrorsModel, SubtitlesModel, VideosModel
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -40,10 +40,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportWizardErrorsStepViewModel(QObject):
     def __init__(self, parent: QObject, inputs: ErrorsPresent) -> None:
         super().__init__(parent)
-        self._documents = MpvqcImportErrorsModel(inputs.rejected_documents)
+        self._documents = ErrorsModel(inputs.rejected_documents)
 
     @Property(QAbstractItemModel, constant=True, final=True)
-    def documents(self) -> MpvqcImportErrorsModel:
+    def documents(self) -> ErrorsModel:
         return self._documents
 
     @classmethod
@@ -123,11 +123,11 @@ class MpvqcImportWizardVideoStepViewModel(QObject):
 
     def __init__(self, parent: QObject, inputs: VideoUnresolved) -> None:
         super().__init__(parent)
-        self._candidates = MpvqcImportVideosModel(inputs.candidates)
+        self._candidates = VideosModel(inputs.candidates)
         self._selected_index = 0
 
     @Property(QAbstractItemModel, constant=True, final=True)
-    def candidates(self) -> MpvqcImportVideosModel:
+    def candidates(self) -> VideosModel:
         return self._candidates
 
     @Property(int, notify=selectedIndexChanged, final=True)
@@ -161,11 +161,11 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
 
     def __init__(self, parent: QObject, inputs: SubtitlesUnresolved) -> None:
         super().__init__(parent)
-        self._subtitles = MpvqcImportSubtitlesModel(inputs.candidates)
+        self._subtitles = SubtitlesModel(inputs.candidates)
         self._subtitles.dataChanged.connect(self._emit_tri_state_changed)
 
     @Property(QAbstractItemModel, constant=True, final=True)
-    def subtitles(self) -> MpvqcImportSubtitlesModel:
+    def subtitles(self) -> SubtitlesModel:
         return self._subtitles
 
     @Property(int, notify=selectAllTriStateChanged, final=True)

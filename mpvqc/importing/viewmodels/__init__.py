@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .drop_area import MpvqcDropAreaViewModel as MpvqcDropAreaViewModel
+from .drop_area import MpvqcImportDropAreaViewModel as MpvqcImportDropAreaViewModel
 from .file_dialogs import MpvqcImportFileDialogViewModel as MpvqcImportFileDialogViewModel
 from .settings_dialog import MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel
 from .wizard import MpvqcImportWizardViewModel as MpvqcImportWizardViewModel

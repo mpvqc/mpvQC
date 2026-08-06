@@ -37,7 +37,7 @@ def test_import_found_video_set_and_get(import_settings_service, setting):
 
 @pytest.mark.parametrize("stored", [42, -1, "banana", ""], ids=["out-of-range", "negative", "text", "empty"])
 def test_unreadable_import_found_video_falls_back_to_ask_every_time(import_settings_service, settings_file, stored):
-    settings_file.qsettings.setValue("Import/importFoundVideo", stored)
+    settings_file.qsettings.setValue("Import/loadFoundVideo", stored)
 
     assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME
 
@@ -130,15 +130,15 @@ def test_every_write_lands_under_its_stored_key_in_the_import_ini_section(
     settings_file.qsettings.sync()
 
     section = import_section(tmp_path)
-    assert "importFoundVideo=2" in section
+    assert "loadFoundVideo=2" in section
     # QSettings serializes a QUrl into an opaque variant, so only the key name is readable for the directories
     assert "lastDirectoryVideo=" in section
     assert "lastDirectoryDocuments=" in section
     assert "lastDirectorySubtitles=" in section
 
 
-def test_a_settings_file_from_the_previous_build_reads_back_unchanged(settings_file, tmp_path):
-    settings_file.qsettings.setValue("Import/importFoundVideo", 0)
+def test_a_settings_file_from_an_earlier_run_reads_back_unchanged(settings_file, tmp_path):
+    settings_file.qsettings.setValue("Import/loadFoundVideo", 0)
     settings_file.qsettings.setValue("Import/lastDirectoryVideo", QUrl.fromLocalFile("/videos"))
     settings_file.qsettings.setValue("Import/lastDirectoryDocuments", QUrl.fromLocalFile("/documents"))
     settings_file.qsettings.setValue("Import/lastDirectorySubtitles", QUrl.fromLocalFile("/subtitles"))
@@ -152,3 +152,9 @@ def test_a_settings_file_from_the_previous_build_reads_back_unchanged(settings_f
     assert service.last_directory_video == QUrl.fromLocalFile("/videos")
     assert service.last_directory_documents == QUrl.fromLocalFile("/documents")
     assert service.last_directory_subtitles == QUrl.fromLocalFile("/subtitles")
+
+
+def test_the_previous_builds_found_video_key_is_ignored(import_settings_service, settings_file):
+    settings_file.qsettings.setValue("Import/importFoundVideo", LoadFoundVideo.ALWAYS.value)
+
+    assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME

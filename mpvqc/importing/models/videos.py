@@ -28,7 +28,7 @@ class _VideoEntry:
 _SKIP_VIDEO_ENTRY = _VideoEntry(path=None, found_in_document=False, found_in_subtitle=False)
 
 
-class MpvqcImportVideosModel(QAbstractListModel):
+class VideosModel(QAbstractListModel):
     FilenameRole = Qt.ItemDataRole.UserRole + 1
     FullPathRole = Qt.ItemDataRole.UserRole + 2
     FoundInDocumentRole = Qt.ItemDataRole.UserRole + 3

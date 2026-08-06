@@ -23,6 +23,8 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   rejected. Canonical order: errors, session, video, subtitles.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. One decision sets both the title and the footer.
+- **MIME type**: the standard label for a file format, a type and a subtype joined by a slash, such as `video/mp4`.
+  Spelled MIME type, two words: the Qt spelling, as in `QMimeType`.
 
 ## Comments
 

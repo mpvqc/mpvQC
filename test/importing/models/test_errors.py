@@ -5,7 +5,7 @@
 from pathlib import Path
 
 from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument
-from mpvqc.importing.models import MpvqcImportErrorsModel
+from mpvqc.importing.models import ErrorsModel
 
 REJECTED = (
     RejectedDocument(Path("/work/broken.qc"), DocumentRejectionReason.INVALID),
@@ -14,11 +14,11 @@ REJECTED = (
 
 
 def test_errors_model_exposes_rejections_with_reasons(qt_app):
-    model = MpvqcImportErrorsModel(REJECTED)
+    model = ErrorsModel(REJECTED)
 
     assert model.rowCount() == 2
-    assert model.data(model.index(0, 0), MpvqcImportErrorsModel.FilenameRole) == "broken.qc"
-    assert model.data(model.index(0, 0), MpvqcImportErrorsModel.FullPathRole) == str(Path("/work/broken.qc"))
-    assert model.data(model.index(0, 0), MpvqcImportErrorsModel.ReasonRole) == "Not a valid QC document"
-    assert model.data(model.index(1, 0), MpvqcImportErrorsModel.FilenameRole) == "future.json"
-    assert model.data(model.index(1, 0), MpvqcImportErrorsModel.ReasonRole) == "Unsupported document format version"
+    assert model.data(model.index(0, 0), ErrorsModel.FilenameRole) == "broken.qc"
+    assert model.data(model.index(0, 0), ErrorsModel.FullPathRole) == str(Path("/work/broken.qc"))
+    assert model.data(model.index(0, 0), ErrorsModel.ReasonRole) == "Not a valid QC document"
+    assert model.data(model.index(1, 0), ErrorsModel.FilenameRole) == "future.json"
+    assert model.data(model.index(1, 0), ErrorsModel.ReasonRole) == "Unsupported document format version"

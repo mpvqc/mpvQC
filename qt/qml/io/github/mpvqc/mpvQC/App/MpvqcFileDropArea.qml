@@ -9,7 +9,7 @@ import io.github.mpvqc.mpvQC.Python
 DropArea {
     objectName: "fileDropArea"
 
-    readonly property MpvqcDropAreaViewModel viewModel: MpvqcDropAreaViewModel {}
+    readonly property MpvqcImportDropAreaViewModel viewModel: MpvqcImportDropAreaViewModel {}
 
     onEntered: event => {
         if (viewModel.canHandle(event.formats, event.hasUrls)) {

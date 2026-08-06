@@ -8,8 +8,8 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
-from mpvqc.importing.services import ImporterService, MimetypeProviderService
-from mpvqc.importing.viewmodels import MpvqcDropAreaViewModel
+from mpvqc.importing.services import ImporterService, MimeTypeProviderService
+from mpvqc.importing.viewmodels import MpvqcImportDropAreaViewModel
 
 
 @pytest.fixture
@@ -21,15 +21,15 @@ def importer_service_mock() -> MagicMock:
 def configure_inject(common_bindings_with, importer_service_mock):
     def custom_bindings(binder: inject.Binder):
         binder.bind(ImporterService, importer_service_mock)
-        binder.bind_to_constructor(MimetypeProviderService, MimetypeProviderService)
+        binder.bind_to_constructor(MimeTypeProviderService, MimeTypeProviderService)
 
     common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
-def view_model() -> MpvqcDropAreaViewModel:
+def view_model() -> MpvqcImportDropAreaViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcDropAreaViewModel()
+    return MpvqcImportDropAreaViewModel()
 
 
 def test_open_routes_dropped_files_by_extension(view_model, importer_service_mock):

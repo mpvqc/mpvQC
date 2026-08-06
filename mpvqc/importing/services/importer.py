@@ -26,7 +26,7 @@ from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.state import StateService
 
-from .plan import plan_import
+from .planning import plan
 from .settings import ImportSettingsService
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class PlanImport(Protocol):
+class Planning(Protocol):
     def __call__(
         self,
         document_paths: list[Path],
@@ -63,7 +63,7 @@ class ImporterService(QObject):
     unfinished_plan_ready = Signal(UnfinishedPlan)
     busy_changed = Signal(bool)
 
-    def __init__(self, executor: JobExecutor | None = None, plan: PlanImport = plan_import) -> None:
+    def __init__(self, executor: JobExecutor | None = None, plan: Planning = plan) -> None:
         super().__init__()
         self._busy = False
         self._plan = plan

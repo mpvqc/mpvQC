@@ -16,7 +16,7 @@ from mpvqc.importing.domain import (
     UnfinishedPlan,
     VideoSkip,
 )
-from mpvqc.importing.services import plan_import
+from mpvqc.importing.services import plan
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -29,7 +29,7 @@ def test_valid_document_composes_into_a_finished_plan(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    plan = plan_import(
+    result = plan(
         [document],
         [],
         [],
@@ -38,19 +38,19 @@ def test_valid_document_composes_into_a_finished_plan(tmp_path: Path) -> None:
         is_any_candidate_loaded=lambda _paths: False,
     )
 
-    assert isinstance(plan, FinishedPlan)
-    assert len(plan.comments) == 1
-    assert plan.comments[0].comment == "A comment"
-    assert plan.session == SessionMerge()
-    assert plan.video == VideoSkip()
-    assert plan.subtitles == SubtitlesSkip()
+    assert isinstance(result, FinishedPlan)
+    assert len(result.comments) == 1
+    assert result.comments[0].comment == "A comment"
+    assert result.session == SessionMerge()
+    assert result.video == VideoSkip()
+    assert result.subtitles == SubtitlesSkip()
 
 
 def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> None:
     document = tmp_path / "broken.json"
     document.write_text(json.dumps({"comments": []}), encoding="utf-8")
 
-    plan = plan_import(
+    result = plan(
         [document],
         [],
         [],
@@ -59,6 +59,6 @@ def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> No
         is_any_candidate_loaded=lambda _paths: False,
     )
 
-    assert isinstance(plan, UnfinishedPlan)
-    assert isinstance(plan.errors, ErrorsPresent)
-    assert plan.errors.rejected_documents[0].path == document
+    assert isinstance(result, UnfinishedPlan)
+    assert isinstance(result.errors, ErrorsPresent)
+    assert result.errors.rejected_documents[0].path == document

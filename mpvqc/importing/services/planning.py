@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from mpvqc.importing.domain import FinishedPlan, LoadFoundVideo, UnfinishedPlan
 
 
-def plan_import(
+def plan(
     document_paths: list[Path],
     video_paths: list[Path],
     subtitle_paths: list[Path],

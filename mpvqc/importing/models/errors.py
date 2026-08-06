@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from mpvqc.importing.domain import RejectedDocument
 
 
-class MpvqcImportErrorsModel(QAbstractListModel):
+class ErrorsModel(QAbstractListModel):
     FilenameRole = Qt.ItemDataRole.UserRole + 1
     FullPathRole = Qt.ItemDataRole.UserRole + 2
     ReasonRole = Qt.ItemDataRole.UserRole + 3

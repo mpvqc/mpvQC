@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.services import ImporterService, MimetypeProviderService
+from mpvqc.importing.services import ImporterService, MimeTypeProviderService
 from mpvqc.services import TypeMapperService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -14,9 +14,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcDropAreaViewModel(QObject):
+class MpvqcImportDropAreaViewModel(QObject):
     _importer = inject.attr(ImporterService)
-    _mimetype_provider = inject.attr(MimetypeProviderService)
+    _mime_type_provider = inject.attr(MimeTypeProviderService)
     _type_mapper = inject.attr(TypeMapperService)
 
     _ACCEPTED_FORMAT = "text/uri-list"
@@ -27,8 +27,8 @@ class MpvqcDropAreaViewModel(QObject):
 
     @Slot(list)
     def open(self, urls: list[QUrl]) -> None:
-        document_extensions = [f".{ext}" for ext in self._mimetype_provider.DOCUMENT_FILE_EXTENSIONS]
-        subtitle_extensions = [f".{ext}" for ext in self._mimetype_provider.SUBTITLE_FILE_EXTENSIONS]
+        document_extensions = [f".{ext}" for ext in self._mime_type_provider.DOCUMENT_FILE_EXTENSIONS]
+        subtitle_extensions = [f".{ext}" for ext in self._mime_type_provider.SUBTITLE_FILE_EXTENSIONS]
         documents = []
         subtitles = []
         videos = []

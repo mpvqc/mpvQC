@@ -38,7 +38,7 @@ MpvqcDialog {
             }
 
             ComboBox {
-                objectName: "importFoundVideoComboBox"
+                objectName: "loadFoundVideoComboBox"
 
                 textRole: "text"
                 valueRole: "value"
@@ -48,11 +48,11 @@ MpvqcDialog {
                 Layout.preferredWidth: 165
 
                 onActivated: value => {
-                    root.viewModel.importFoundVideo = value;
+                    root.viewModel.loadFoundVideo = value;
                 }
 
                 Component.onCompleted: {
-                    currentIndex = indexOfValue(root.viewModel.importFoundVideo);
+                    currentIndex = indexOfValue(root.viewModel.loadFoundVideo);
                 }
             }
         }

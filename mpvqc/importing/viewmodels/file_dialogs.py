@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.services import ImporterService, ImportSettingsService, MimetypeProviderService
+from mpvqc.importing.services import ImporterService, ImportSettingsService, MimeTypeProviderService
 from mpvqc.services import TypeMapperService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -16,7 +16,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcImportFileDialogViewModel(QObject):
     _importer = inject.attr(ImporterService)
-    _mimetype_provider = inject.attr(MimetypeProviderService)
+    _mime_type_provider = inject.attr(MimeTypeProviderService)
     _settings = inject.attr(ImportSettingsService)
     _type_mapper = inject.attr(TypeMapperService)
 
@@ -26,11 +26,11 @@ class MpvqcImportFileDialogViewModel(QObject):
 
     @Property(str, constant=True, final=True)
     def videoFileGlobPattern(self) -> str:
-        return self._mimetype_provider.video_file_glob_pattern
+        return self._mime_type_provider.video_file_glob_pattern
 
     @Property(str, constant=True, final=True)
     def subtitleFileGlobPattern(self) -> str:
-        return self._mimetype_provider.subtitle_file_glob_pattern
+        return self._mime_type_provider.subtitle_file_glob_pattern
 
     @Property(QUrl, notify=lastDirectoryVideoChanged)
     def lastDirectoryVideo(self) -> QUrl:

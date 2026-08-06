@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import QSettings
 
-_IMPORT_FOUND_VIDEO_KEY = "Import/importFoundVideo"
+_LOAD_FOUND_VIDEO_KEY = "Import/loadFoundVideo"
 _LAST_DIRECTORY_VIDEO_KEY = "Import/lastDirectoryVideo"
 _LAST_DIRECTORY_DOCUMENTS_KEY = "Import/lastDirectoryDocuments"
 _LAST_DIRECTORY_SUBTITLES_KEY = "Import/lastDirectorySubtitles"
@@ -43,7 +43,7 @@ class ImportSettingsService(QObject):
     @property
     def import_found_video(self) -> LoadFoundVideo:
         # Reading with type=int would coerce a corrupted value to 0, which means ALWAYS
-        stored = self._stored(_IMPORT_FOUND_VIDEO_KEY)
+        stored = self._stored(_LOAD_FOUND_VIDEO_KEY)
         if isinstance(stored, str | int):
             with suppress(ValueError):
                 return LoadFoundVideo(int(stored))
@@ -53,7 +53,7 @@ class ImportSettingsService(QObject):
     def import_found_video(self, setting: LoadFoundVideo) -> None:
         if self.import_found_video == setting:
             return
-        self._qsettings.setValue(_IMPORT_FOUND_VIDEO_KEY, setting.value)
+        self._qsettings.setValue(_LOAD_FOUND_VIDEO_KEY, setting.value)
         self.import_found_video_changed.emit(setting)
 
     @property
