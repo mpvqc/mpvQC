@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
@@ -30,12 +30,27 @@ from .plan import plan_import
 from .settings import ImportSettingsService
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
     from pathlib import Path
 
+    from mpvqc.importing.domain import LoadFoundVideo
     from mpvqc.jobs import JobExecutor, Result
 
 
 logger = logging.getLogger(__name__)
+
+
+class PlanImport(Protocol):
+    def __call__(
+        self,
+        document_paths: list[Path],
+        video_paths: list[Path],
+        subtitle_paths: list[Path],
+        *,
+        found_video_setting: LoadFoundVideo,
+        has_existing_comments: bool,
+        is_any_candidate_loaded: Callable[[Iterable[Path]], bool],
+    ) -> FinishedPlan | UnfinishedPlan: ...
 
 
 class ImporterService(QObject):
@@ -48,9 +63,10 @@ class ImporterService(QObject):
     unfinished_plan_ready = Signal(UnfinishedPlan)
     busy_changed = Signal(bool)
 
-    def __init__(self, executor: JobExecutor | None = None) -> None:
+    def __init__(self, executor: JobExecutor | None = None, plan: PlanImport = plan_import) -> None:
         super().__init__()
         self._busy = False
+        self._plan = plan
         self._jobs = SerialJobRunner(executor)
 
     @Property(bool, notify=busy_changed)
@@ -79,7 +95,7 @@ class ImporterService(QObject):
         current_video = self._player.path
 
         def build_plan() -> FinishedPlan | UnfinishedPlan:
-            return plan_import(
+            return self._plan(
                 document_paths,
                 video_paths,
                 subtitle_paths,

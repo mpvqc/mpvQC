@@ -322,12 +322,10 @@ UNRESOLVED_PLAN = UnfinishedPlan(
 
 def test_open_routes_resolvable_scan_to_execute(
     qt_app,
-    monkeypatch: pytest.MonkeyPatch,
-    service: ImporterService,
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    monkeypatch.setattr("mpvqc.importing.services.importer.plan_import", lambda *_args, **_kwargs: NOOP_PLAN)
+    service = ImporterService(manual_executor, plan=lambda *_args, **_kwargs: NOOP_PLAN)
     unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -339,12 +337,10 @@ def test_open_routes_resolvable_scan_to_execute(
 
 def test_open_routes_unresolvable_scan_to_wizard(
     qt_app,
-    monkeypatch: pytest.MonkeyPatch,
-    service: ImporterService,
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    monkeypatch.setattr("mpvqc.importing.services.importer.plan_import", lambda *_args, **_kwargs: UNRESOLVED_PLAN)
+    service = ImporterService(manual_executor, plan=lambda *_args, **_kwargs: UNRESOLVED_PLAN)
     unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -356,8 +352,6 @@ def test_open_routes_unresolvable_scan_to_wizard(
 
 def test_open_recovers_when_scan_raises(
     qt_app,
-    monkeypatch: pytest.MonkeyPatch,
-    service: ImporterService,
     manual_executor: ManualJobExecutor,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
@@ -365,7 +359,7 @@ def test_open_recovers_when_scan_raises(
         msg = "scan exploded"
         raise RuntimeError(msg)
 
-    monkeypatch.setattr("mpvqc.importing.services.importer.plan_import", raise_scan_error)
+    service = ImporterService(manual_executor, plan=raise_scan_error)
 
     service.open([], [], [])
     manual_executor.drain()
