@@ -49,7 +49,4 @@ from .wizard import SubtitlesStep as SubtitlesStep
 from .wizard import VideoStep as VideoStep
 from .wizard import WizardState as WizardState
 from .wizard import WizardStep as WizardStep
-from .wizard import compute_footer_state as compute_footer_state
-from .wizard import compute_steps as compute_steps
-from .wizard import is_close_only as is_close_only
 from .wizard import make_wizard_state as make_wizard_state

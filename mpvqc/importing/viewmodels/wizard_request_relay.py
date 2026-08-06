@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.domain import UnfinishedPlan, compute_steps
+from mpvqc.importing.domain import UnfinishedPlan
 from mpvqc.importing.services import ImporterService
 
 from .wizard import MpvqcImportWizardViewModel
@@ -42,10 +42,11 @@ class MpvqcImportWizardRequestRelayViewModel(QObject):
 
     @Slot(UnfinishedPlan)
     def _request_import_wizard(self, unfinished_plan: UnfinishedPlan) -> None:
-        if not compute_steps(unfinished_plan):
-            logger.error("UnfinishedPlan has no steps; unfinished_plan=%r", unfinished_plan)
+        try:
+            self._wizard_vm = MpvqcImportWizardViewModel(self, unfinished_plan)
+        except ValueError:
+            logger.exception("Cannot open a wizard; unfinished_plan=%r", unfinished_plan)
             self._importer.cancel_pending()
             return
 
-        self._wizard_vm = MpvqcImportWizardViewModel(self, unfinished_plan)
         self.importWizardRequested.emit(self._wizard_vm)

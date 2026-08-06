@@ -11,18 +11,14 @@ from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import (
     ErrorsPresent,
-    ImportErrors,
-    SessionConcern,
     SessionMerge,
     SessionReplace,
     SessionResolved,
     SessionUnresolved,
-    SubtitlesConcern,
     SubtitlesLoad,
     SubtitlesResolved,
     SubtitlesSkip,
     SubtitlesUnresolved,
-    VideoConcern,
     VideoLoad,
     VideoResolved,
     VideoSkip,
@@ -45,12 +41,6 @@ class MpvqcImportWizardErrorsStepViewModel(QObject):
     @Property(QAbstractItemModel, constant=True, final=True)
     def documents(self) -> ErrorsModel:
         return self._documents
-
-    @classmethod
-    def build(cls, parent: QObject, errors: ImportErrors) -> MpvqcImportWizardErrorsStepViewModel | None:
-        if isinstance(errors, ErrorsPresent):
-            return cls(parent, errors)
-        return None
 
 
 @QmlElement
@@ -88,12 +78,6 @@ class MpvqcImportWizardSessionStepViewModel(QObject):
             self.resolved = _to_resolved(MpvqcImportWizardSessionMode.SessionMode(value))
         except ValueError:
             return
-
-    @classmethod
-    def build(cls, parent: QObject, concern: SessionConcern) -> MpvqcImportWizardSessionStepViewModel | None:
-        if isinstance(concern, SessionUnresolved):
-            return cls(parent, concern)
-        return None
 
 
 def _to_mode(resolved: SessionResolved) -> MpvqcImportWizardSessionMode.SessionMode:
@@ -147,12 +131,6 @@ class MpvqcImportWizardVideoStepViewModel(QObject):
             return VideoLoad(path=path)
         return VideoSkip()
 
-    @classmethod
-    def build(cls, parent: QObject, concern: VideoConcern) -> MpvqcImportWizardVideoStepViewModel | None:
-        if isinstance(concern, VideoUnresolved):
-            return cls(parent, concern)
-        return None
-
 
 @QmlElement
 @QmlUncreatable("constructed by MpvqcImportWizardViewModel")
@@ -198,9 +176,3 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
     @Slot()
     def _emit_tri_state_changed(self) -> None:
         self.selectAllTriStateChanged.emit(self.selectAllTriState)
-
-    @classmethod
-    def build(cls, parent: QObject, concern: SubtitlesConcern) -> MpvqcImportWizardSubtitlesStepViewModel | None:
-        if isinstance(concern, SubtitlesUnresolved):
-            return cls(parent, concern)
-        return None

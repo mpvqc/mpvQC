@@ -85,11 +85,11 @@ class WizardState:
 
     @property
     def close_only(self) -> bool:
-        return is_close_only(self.plan, self.step_kinds)
+        return _is_close_only(self)
 
     @property
     def footer(self) -> FooterState:
-        return compute_footer_state(self.plan, self.step_kinds, self.current_index)
+        return _compute_footer_state(self)
 
     def advance(self) -> WizardState:
         return self.jump_to(self.current_index + 1)
@@ -124,23 +124,15 @@ def _derive_steps(unfinished_plan: UnfinishedPlan) -> tuple[WizardStep, ...]:
     return tuple(steps)
 
 
-def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
-    return tuple(step.kind for step in _derive_steps(unfinished_plan))
+def _is_close_only(state: WizardState) -> bool:
+    return state.step_kinds == (StepKind.ERRORS,) and not _has_valid_content(state.plan)
 
 
-def is_close_only(unfinished_plan: UnfinishedPlan, steps: tuple[StepKind, ...]) -> bool:
-    return steps == (StepKind.ERRORS,) and not _has_valid_content(unfinished_plan)
+def _compute_footer_state(state: WizardState) -> FooterState:
+    has_content = _has_valid_content(state.plan)
+    is_last = state.current_index == len(state.steps) - 1
 
-
-def compute_footer_state(
-    unfinished_plan: UnfinishedPlan,
-    steps: tuple[StepKind, ...],
-    current_index: int,
-) -> FooterState:
-    has_content = _has_valid_content(unfinished_plan)
-    is_last = current_index == len(steps) - 1
-
-    if is_close_only(unfinished_plan, steps):
+    if _is_close_only(state):
         label = PrimaryLabel.CLOSE
         action = PrimaryAction.REJECT
     elif is_last and not has_content:
@@ -156,8 +148,8 @@ def compute_footer_state(
     return FooterState(
         primary_label=label,
         primary_action=action,
-        show_cancel=has_content or len(steps) > 1,
-        show_back=current_index > 0,
+        show_cancel=has_content or len(state.steps) > 1,
+        show_back=state.current_index > 0,
     )
 
 

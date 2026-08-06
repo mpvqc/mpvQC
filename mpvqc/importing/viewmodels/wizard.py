@@ -11,12 +11,14 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import (
+    ErrorsStep,
     PrimaryAction,
     PrimaryLabel,
-    compute_footer_state,
-    compute_steps,
+    SessionStep,
+    SubtitlesStep,
+    VideoStep,
     finish_plan,
-    is_close_only,
+    make_wizard_state,
 )
 from mpvqc.importing.services import ImporterService
 
@@ -28,7 +30,7 @@ from .wizard_steps import (
 )
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import FooterState, UnfinishedPlan
+    from mpvqc.importing.domain import UnfinishedPlan, WizardState
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -46,38 +48,41 @@ class MpvqcImportWizardViewModel(QObject):
 
     def __init__(self, parent: QObject | None, unfinished_plan: UnfinishedPlan) -> None:
         super().__init__(parent)
-        self._unfinished_plan = unfinished_plan
-        self._current_step_index = 0
+        self._state = make_wizard_state(unfinished_plan)
 
-        self._steps = compute_steps(unfinished_plan)
-        self._close_only = is_close_only(unfinished_plan, self._steps)
+        self._errors_step: MpvqcImportWizardErrorsStepViewModel | None = None
+        self._session_step: MpvqcImportWizardSessionStepViewModel | None = None
+        self._video_step: MpvqcImportWizardVideoStepViewModel | None = None
+        self._subtitles_step: MpvqcImportWizardSubtitlesStepViewModel | None = None
 
-        self._errors_step = MpvqcImportWizardErrorsStepViewModel.build(self, unfinished_plan.errors)
-        self._session_step = MpvqcImportWizardSessionStepViewModel.build(self, unfinished_plan.session)
-        self._video_step = MpvqcImportWizardVideoStepViewModel.build(self, unfinished_plan.video)
-        self._subtitles_step = MpvqcImportWizardSubtitlesStepViewModel.build(self, unfinished_plan.subtitles)
+        for step in self._state.steps:
+            match step:
+                case ErrorsStep():
+                    self._errors_step = MpvqcImportWizardErrorsStepViewModel(self, step.errors)
+                case SessionStep():
+                    self._session_step = MpvqcImportWizardSessionStepViewModel(self, step.session)
+                case VideoStep():
+                    self._video_step = MpvqcImportWizardVideoStepViewModel(self, step.video)
+                case SubtitlesStep():
+                    self._subtitles_step = MpvqcImportWizardSubtitlesStepViewModel(self, step.subtitles)
+                case _:
+                    assert_never(step)
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepIndex(self) -> int:
-        return self._current_step_index
+        return self._state.current_index
 
     @currentStepIndex.setter
     def currentStepIndex(self, value: int) -> None:
-        if 0 <= value < len(self._steps) and value != self._current_step_index:
-            self._current_step_index = value
-            self.currentStepChanged.emit()
-
-    @Property(int, notify=currentStepChanged, final=True)
-    def currentStepKind(self) -> int:
-        return int(self._steps[self._current_step_index])
+        self._move_to(self._state.jump_to(value))
 
     @Property(list, constant=True, final=True)
     def stepKinds(self) -> list[int]:
-        return [int(s) for s in self._steps]
+        return [int(kind) for kind in self._state.step_kinds]
 
     @Property(str, constant=True, final=True)
     def title(self) -> str:
-        if self._close_only:
+        if self._state.close_only:
             #: Title of the import wizard dialog when no valid content can be imported
             return QCoreApplication.translate("ImportWizardDialog", "Import Error")
         #: Title of the import wizard dialog
@@ -85,15 +90,15 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Property(str, notify=currentStepChanged, final=True)
     def primaryLabel(self) -> str:
-        return self._primary_label_text(self._footer_state().primary_label)
+        return self._primary_label_text(self._state.footer.primary_label)
 
     @Property(bool, notify=currentStepChanged, final=True)
     def showBack(self) -> bool:
-        return self._footer_state().show_back
+        return self._state.footer.show_back
 
     @Property(bool, notify=currentStepChanged, final=True)
     def showCancel(self) -> bool:
-        return self._footer_state().show_cancel
+        return self._state.footer.show_cancel
 
     @Property(MpvqcImportWizardErrorsStepViewModel, constant=True, final=True)
     def errorsStepViewModel(self) -> MpvqcImportWizardErrorsStepViewModel | None:
@@ -113,19 +118,15 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Slot()
     def next(self) -> None:
-        if self._current_step_index < len(self._steps) - 1:
-            self._current_step_index += 1
-            self.currentStepChanged.emit()
+        self._move_to(self._state.advance())
 
     @Slot()
     def back(self) -> None:
-        if self._current_step_index > 0:
-            self._current_step_index -= 1
-            self.currentStepChanged.emit()
+        self._move_to(self._state.back())
 
     @Slot()
     def primaryClicked(self) -> None:
-        action = self._footer_state().primary_action
+        action = self._state.footer.primary_action
         match action:
             case PrimaryAction.ADVANCE:
                 self.next()
@@ -141,17 +142,20 @@ class MpvqcImportWizardViewModel(QObject):
     def cancelClicked(self) -> None:
         self.rejectRequested.emit()
 
+    def _move_to(self, state: WizardState) -> None:
+        if state.current_index == self._state.current_index:
+            return
+        self._state = state
+        self.currentStepChanged.emit()
+
     def _commit(self) -> None:
         plan = finish_plan(
-            self._unfinished_plan,
+            self._state.plan,
             session=self._session_step.resolved if self._session_step is not None else None,
             video=self._video_step.resolved if self._video_step is not None else None,
             subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
         )
         self._importer.execute(plan)
-
-    def _footer_state(self) -> FooterState:
-        return compute_footer_state(self._unfinished_plan, self._steps, self._current_step_index)
 
     @staticmethod
     def _primary_label_text(label: PrimaryLabel) -> str:
