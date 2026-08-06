@@ -23,7 +23,6 @@ class MpvqcDialogKind(QObject):
         EDIT_MPV_CONFIG = auto()
         EXPORT_SETTINGS = auto()
         IMPORT_SETTINGS = auto()
-        IMPORT_WIZARD = auto()
         KEYBOARD_SHORTCUTS = auto()
 
 
