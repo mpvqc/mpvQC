@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class ReadDocumentsResult:
-    valid_documents: tuple[Path, ...]
     rejected_documents: tuple[RejectedDocument, ...]
     existing_videos: tuple[Path, ...]
     existing_subtitles: tuple[Path, ...]
@@ -30,7 +29,6 @@ class ReadDocumentsResult:
 
 
 def read_documents(documents: list[Path]) -> ReadDocumentsResult:
-    valid_docs = []
     rejected_docs = []
     existing_vids = []
     existing_subs = []
@@ -48,8 +46,6 @@ def read_documents(documents: list[Path]) -> ReadDocumentsResult:
             case DocumentRejectionReason() as reason:
                 rejected_docs.append(RejectedDocument(document, reason))
             case ParsedDocument() as parsed:
-                valid_docs.append(document)
-
                 if parsed.video is not None and parsed.video.is_file():
                     existing_vids.append(parsed.video)
 
@@ -57,7 +53,6 @@ def read_documents(documents: list[Path]) -> ReadDocumentsResult:
                 all_comments.extend(parsed.comments)
 
     return ReadDocumentsResult(
-        valid_documents=tuple(valid_docs),
         rejected_documents=tuple(rejected_docs),
         existing_videos=tuple(existing_vids),
         existing_subtitles=tuple(existing_subs),

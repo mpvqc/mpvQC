@@ -132,7 +132,7 @@ def test_backup_imports_losslessly(make_context, tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [(754321, "Spelling", "Lorem ipsum")]
 
 
@@ -154,7 +154,7 @@ def test_exported_document_imports_losslessly(make_context, tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [
         (0, "Translation", "Lorem ipsum"),
         ((15 * 60 + 29) * 1000 + 340, "Spelling", ""),

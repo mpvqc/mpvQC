@@ -35,7 +35,6 @@ def test_import_invalid_documents(tmp_path):
 
     result = read_documents([document_1, document_2])
 
-    assert not result.valid_documents
     assert [r.path for r in result.rejected_documents] == [document_1, document_2]
 
 
@@ -46,7 +45,6 @@ def test_import_unreadable_documents(tmp_path):
 
     result = read_documents([invalid_encoding, missing])
 
-    assert not result.valid_documents
     rejected_paths = [r.path for r in result.rejected_documents]
     assert invalid_encoding in rejected_paths
     assert missing in rejected_paths
@@ -56,12 +54,13 @@ def test_import_documents_with_utf8_bom(tmp_path):
     classic = tmp_path / "classic.txt"
     classic.write_text("[FILE]\n\n[DATA]\n[00:00:10] [Translation] first\n", encoding="utf-8-sig")
     v1 = tmp_path / "document.json"
-    v1.write_text('{"version": 1, "comments": []}', encoding="utf-8-sig")
+    v1_content = '{"version": 1, "comments": [{"time": "00:00:20.000", "type": "Translation", "text": "second"}]}'
+    v1.write_text(v1_content, encoding="utf-8-sig")
 
     result = read_documents([classic, v1])
 
-    assert set(result.valid_documents) == {classic, v1}
     assert result.rejected_documents == ()
+    assert len(result.comments) == 2
 
 
 def test_import_translates_comment_type_from_the_current_language(tmp_path):
@@ -80,18 +79,20 @@ def test_import_document_with_existing_video(tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert result.existing_videos == (video,)
 
 
 def test_import_document_with_nonexistent_video(tmp_path):
     video = tmp_path / "missing.mp4"
-    document = write_classic_document(tmp_path, "document.txt", f"[FILE]\npath: {video}\n\n[DATA]\n")
+    content = f"[FILE]\npath: {video}\n\n[DATA]\n[00:00:01][Translation] a comment\n"
+    document = write_classic_document(tmp_path, "document.txt", content)
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert result.existing_videos == ()
+    assert len(result.comments) == 1
 
 
 def test_import_document_with_existing_subtitle(tmp_path):
@@ -101,18 +102,20 @@ def test_import_document_with_existing_subtitle(tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert result.existing_subtitles == (subtitle,)
 
 
 def test_import_document_with_nonexistent_subtitle(tmp_path):
     subtitle = tmp_path / "missing.ass"
-    document = write_classic_document(tmp_path, "document.txt", f"[FILE]\nsubtitle: {subtitle}\n")
+    content = f"[FILE]\nsubtitle: {subtitle}\n\n[DATA]\n[00:00:01][Translation] a comment\n"
+    document = write_classic_document(tmp_path, "document.txt", content)
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert result.existing_subtitles == ()
+    assert len(result.comments) == 1
 
 
 def test_import_v1_video_and_subtitles(tmp_path):
@@ -134,7 +137,7 @@ def test_import_v1_video_and_subtitles(tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert result.existing_videos == (video,)
     assert result.existing_subtitles == (existing_subtitle,)
 
@@ -157,7 +160,6 @@ def test_import_multiple_documents_of_mixed_formats(tmp_path):
     result = read_documents([invalid, classic_document, v1_document])
 
     assert [r.path for r in result.rejected_documents] == [invalid]
-    assert set(result.valid_documents) == {classic_document, v1_document}
     assert result.existing_videos == (video,)
     assert len(result.comments) == 3
 
@@ -185,7 +187,6 @@ def test_import_rejects_documents_with_malformed_version(tmp_path, case):
 
     result = read_documents([document])
 
-    assert result.valid_documents == ()
     assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.INVALID),)
 
 
@@ -194,7 +195,6 @@ def test_import_unsupported_version(tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == ()
     assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.UNSUPPORTED_VERSION),)
 
 
@@ -203,7 +203,6 @@ def test_import_rejects_malformed_v1_document(tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == ()
     assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.INVALID),)
 
 
@@ -216,7 +215,7 @@ def test_import_readme_example_document(tmp_path):
 
     result = read_documents([document])
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert len(result.comments) == 1
 
     comment = result.comments[0]
