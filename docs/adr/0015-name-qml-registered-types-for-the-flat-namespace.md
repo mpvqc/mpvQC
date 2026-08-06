@@ -13,9 +13,9 @@ So one question decides how free a name is: can QML name the type?
 A class QML can name carries `Mpvqc` and its full qualification — the area, what it is, and its role — because the
 flat namespace is the only context the name will ever have. The Python name and the QML name are one name. The prefix
 means exactly that QML can name the type, so nothing unregistered wears it. Modules holding registered classes never
-share a file name. That check belongs in the test suite, because the build driver stays replaceable by upstream and
-cannot carry it; nothing runs it yet, and writing it is follow-up work. Everything QML cannot name is free: it names
-itself for its package, and package, role directory, and module carry the context a flat namespace cannot.
+share a file name. A test in the Python suite guards this, because the build driver stays replaceable by upstream and
+cannot carry the check. Everything QML cannot name is free: it names itself for its package, and package, role
+directory, and module carry the context a flat namespace cannot.
 
 ## Consequences
 
