@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.importing.services.subtitle_videos import find_videos_in_subtitles
+from mpvqc.importing.services import find_videos_in_subtitles
 
 SUBTITLE_EMPTY = """\
 """

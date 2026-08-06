@@ -16,7 +16,7 @@ from mpvqc.importing.domain import (
     UnfinishedPlan,
     VideoSkip,
 )
-from mpvqc.importing.services.plan import plan_import
+from mpvqc.importing.services import plan_import
 
 if TYPE_CHECKING:
     from pathlib import Path
