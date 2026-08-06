@@ -5,38 +5,20 @@
 import gc
 import weakref
 from dataclasses import replace
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 
-from mpvqc.importing.domain import (
-    DocumentRejectionReason,
-    ErrorsAbsent,
-    ErrorsPresent,
-    RejectedDocument,
-    SessionMerge,
-    SubtitlesSkip,
-    UnfinishedPlan,
-    VideoSkip,
-)
+from mpvqc.importing.domain import UnfinishedPlan
 from mpvqc.importing.services import ImporterService
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
+from test.importing.viewmodels.plans import ALL_RESOLVED, PRESENT_ERRORS
 
-NOTHING_TO_DECIDE = UnfinishedPlan(
-    comments=(),
-    session=SessionMerge(),
-    video=VideoSkip(),
-    subtitles=SubtitlesSkip(),
-    errors=ErrorsAbsent(),
-)
+NOTHING_TO_DECIDE = ALL_RESOLVED
 
-NEEDS_A_DECISION = replace(
-    NOTHING_TO_DECIDE,
-    errors=ErrorsPresent(rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)),
-)
+NEEDS_A_DECISION = replace(NOTHING_TO_DECIDE, errors=PRESENT_ERRORS)
 
 
 class ImporterSignals(QObject):
@@ -119,6 +101,15 @@ def test_release_cancels_a_pending_import(relay, importer_service_mock):
 def test_release_does_not_cancel_when_the_importer_is_idle(relay, importer_service_mock):
     importer_service_mock.busy = False
     importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
+
+    relay.releaseWizardViewModel()
+
+    importer_service_mock.cancel_pending.assert_not_called()
+
+
+def test_release_with_no_wizard_open_does_nothing(relay, importer_service_mock):
+    # Busy, so a release that skipped the no-wizard guard would cancel the import.
+    importer_service_mock.busy = True
 
     relay.releaseWizardViewModel()
 

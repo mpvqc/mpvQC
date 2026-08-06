@@ -5,29 +5,12 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment
-from mpvqc.importing.domain import (
-    DocumentRejectionReason,
-    ErrorsAbsent,
-    ErrorsPresent,
-    RejectedDocument,
-    SessionMerge,
-    SessionUnresolved,
-    SubtitlesLoad,
-    SubtitlesSkip,
-    SubtitlesUnresolved,
-    UnfinishedPlan,
-    VideoLoad,
-    VideoSkip,
-    VideoSource,
-    VideoUnresolved,
-)
-from mpvqc.importing.viewmodels.wizard_state import (
+from mpvqc.importing.domain import ErrorsPresent, SubtitlesLoad, UnfinishedPlan, VideoLoad
+from mpvqc.importing.viewmodels import (
     ErrorsStep,
     FooterState,
     PrimaryAction,
@@ -39,37 +22,20 @@ from mpvqc.importing.viewmodels.wizard_state import (
     WizardState,
     make_wizard_state,
 )
+from test.importing.viewmodels.plans import (
+    ALL_RESOLVED,
+    ALL_UNRESOLVED,
+    COMMENT,
+    PRESENT_ERRORS,
+    SUB_A,
+    UNRESOLVED_SESSION,
+    UNRESOLVED_SUBTITLES,
+    UNRESOLVED_VIDEO,
+    VIDEO_A,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-VIDEO_A = Path("/movies/a.mp4")
-SUB_A = Path("/work/a.en.srt")
-VID_A_DOC = VideoSource(path=VIDEO_A, found_in_document=True)
-COMMENT = Comment(time=0, comment_type="", comment="")
-
-ALL_RESOLVED = UnfinishedPlan(
-    comments=(),
-    session=SessionMerge(),
-    video=VideoSkip(),
-    subtitles=SubtitlesSkip(),
-    errors=ErrorsAbsent(),
-)
-
-PRESENT_ERRORS = ErrorsPresent(
-    rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
-)
-UNRESOLVED_VIDEO = VideoUnresolved(candidates=(VID_A_DOC,))
-UNRESOLVED_SUBS = SubtitlesUnresolved(candidates=(SUB_A,))
-UNRESOLVED_SESSION = SessionUnresolved(incoming_comment_count=1)
-
-ALL_UNRESOLVED = UnfinishedPlan(
-    comments=(),
-    session=UNRESOLVED_SESSION,
-    video=UNRESOLVED_VIDEO,
-    subtitles=UNRESOLVED_SUBS,
-    errors=PRESENT_ERRORS,
-)
 
 
 def test_creation_rejects_a_plan_with_nothing_to_decide() -> None:
@@ -84,7 +50,7 @@ def test_steps_carry_the_unresolved_data_in_canonical_order() -> None:
         ErrorsStep(PRESENT_ERRORS),
         SessionStep(UNRESOLVED_SESSION),
         VideoStep(UNRESOLVED_VIDEO),
-        SubtitlesStep(UNRESOLVED_SUBS),
+        SubtitlesStep(UNRESOLVED_SUBTITLES),
     )
 
 
@@ -112,7 +78,7 @@ STEP_CASES = [
     ),
     StepCase(
         name="subtitles only",
-        plan=replace(ALL_RESOLVED, subtitles=UNRESOLVED_SUBS),
+        plan=replace(ALL_RESOLVED, subtitles=UNRESOLVED_SUBTITLES),
         expected=(StepKind.SUBTITLES,),
     ),
     StepCase(
@@ -139,7 +105,7 @@ def test_current_step_follows_the_index() -> None:
     state = make_wizard_state(ALL_UNRESOLVED)
 
     assert state.advance().current_step == SessionStep(UNRESOLVED_SESSION)
-    assert state.jump_to(3).current_step == SubtitlesStep(UNRESOLVED_SUBS)
+    assert state.jump_to(3).current_step == SubtitlesStep(UNRESOLVED_SUBTITLES)
 
 
 class TransitionCase(NamedTuple):
@@ -302,7 +268,7 @@ FOOTER_CASES = [
             ALL_RESOLVED,
             session=UNRESOLVED_SESSION,
             video=UNRESOLVED_VIDEO,
-            subtitles=UNRESOLVED_SUBS,
+            subtitles=UNRESOLVED_SUBTITLES,
             comments=(COMMENT,),
         ),
         index=0,
@@ -314,7 +280,7 @@ FOOTER_CASES = [
             ALL_RESOLVED,
             session=UNRESOLVED_SESSION,
             video=UNRESOLVED_VIDEO,
-            subtitles=UNRESOLVED_SUBS,
+            subtitles=UNRESOLVED_SUBTITLES,
             comments=(COMMENT,),
         ),
         index=2,
@@ -322,7 +288,7 @@ FOOTER_CASES = [
     ),
     FooterCase(
         name="video+subs unresolved, no comments, on subtitles (last) -> Confirm, cancel shown",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, subtitles=UNRESOLVED_SUBS),
+        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, subtitles=UNRESOLVED_SUBTITLES),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),

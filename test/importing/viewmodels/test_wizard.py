@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import replace
-from pathlib import Path
 from typing import NamedTuple
 from unittest.mock import MagicMock
 
@@ -11,22 +10,15 @@ import inject
 import pytest
 from PySide6.QtCore import QObject
 
-from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
-    DocumentRejectionReason,
-    ErrorsAbsent,
-    ErrorsPresent,
     FinishedPlan,
-    RejectedDocument,
     SessionMerge,
     SessionReplace,
-    SessionUnresolved,
     SubtitlesLoad,
     SubtitlesSkip,
     SubtitlesUnresolved,
     UnfinishedPlan,
     VideoLoad,
-    VideoSkip,
     VideoSource,
     VideoUnresolved,
 )
@@ -38,30 +30,28 @@ from mpvqc.importing.viewmodels import (
     MpvqcImportWizardVideoStepViewModel,
     MpvqcImportWizardViewModel,
 )
+from test.importing.viewmodels.plans import (
+    ALL_RESOLVED,
+    ALL_UNRESOLVED,
+    COMMENT,
+    PRESENT_ERRORS,
+    SUB_A,
+    SUB_B,
+    UNRESOLVED_SESSION,
+    UNRESOLVED_VIDEO,
+    VIDEO_A,
+    VIDEO_A_FROM_DOCUMENT,
+    VIDEO_B,
+)
 
 NavigationDirection = MpvqcImportWizardNavigationDirection.NavigationDirection
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
 
-VIDEO_A = Path("/movies/a.mp4")
-VIDEO_B = Path("/movies/b.mp4")
-SUB_A = Path("/work/a.en.srt")
-SUB_B = Path("/work/b.en.srt")
-COMMENT = Comment(time=0, comment_type="", comment="")
-
-PRESENT_ERRORS = ErrorsPresent(
-    rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
-)
-UNRESOLVED_SESSION = SessionUnresolved(incoming_comment_count=1)
-UNRESOLVED_VIDEO = VideoUnresolved(candidates=(VideoSource(path=VIDEO_A, found_in_document=True),))
-UNRESOLVED_SUBTITLES = SubtitlesUnresolved(candidates=(SUB_A,))
-
-ALL_RESOLVED = UnfinishedPlan(
-    comments=(),
-    session=SessionMerge(),
-    video=VideoSkip(),
-    subtitles=SubtitlesSkip(),
-    errors=ErrorsAbsent(),
-)
+ERRORS_ONLY = replace(ALL_RESOLVED, errors=PRESENT_ERRORS)
+ERRORS_THEN_VIDEO = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO)
+VIDEO_ONLY = replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO)
+VIDEO_WITH_COMMENTS = replace(ALL_RESOLVED, comments=(COMMENT,), video=UNRESOLVED_VIDEO)
+THREE_STEPS = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, session=UNRESOLVED_SESSION, video=UNRESOLVED_VIDEO)
 
 
 @pytest.fixture
@@ -77,65 +67,51 @@ def configure_inject(common_bindings_with, importer_service_mock):
     common_bindings_with(custom)
 
 
-class LabelCase(NamedTuple):
+class PrimaryLabelCase(NamedTuple):
     name: str
     plan: UnfinishedPlan
-    title: str
-    primary_label: str
-    show_back: bool
-    show_cancel: bool
+    expected: str
 
 
-LABEL_CASES = [
-    LabelCase(
-        name="errors-only, no content -> close-only",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
-        title="Import Error",
-        primary_label="Close",
-        show_back=False,
-        show_cancel=False,
+PRIMARY_LABEL_CASES = [
+    PrimaryLabelCase(
+        name="close-only wizard -> Close",
+        plan=ERRORS_ONLY,
+        expected="Close",
     ),
-    LabelCase(
-        name="video-only, no content -> Confirm",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO),
-        title="Confirm Import",
-        primary_label="Confirm",
-        show_back=False,
-        show_cancel=False,
+    PrimaryLabelCase(
+        name="last step, no content -> Confirm",
+        plan=VIDEO_ONLY,
+        expected="Confirm",
     ),
-    LabelCase(
-        name="video-only, comments present -> Confirm import",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
-        title="Confirm Import",
-        primary_label="Confirm import",
-        show_back=False,
-        show_cancel=True,
+    PrimaryLabelCase(
+        name="last step, content -> Confirm import",
+        plan=VIDEO_WITH_COMMENTS,
+        expected="Confirm import",
     ),
-    LabelCase(
-        name="errors+video, no content, on the first (errors) step -> Next",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
-        title="Confirm Import",
-        primary_label="Next",
-        show_back=False,
-        show_cancel=True,
+    PrimaryLabelCase(
+        name="steps remain -> Next",
+        plan=ERRORS_THEN_VIDEO,
+        expected="Next",
     ),
 ]
 
 
-@pytest.mark.parametrize("case", LABEL_CASES, ids=lambda c: c.name)
-def test_title_and_primary_label(qt_app, case: LabelCase) -> None:
-    view_model = MpvqcImportWizardViewModel(None, case.plan)
-
-    assert view_model.title == case.title
-    assert view_model.primaryLabel == case.primary_label
-    assert view_model.showBack is case.show_back
-    assert view_model.showCancel is case.show_cancel
+@pytest.mark.parametrize("case", PRIMARY_LABEL_CASES, ids=lambda c: c.name)
+def test_each_primary_label_maps_to_its_text(qt_app, case: PrimaryLabelCase) -> None:
+    assert MpvqcImportWizardViewModel(None, case.plan).primaryLabel == case.expected
 
 
-def test_primary_label_tracks_the_current_step(qt_app) -> None:
-    plan = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO)
-    view_model = MpvqcImportWizardViewModel(None, plan)
+def test_the_title_follows_close_only(qt_app) -> None:
+    assert MpvqcImportWizardViewModel(None, ERRORS_ONLY).title == "Import Error"
+    assert MpvqcImportWizardViewModel(None, VIDEO_ONLY).title == "Confirm Import"
+
+
+def test_the_footer_follows_the_current_step(qt_app) -> None:
+    view_model = MpvqcImportWizardViewModel(None, ERRORS_THEN_VIDEO)
     assert view_model.primaryLabel == "Next"
+    assert view_model.showBack is False
+    assert view_model.showCancel is True
 
     view_model.next()
 
@@ -158,40 +134,14 @@ class StepViewModelCase(NamedTuple):
 
 STEP_VIEW_MODEL_CASES = [
     StepViewModelCase(
-        name="errors only",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
-        expected=BuiltSteps(errors=True, session=False, video=False, subtitles=False),
-    ),
-    StepViewModelCase(
-        name="session only",
-        plan=replace(ALL_RESOLVED, session=UNRESOLVED_SESSION),
-        expected=BuiltSteps(errors=False, session=True, video=False, subtitles=False),
-    ),
-    StepViewModelCase(
-        name="video only",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO),
-        expected=BuiltSteps(errors=False, session=False, video=True, subtitles=False),
-    ),
-    StepViewModelCase(
-        name="subtitles only",
-        plan=replace(ALL_RESOLVED, subtitles=UNRESOLVED_SUBTITLES),
-        expected=BuiltSteps(errors=False, session=False, video=False, subtitles=True),
-    ),
-    StepViewModelCase(
-        name="a resolved concern alongside errors builds no step of its own",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
-        expected=BuiltSteps(errors=True, session=False, video=False, subtitles=False),
-    ),
-    StepViewModelCase(
-        name="everything unresolved",
-        plan=replace(
-            ALL_RESOLVED,
-            errors=PRESENT_ERRORS,
-            session=UNRESOLVED_SESSION,
-            video=UNRESOLVED_VIDEO,
-            subtitles=UNRESOLVED_SUBTITLES,
-        ),
+        name="every step routes to its own view model",
+        plan=ALL_UNRESOLVED,
         expected=BuiltSteps(errors=True, session=True, video=True, subtitles=True),
+    ),
+    StepViewModelCase(
+        name="a step the wizard does not show stays unbuilt",
+        plan=ERRORS_ONLY,
+        expected=BuiltSteps(errors=True, session=False, video=False, subtitles=False),
     ),
 ]
 
@@ -208,16 +158,6 @@ def test_builds_only_the_step_view_models_the_wizard_shows(qt_app, case: StepVie
     )
 
     assert built == case.expected
-
-
-def test_a_plan_with_nothing_to_decide_cannot_open_a_wizard(qt_app) -> None:
-    with pytest.raises(ValueError, match="nothing to decide"):
-        MpvqcImportWizardViewModel(None, ALL_RESOLVED)
-
-
-ERRORS_THEN_VIDEO = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO)
-VIDEO_WITH_COMMENTS = replace(ALL_RESOLVED, comments=(COMMENT,), video=UNRESOLVED_VIDEO)
-ERRORS_ONLY = replace(ALL_RESOLVED, errors=PRESENT_ERRORS)
 
 
 def test_primary_click_advances_while_steps_remain(qt_app, importer_service_mock, make_spy) -> None:
@@ -242,7 +182,15 @@ def test_primary_click_accepts_on_the_last_step(qt_app, importer_service_mock, m
 
     assert accept_spy.count() == 1
     assert reject_spy.count() == 0
-    importer_service_mock.execute.assert_called_once()
+    # Session and subtitles never got a step, so their resolved values must come from the plan itself.
+    importer_service_mock.execute.assert_called_once_with(
+        FinishedPlan(
+            comments=(COMMENT,),
+            session=SessionMerge(),
+            video=VideoLoad(path=VIDEO_A),
+            subtitles=SubtitlesSkip(),
+        )
+    )
 
 
 def test_primary_click_rejects_when_the_wizard_only_closes(qt_app, importer_service_mock, make_spy) -> None:
@@ -291,9 +239,6 @@ def test_back_on_the_first_step_stays_put(qt_app, make_spy) -> None:
 
     assert view_model.currentStepIndex == 0
     assert spy.count() == 0
-
-
-THREE_STEPS = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, session=UNRESOLVED_SESSION, video=UNRESOLVED_VIDEO)
 
 
 def test_next_navigates_forward(qt_app, make_spy) -> None:
@@ -363,7 +308,7 @@ def test_accepting_hands_the_step_answers_to_the_importer(qt_app, importer_servi
         session=UNRESOLVED_SESSION,
         video=VideoUnresolved(
             candidates=(
-                VideoSource(path=VIDEO_A, found_in_document=True),
+                VIDEO_A_FROM_DOCUMENT,
                 VideoSource(path=VIDEO_B, found_in_document=False),
             )
         ),

@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from mpvqc.importing.enums import MpvqcImportWizardStepKind
-from mpvqc.importing.viewmodels.wizard_state import StepKind
+from mpvqc.importing.viewmodels import StepKind
 
 
 def test_step_kind_covers_the_wizard_state_enum() -> None:

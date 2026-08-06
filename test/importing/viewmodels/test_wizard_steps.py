@@ -2,22 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from pathlib import Path
-
 import pytest
 from PySide6.QtCore import QObject
 
 from mpvqc.importing.domain import (
     SessionMerge,
     SessionReplace,
-    SessionUnresolved,
     SubtitlesLoad,
     SubtitlesSkip,
-    SubtitlesUnresolved,
     VideoLoad,
     VideoSkip,
-    VideoSource,
-    VideoUnresolved,
 )
 from mpvqc.importing.enums import MpvqcImportWizardSessionMode
 from mpvqc.importing.viewmodels import (
@@ -25,17 +19,15 @@ from mpvqc.importing.viewmodels import (
     MpvqcImportWizardSubtitlesStepViewModel,
     MpvqcImportWizardVideoStepViewModel,
 )
+from test.importing.viewmodels.plans import (
+    SUB_A,
+    UNRESOLVED_SESSION,
+    UNRESOLVED_SUBTITLES,
+    UNRESOLVED_VIDEO,
+    VIDEO_A,
+)
 
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
-
-SESSION_UNRESOLVED = SessionUnresolved(incoming_comment_count=3)
-
-VIDEO_A = Path("/movies/a.mp4")
-VID_A_DOC = VideoSource(path=VIDEO_A, found_in_document=True)
-VIDEO_UNRESOLVED = VideoUnresolved(candidates=(VID_A_DOC,))
-
-SUB_A = Path("/work/a.en.srt")
-SUBTITLES_UNRESOLVED = SubtitlesUnresolved(candidates=(SUB_A,))
 
 
 @pytest.fixture
@@ -46,7 +38,7 @@ def parent(qt_app):
 
 @pytest.fixture
 def session_step(parent):
-    return MpvqcImportWizardSessionStepViewModel(parent, SESSION_UNRESOLVED)
+    return MpvqcImportWizardSessionStepViewModel(parent, UNRESOLVED_SESSION)
 
 
 def test_defaults_to_merge(session_step):
@@ -95,7 +87,7 @@ def test_an_unknown_mode_leaves_the_step_untouched(session_step, make_spy):
 
 @pytest.fixture
 def video_step(parent):
-    return MpvqcImportWizardVideoStepViewModel(parent, VIDEO_UNRESOLVED)
+    return MpvqcImportWizardVideoStepViewModel(parent, UNRESOLVED_VIDEO)
 
 
 def test_defaults_to_the_first_candidate(video_step):
@@ -112,7 +104,7 @@ def test_selecting_the_skip_entry_resolves_to_skip(video_step):
 
 @pytest.fixture
 def subtitles_step(parent):
-    return MpvqcImportWizardSubtitlesStepViewModel(parent, SUBTITLES_UNRESOLVED)
+    return MpvqcImportWizardSubtitlesStepViewModel(parent, UNRESOLVED_SUBTITLES)
 
 
 def test_defaults_to_all_checked(subtitles_step):
