@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
@@ -13,7 +12,6 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
-    ErrorsAbsent,
     FinishedPlan,
     LoadFoundVideo,
     SessionMerge,
@@ -23,16 +21,18 @@ from mpvqc.importing.domain import (
     UnfinishedPlan,
     VideoLoad,
     VideoSkip,
-    VideoSource,
-    VideoUnresolved,
 )
 from mpvqc.importing.services import ImporterService, ImportSettingsService
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.state import StateService
+from test.importing.plans import SUB_A, SUB_B, UNRESOLVED_VIDEO, VIDEO_A, plan_with
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+
     from test.conftest import ManualJobExecutor
 
 
@@ -86,8 +86,11 @@ def configure_inject(
 
 
 @pytest.fixture
-def service(manual_executor: ManualJobExecutor) -> ImporterService:
-    return ImporterService(manual_executor)
+def make_importer(manual_executor: ManualJobExecutor) -> Callable[[FinishedPlan | UnfinishedPlan], ImporterService]:
+    def _make(planned: FinishedPlan | UnfinishedPlan) -> ImporterService:
+        return ImporterService(manual_executor, plan=lambda *_args, **_kwargs: planned)
+
+    return _make
 
 
 NOOP_PLAN = FinishedPlan(
@@ -97,38 +100,7 @@ NOOP_PLAN = FinishedPlan(
     subtitles=SubtitlesSkip(),
 )
 
-
-def test_second_open_while_busy_is_ignored(service: ImporterService, make_spy) -> None:
-    service.open([], [], [])
-    spy = make_spy(service.busy_changed)
-    service.open([], [], [])
-    assert service.busy is True
-    assert spy.count() == 0
-
-
-def test_cancel_pending_unblocks_next_open(service: ImporterService, make_spy) -> None:
-    service.open([], [], [])
-    service.cancel_pending()
-    spy = make_spy(service.busy_changed)
-    service.open([], [], [])
-    assert service.busy is True
-    assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) is True
-
-
-def test_execute_unblocks_next_open(service: ImporterService, make_spy) -> None:
-    service.open([], [], [])
-    service.execute(NOOP_PLAN)
-    spy = make_spy(service.busy_changed)
-    service.open([], [], [])
-    assert service.busy is True
-    assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) is True
-
-
-V = Path("/movies/v.mp4")
-S1 = Path("/work/a.srt")
-S2 = Path("/work/b.srt")
+NEEDS_A_VIDEO_CHOICE = plan_with(video=UNRESOLVED_VIDEO)
 
 
 class DispatchCase(NamedTuple):
@@ -143,20 +115,20 @@ DISPATCH_CASES = [
         plan=FinishedPlan(
             comments=(),
             session=SessionMerge(),
-            video=VideoLoad(path=V),
-            subtitles=SubtitlesLoad(paths=(S1, S2)),
+            video=VideoLoad(path=VIDEO_A),
+            subtitles=SubtitlesLoad(paths=(SUB_A, SUB_B)),
         ),
-        expected={"video": V, "subtitles": (S1, S2)},
+        expected={"video": VIDEO_A, "subtitles": (SUB_A, SUB_B)},
     ),
     DispatchCase(
         name="video loads, subtitles skipped",
         plan=FinishedPlan(
             comments=(),
             session=SessionMerge(),
-            video=VideoLoad(path=V),
+            video=VideoLoad(path=VIDEO_A),
             subtitles=SubtitlesSkip(),
         ),
-        expected={"video": V, "subtitles": ()},
+        expected={"video": VIDEO_A, "subtitles": ()},
     ),
     DispatchCase(
         name="subtitles load without a video",
@@ -164,9 +136,9 @@ DISPATCH_CASES = [
             comments=(),
             session=SessionMerge(),
             video=VideoSkip(),
-            subtitles=SubtitlesLoad(paths=(S1,)),
+            subtitles=SubtitlesLoad(paths=(SUB_A,)),
         ),
-        expected={"video": None, "subtitles": (S1,)},
+        expected={"video": None, "subtitles": (SUB_A,)},
     ),
     DispatchCase(
         name="nothing to load leaves the player untouched",
@@ -177,12 +149,15 @@ DISPATCH_CASES = [
 
 
 @pytest.mark.parametrize("case", DISPATCH_CASES, ids=lambda c: c.name)
-def test_execute_dispatches_to_open_media(
-    service: ImporterService,
+def test_open_dispatches_a_finished_plan_to_open_media(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
     player_service_mock: MagicMock,
     case: DispatchCase,
 ) -> None:
-    service.execute(case.plan)
+    make_importer(case.plan).open([], [], [])
+    manual_executor.drain()
 
     if case.expected is None:
         player_service_mock.open_media.assert_not_called()
@@ -203,7 +178,7 @@ RECORD_IMPORT_CASES = [
         plan=FinishedPlan(
             comments=(),
             session=SessionMerge(),
-            video=VideoLoad(path=V),
+            video=VideoLoad(path=VIDEO_A),
             subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=False,
@@ -214,7 +189,7 @@ RECORD_IMPORT_CASES = [
         plan=FinishedPlan(
             comments=(),
             session=SessionMerge(),
-            video=VideoLoad(path=V),
+            video=VideoLoad(path=VIDEO_A),
             subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=True,
@@ -225,7 +200,7 @@ RECORD_IMPORT_CASES = [
         plan=FinishedPlan(
             comments=(MagicMock(),),
             session=SessionMerge(),
-            video=VideoLoad(path=V),
+            video=VideoLoad(path=VIDEO_A),
             subtitles=SubtitlesSkip(),
         ),
         player_already_has_video=True,
@@ -252,15 +227,18 @@ RECORD_IMPORT_CASES = [
 
 
 @pytest.mark.parametrize("case", RECORD_IMPORT_CASES, ids=lambda c: c.name)
-def test_execute_gates_state_record_import(
-    service: ImporterService,
+def test_open_gates_state_record_import(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
     player_service_mock: MagicMock,
     state_service_mock: MagicMock,
     case: RecordImportCase,
 ) -> None:
     player_service_mock.is_any_video_loaded.return_value = case.player_already_has_video
 
-    service.execute(case.plan)
+    make_importer(case.plan).open([], [], [])
+    manual_executor.drain()
 
     if case.expected_record:
         state_service_mock.record_import.assert_called_once()
@@ -271,101 +249,223 @@ def test_execute_gates_state_record_import(
 COMMENTS = (Comment(time=0, comment_type="Translation", comment="Lorem ipsum"),)
 
 
-def test_execute_replace_session_resets_application(
-    service: ImporterService,
+def test_open_resets_the_application_for_a_replacing_session(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
     reset_service_mock: MagicMock,
 ) -> None:
     plan = FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip())
 
-    service.execute(plan)
+    make_importer(plan).open([], [], [])
+    manual_executor.drain()
 
     reset_service_mock.reset.assert_called_once()
 
 
-def test_execute_merge_session_does_not_reset(
-    service: ImporterService,
+def test_open_does_not_reset_for_a_merging_session(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
     reset_service_mock: MagicMock,
 ) -> None:
-    service.execute(NOOP_PLAN)
+    make_importer(NOOP_PLAN).open([], [], [])
+    manual_executor.drain()
 
     reset_service_mock.reset.assert_not_called()
 
 
-def test_execute_imports_comments(
-    service: ImporterService,
+def test_open_imports_the_comments_it_planned(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
     comments_service_mock: MagicMock,
 ) -> None:
     plan = FinishedPlan(comments=COMMENTS, session=SessionMerge(), video=VideoSkip(), subtitles=SubtitlesSkip())
 
-    service.execute(plan)
+    make_importer(plan).open([], [], [])
+    manual_executor.drain()
 
     comments_service_mock.import_comments.assert_called_once_with(COMMENTS)
 
 
-def test_execute_without_comments_imports_nothing(
-    service: ImporterService,
+def test_open_without_comments_imports_nothing(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
     comments_service_mock: MagicMock,
 ) -> None:
-    service.execute(NOOP_PLAN)
+    make_importer(NOOP_PLAN).open([], [], [])
+    manual_executor.drain()
 
     comments_service_mock.import_comments.assert_not_called()
 
 
-UNRESOLVED_PLAN = UnfinishedPlan(
-    comments=(),
-    session=SessionMerge(),
-    video=VideoUnresolved(candidates=(VideoSource(path=V, found_in_document=True),)),
-    subtitles=SubtitlesSkip(),
-    errors=ErrorsAbsent(),
-)
-
-
-def test_open_routes_resolvable_scan_to_execute(
+def test_open_hands_a_plan_needing_decisions_to_the_wizard(
     qt_app,
     manual_executor: ManualJobExecutor,
+    make_importer,
     make_spy,
+    player_service_mock: MagicMock,
 ) -> None:
-    service = ImporterService(manual_executor, plan=lambda *_args, **_kwargs: NOOP_PLAN)
-    unfinished_spy = make_spy(service.unfinished_plan_ready)
+    service = make_importer(NEEDS_A_VIDEO_CHOICE)
+    spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
     manual_executor.drain()
 
-    assert unfinished_spy.count() == 0
-    assert service.busy is False
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == NEEDS_A_VIDEO_CHOICE
+    player_service_mock.open_media.assert_not_called()
 
 
-def test_open_routes_unresolvable_scan_to_wizard(
+@pytest.fixture
+def pending_importer(
     qt_app,
     manual_executor: ManualJobExecutor,
-    make_spy,
-) -> None:
-    service = ImporterService(manual_executor, plan=lambda *_args, **_kwargs: UNRESOLVED_PLAN)
-    unfinished_spy = make_spy(service.unfinished_plan_ready)
-
+    make_importer: Callable[[FinishedPlan | UnfinishedPlan], ImporterService],
+) -> ImporterService:
+    service = make_importer(NEEDS_A_VIDEO_CHOICE)
     service.open([], [], [])
     manual_executor.drain()
-
-    assert unfinished_spy.count() == 1
-    assert service.busy is True
+    return service
 
 
-def test_open_recovers_when_scan_raises(
-    qt_app,
+def test_finish_pending_resolves_the_plan_with_the_answers_it_is_given(
+    pending_importer: ImporterService,
+    player_service_mock: MagicMock,
+) -> None:
+    pending_importer.finish_pending(video=VideoLoad(path=VIDEO_A))
+
+    player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
+
+
+def test_dismiss_after_finish_changes_nothing(
+    pending_importer: ImporterService,
     manual_executor: ManualJobExecutor,
+    make_spy,
+    player_service_mock: MagicMock,
+) -> None:
+    # One close both finishes and dismisses, so the trailing dismissal must neither undo the import nor latch.
+    pending_importer.finish_pending(video=VideoLoad(path=VIDEO_A))
+    pending_importer.dismiss_pending()
+    spy = make_spy(pending_importer.unfinished_plan_ready)
+
+    pending_importer.open([], [], [])
+    manual_executor.drain()
+
+    player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
+    assert spy.count() == 1
+
+
+def test_finishing_without_a_pending_import_is_logged(
+    pending_importer: ImporterService,
+    player_service_mock: MagicMock,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    def raise_scan_error(*_args: object, **_kwargs: object) -> FinishedPlan | UnfinishedPlan:
-        msg = "scan exploded"
-        raise RuntimeError(msg)
+    pending_importer.dismiss_pending()
 
-    service = ImporterService(manual_executor, plan=raise_scan_error)
+    pending_importer.finish_pending(video=VideoLoad(path=VIDEO_A))
+
+    player_service_mock.open_media.assert_not_called()
+    assert "no import is pending" in caplog.text
+
+
+def test_dismiss_never_reaches_the_player(
+    pending_importer: ImporterService,
+    player_service_mock: MagicMock,
+) -> None:
+    pending_importer.dismiss_pending()
+
+    player_service_mock.open_media.assert_not_called()
+
+
+def test_a_second_open_while_a_decision_is_pending_is_dropped(
+    pending_importer: ImporterService,
+    manual_executor: ManualJobExecutor,
+    make_spy,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    spy = make_spy(pending_importer.unfinished_plan_ready)
+
+    pending_importer.open([], [], [])
+    manual_executor.drain()
+
+    assert spy.count() == 0
+    assert "Skipping import while another is in progress" in caplog.text
+
+
+def test_an_open_after_a_finish_proceeds(
+    pending_importer: ImporterService,
+    manual_executor: ManualJobExecutor,
+    make_spy,
+) -> None:
+    pending_importer.finish_pending(video=VideoSkip())
+    spy = make_spy(pending_importer.unfinished_plan_ready)
+
+    pending_importer.open([], [], [])
+    manual_executor.drain()
+
+    assert spy.count() == 1
+
+
+def test_an_open_after_a_dismissal_proceeds(
+    pending_importer: ImporterService,
+    manual_executor: ManualJobExecutor,
+    make_spy,
+) -> None:
+    pending_importer.dismiss_pending()
+    spy = make_spy(pending_importer.unfinished_plan_ready)
+
+    pending_importer.open([], [], [])
+    manual_executor.drain()
+
+    assert spy.count() == 1
+
+
+def test_dismiss_with_nothing_pending_leaves_a_running_scan_alone(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_importer,
+    make_spy,
+) -> None:
+    service = make_importer(NEEDS_A_VIDEO_CHOICE)
+    spy = make_spy(service.unfinished_plan_ready)
+    # The scan is queued but undrained, so the importer is Scanning with nothing to dismiss yet.
+    service.open([], [], [])
+
+    service.dismiss_pending()
+    service.open([], [], [])
+    manual_executor.drain()
+
+    assert spy.count() == 1
+
+
+def test_open_recovers_when_the_scan_raises(
+    qt_app,
+    manual_executor: ManualJobExecutor,
+    make_spy,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    scans = 0
+
+    def explode_once(*_args: object, **_kwargs: object) -> FinishedPlan | UnfinishedPlan:
+        nonlocal scans
+        scans += 1
+        if scans == 1:
+            msg = "scan exploded"
+            raise RuntimeError(msg)
+        return NEEDS_A_VIDEO_CHOICE
+
+    service = ImporterService(manual_executor, plan=explode_once)
+    spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
     manual_executor.drain()
 
-    assert service.busy is False
     assert "Import scan failed" in caplog.text
 
     service.open([], [], [])
-    assert service.busy is True
+    manual_executor.drain()
+
+    assert spy.count() == 1

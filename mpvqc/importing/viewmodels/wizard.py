@@ -10,7 +10,6 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import finish_plan
 from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection
 from mpvqc.importing.services import ImporterService
 
@@ -163,13 +162,11 @@ class MpvqcImportWizardViewModel(QObject):
         self.navigated.emit(direction.value)
 
     def _commit(self) -> None:
-        plan = finish_plan(
-            self._state.plan,
+        self._importer.finish_pending(
             session=self._session_step.resolved if self._session_step is not None else None,
             video=self._video_step.resolved if self._video_step is not None else None,
             subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
         )
-        self._importer.execute(plan)
 
     @staticmethod
     def _primary_label_text(label: PrimaryLabel) -> str:

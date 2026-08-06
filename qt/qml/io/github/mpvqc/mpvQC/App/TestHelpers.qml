@@ -206,10 +206,17 @@ QtObject {
         function openedSubtitleCount(count: int): void {
             root.testCase.tryVerify(() => root.bridge.openedSubtitleCount() === count);
         }
+
+        function openedSubtitles(names: list<string>): void {
+            root.testCase.tryVerify(() => {
+                const opened = root.bridge.openedSubtitleNames();
+                return opened.length === names.length && names.every(n => opened.indexOf(n) >= 0);
+            });
+        }
     }
 
     readonly property var imports: QtObject {
-        function dropFiles(control: Item, urls: list<url>): void {
+        function dropFiles(control: Item, urls: list<var>): void {
             const dropArea = root.testCase.findChild(control, "fileDropArea");
             root.testCase.verify(dropArea, "fileDropArea not found");
             dropArea.viewModel.open(urls);
@@ -237,6 +244,28 @@ QtObject {
             const btn = root.testCase.findChild(dlg.footer, "cancelButton");
             root.testCase.verify(btn, "cancelButton not found");
             root.testCase.mouseClick(btn);
+        }
+
+        function advance(dlg: QtObject): void {
+            root.wizard.clickPrimary(dlg);
+            const stepView = root.testCase.findChild(dlg.contentItem, "stepView");
+            root.testCase.verify(stepView, "stepView not found");
+            root.testCase.tryVerify(() => !stepView.busy);
+        }
+
+        function pickVideo(dlg: QtObject, index: int): void {
+            _pickRow(dlg, "videoList", index);
+        }
+
+        function pickSubtitle(dlg: QtObject, index: int): void {
+            _pickRow(dlg, "subtitleList", index);
+        }
+
+        function _pickRow(dlg: QtObject, listName: string, index: int): void {
+            const list = root.testCase.findChild(dlg.contentItem, listName);
+            root.testCase.verify(list, `${listName} not found`);
+            root.testCase.tryVerify(() => list.itemAtIndex(index) !== null);
+            root.testCase.mouseClick(list.itemAtIndex(index));
         }
     }
 

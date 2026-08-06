@@ -10,11 +10,8 @@ import pytest
 from PySide6.QtCore import QObject
 
 from mpvqc.importing.domain import (
-    FinishedPlan,
-    SessionMerge,
     SessionReplace,
     SubtitlesLoad,
-    SubtitlesSkip,
     SubtitlesUnresolved,
     UnfinishedPlan,
     VideoLoad,
@@ -169,7 +166,7 @@ def test_primary_click_advances_while_steps_remain(qt_app, importer_service_mock
     assert view_model.currentStepIndex == 1
     assert accept_spy.count() == 0
     assert reject_spy.count() == 0
-    importer_service_mock.execute.assert_not_called()
+    importer_service_mock.finish_pending.assert_not_called()
 
 
 def test_primary_click_accepts_on_the_last_step(qt_app, importer_service_mock, make_spy) -> None:
@@ -181,15 +178,24 @@ def test_primary_click_accepts_on_the_last_step(qt_app, importer_service_mock, m
 
     assert accept_spy.count() == 1
     assert reject_spy.count() == 0
-    # Session and subtitles never got a step, so their resolved values must come from the plan itself.
-    importer_service_mock.execute.assert_called_once_with(
-        FinishedPlan(
-            comments=(COMMENT,),
-            session=SessionMerge(),
-            video=VideoLoad(path=VIDEO_A),
-            subtitles=SubtitlesSkip(),
-        )
+    # Session and subtitles never got a step, so the wizard has no answer to report for them.
+    importer_service_mock.finish_pending.assert_called_once_with(
+        session=None,
+        video=VideoLoad(path=VIDEO_A),
+        subtitles=None,
     )
+
+
+def test_accepting_reports_before_it_asks_the_dialog_to_close(qt_app, importer_service_mock) -> None:
+    # The close runs the app shell's dismissal, and on Windows it runs inside this emit: a report that came
+    # afterwards would meet an importer with nothing pending, and the confirmed import would be dropped.
+    view_model = MpvqcImportWizardViewModel(None, VIDEO_WITH_COMMENTS)
+    reported_by_close: list[bool] = []
+    view_model.acceptRequested.connect(lambda: reported_by_close.append(importer_service_mock.finish_pending.called))
+
+    view_model.primaryClicked()
+
+    assert reported_by_close == [True]
 
 
 def test_primary_click_rejects_when_the_wizard_only_closes(qt_app, importer_service_mock, make_spy) -> None:
@@ -201,7 +207,7 @@ def test_primary_click_rejects_when_the_wizard_only_closes(qt_app, importer_serv
 
     assert reject_spy.count() == 1
     assert accept_spy.count() == 0
-    importer_service_mock.execute.assert_not_called()
+    importer_service_mock.finish_pending.assert_not_called()
 
 
 def test_cancel_click_rejects(qt_app, importer_service_mock, make_spy) -> None:
@@ -211,7 +217,7 @@ def test_cancel_click_rejects(qt_app, importer_service_mock, make_spy) -> None:
     view_model.cancelClicked()
 
     assert reject_spy.count() == 1
-    importer_service_mock.execute.assert_not_called()
+    importer_service_mock.finish_pending.assert_not_called()
 
 
 def test_show_step_indicator_follows_the_step_count(qt_app) -> None:
@@ -300,7 +306,7 @@ def step_view_model[T: QObject](wizard: MpvqcImportWizardViewModel, step_type: t
     return step
 
 
-def test_accepting_hands_the_step_answers_to_the_importer(qt_app, importer_service_mock) -> None:
+def test_accepting_reports_the_step_answers_to_the_importer(qt_app, importer_service_mock) -> None:
     plan = plan_with(
         comments=(COMMENT,),
         session=UNRESOLVED_SESSION,
@@ -323,11 +329,8 @@ def test_accepting_hands_the_step_answers_to_the_importer(qt_app, importer_servi
     view_model.next()
     view_model.primaryClicked()
 
-    importer_service_mock.execute.assert_called_once_with(
-        FinishedPlan(
-            comments=(COMMENT,),
-            session=SessionReplace(),
-            video=VideoLoad(path=VIDEO_B),
-            subtitles=SubtitlesLoad(paths=(SUB_B,)),
-        )
+    importer_service_mock.finish_pending.assert_called_once_with(
+        session=SessionReplace(),
+        video=VideoLoad(path=VIDEO_B),
+        subtitles=SubtitlesLoad(paths=(SUB_B,)),
     )

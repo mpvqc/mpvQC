@@ -21,11 +21,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcImportWizardRequestRelayViewModel(QObject):
     _importer = inject.attr(ImporterService)
 
-    importWizardRequested = Signal(QObject)
+    importWizardRequested = Signal(MpvqcImportWizardViewModel)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._wizard_vm: QObject | None = None
+        self._wizard_vm: MpvqcImportWizardViewModel | None = None
         self._importer.unfinished_plan_ready.connect(self._request_import_wizard)
 
     @Slot()
@@ -33,8 +33,7 @@ class MpvqcImportWizardRequestRelayViewModel(QObject):
         if self._wizard_vm is not None:
             self._wizard_vm.deleteLater()
             self._wizard_vm = None
-            if self._importer.busy:
-                self._importer.cancel_pending()
+        self._importer.dismiss_pending()
 
     @Slot(UnfinishedPlan)
     def _request_import_wizard(self, unfinished_plan: UnfinishedPlan) -> None:

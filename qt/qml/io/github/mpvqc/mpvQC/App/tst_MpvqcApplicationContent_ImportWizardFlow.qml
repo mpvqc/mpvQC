@@ -31,10 +31,8 @@ TestCase {
         it.bridge.waitForBackgroundJobs();
 
         const wizard = it.wizard.opened(control);
-        const stepView = findChild(wizard.contentItem, "stepView");
 
-        it.wizard.clickPrimary(wizard);
-        tryVerify(() => !stepView.busy);
+        it.wizard.advance(wizard);
         it.wizard.clickPrimary(wizard);
 
         tryVerify(() => !wizard.opened);
@@ -63,6 +61,55 @@ TestCase {
         it.expect.commentCount(control, 0);
         it.expect.noOpenedVideo();
         it.expect.openedSubtitleCount(0);
+    }
+
+    function test_multiVideoDrop_importsTheVideoPickedInTheWizard(): void {
+        const control = it.makeControl();
+
+        it.imports.dropFiles(control, it.bridge.importMultiVideoDocuments());
+
+        const wizard = it.wizard.opened(control);
+        // index 0 = alpha.mp4, 1 = beta.mp4, 2 = "Don't load a video"
+        it.wizard.pickVideo(wizard, 1);
+        it.wizard.clickPrimary(wizard);
+
+        tryVerify(() => !wizard.opened);
+        it.bridge.waitForBackgroundJobs();
+
+        it.expect.openedVideo("beta.mp4");
+    }
+
+    function test_pickingTheSkipEntry_importsCommentsWithoutAVideo(): void {
+        const control = it.makeControl();
+
+        it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument()]);
+
+        const wizard = it.wizard.opened(control);
+        // index 0 = the video the document names, 1 = "Don't load a video"
+        it.wizard.pickVideo(wizard, 1);
+        it.wizard.clickPrimary(wizard);
+
+        tryVerify(() => !wizard.opened);
+        it.bridge.waitForBackgroundJobs();
+
+        it.expect.commentCount(control, 1);
+        it.expect.noOpenedVideo();
+    }
+
+    function test_complexDocument_deselectedSubtitleStaysOut(): void {
+        const control = it.makeControl();
+
+        it.imports.dropFiles(control, [it.bridge.importComplexDocument()]);
+
+        const wizard = it.wizard.opened(control);
+        it.wizard.advance(wizard);
+        it.wizard.pickSubtitle(wizard, 1);
+        it.wizard.clickPrimary(wizard);
+
+        tryVerify(() => !wizard.opened);
+        it.bridge.waitForBackgroundJobs();
+
+        it.expect.openedSubtitles(["track1.ass"]);
     }
 
     function test_singleSubtitleDrop_loadsWithoutWizard(): void {
@@ -108,7 +155,7 @@ TestCase {
         compare(wizard.viewModel.stepKinds.length, 1, "second drop should not replace wizard");
     }
 
-    function test_nativeCloseClearsBusyForNextImport(): void {
+    function test_nativeClose_dismissesAndFreesTheNextImport(): void {
         const control = it.makeControl();
         const dialogLoader = it.find.dialogLoader(control);
 

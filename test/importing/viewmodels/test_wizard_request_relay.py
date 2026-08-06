@@ -32,7 +32,6 @@ def importer_signals(qt_app) -> ImporterSignals:
 def importer_service_mock(importer_signals) -> MagicMock:
     service = MagicMock(spec_set=ImporterService)
     service.unfinished_plan_ready = importer_signals.unfinished_plan_ready
-    service.busy = False
     return service
 
 
@@ -63,7 +62,7 @@ def test_requests_a_wizard_for_a_plan_with_decisions(relay, importer_service_moc
 
     assert spy.count() == 1
     assert isinstance(spy.at(invocation=0, argument=0), MpvqcImportWizardViewModel)
-    importer_service_mock.cancel_pending.assert_not_called()
+    importer_service_mock.dismiss_pending.assert_not_called()
 
 
 def test_releases_the_wizard_view_model(relay, importer_service_mock):
@@ -77,28 +76,16 @@ def test_releases_the_wizard_view_model(relay, importer_service_mock):
     _assert_view_model_collected(captured[0])
 
 
-def test_release_cancels_a_pending_import(relay, importer_service_mock):
-    importer_service_mock.busy = True
+def test_release_dismisses_the_pending_import(relay, importer_service_mock):
     importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
 
     relay.releaseWizardViewModel()
 
-    importer_service_mock.cancel_pending.assert_called_once_with()
+    importer_service_mock.dismiss_pending.assert_called_once_with()
 
 
-def test_release_does_not_cancel_when_the_importer_is_idle(relay, importer_service_mock):
-    importer_service_mock.busy = False
-    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
-
+def test_release_without_a_wizard_open_still_dismisses(relay, importer_service_mock):
+    # The app shell releases from a close handler every dialog shares, so most releases meet no wizard.
     relay.releaseWizardViewModel()
 
-    importer_service_mock.cancel_pending.assert_not_called()
-
-
-def test_release_with_no_wizard_open_does_nothing(relay, importer_service_mock):
-    # Busy, so a release that skipped the no-wizard guard would cancel the import.
-    importer_service_mock.busy = True
-
-    relay.releaseWizardViewModel()
-
-    importer_service_mock.cancel_pending.assert_not_called()
+    importer_service_mock.dismiss_pending.assert_called_once_with()
