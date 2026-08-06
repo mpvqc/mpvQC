@@ -27,6 +27,9 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **UnfinishedPlan**: scan output with at least one Concern unresolved, or Import errors present. Presented to the user
   as the import wizard.
 - **FinishedPlan**: every Concern resolved. The only input the importer executes.
+- **Pending import**: an import whose UnfinishedPlan is before the user. It ends finished, the wizard's input
+  resolving what was unresolved and the import executed, or dismissed, the wizard closed without confirming and the
+  import abandoned.
 - **MIME type**: the standard label for a file format, a type and a subtype joined by a slash, such as `video/mp4`.
   Spelled MIME type, two words: the Qt spelling, as in `QMimeType`.
 
