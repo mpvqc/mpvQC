@@ -57,7 +57,7 @@
 
 ## Committing
 
-- Load the `committing` skill before committing.
+- Load the `committing` skill before committing — a code review gates the commit.
 
 ## Agent skills
 

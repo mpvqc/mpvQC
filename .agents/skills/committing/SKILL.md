@@ -5,9 +5,22 @@ description: Use when about to commit in this repo.
 
 # Committing
 
-## Before
+## The gate
 
-The user reviews before you commit. Never run `git commit` on work they haven't seen.
+A code review comes before the commit. Run one over the change and settle every finding it reports: fix it, or say why
+it stands. Then commit.
+
+The change isn't committed yet, so the review reads the working tree against `HEAD` — staged and unstaged, new files
+included. Commits already on the branch passed their own gate.
+
+The user asking for the commit is the one way past the gate. That call is theirs. Deciding to commit yourself is not,
+however small the change.
+
+A review already run this session covers the code it read. Code that changed after it is unreviewed.
+
+The user sees the work before it lands, too: every commit is on a change they have already looked at.
+
+## The working tree
 
 `git add` the new files this change brings, and only those. `just fmt` reads the working tree, but only for files git
 already tracks, so a file that was never added is invisible and every hook passes without having read it. A file git
@@ -65,6 +78,8 @@ When a larger chunk of work is done, offer to push, and to write the manual chec
 
 ## Done when
 
+- The change was code reviewed, or the user asked for the commit.
+- Every finding the review reported is fixed or answered.
 - The new files this change brings are added, and nothing else is.
 - `just build-develop` ran, and the file list it rewrote in `pyproject.toml` is in the commit.
 - `just fmt` came back clean, and whatever it rewrote outside this change stayed out of the commit.
