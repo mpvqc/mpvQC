@@ -6,7 +6,8 @@ import inject
 from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.services import ImporterService, MimeTypeProviderService
+from mpvqc.importing.domain import classify_paths
+from mpvqc.importing.services import ImporterService
 from mpvqc.services import TypeMapperService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -16,7 +17,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcImportDropAreaViewModel(QObject):
     _importer = inject.attr(ImporterService)
-    _mime_type_provider = inject.attr(MimeTypeProviderService)
     _type_mapper = inject.attr(TypeMapperService)
 
     _ACCEPTED_FORMAT = "text/uri-list"
@@ -27,20 +27,6 @@ class MpvqcImportDropAreaViewModel(QObject):
 
     @Slot(list)
     def open(self, urls: list[QUrl]) -> None:
-        document_extensions = [f".{ext}" for ext in self._mime_type_provider.DOCUMENT_FILE_EXTENSIONS]
-        subtitle_extensions = [f".{ext}" for ext in self._mime_type_provider.SUBTITLE_FILE_EXTENSIONS]
-        documents = []
-        subtitles = []
-        videos = []
-
-        for url in urls:
-            path = self._type_mapper.map_url_to_path(url)
-            suffix = path.suffix.lower()
-            if suffix in document_extensions:
-                documents.append(path)
-            elif suffix in subtitle_extensions:
-                subtitles.append(path)
-            else:
-                videos.append(path)
-
-        self._importer.open(documents, videos, subtitles)
+        paths = self._type_mapper.map_urls_to_path(urls)
+        classified = classify_paths(paths)
+        self._importer.open(list(classified.documents), list(classified.videos), list(classified.subtitles))

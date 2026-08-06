@@ -5,6 +5,10 @@
 from .documents import ParsedDocument as ParsedDocument
 from .documents import parse_classic as parse_classic
 from .documents import parse_v1 as parse_v1
+from .kind import DOCUMENT_EXTENSIONS as DOCUMENT_EXTENSIONS
+from .kind import SUBTITLE_EXTENSIONS as SUBTITLE_EXTENSIONS
+from .kind import ClassifiedPaths as ClassifiedPaths
+from .kind import classify_paths as classify_paths
 from .plan import ErrorsAbsent as ErrorsAbsent
 from .plan import ErrorsPresent as ErrorsPresent
 from .plan import FinishedPlan as FinishedPlan
