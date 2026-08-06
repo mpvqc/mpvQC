@@ -173,7 +173,6 @@ files = [
     "mpvqc/importing/enums/step_kind.py",
     "mpvqc/importing/models/__init__.py",
     "mpvqc/importing/models/errors.py",
-    "mpvqc/importing/models/settings.py",
     "mpvqc/importing/models/subtitles.py",
     "mpvqc/importing/models/videos.py",
     "mpvqc/importing/services/__init__.py",

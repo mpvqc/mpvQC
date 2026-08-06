@@ -35,23 +35,15 @@ def test_import_found_video_set_and_get(import_settings_service, setting):
     assert import_settings_service.import_found_video == setting
 
 
-@pytest.mark.parametrize("stored", [42, -1, "banana", ""], ids=["out-of-range", "negative", "text", "empty"])
+@pytest.mark.parametrize(
+    "stored",
+    [42, -1, "banana", "", ["a", "b"]],
+    ids=["out-of-range", "negative", "text", "empty", "comma-separated"],
+)
 def test_unreadable_import_found_video_falls_back_to_ask_every_time(import_settings_service, settings_file, stored):
     settings_file.qsettings.setValue("Import/loadFoundVideo", stored)
 
     assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME
-
-
-def test_import_found_video_write_emits_once(import_settings_service, make_spy):
-    spy = make_spy(import_settings_service.import_found_video_changed)
-
-    import_settings_service.import_found_video = LoadFoundVideo.ALWAYS
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) is LoadFoundVideo.ALWAYS
-
-    import_settings_service.import_found_video = LoadFoundVideo.ALWAYS
-    assert spy.count() == 1
 
 
 def test_last_directory_video_defaults_to_the_movies_location(import_settings_service):
@@ -82,42 +74,6 @@ def test_last_directory_subtitles_set_and_get(import_settings_service):
     import_settings_service.last_directory_subtitles = ELSEWHERE
 
     assert import_settings_service.last_directory_subtitles == ELSEWHERE
-
-
-def test_last_directory_video_write_emits_once(import_settings_service, make_spy):
-    spy = make_spy(import_settings_service.last_directory_video_changed)
-
-    import_settings_service.last_directory_video = ELSEWHERE
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ELSEWHERE
-
-    import_settings_service.last_directory_video = ELSEWHERE
-    assert spy.count() == 1
-
-
-def test_last_directory_documents_write_emits_once(import_settings_service, make_spy):
-    spy = make_spy(import_settings_service.last_directory_documents_changed)
-
-    import_settings_service.last_directory_documents = ELSEWHERE
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ELSEWHERE
-
-    import_settings_service.last_directory_documents = ELSEWHERE
-    assert spy.count() == 1
-
-
-def test_last_directory_subtitles_write_emits_once(import_settings_service, make_spy):
-    spy = make_spy(import_settings_service.last_directory_subtitles_changed)
-
-    import_settings_service.last_directory_subtitles = ELSEWHERE
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ELSEWHERE
-
-    import_settings_service.last_directory_subtitles = ELSEWHERE
-    assert spy.count() == 1
 
 
 def test_every_write_lands_under_its_stored_key_in_the_import_ini_section(

@@ -43,7 +43,7 @@ MpvqcDialog {
                 textRole: "text"
                 valueRole: "value"
 
-                model: MpvqcImportSettingsModel {}
+                model: root.viewModel.options
 
                 Layout.preferredWidth: 165
 
