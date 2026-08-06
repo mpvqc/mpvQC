@@ -15,8 +15,5 @@ FileDialog {
     currentFolder: viewModel.lastDirectoryVideo
     nameFilters: [qsTranslate("FileInteractionDialogs", "Video files") + viewModel.videoFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
-    onAccepted: {
-        viewModel.lastDirectoryVideo = currentFolder;
-        viewModel.openVideo(selectedFile);
-    }
+    onAccepted: viewModel.openVideo(selectedFile)
 }
