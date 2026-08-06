@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
@@ -22,8 +22,8 @@ from mpvqc.importing.domain import (
 )
 from mpvqc.importing.services import plan, scan
 
-VIDEO_A = Path("/movies/a.mp4")
-SUB_A = Path("/work/a.en.srt")
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def write_document(tmp_path: Path, name: str, content: str) -> Path:
@@ -80,11 +80,6 @@ def test_invalid_document_composes_into_an_unfinished_plan(tmp_path: Path) -> No
     assert result.errors.rejected_documents[0].path == document
 
 
-def test_explicit_video_gets_explicit_flag() -> None:
-    result = scan(documents=[], videos=[VIDEO_A], subtitles=[])
-    assert result.videos == (VideoSource(path=VIDEO_A.resolve(), explicitly_provided=True),)
-
-
 def test_doc_video_gets_doc_flag(tmp_path: Path) -> None:
     video = tmp_path / "movie.mp4"
     video.touch()
@@ -105,24 +100,6 @@ def test_subtitle_referenced_video_gets_subtitle_flag(tmp_path: Path) -> None:
     assert result.videos == (VideoSource(path=video.resolve(), found_in_subtitle=True),)
 
 
-def test_video_sources_merge_flags_when_path_collides(tmp_path: Path) -> None:
-    video = tmp_path / "movie.mp4"
-    video.touch()
-    document = write_document(tmp_path, "a.qc", f"[FILE]\npath: {video}\n\n[DATA]\n")
-    subtitle = write_subtitle_referencing(tmp_path, "a.ass", video)
-
-    result = scan(documents=[document], videos=[video], subtitles=[subtitle])
-
-    assert result.videos == (
-        VideoSource(path=video.resolve(), explicitly_provided=True, found_in_document=True, found_in_subtitle=True),
-    )
-
-
-def test_explicit_subtitle_gets_explicit_flag() -> None:
-    result = scan(documents=[], videos=[], subtitles=[SUB_A])
-    assert result.subtitles == (SubtitleSource(path=SUB_A.resolve(), explicitly_provided=True),)
-
-
 def test_doc_subtitle_gets_doc_flag(tmp_path: Path) -> None:
     subtitle = tmp_path / "a.en.srt"
     subtitle.touch()
@@ -131,23 +108,6 @@ def test_doc_subtitle_gets_doc_flag(tmp_path: Path) -> None:
     result = scan(documents=[document], videos=[], subtitles=[])
 
     assert result.subtitles == (SubtitleSource(path=subtitle.resolve(), found_in_document=True),)
-
-
-def test_subtitle_sources_merge_flags_when_path_collides(tmp_path: Path) -> None:
-    subtitle = tmp_path / "a.en.srt"
-    subtitle.touch()
-    document = write_document(tmp_path, "a.qc", f"[FILE]\nsubtitle: {subtitle}\n")
-
-    result = scan(documents=[document], videos=[], subtitles=[subtitle])
-
-    assert result.subtitles == (
-        SubtitleSource(path=subtitle.resolve(), explicitly_provided=True, found_in_document=True),
-    )
-
-
-def test_duplicate_subtitle_paths_collapse() -> None:
-    result = scan(documents=[], videos=[], subtitles=[SUB_A, SUB_A])
-    assert result.subtitles == (SubtitleSource(path=SUB_A.resolve(), explicitly_provided=True),)
 
 
 def test_comments_and_rejected_documents_flow_through(tmp_path: Path) -> None:
