@@ -5,11 +5,13 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from typing import TYPE_CHECKING
+
+from mpvqc.importing.domain import SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS, parse_video_references
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -19,33 +21,23 @@ def find_videos_in_subtitles(subtitles: Sequence[Path]) -> tuple[Path, ...]:
 
 
 def _parse_video_from(subtitle: Path) -> Path | None:
+    if subtitle.suffix.lower() not in SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS:
+        return None
+
     try:
-        match subtitle.suffix.lower():
-            case ".ass" | ".ssa":
-                return _parse_video_in_ass_ssa(subtitle)
+        return _find_existing_video_reference(subtitle)
     except Exception:
         logger.exception("Failed to parse video path from subtitle file: %s", subtitle)
-    return None
-
-
-def _parse_video_in_ass_ssa(subtitle: Path) -> Path | None:
-    with subtitle.open("r", encoding="utf-8-sig") as file:
-        for raw_line in file:
-            line = raw_line.strip()
-
-            if not line.startswith("Video File:"):
-                continue
-
-            video_path_str = line.split(":", 1)[1].strip()
-            if not video_path_str:
-                continue
-
-            video_path = Path(video_path_str)
-            if not video_path.is_absolute():
-                video_path = subtitle.parent / video_path
-
-            resolved_path = video_path.resolve()
-            if resolved_path.is_file():
-                return resolved_path
-
         return None
+
+
+def _find_existing_video_reference(subtitle: Path) -> Path | None:
+    content = subtitle.read_text(encoding="utf-8-sig")
+
+    for reference in parse_video_references(content):
+        video_path = reference if reference.is_absolute() else subtitle.parent / reference
+        resolved_path = video_path.resolve()
+        if resolved_path.is_file():
+            return resolved_path
+
+    return None

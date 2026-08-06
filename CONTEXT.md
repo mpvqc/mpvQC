@@ -6,6 +6,10 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 ## Import pipeline
 
 - **File kind**: what an import path is: document, video, or subtitle, decided by its extension.
+- **Video reference**: a video path a subtitle names as the one it was written against. A subtitle can name more than
+  one; parsing keeps every one, in the order it was written, because a dead reference can fall through to a live one
+  and deciding that needs them all. Distinct from the video and subtitles a document names: those are kept on import
+  only when they exist, decided as the document is read.
 - **Classic document**: mpvQC's original import document format: a text file, superseded by the v1 document but still
   read on import.
 - **v1 document**: mpvQC's current import document format, versioned so a future format can succeed it without
