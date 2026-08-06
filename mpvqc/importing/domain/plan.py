@@ -7,7 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, assert_never
 
-from .errors import ErrorsAbsent, resolve_errors
+from .errors import ErrorsAbsent, ErrorsPresent, resolve_errors
 from .session import SessionMerge, SessionReplace, SessionUnresolved, resolve_session
 from .subtitles import SubtitlesLoad, SubtitlesSkip, SubtitlesUnresolved, resolve_subtitles
 from .video import VideoLoad, VideoSkip, VideoUnresolved, resolve_video
@@ -38,6 +38,19 @@ class UnfinishedPlan:
     subtitles: SubtitlesConcern
     errors: ImportErrors
 
+    def __post_init__(self) -> None:
+        if not self._has_unresolved_concern_or_errors():
+            msg = "an unfinished plan needs an unresolved concern or import errors"
+            raise ValueError(msg)
+
+    def _has_unresolved_concern_or_errors(self) -> bool:
+        return (
+            isinstance(self.errors, ErrorsPresent)
+            or isinstance(self.session, SessionUnresolved)
+            or isinstance(self.video, VideoUnresolved)
+            or isinstance(self.subtitles, SubtitlesUnresolved)
+        )
+
 
 def make_plan(
     scan_result: ScanResult,
@@ -54,7 +67,7 @@ def make_plan(
     match (errors_outcome, session_outcome, video_outcome, subtitles_outcome):
         case (
             ErrorsAbsent(),
-            SessionMerge() as s,
+            SessionMerge() | SessionReplace() as s,
             VideoLoad() | VideoSkip() as v,
             SubtitlesLoad() | SubtitlesSkip() as sub,
         ):

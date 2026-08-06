@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from mpvqc.datamodels import Comment
@@ -9,12 +11,16 @@ from mpvqc.importing.domain import (
     DocumentRejectionReason,
     ErrorsAbsent,
     ErrorsPresent,
+    ImportErrors,
     RejectedDocument,
+    SessionConcern,
     SessionMerge,
     SessionUnresolved,
+    SubtitlesConcern,
     SubtitlesSkip,
     SubtitlesUnresolved,
     UnfinishedPlan,
+    VideoConcern,
     VideoSkip,
     VideoSource,
     VideoUnresolved,
@@ -28,6 +34,11 @@ COMMENT = Comment(time=0, comment_type="", comment="")
 
 VIDEO_A_FROM_DOCUMENT = VideoSource(path=VIDEO_A, found_in_document=True)
 
+ABSENT_ERRORS = ErrorsAbsent()
+MERGED_SESSION = SessionMerge()
+SKIPPED_VIDEO = VideoSkip()
+SKIPPED_SUBTITLES = SubtitlesSkip()
+
 PRESENT_ERRORS = ErrorsPresent(
     rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
 )
@@ -35,16 +46,19 @@ UNRESOLVED_SESSION = SessionUnresolved(incoming_comment_count=1)
 UNRESOLVED_VIDEO = VideoUnresolved(candidates=(VIDEO_A_FROM_DOCUMENT,))
 UNRESOLVED_SUBTITLES = SubtitlesUnresolved(candidates=(SUB_A,))
 
-ALL_RESOLVED = UnfinishedPlan(
-    comments=(),
-    session=SessionMerge(),
-    video=VideoSkip(),
-    subtitles=SubtitlesSkip(),
-    errors=ErrorsAbsent(),
-)
 
-ALL_UNRESOLVED = UnfinishedPlan(
-    comments=(),
+def plan_with(
+    *,
+    comments: tuple[Comment, ...] = (),
+    session: SessionConcern = MERGED_SESSION,
+    video: VideoConcern = SKIPPED_VIDEO,
+    subtitles: SubtitlesConcern = SKIPPED_SUBTITLES,
+    errors: ImportErrors = ABSENT_ERRORS,
+) -> UnfinishedPlan:
+    return UnfinishedPlan(comments=comments, session=session, video=video, subtitles=subtitles, errors=errors)
+
+
+ALL_UNRESOLVED = plan_with(
     session=UNRESOLVED_SESSION,
     video=UNRESOLVED_VIDEO,
     subtitles=UNRESOLVED_SUBTITLES,

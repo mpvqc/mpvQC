@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
@@ -22,8 +21,7 @@ from mpvqc.importing.viewmodels import (
     WizardState,
     make_wizard_state,
 )
-from test.importing.viewmodels.plans import (
-    ALL_RESOLVED,
+from test.importing.plans import (
     ALL_UNRESOLVED,
     COMMENT,
     PRESENT_ERRORS,
@@ -32,15 +30,11 @@ from test.importing.viewmodels.plans import (
     UNRESOLVED_SUBTITLES,
     UNRESOLVED_VIDEO,
     VIDEO_A,
+    plan_with,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-
-def test_creation_rejects_a_plan_with_nothing_to_decide() -> None:
-    with pytest.raises(ValueError, match="nothing to decide"):
-        make_wizard_state(ALL_RESOLVED)
 
 
 def test_steps_carry_the_unresolved_data_in_canonical_order() -> None:
@@ -63,22 +57,22 @@ class StepCase(NamedTuple):
 STEP_CASES = [
     StepCase(
         name="errors only",
-        plan=replace(ALL_RESOLVED, errors=ErrorsPresent(rejected_documents=())),
+        plan=plan_with(errors=ErrorsPresent(rejected_documents=())),
         expected=(StepKind.ERRORS,),
     ),
     StepCase(
         name="session only",
-        plan=replace(ALL_RESOLVED, session=UNRESOLVED_SESSION),
+        plan=plan_with(session=UNRESOLVED_SESSION),
         expected=(StepKind.SESSION,),
     ),
     StepCase(
         name="video only",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO),
+        plan=plan_with(video=UNRESOLVED_VIDEO),
         expected=(StepKind.VIDEO,),
     ),
     StepCase(
         name="subtitles only",
-        plan=replace(ALL_RESOLVED, subtitles=UNRESOLVED_SUBTITLES),
+        plan=plan_with(subtitles=UNRESOLVED_SUBTITLES),
         expected=(StepKind.SUBTITLES,),
     ),
     StepCase(
@@ -145,12 +139,12 @@ class MultiStepCase(NamedTuple):
 MULTI_STEP_CASES = [
     MultiStepCase(
         name="one step",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
+        plan=plan_with(errors=PRESENT_ERRORS),
         expected=False,
     ),
     MultiStepCase(
         name="two steps",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
+        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
         expected=True,
     ),
     MultiStepCase(
@@ -175,27 +169,27 @@ class CloseOnlyCase(NamedTuple):
 CLOSE_ONLY_CASES = [
     CloseOnlyCase(
         name="errors-only, nothing valid survives -> close-only",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
+        plan=plan_with(errors=PRESENT_ERRORS),
         expected=True,
     ),
     CloseOnlyCase(
         name="errors-only, comments present -> not close-only",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, comments=(COMMENT,)),
+        plan=plan_with(errors=PRESENT_ERRORS, comments=(COMMENT,)),
         expected=False,
     ),
     CloseOnlyCase(
         name="errors-only, VideoLoad resolved -> not close-only",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
+        plan=plan_with(errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
         expected=False,
     ),
     CloseOnlyCase(
         name="errors-only, SubtitlesLoad resolved -> not close-only",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, subtitles=SubtitlesLoad(paths=(SUB_A,))),
+        plan=plan_with(errors=PRESENT_ERRORS, subtitles=SubtitlesLoad(paths=(SUB_A,))),
         expected=False,
     ),
     CloseOnlyCase(
         name="errors+video, nothing valid -> not close-only, more than one step",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
+        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
         expected=False,
     ),
 ]
@@ -216,56 +210,55 @@ class FooterCase(NamedTuple):
 FOOTER_CASES = [
     FooterCase(
         name="errors-only, no content -> Close + reject, no cancel",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS),
+        plan=plan_with(errors=PRESENT_ERRORS),
         index=0,
         expected=FooterState(PrimaryLabel.CLOSE, PrimaryAction.REJECT, show_cancel=False, show_back=False),
     ),
     FooterCase(
         name="errors-only, valid content survives -> Confirm import, cancel shown",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
+        plan=plan_with(errors=PRESENT_ERRORS, video=VideoLoad(path=VIDEO_A)),
         index=0,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="video-only, no content -> Confirm + accept, no cancel",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO),
+        plan=plan_with(video=UNRESOLVED_VIDEO),
         index=0,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=False, show_back=False),
     ),
     FooterCase(
         name="video-only, comments present -> Confirm import, cancel shown",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
+        plan=plan_with(video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
         index=0,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, no content, on errors step -> Next, cancel shown (multi-step exit)",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
+        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
         index=0,
         expected=FooterState(PrimaryLabel.NEXT, PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, no content, on video (terminal) -> Confirm + accept, cancel shown",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
+        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
     FooterCase(
         name="errors+video, with comments, on errors step -> Next, cancel shown",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
+        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
         index=0,
         expected=FooterState(PrimaryLabel.NEXT, PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, with comments, on video step -> Confirm import",
-        plan=replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
+        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
     FooterCase(
         name="session+video+subs with comments, on session step -> Next + cancel",
-        plan=replace(
-            ALL_RESOLVED,
+        plan=plan_with(
             session=UNRESOLVED_SESSION,
             video=UNRESOLVED_VIDEO,
             subtitles=UNRESOLVED_SUBTITLES,
@@ -276,8 +269,7 @@ FOOTER_CASES = [
     ),
     FooterCase(
         name="session+video+subs, on subtitles (last) step -> Confirm import",
-        plan=replace(
-            ALL_RESOLVED,
+        plan=plan_with(
             session=UNRESOLVED_SESSION,
             video=UNRESOLVED_VIDEO,
             subtitles=UNRESOLVED_SUBTITLES,
@@ -288,7 +280,7 @@ FOOTER_CASES = [
     ),
     FooterCase(
         name="video+subs unresolved, no comments, on subtitles (last) -> Confirm, cancel shown",
-        plan=replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO, subtitles=UNRESOLVED_SUBTITLES),
+        plan=plan_with(video=UNRESOLVED_VIDEO, subtitles=UNRESOLVED_SUBTITLES),
         index=1,
         expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),

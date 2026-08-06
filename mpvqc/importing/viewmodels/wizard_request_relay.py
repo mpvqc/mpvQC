@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-import logging
-
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
@@ -14,8 +12,6 @@ from mpvqc.importing.domain import UnfinishedPlan
 from mpvqc.importing.services import ImporterService
 
 from .wizard import MpvqcImportWizardViewModel
-
-logger = logging.getLogger(__name__)
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -42,11 +38,5 @@ class MpvqcImportWizardRequestRelayViewModel(QObject):
 
     @Slot(UnfinishedPlan)
     def _request_import_wizard(self, unfinished_plan: UnfinishedPlan) -> None:
-        try:
-            self._wizard_vm = MpvqcImportWizardViewModel(self, unfinished_plan)
-        except ValueError:
-            logger.exception("Cannot open a wizard; unfinished_plan=%r", unfinished_plan)
-            self._importer.cancel_pending()
-            return
-
+        self._wizard_vm = MpvqcImportWizardViewModel(self, unfinished_plan)
         self.importWizardRequested.emit(self._wizard_vm)

@@ -19,7 +19,7 @@ from mpvqc.importing.viewmodels import (
     MpvqcImportWizardSubtitlesStepViewModel,
     MpvqcImportWizardVideoStepViewModel,
 )
-from test.importing.viewmodels.plans import (
+from test.importing.plans import (
     SUB_A,
     UNRESOLVED_SESSION,
     UNRESOLVED_SUBTITLES,

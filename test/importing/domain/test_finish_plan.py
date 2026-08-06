@@ -4,42 +4,34 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
-from pathlib import Path
 from typing import Any, NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
-    ErrorsAbsent,
     FinishedPlan,
     SessionMerge,
     SessionReplace,
-    SessionUnresolved,
     SubtitlesLoad,
     SubtitlesSkip,
-    SubtitlesUnresolved,
     UnfinishedPlan,
     VideoLoad,
     VideoSkip,
-    VideoSource,
-    VideoUnresolved,
     finish_plan,
 )
-
-VIDEO_A = Path("/movies/a.mp4")
-SUB_A = Path("/work/a.en.srt")
-VID_A_DOC = VideoSource(path=VIDEO_A, found_in_document=True)
-COMMENT = Comment(time=0, comment_type="", comment="")
-
-ALL_RESOLVED = UnfinishedPlan(
-    comments=(),
-    session=SessionMerge(),
-    video=VideoSkip(),
-    subtitles=SubtitlesSkip(),
-    errors=ErrorsAbsent(),
+from test.importing.plans import (
+    COMMENT,
+    SUB_A,
+    UNRESOLVED_SESSION,
+    UNRESOLVED_SUBTITLES,
+    UNRESOLVED_VIDEO,
+    VIDEO_A,
+    plan_with,
 )
+
+ASKS_ABOUT_SESSION = plan_with(session=UNRESOLVED_SESSION)
+ASKS_ABOUT_VIDEO = plan_with(video=UNRESOLVED_VIDEO)
+ASKS_ABOUT_SUBTITLES = plan_with(subtitles=UNRESOLVED_SUBTITLES)
 
 
 class FinishPlanCase(NamedTuple):
@@ -52,14 +44,13 @@ class FinishPlanCase(NamedTuple):
 FINISH_PLAN_CASES = [
     FinishPlanCase(
         name="already resolved concerns pass through untouched",
-        plan=replace(
-            ALL_RESOLVED,
+        plan=plan_with(
             comments=(COMMENT,),
-            session=SessionReplace(),
+            session=UNRESOLVED_SESSION,
             video=VideoLoad(path=VIDEO_A),
             subtitles=SubtitlesLoad(paths=(SUB_A,)),
         ),
-        answers={},
+        answers={"session": SessionReplace()},
         expected=FinishedPlan(
             comments=(COMMENT,),
             session=SessionReplace(),
@@ -69,19 +60,19 @@ FINISH_PLAN_CASES = [
     ),
     FinishPlanCase(
         name="an answer is ignored when the concern is already resolved",
-        plan=replace(ALL_RESOLVED, session=SessionReplace()),
-        answers={"session": SessionMerge()},
+        plan=plan_with(session=SessionReplace(), video=UNRESOLVED_VIDEO),
+        answers={"session": SessionMerge(), "video": VideoSkip()},
         expected=FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     FinishPlanCase(
         name="unresolved session takes the given answer",
-        plan=replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1)),
+        plan=ASKS_ABOUT_SESSION,
         answers={"session": SessionReplace()},
         expected=FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     FinishPlanCase(
         name="unresolved video takes the given answer",
-        plan=replace(ALL_RESOLVED, video=VideoUnresolved(candidates=(VID_A_DOC,))),
+        plan=ASKS_ABOUT_VIDEO,
         answers={"video": VideoLoad(path=VIDEO_A)},
         expected=FinishedPlan(
             comments=(),
@@ -92,7 +83,7 @@ FINISH_PLAN_CASES = [
     ),
     FinishPlanCase(
         name="unresolved subtitles takes the given answer",
-        plan=replace(ALL_RESOLVED, subtitles=SubtitlesUnresolved(candidates=(SUB_A,))),
+        plan=ASKS_ABOUT_SUBTITLES,
         answers={"subtitles": SubtitlesLoad(paths=(SUB_A,))},
         expected=FinishedPlan(
             comments=(),
@@ -115,9 +106,9 @@ class UnresolvedCase(NamedTuple):
 
 
 UNRESOLVED_WITHOUT_ANSWER_CASES = [
-    UnresolvedCase("session", replace(ALL_RESOLVED, session=SessionUnresolved(incoming_comment_count=1))),
-    UnresolvedCase("video", replace(ALL_RESOLVED, video=VideoUnresolved(candidates=(VID_A_DOC,)))),
-    UnresolvedCase("subtitles", replace(ALL_RESOLVED, subtitles=SubtitlesUnresolved(candidates=(SUB_A,)))),
+    UnresolvedCase("session", ASKS_ABOUT_SESSION),
+    UnresolvedCase("video", ASKS_ABOUT_VIDEO),
+    UnresolvedCase("subtitles", ASKS_ABOUT_SUBTITLES),
 ]
 
 

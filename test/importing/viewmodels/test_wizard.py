@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import replace
 from typing import NamedTuple
 from unittest.mock import MagicMock
 
@@ -30,8 +29,7 @@ from mpvqc.importing.viewmodels import (
     MpvqcImportWizardVideoStepViewModel,
     MpvqcImportWizardViewModel,
 )
-from test.importing.viewmodels.plans import (
-    ALL_RESOLVED,
+from test.importing.plans import (
     ALL_UNRESOLVED,
     COMMENT,
     PRESENT_ERRORS,
@@ -42,16 +40,17 @@ from test.importing.viewmodels.plans import (
     VIDEO_A,
     VIDEO_A_FROM_DOCUMENT,
     VIDEO_B,
+    plan_with,
 )
 
 NavigationDirection = MpvqcImportWizardNavigationDirection.NavigationDirection
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
 
-ERRORS_ONLY = replace(ALL_RESOLVED, errors=PRESENT_ERRORS)
-ERRORS_THEN_VIDEO = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO)
-VIDEO_ONLY = replace(ALL_RESOLVED, video=UNRESOLVED_VIDEO)
-VIDEO_WITH_COMMENTS = replace(ALL_RESOLVED, comments=(COMMENT,), video=UNRESOLVED_VIDEO)
-THREE_STEPS = replace(ALL_RESOLVED, errors=PRESENT_ERRORS, session=UNRESOLVED_SESSION, video=UNRESOLVED_VIDEO)
+ERRORS_ONLY = plan_with(errors=PRESENT_ERRORS)
+ERRORS_THEN_VIDEO = plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO)
+VIDEO_ONLY = plan_with(video=UNRESOLVED_VIDEO)
+VIDEO_WITH_COMMENTS = plan_with(comments=(COMMENT,), video=UNRESOLVED_VIDEO)
+THREE_STEPS = plan_with(errors=PRESENT_ERRORS, session=UNRESOLVED_SESSION, video=UNRESOLVED_VIDEO)
 
 
 @pytest.fixture
@@ -302,8 +301,7 @@ def step_view_model[T: QObject](wizard: MpvqcImportWizardViewModel, step_type: t
 
 
 def test_accepting_hands_the_step_answers_to_the_importer(qt_app, importer_service_mock) -> None:
-    plan = replace(
-        ALL_RESOLVED,
+    plan = plan_with(
         comments=(COMMENT,),
         session=UNRESOLVED_SESSION,
         video=VideoUnresolved(

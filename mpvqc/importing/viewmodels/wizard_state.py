@@ -115,11 +115,7 @@ class WizardState:
 
 
 def make_wizard_state(unfinished_plan: UnfinishedPlan) -> WizardState:
-    steps = _derive_steps(unfinished_plan)
-    if not steps:
-        msg = "cannot open a wizard on a plan with nothing to decide"
-        raise ValueError(msg)
-    return WizardState(plan=unfinished_plan, steps=steps, current_index=0)
+    return WizardState(plan=unfinished_plan, steps=_derive_steps(unfinished_plan), current_index=0)
 
 
 def _derive_steps(unfinished_plan: UnfinishedPlan) -> tuple[WizardStep, ...]:

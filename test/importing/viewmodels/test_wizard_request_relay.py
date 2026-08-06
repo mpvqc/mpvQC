@@ -4,7 +4,6 @@
 
 import gc
 import weakref
-from dataclasses import replace
 from unittest.mock import MagicMock
 
 import inject
@@ -14,11 +13,9 @@ from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 from mpvqc.importing.domain import UnfinishedPlan
 from mpvqc.importing.services import ImporterService
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
-from test.importing.viewmodels.plans import ALL_RESOLVED, PRESENT_ERRORS
+from test.importing.plans import PRESENT_ERRORS, plan_with
 
-NOTHING_TO_DECIDE = ALL_RESOLVED
-
-NEEDS_A_DECISION = replace(NOTHING_TO_DECIDE, errors=PRESENT_ERRORS)
+NEEDS_A_DECISION = plan_with(errors=PRESENT_ERRORS)
 
 
 class ImporterSignals(QObject):
@@ -67,15 +64,6 @@ def test_requests_a_wizard_for_a_plan_with_decisions(relay, importer_service_moc
     assert spy.count() == 1
     assert isinstance(spy.at(invocation=0, argument=0), MpvqcImportWizardViewModel)
     importer_service_mock.cancel_pending.assert_not_called()
-
-
-def test_does_not_request_a_wizard_when_the_plan_has_no_steps(relay, importer_service_mock, make_spy):
-    spy = make_spy(relay.importWizardRequested)
-
-    importer_service_mock.unfinished_plan_ready.emit(NOTHING_TO_DECIDE)
-
-    assert spy.count() == 0
-    importer_service_mock.cancel_pending.assert_called_once_with()
 
 
 def test_releases_the_wizard_view_model(relay, importer_service_mock):
