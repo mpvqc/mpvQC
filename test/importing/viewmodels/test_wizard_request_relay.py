@@ -4,12 +4,13 @@
 
 import gc
 import weakref
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import QCoreApplication, QEvent, QObject
+from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
@@ -22,22 +23,44 @@ from mpvqc.importing.domain import (
     VideoSkip,
 )
 from mpvqc.importing.services import ImporterService
-from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel
-from mpvqc.services import SettingsService
+from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
+
+NOTHING_TO_DECIDE = UnfinishedPlan(
+    comments=(),
+    session=SessionMerge(),
+    video=VideoSkip(),
+    subtitles=SubtitlesSkip(),
+    errors=ErrorsAbsent(),
+)
+
+NEEDS_A_DECISION = replace(
+    NOTHING_TO_DECIDE,
+    errors=ErrorsPresent(rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)),
+)
+
+
+class ImporterSignals(QObject):
+    # A MagicMock cannot carry a Qt signal, so the substituted importer borrows a real one from here.
+    unfinished_plan_ready = Signal(UnfinishedPlan)
 
 
 @pytest.fixture
-def importer_service_mock() -> MagicMock:
+def importer_signals(qt_app) -> ImporterSignals:
+    return ImporterSignals()
+
+
+@pytest.fixture
+def importer_service_mock(importer_signals) -> MagicMock:
     service = MagicMock(spec_set=ImporterService)
-    service.unfinished_plan_ready = MagicMock()
+    service.unfinished_plan_ready = importer_signals.unfinished_plan_ready
+    service.busy = False
     return service
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, importer_service_mock, settings_service):
+def configure_inject(common_bindings_with, importer_service_mock):
     def custom(binder: inject.Binder):
         binder.bind(ImporterService, importer_service_mock)
-        binder.bind(SettingsService, settings_service)
 
     common_bindings_with(custom)
 
@@ -54,57 +77,48 @@ def _assert_view_model_collected(ref: weakref.ref) -> None:
     assert ref() is None
 
 
-def test_releases_view_model_after_wizard(relay):
+def test_requests_a_wizard_for_a_plan_with_decisions(relay, importer_service_mock, make_spy):
+    spy = make_spy(relay.importWizardRequested)
+
+    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
+
+    assert spy.count() == 1
+    assert isinstance(spy.at(invocation=0, argument=0), MpvqcImportWizardViewModel)
+    importer_service_mock.cancel_pending.assert_not_called()
+
+
+def test_does_not_request_a_wizard_when_the_plan_has_no_steps(relay, importer_service_mock, make_spy):
+    spy = make_spy(relay.importWizardRequested)
+
+    importer_service_mock.unfinished_plan_ready.emit(NOTHING_TO_DECIDE)
+
+    assert spy.count() == 0
+    importer_service_mock.cancel_pending.assert_called_once_with()
+
+
+def test_releases_the_wizard_view_model(relay, importer_service_mock):
+    # A spy would keep the view model alive, so the weak reference is taken as the signal passes it on.
     captured: list[weakref.ref] = []
-    relay.importWizardRequested.connect(lambda vm: captured.append(weakref.ref(vm)))
+    relay.importWizardRequested.connect(lambda view_model: captured.append(weakref.ref(view_model)))
 
-    unfinished_plan = UnfinishedPlan(
-        comments=(),
-        session=SessionMerge(),
-        video=VideoSkip(),
-        subtitles=SubtitlesSkip(),
-        errors=ErrorsPresent(
-            rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
-        ),
-    )
-
-    relay._request_import_wizard(unfinished_plan)
+    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
     relay.releaseWizardViewModel()
 
     _assert_view_model_collected(captured[0])
 
 
-def test_does_not_request_wizard_when_plan_has_no_steps(relay, importer_service_mock):
-    requested: list[QObject] = []
-    relay.importWizardRequested.connect(lambda vm: requested.append(vm))
-
-    unfinished_plan = UnfinishedPlan(
-        comments=(),
-        session=SessionMerge(),
-        video=VideoSkip(),
-        subtitles=SubtitlesSkip(),
-        errors=ErrorsAbsent(),
-    )
-
-    relay._request_import_wizard(unfinished_plan)
-
-    assert requested == []
-    assert relay._wizard_vm is None
-    importer_service_mock.cancel_pending.assert_called_once_with()
-
-
-def test_release_cancels_pending_when_importer_busy(relay, importer_service_mock):
+def test_release_cancels_a_pending_import(relay, importer_service_mock):
     importer_service_mock.busy = True
-    relay._wizard_vm = QObject()
+    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
 
     relay.releaseWizardViewModel()
 
     importer_service_mock.cancel_pending.assert_called_once_with()
 
 
-def test_release_does_not_cancel_pending_when_importer_idle(relay, importer_service_mock):
+def test_release_does_not_cancel_when_the_importer_is_idle(relay, importer_service_mock):
     importer_service_mock.busy = False
-    relay._wizard_vm = QObject()
+    importer_service_mock.unfinished_plan_ready.emit(NEEDS_A_DECISION)
 
     relay.releaseWizardViewModel()
 
