@@ -1,5 +1,8 @@
 # Group a feature into a feature package
 
+Superseded in part by [ADR 0014](0014-attach-a-feature-package-through-its-wiring.md): a feature package now exports its
+wiring from the package root, and the composition root calls that instead of importing role directories.
+
 The layer packages sort code by what a class is, not by what it is about. Everything one area means then sits spread
 across all of them, held together only by a naming convention. Reading the area means opening every layer and picking
 its files out; changing it means touching every layer for one idea. Appearance was spread across four.
@@ -11,13 +14,14 @@ call sites name the new home.
 
 Role directories exist because one concept recurs across roles. The same idea is often a domain type, a service and a
 model at once, and without the directory each would grow a role suffix to stay distinct. The directory carries the
-role, so the concept keeps its name everywhere. The package root exports nothing; each role directory re-exports what
-its modules hold, so a call site names the role it pulls from and the layout under that role stays free to change.
+role, so the concept keeps its name everywhere. The package root exports no vocabulary; each role directory re-exports
+exactly the names call sites outside it import, tests included, so a call site names the role it pulls from and the
+layout under that role stays free to change. Nothing outside a role imports past it, not even to bind a module: a name
+worth reaching past the role for is worth exporting, and an export nothing outside names is a review finding.
 
 A feature package brings its own bindings, and the composition root calls them first. How a service is assembled stops
 at the package boundary; the root only decides which packages participate. Bindings must stay lazy, since injection is
-configured before `QGuiApplication` exists. QML-facing classes register by decorator when their module is imported, so
-startup imports the role directories rather than the bare package, whose empty root would register nothing.
+configured before `QGuiApplication` exists.
 
 ## What stays horizontal
 
