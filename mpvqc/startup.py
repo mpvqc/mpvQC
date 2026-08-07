@@ -15,7 +15,7 @@ def perform_startup(process_started_at: float) -> Never:
     configure_environment_variables()
     pin_windows_ui_library()
 
-    import_mpvqc_bindings()
+    register_qml_types()
 
     start_application(process_started_at)
 
@@ -82,14 +82,15 @@ def pin_windows_ui_library() -> None:
     ctypes.WinDLL("Windows.UI.dll")
 
 
-def import_mpvqc_bindings() -> None:
-    import mpvqc.appearance.models  # ruff: ignore[unused-import]
-    import mpvqc.appearance.viewmodels  # ruff: ignore[unused-import]
+def register_qml_types() -> None:
     import mpvqc.dialogs  # ruff: ignore[unused-import]
     import mpvqc.enums  # ruff: ignore[unused-import]
     import mpvqc.models  # ruff: ignore[unused-import]
     import mpvqc.viewmodels  # ruff: ignore[unused-import]
     import mpvqc.views  # ruff: ignore[unused-import]
+    from mpvqc import appearance
+
+    appearance.register_qml_types()
 
 
 def start_application(process_started_at: float) -> Never:
