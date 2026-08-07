@@ -51,6 +51,16 @@ assert deliveries == [Ok(None)]
 
 The `SerialJobRunner` tests work this way throughout.
 
+### Case bags
+
+A parametrized `NamedTuple` case list reads worst when its entries mix shapes. Pick one shape for the whole bag: if
+every entry fits the line limit as a true one-liner, every entry is one; otherwise every entry is one field per
+line, with a trailing comma on the last field so `just fmt` keeps it exploded. Never leave some entries one-liners
+and others wrapped, and never let the formatter's default partial wrap stand.
+
+Spell out the field names (`InvalidCase(name=..., data=..., match=...)`) rather than passing positional arguments —
+positional calls hide which value is which once a bag has more than one or two fields.
+
 ### Real thread pools
 
 When a test needs the real executor rather than `manual_executor`, wait with
@@ -98,6 +108,7 @@ than a loaded CI machine, and the second one is a flake.
 ## Done when
 
 - Every assertion sits on the test's own stack, never inside a slot or a callback.
+- Every case bag has one shape throughout: all one-liners, or all one field per line.
 - Nothing waits on a duration.
 - `just prepare-tests` has run, if production QML, data, or translations changed.
 - The full suite passes, not only the tests you filtered to while iterating.
