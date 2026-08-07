@@ -23,10 +23,7 @@ from mpvqc.importing.domain import (
     make_plan,
 )
 from mpvqc.jobs import Err, Ok, SerialJobRunner
-from mpvqc.services.comments import CommentsService
-from mpvqc.services.player import PlayerService
-from mpvqc.services.resetter import ResetService
-from mpvqc.services.state import StateService
+from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
 
 from .scan import scan
 from .settings import ImportSettingsService

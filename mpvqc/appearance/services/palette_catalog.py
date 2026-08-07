@@ -19,7 +19,7 @@ from mpvqc.appearance.domain import (
     Palette,
     parse_color_scheme,
 )
-from mpvqc.services.resource import ResourceService
+from mpvqc.services import ResourceService
 
 
 def _dark_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette:
