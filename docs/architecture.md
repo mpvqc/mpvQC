@@ -55,12 +55,13 @@ calls each feature package's `bindings`, and startup's registration pass calls e
 ### Feature packages: `mpvqc/<feature>/`
 
 Some areas are grouped by what they are about instead of by layer. A feature package holds its own domain types and the
-services, models, and view models the area owns. It also owns the settings keys its area
+services, models, view models, and QML enums the area owns. It also owns the settings keys its area
 means, reading the file through the shared settings file service. The application
 attaches a feature package through two functions its root exports: `bindings` for the inject container, and
 `register_qml_types` for the QML engine. Both sit in the package's `wiring.py`, which names no mpvqc module and no Qt at
 module level, so importing a feature registers nothing. Vocabulary still travels by role directory: a call site imports
 a service or a view model from the role that owns it. The layer packages hold everything no feature package has claimed.
+A domain imports no Qt, so the QML enums that name its vocabulary sit in their own role directory.
 
 ### Bootstrap
 

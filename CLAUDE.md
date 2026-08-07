@@ -27,9 +27,10 @@
   - Use closures instead of `functools.partial`
   - Don't use getattr
 - A feature package under `mpvqc/<feature>/` bundles everything one area needs: `domain.py` at its root, plus role
-  directories (`services/`, `models/`, `viewmodels/`) for what the area owns. Its root exports `bindings` and
+  directories (`services/`, `models/`, `viewmodels/`, `enums/`) for what the area owns. Its root exports `bindings` and
   `register_qml_types` from its `wiring.py`, and the roots call them. A `wiring.py` names no `mpvqc` module and no
   `PySide6` at module level; each function imports what it needs when it runs.
+- A domain imports no Qt and no injection. QML-registered enums live in the feature's `enums/`, never in its domain.
 - A class QML can name as a type keeps one full name in Python and QML: `Mpvqc`, the area, what it is, and its role.
   The prefix marks exactly those classes; everything unregistered names itself for its package.
 - Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
