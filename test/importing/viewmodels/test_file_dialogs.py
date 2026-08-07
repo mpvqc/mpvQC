@@ -101,6 +101,33 @@ def test_open_subtitles_forwards_the_selected_files_to_the_importer(view_model, 
     assert [path.name for path in subtitles] == ["a.srt", "b.ass"]
 
 
+def test_open_video_ignores_an_empty_selection(view_model, importer_service_mock, import_settings_service_mock):
+    import_settings_service_mock.last_directory_video = QUrl.fromLocalFile("/videos")
+
+    view_model.openVideo(QUrl())
+
+    assert import_settings_service_mock.last_directory_video == QUrl.fromLocalFile("/videos")
+    importer_service_mock.open.assert_not_called()
+
+
+def test_open_documents_ignores_an_empty_selection(view_model, importer_service_mock, import_settings_service_mock):
+    import_settings_service_mock.last_directory_documents = QUrl.fromLocalFile("/documents")
+
+    view_model.openDocuments([])
+
+    assert import_settings_service_mock.last_directory_documents == QUrl.fromLocalFile("/documents")
+    importer_service_mock.open.assert_not_called()
+
+
+def test_open_subtitles_ignores_an_empty_selection(view_model, importer_service_mock, import_settings_service_mock):
+    import_settings_service_mock.last_directory_subtitles = QUrl.fromLocalFile("/subtitles")
+
+    view_model.openSubtitles([])
+
+    assert import_settings_service_mock.last_directory_subtitles == QUrl.fromLocalFile("/subtitles")
+    importer_service_mock.open.assert_not_called()
+
+
 def test_open_video_saves_the_selected_files_parent_directory(view_model, import_settings_service_mock, tmp_path):
     folder = tmp_path / "videos"
     folder.mkdir()
