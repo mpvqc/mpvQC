@@ -2,8 +2,8 @@
 
 `SettingsService` held every key the app stores. Keys carry domain types, so it had to import them from whichever area
 meant them, and the arrow ran backwards through the seam a feature package exists to draw: the shared layer knew what a
-feature means. For the first feature to move out that was eleven names, and only an empty package root kept it from
-being an import cycle.
+feature means. For the first feature to move out that was eleven names, and only a package root that imported nothing
+kept it from being an import cycle.
 
 A feature package owns the settings its area means. It holds the key names, the defaults, the domain-typed accessors
 and the signal that publishes them, and it reads the file through the shared boundary service that locates and opens

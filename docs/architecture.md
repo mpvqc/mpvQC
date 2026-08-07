@@ -48,15 +48,19 @@ files by the consuming QML module. Not every view model lives there, though: see
 Services hold the application's logic and own its mutable state. QML never talks to them directly: they are Python
 classes that other services and view models pull in via `inject.attr`. A few define Qt types that view models hand
 through to QML, such as the comment store and its selection state. Each service sits in its own module or package, and
-`mpvqc/injections.py` binds them for the inject container. It is also the composition root: a feature package brings
-its own bindings, and `mpvqc/injections.py` calls them.
+`mpvqc/injections.py` binds them for the inject container. Composition happens in two places: `mpvqc/injections.py`
+calls each feature package's `bindings`, and startup's registration pass calls each feature package's
+`register_qml_types`.
 
 ### Feature packages: `mpvqc/<feature>/`
 
 Some areas are grouped by what they are about instead of by layer. A feature package holds its own domain types and the
-services, models, and view models the area owns, and brings its own bindings. It also owns the settings keys its area
-means, reading the file through the shared settings file service. A layer packages hold everything no feature package
-has claimed.
+services, models, and view models the area owns. It also owns the settings keys its area
+means, reading the file through the shared settings file service. The application
+attaches a feature package through two functions its root exports: `bindings` for the inject container, and
+`register_qml_types` for the QML engine. Both sit in the package's `wiring.py`, which names no mpvqc module and no Qt at
+module level, so importing a feature registers nothing. Vocabulary still travels by role directory: a call site imports
+a service or a view model from the role that owns it. The layer packages hold everything no feature package has claimed.
 
 ### Bootstrap
 
