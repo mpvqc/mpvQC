@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def scan(documents: list[Path], videos: list[Path], subtitles: list[Path]) -> ScanResult:
+def scan(documents: tuple[Path, ...], videos: tuple[Path, ...], subtitles: tuple[Path, ...]) -> ScanResult:
     doc_data = read_documents(documents)
 
     merged_subtitles = collect_subtitle_sources(

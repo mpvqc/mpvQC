@@ -42,7 +42,9 @@ logger = logging.getLogger(__name__)
 
 
 class Scanning(Protocol):
-    def __call__(self, documents: list[Path], videos: list[Path], subtitles: list[Path], /) -> ScanResult: ...
+    def __call__(
+        self, documents: tuple[Path, ...], videos: tuple[Path, ...], subtitles: tuple[Path, ...], /
+    ) -> ScanResult: ...
 
 
 class ImporterService(QObject):
@@ -60,7 +62,9 @@ class ImporterService(QObject):
         self._scan = scan
         self._jobs = SerialJobRunner(executor)
 
-    def open(self, document_paths: list[Path], video_paths: list[Path], subtitle_paths: list[Path]) -> None:
+    def open(
+        self, document_paths: tuple[Path, ...], video_paths: tuple[Path, ...], subtitle_paths: tuple[Path, ...]
+    ) -> None:
         if self._busy:
             logger.warning(
                 "Skipping import while another is in progress; documents=%s videos=%s subtitles=%s",

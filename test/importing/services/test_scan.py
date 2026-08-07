@@ -35,7 +35,7 @@ def test_doc_video_gets_doc_flag(tmp_path: Path) -> None:
     video.touch()
     document = write_document(tmp_path, "a.qc", f"[FILE]\npath: {video}\n\n[DATA]\n")
 
-    result = scan(documents=[document], videos=[], subtitles=[])
+    result = scan(documents=(document,), videos=(), subtitles=())
 
     assert result.videos == (VideoSource(path=video.resolve(), found_in_document=True),)
 
@@ -45,7 +45,7 @@ def test_subtitle_referenced_video_gets_subtitle_flag(tmp_path: Path) -> None:
     video.touch()
     subtitle = write_subtitle_referencing(tmp_path, "a.ass", video)
 
-    result = scan(documents=[], videos=[], subtitles=[subtitle])
+    result = scan(documents=(), videos=(), subtitles=(subtitle,))
 
     assert result.videos == (VideoSource(path=video.resolve(), found_in_subtitle=True),)
 
@@ -55,7 +55,7 @@ def test_doc_subtitle_gets_doc_flag(tmp_path: Path) -> None:
     subtitle.touch()
     document = write_document(tmp_path, "a.qc", f"[FILE]\nsubtitle: {subtitle}\n")
 
-    result = scan(documents=[document], videos=[], subtitles=[])
+    result = scan(documents=(document,), videos=(), subtitles=())
 
     assert result.subtitles == (SubtitleSource(path=subtitle.resolve(), found_in_document=True),)
 
@@ -69,7 +69,7 @@ def test_comments_and_rejected_documents_flow_through(tmp_path: Path) -> None:
     broken = write_document(tmp_path, "broken.qc", "erroneous_document\n")
     unsupported = write_document(tmp_path, "future.json", '{"version": 999, "comments": []}')
 
-    result = scan(documents=[valid, broken, unsupported], videos=[], subtitles=[])
+    result = scan(documents=(valid, broken, unsupported), videos=(), subtitles=())
 
     assert result.rejected_documents == (
         RejectedDocument(broken, DocumentRejectionReason.INVALID),
@@ -85,7 +85,7 @@ def test_video_sources_merge_when_spelling_differs(tmp_path: Path) -> None:
     alias = tmp_path / "sub" / ".." / "movie.mkv"
     document = write_document(tmp_path, "a.qc", f"[FILE]\npath: {alias}\n\n[DATA]\n")
 
-    result = scan(documents=[document], videos=[real], subtitles=[])
+    result = scan(documents=(document,), videos=(real,), subtitles=())
 
     assert result.videos == (VideoSource(path=real.resolve(), explicitly_provided=True, found_in_document=True),)
 
@@ -97,6 +97,6 @@ def test_subtitle_sources_merge_when_spelling_differs(tmp_path: Path) -> None:
     alias = tmp_path / "sub" / ".." / "subs.ass"
     document = write_document(tmp_path, "a.qc", f"[FILE]\nsubtitle: {alias}\n")
 
-    result = scan(documents=[document], videos=[], subtitles=[real])
+    result = scan(documents=(document,), videos=(), subtitles=(real,))
 
     assert result.subtitles == (SubtitleSource(path=real.resolve(), explicitly_provided=True, found_in_document=True),)

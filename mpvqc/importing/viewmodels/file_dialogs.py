@@ -70,16 +70,16 @@ class MpvqcImportFileDialogViewModel(QObject):
     def openVideo(self, url: QUrl) -> None:
         path = self._type_mapper.map_url_to_path(url)
         self._settings.last_directory_video = self._type_mapper.map_path_to_url(path.parent)
-        self._importer.open([], [path], [])
+        self._importer.open((), (path,), ())
 
     @Slot(list)
     def openDocuments(self, urls: list[QUrl]) -> None:
-        paths = self._type_mapper.map_urls_to_path(urls)
+        paths = tuple(self._type_mapper.map_url_to_path(url) for url in urls)
         self._settings.last_directory_documents = self._type_mapper.map_path_to_url(paths[0].parent)
-        self._importer.open(paths, [], [])
+        self._importer.open(paths, (), ())
 
     @Slot(list)
     def openSubtitles(self, urls: list[QUrl]) -> None:
-        paths = self._type_mapper.map_urls_to_path(urls)
+        paths = tuple(self._type_mapper.map_url_to_path(url) for url in urls)
         self._settings.last_directory_subtitles = self._type_mapper.map_path_to_url(paths[0].parent)
-        self._importer.open([], [], paths)
+        self._importer.open((), (), paths)

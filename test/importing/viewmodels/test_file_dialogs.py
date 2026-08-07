@@ -74,9 +74,9 @@ def test_open_video_forwards_the_selected_file_to_the_importer(view_model, impor
     view_model.openVideo(QUrl.fromLocalFile(str(file)))
 
     documents, videos, subtitles = importer_service_mock.open.call_args.args
-    assert documents == []
+    assert documents == ()
     assert [path.name for path in videos] == ["movie.mkv"]
-    assert subtitles == []
+    assert subtitles == ()
 
 
 def test_open_documents_forwards_the_selected_files_to_the_importer(view_model, importer_service_mock, tmp_path):
@@ -86,8 +86,8 @@ def test_open_documents_forwards_the_selected_files_to_the_importer(view_model, 
 
     documents, videos, subtitles = importer_service_mock.open.call_args.args
     assert [path.name for path in documents] == ["a.txt", "b.json"]
-    assert videos == []
-    assert subtitles == []
+    assert videos == ()
+    assert subtitles == ()
 
 
 def test_open_subtitles_forwards_the_selected_files_to_the_importer(view_model, importer_service_mock, tmp_path):
@@ -96,8 +96,8 @@ def test_open_subtitles_forwards_the_selected_files_to_the_importer(view_model, 
     view_model.openSubtitles(urls)
 
     documents, videos, subtitles = importer_service_mock.open.call_args.args
-    assert documents == []
-    assert videos == []
+    assert documents == ()
+    assert videos == ()
     assert [path.name for path in subtitles] == ["a.srt", "b.ass"]
 
 

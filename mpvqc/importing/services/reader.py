@@ -28,7 +28,7 @@ class ReadDocumentsResult:
     comments: tuple[Comment, ...]
 
 
-def read_documents(documents: list[Path]) -> ReadDocumentsResult:
+def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
     rejected_docs = []
     existing_vids = []
     existing_subs = []

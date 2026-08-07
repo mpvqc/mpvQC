@@ -172,7 +172,7 @@ def test_finishing_the_import_dispatches_the_resolved_media_to_open_media(
     service = make_importer(MEDIA_CHOICE_SCAN)
     spy = make_spy(service.pending_import_ready)
 
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -245,7 +245,7 @@ def test_open_gates_state_record_import(
 
     service = make_importer(case.scanned)
     spy = make_spy(service.pending_import_ready)
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     if case.resolve_video is None:
@@ -272,7 +272,7 @@ def test_finishing_with_a_replacing_session_resets_the_application(
 
     service = make_importer(scan_with(comments=COMMENTS))
     spy = make_spy(service.pending_import_ready)
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -287,7 +287,7 @@ def test_open_does_not_reset_for_a_merging_session(
     make_importer,
     reset_service_mock: MagicMock,
 ) -> None:
-    make_importer(EMPTY_SCAN).open([], [], [])
+    make_importer(EMPTY_SCAN).open((), (), ())
     manual_executor.drain()
 
     reset_service_mock.reset.assert_not_called()
@@ -303,7 +303,7 @@ def test_open_executes_a_plan_needing_no_decisions_without_the_wizard(
     service = make_importer(scan_with(comments=COMMENTS))
     spy = make_spy(service.pending_import_ready)
 
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 0
@@ -316,7 +316,7 @@ def test_open_without_comments_imports_nothing(
     make_importer,
     comments_service_mock: MagicMock,
 ) -> None:
-    make_importer(EMPTY_SCAN).open([], [], [])
+    make_importer(EMPTY_SCAN).open((), (), ())
     manual_executor.drain()
 
     comments_service_mock.import_comments.assert_not_called()
@@ -332,7 +332,7 @@ def test_open_announces_a_pending_import_for_a_scan_needing_decisions(
     service = make_importer(VIDEO_CHOICE_SCAN)
     spy = make_spy(service.pending_import_ready)
 
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -354,7 +354,7 @@ def pending_importer(
 ) -> AnnouncedImport:
     service = make_importer(VIDEO_CHOICE_SCAN)
     spy = make_spy(service.pending_import_ready)
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
     return AnnouncedImport(service, spy.at(invocation=0, argument=0))
 
@@ -379,7 +379,7 @@ def test_dismiss_after_finish_changes_nothing(
     pending_importer.pending.dismiss()
     spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.service.open([], [], [])
+    pending_importer.service.open((), (), ())
     manual_executor.drain()
 
     player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
@@ -403,7 +403,7 @@ def test_a_second_open_while_a_decision_is_pending_is_dropped(
 ) -> None:
     spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.service.open([], [], [])
+    pending_importer.service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 0
@@ -418,7 +418,7 @@ def test_an_open_after_a_finish_proceeds(
     pending_importer.pending.finish(video=VideoSkip())
     spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.service.open([], [], [])
+    pending_importer.service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -432,7 +432,7 @@ def test_an_open_after_a_dismissal_proceeds(
     pending_importer.pending.dismiss()
     spy = make_spy(pending_importer.service.pending_import_ready)
 
-    pending_importer.service.open([], [], [])
+    pending_importer.service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -446,10 +446,10 @@ def test_a_late_dismissal_leaves_a_running_scan_alone(
     pending_importer.pending.dismiss()
     spy = make_spy(pending_importer.service.pending_import_ready)
     # The next scan is queued but undrained, so it is still in flight when the duplicate dismissal arrives.
-    pending_importer.service.open([], [], [])
+    pending_importer.service.open((), (), ())
 
     pending_importer.pending.dismiss()
-    pending_importer.service.open([], [], [])
+    pending_importer.service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1
@@ -474,12 +474,12 @@ def test_open_recovers_when_the_scan_raises(
     service = ImporterService(manual_executor, scan=explode_once)
     spy = make_spy(service.pending_import_ready)
 
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     assert "Import scan failed" in caplog.text
 
-    service.open([], [], [])
+    service.open((), (), ())
     manual_executor.drain()
 
     assert spy.count() == 1

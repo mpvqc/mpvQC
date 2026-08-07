@@ -29,4 +29,4 @@ class MpvqcImportDropAreaViewModel(QObject):
     def open(self, urls: list[QUrl]) -> None:
         paths = self._type_mapper.map_urls_to_path(urls)
         classified = classify_paths(paths)
-        self._importer.open(list(classified.documents), list(classified.videos), list(classified.subtitles))
+        self._importer.open(classified.documents, classified.videos, classified.subtitles)
