@@ -24,11 +24,11 @@ from .documents import parse_v1 as parse_v1
 from .errors import ErrorsAbsent as ErrorsAbsent
 from .errors import ErrorsPresent as ErrorsPresent
 from .errors import ImportErrors as ImportErrors
-from .kind import DOCUMENT_EXTENSIONS as DOCUMENT_EXTENSIONS
-from .kind import SUBTITLE_EXTENSIONS as SUBTITLE_EXTENSIONS
-from .kind import VIDEO_FALLBACK_EXTENSIONS as VIDEO_FALLBACK_EXTENSIONS
-from .kind import ClassifiedPaths as ClassifiedPaths
-from .kind import classify_paths as classify_paths
+from .file_kind import DOCUMENT_EXTENSIONS as DOCUMENT_EXTENSIONS
+from .file_kind import SUBTITLE_EXTENSIONS as SUBTITLE_EXTENSIONS
+from .file_kind import VIDEO_FALLBACK_EXTENSIONS as VIDEO_FALLBACK_EXTENSIONS
+from .file_kind import ClassifiedPaths as ClassifiedPaths
+from .file_kind import classify_paths as classify_paths
 from .pending import PendingImport as PendingImport
 from .plan import FinishedPlan as FinishedPlan
 from .plan import UnfinishedPlan as UnfinishedPlan
