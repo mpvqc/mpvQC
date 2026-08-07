@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 DOCUMENT_EXTENSIONS: frozenset[str] = frozenset({".txt", ".json"})
 
+VIDEO_FALLBACK_EXTENSIONS: frozenset[str] = frozenset({".avi", ".mkv", ".mp4"})
+
 # fmt: off
 SUBTITLE_EXTENSIONS: frozenset[str] = frozenset({
     ".aqt", ".ass", ".idx", ".js", ".jss", ".mks", ".rt", ".scc", ".smi",

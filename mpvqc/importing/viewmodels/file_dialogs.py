@@ -6,18 +6,16 @@ import inject
 from PySide6.QtCore import Property, QMimeDatabase, QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.domain import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS
+from mpvqc.importing.domain import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS, VIDEO_FALLBACK_EXTENSIONS
 from mpvqc.importing.services import ImporterService, ImportSettingsService
 from mpvqc.services import TypeMapperService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-_VIDEO_FALLBACK_EXTENSIONS: frozenset[str] = frozenset({".avi", ".mkv", ".mp4"})
-
 
 def _video_file_glob_pattern() -> str:
-    patterns = {f"*{ext}" for ext in _VIDEO_FALLBACK_EXTENSIONS}
+    patterns = {f"*{ext}" for ext in VIDEO_FALLBACK_EXTENSIONS}
 
     for mime_type in QMimeDatabase().allMimeTypes():
         if mime_type.name().startswith("video/"):
