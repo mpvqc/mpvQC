@@ -212,3 +212,11 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
     @Slot()
     def _emit_tri_state_changed(self) -> None:
         self.selectAllTriStateChanged.emit(self.selectAllTriState)
+
+
+type WizardStepViewModel = (
+    MpvqcImportWizardErrorsStepViewModel
+    | MpvqcImportWizardSessionStepViewModel
+    | MpvqcImportWizardVideoStepViewModel
+    | MpvqcImportWizardSubtitlesStepViewModel
+)

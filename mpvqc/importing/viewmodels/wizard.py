@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from mpvqc.importing.domain import PendingImport
 
     from .wizard_state import WizardState
+    from .wizard_steps import WizardStepViewModel
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -55,7 +56,7 @@ class MpvqcImportWizardViewModel(QObject):
         self._video_step: MpvqcImportWizardVideoStepViewModel | None = None
         self._subtitles_step: MpvqcImportWizardSubtitlesStepViewModel | None = None
 
-        step_view_models: list[QObject] = []
+        step_view_models: list[WizardStepViewModel] = []
         for step in self._state.steps:
             match step:
                 case ErrorsStep():
@@ -72,7 +73,7 @@ class MpvqcImportWizardViewModel(QObject):
                 case _:
                     assert_never(step)
 
-        self._steps = tuple(step_view_models)
+        self._steps: tuple[WizardStepViewModel, ...] = tuple(step_view_models)
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepIndex(self) -> int:
@@ -83,7 +84,7 @@ class MpvqcImportWizardViewModel(QObject):
         self._move_to(self._state.jump_to(value))
 
     @Property(list, constant=True, final=True)
-    def steps(self) -> list[QObject]:
+    def steps(self) -> list[WizardStepViewModel]:
         return list(self._steps)
 
     @Property(str, constant=True, final=True)
