@@ -14,6 +14,7 @@ Dialog {
     id: root
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
+    readonly property bool isTestMode: typeof mpvqcTestMode !== "undefined"
 
     popupType: MpvqcConstants.preferredPopupType
     anchors.centerIn: Overlay.overlay
@@ -30,7 +31,7 @@ Dialog {
     }
 
     Binding {
-        when: root.popupType === Popup.Window
+        when: root.popupType === Popup.Window || root.isTestMode
         target: root
         property: "enter"
         value: null
@@ -38,7 +39,7 @@ Dialog {
     }
 
     Binding {
-        when: root.popupType === Popup.Window
+        when: root.popupType === Popup.Window || root.isTestMode
         target: root
         property: "exit"
         value: null
