@@ -7,19 +7,36 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, assert_never
 
+from .concerns import (
+    SessionMerge,
+    SessionReplace,
+    SessionUnresolved,
+    SubtitlesLoad,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
+    VideoLoad,
+    VideoSkip,
+    VideoUnresolved,
+    resolve_session,
+    resolve_subtitles,
+    resolve_video,
+)
 from .errors import ErrorsAbsent, ErrorsPresent, resolve_errors
-from .session import SessionMerge, SessionReplace, SessionUnresolved, resolve_session
-from .subtitles import SubtitlesLoad, SubtitlesSkip, SubtitlesUnresolved, resolve_subtitles
-from .video import VideoLoad, VideoSkip, VideoUnresolved, resolve_video
 
 if TYPE_CHECKING:
     from mpvqc.datamodels import Comment
 
+    from .concerns import (
+        LoadFoundVideo,
+        SessionConcern,
+        SessionResolved,
+        SubtitlesConcern,
+        SubtitlesResolved,
+        VideoConcern,
+        VideoResolved,
+    )
     from .errors import ImportErrors
     from .scan import ScanResult
-    from .session import SessionConcern, SessionResolved
-    from .subtitles import SubtitlesConcern, SubtitlesResolved
-    from .video import LoadFoundVideo, VideoConcern, VideoResolved
 
 
 @dataclass(frozen=True)

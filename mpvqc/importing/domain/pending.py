@@ -11,10 +11,8 @@ from .plan import finish_plan
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from .concerns import SessionResolved, SubtitlesResolved, VideoResolved
     from .plan import FinishedPlan, UnfinishedPlan
-    from .session import SessionResolved
-    from .subtitles import SubtitlesResolved
-    from .video import VideoResolved
 
 
 class PendingImport:
