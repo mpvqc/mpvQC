@@ -85,8 +85,7 @@ TestCase {
         it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument()]);
 
         const wizard = it.wizard.opened(control);
-        // index 0 = the video the document names, 1 = "Don't load a video"
-        it.wizard.pickVideo(wizard, 1);
+        it.wizard.pickNoVideo(wizard);
         it.wizard.clickPrimary(wizard);
 
         tryVerify(() => !wizard.opened);
@@ -124,20 +123,40 @@ TestCase {
         it.expect.noOpenedVideo();
     }
 
-    function test_explicitSubtitle_skipsSubtitlesStep(): void {
+    function test_explicitSubtitle_getsASubtitlesStepWhenTheVideoIsUnresolved(): void {
         const control = it.makeControl();
 
         it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument(), it.bridge.importArtifact("subtitle_basic.ass")]);
 
         const wizard = it.wizard.opened(control);
-        compare(wizard.viewModel.steps.length, 1, "explicit sub should bypass Subtitles step");
+        compare(wizard.viewModel.steps.length, 2, "the video question should bring the explicit sub along");
 
+        it.wizard.advance(wizard);
         it.wizard.clickPrimary(wizard);
         tryVerify(() => !wizard.opened);
         it.bridge.waitForBackgroundJobs();
 
         it.expect.commentCount(control, 1);
         it.expect.openedVideo("video_only.mp4");
+        it.expect.openedSubtitleCount(1);
+    }
+
+    function test_explicitSubtitle_loadsEvenWhenTheVideoIsSkipped(): void {
+        const control = it.makeControl();
+
+        it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument(), it.bridge.importArtifact("subtitle_basic.ass")]);
+
+        const wizard = it.wizard.opened(control);
+        compare(wizard.viewModel.steps.length, 2, "the video question should bring the explicit sub along");
+
+        it.wizard.pickNoVideo(wizard);
+        it.wizard.advance(wizard);
+        it.wizard.clickPrimary(wizard);
+
+        tryVerify(() => !wizard.opened);
+        it.bridge.waitForBackgroundJobs();
+
+        it.expect.noOpenedVideo();
         it.expect.openedSubtitleCount(1);
     }
 
