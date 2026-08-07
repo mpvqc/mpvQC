@@ -257,6 +257,12 @@ QtObject {
             _pickRow(dlg, "videoList", index);
         }
 
+        function pickNoVideo(dlg: QtObject): void {
+            const list = root.testCase.findChild(dlg.contentItem, "videoList");
+            root.testCase.verify(list, "videoList not found");
+            _pickRow(dlg, "videoList", list.count - 1);
+        }
+
         function pickSubtitle(dlg: QtObject, index: int): void {
             _pickRow(dlg, "subtitleList", index);
         }

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, assert_never
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from .scan import ScanResult, SubtitleSource, VideoSource
+    from .scan import ScanResult, VideoSource
 
 
 @dataclass(frozen=True)
@@ -127,30 +127,25 @@ def _video_from_scan(
 
 
 def resolve_subtitles(scan: ScanResult, *, video_concern: VideoConcern) -> SubtitlesConcern:
-    explicit = tuple(s for s in scan.subtitles if s.explicitly_provided)
-    if explicit:
-        return _subtitles_from_explicit(explicit)
-    return _subtitles_from_scan(scan, video_concern)
+    explicit = tuple(s.path for s in scan.subtitles if s.explicitly_provided)
+    candidates = explicit or tuple(s.path for s in scan.subtitles)
 
-
-def _subtitles_from_explicit(candidates: tuple[SubtitleSource, ...]) -> SubtitlesConcern:
-    return SubtitlesLoad(paths=tuple(c.path for c in candidates))
-
-
-def _subtitles_from_scan(scan: ScanResult, video_concern: VideoConcern) -> SubtitlesConcern:
-    candidates = scan.subtitles
-    if isinstance(video_concern, VideoSkip) or not candidates:
+    if not candidates:
         return SubtitlesSkip()
     if isinstance(video_concern, VideoUnresolved):
-        return SubtitlesUnresolved(candidates=tuple(c.path for c in candidates))
-    if _explicit_video_overrides_doc(scan.videos):
-        return SubtitlesUnresolved(candidates=tuple(c.path for c in candidates))
-    return SubtitlesLoad(paths=tuple(c.path for c in candidates))
+        return SubtitlesUnresolved(candidates=candidates)
+    if explicit:
+        return SubtitlesLoad(paths=explicit)
+    if isinstance(video_concern, VideoSkip):
+        return SubtitlesSkip()
+    if _handed_in_video_absent_from_document(scan.videos):
+        return SubtitlesUnresolved(candidates=candidates)
+    return SubtitlesLoad(paths=candidates)
 
 
-def _explicit_video_overrides_doc(videos: tuple[VideoSource, ...]) -> bool:
-    explicit_paths = {v.path for v in videos if v.explicitly_provided}
-    if not explicit_paths:
+def _handed_in_video_absent_from_document(videos: tuple[VideoSource, ...]) -> bool:
+    handed_in_paths = {v.path for v in videos if v.explicitly_provided}
+    if not handed_in_paths:
         return False
-    doc_paths = {v.path for v in videos if v.found_in_document}
-    return explicit_paths.isdisjoint(doc_paths)
+    document_paths = {v.path for v in videos if v.found_in_document}
+    return handed_in_paths.isdisjoint(document_paths)

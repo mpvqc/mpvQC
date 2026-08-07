@@ -158,5 +158,5 @@ def _has_valid_content(unfinished_plan: UnfinishedPlan) -> bool:
     return (
         bool(unfinished_plan.comments)
         or isinstance(unfinished_plan.video, VideoLoad)
-        or isinstance(unfinished_plan.subtitles, SubtitlesLoad)
+        or isinstance(unfinished_plan.subtitles, SubtitlesLoad | SubtitlesUnresolved)
     )

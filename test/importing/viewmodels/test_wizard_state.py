@@ -264,10 +264,10 @@ FOOTER_CASES = [
         expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
     FooterCase(
-        name="video+subs unresolved, no comments, on subtitles (last) -> Confirm, cancel shown",
+        name="video+subs unresolved, no comments, on subtitles (last) -> Confirm import, cancel shown",
         plan=plan_with(video=UNRESOLVED_VIDEO, subtitles=UNRESOLVED_SUBTITLES),
         index=1,
-        expected=FooterState(PrimaryLabel.CONFIRM, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
+        expected=FooterState(PrimaryLabel.CONFIRM_IMPORT, PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
 ]
 
