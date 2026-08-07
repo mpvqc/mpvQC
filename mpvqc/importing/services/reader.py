@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from mpvqc.importing.domain import DocumentRejectionReason, ParsedDocument, RejectedDocument, parse_classic, parse_v1
-from mpvqc.services.reverse_translator import ReverseTranslatorService
+from mpvqc.services import ReverseTranslatorService
 
 if TYPE_CHECKING:
     from pathlib import Path

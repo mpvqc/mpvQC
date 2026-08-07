@@ -28,9 +28,8 @@
   - Don't use getattr
 - A feature package under `mpvqc/<feature>/` bundles everything one area needs: its domain, plus role directories
   (`services/`, `models/`, `viewmodels/`, `enums/`) for what the area owns. Its root exports `bindings` and
-  `register_qml_types` from its `wiring.py`, and the roots call them. A `wiring.py` names no `mpvqc` module and no
-  `PySide6` at module level; each function imports what it needs when it runs.
-- A domain imports no Qt and no injection. QML-registered enums live in the feature's `enums/`, never in its domain.
+  `register_qml_types` from its `wiring.py`, and the roots call them.
+- QML-registered enums live in the feature's `enums/`, never in its domain.
 - A feature's domain is a `domain` module at the package root, one file or a package as the area needs. It always
   imports as `mpvqc.<feature>.domain`, and a package re-exports the flat vocabulary from its `__init__`, so call sites
   never say which one it is.
@@ -38,6 +37,7 @@
   The prefix marks exactly those classes; everything unregistered names itself for its package.
 - Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
   has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
+- Load the `slice-imports` skill before creating or editing Python in a feature package or its test tree.
 - Load the `load-bearing-comments` skill before adding a comment or docstring, and when reviewing code.
 - Load the `writing-qml` skill before writing or editing a QML file.
 - Load the `writing-view-models` skill before writing or editing a view model that reads service state.

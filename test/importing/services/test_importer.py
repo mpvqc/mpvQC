@@ -23,10 +23,7 @@ from mpvqc.importing.domain import (
     VideoSkip,
 )
 from mpvqc.importing.services import ImporterService, ImportSettingsService
-from mpvqc.services.comments import CommentsService
-from mpvqc.services.player import PlayerService
-from mpvqc.services.resetter import ResetService
-from mpvqc.services.state import StateService
+from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
 from test.importing.plans import (
     SUB_A,
     SUB_A_FROM_DOCUMENT,
