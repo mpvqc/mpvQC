@@ -31,13 +31,3 @@ class TimeFormatterService:
         seconds, milliseconds = divmod(clamped, TimeFormatterService.MILLISECONDS_PER_SECOND)
         time = TimeFormatterService.format_time_to_string(seconds, long_format=True)
         return f"{time}.{milliseconds:03d}"
-
-    @staticmethod
-    def parse_string_to_milliseconds(time_string: str) -> int:
-        hours, minutes, seconds = map(int, time_string.split(":"))
-        return (hours * 3600 + minutes * 60 + seconds) * TimeFormatterService.MILLISECONDS_PER_SECOND
-
-    @staticmethod
-    def parse_subsecond_string_to_milliseconds(time_string: str) -> int:
-        time, milliseconds = time_string.split(".")
-        return TimeFormatterService.parse_string_to_milliseconds(time) + int(milliseconds)
