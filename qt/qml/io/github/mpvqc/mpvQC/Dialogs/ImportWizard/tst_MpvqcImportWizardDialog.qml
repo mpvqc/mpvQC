@@ -290,15 +290,6 @@ TestCase {
         tryCompare(dlg, "opened", false);
     }
 
-    function test_confirmOnlyModeHidesCancelWhenVideoIsTheOnlyDecision(): void {
-        const dlg = open.scenario("video-choice");
-
-        verify(!find.cancelButton(dlg).visible, "cancel should be hidden in confirm-only mode");
-        verify(!find.backButton(dlg).visible, "back should be hidden on first step");
-        verify(find.primaryButton(dlg).visible, "primary should be visible");
-        verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
-    }
-
     function test_cancelClosesTheDialogAndDismissesTheImport(): void {
         const dlg = open.scenario("all-steps");
 

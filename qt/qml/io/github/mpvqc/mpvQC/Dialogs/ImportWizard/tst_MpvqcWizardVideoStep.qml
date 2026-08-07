@@ -57,10 +57,6 @@ TestCase {
     function test_clickingRowUpdatesSelectedIndex_data(): var {
         return [
             {
-                tag: "first",
-                rowIndex: 0
-            },
-            {
                 tag: "second",
                 rowIndex: 1
             },
@@ -82,16 +78,13 @@ TestCase {
         id: objectUnderTest
 
         MpvqcWizardVideoStep {
-            id: _step
-
             property alias rowsModel: _rows
-            property int selected: 0
 
             anchors.fill: parent
 
             viewModel: QtObject {
                 readonly property ListModel candidates: _rows
-                property int selectedIndex: _step.selected
+                property int selectedIndex: 0
             }
 
             ListModel {

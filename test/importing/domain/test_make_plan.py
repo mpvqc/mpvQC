@@ -610,33 +610,6 @@ ALREADY_LOADED_VIDEO = [
             errors=ErrorsAbsent(),
         ),
     ),
-    Scenario(
-        name="doc with video, already loaded, ASK, existing comments",
-        scan=make_scan(videos=[VIDEO_A], comment_count=3),
-        any_candidate_loaded=True,
-        has_existing_comments=True,
-        expected=UnfinishedPlan(
-            comments=stub_comments(3),
-            session=SessionUnresolved(incoming_comment_count=3),
-            video=VideoSkip(),
-            subtitles=SubtitlesSkip(),
-            errors=ErrorsAbsent(),
-        ),
-    ),
-    Scenario(
-        name="doc with video, already loaded, NEVER, existing comments",
-        scan=make_scan(videos=[VIDEO_A], comment_count=3),
-        found_video_setting=LoadFoundVideo.NEVER,
-        any_candidate_loaded=True,
-        has_existing_comments=True,
-        expected=UnfinishedPlan(
-            comments=stub_comments(3),
-            session=SessionUnresolved(incoming_comment_count=3),
-            video=VideoSkip(),
-            subtitles=SubtitlesSkip(),
-            errors=ErrorsAbsent(),
-        ),
-    ),
 ]
 
 

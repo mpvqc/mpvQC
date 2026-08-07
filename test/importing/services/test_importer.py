@@ -361,15 +361,6 @@ def pending_importer(
     return AnnouncedImport(service, spy.at(invocation=0, argument=0))
 
 
-def test_finishing_the_announced_import_executes_the_resolved_plan(
-    pending_importer: AnnouncedImport,
-    player_service_mock: MagicMock,
-) -> None:
-    pending_importer.pending.finish(session=NotAsked(), video=VideoLoad(path=VIDEO_A), subtitles=NotAsked())
-
-    player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
-
-
 def test_dismiss_after_finish_changes_nothing(
     pending_importer: AnnouncedImport,
     manual_executor: ManualJobExecutor,

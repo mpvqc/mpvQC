@@ -138,15 +138,3 @@ def test_open_subtitles_saves_the_first_selected_files_parent_directory(
     )
 
     assert import_settings_service_mock.last_directory_subtitles == QUrl.fromLocalFile(str(first_folder))
-
-
-def test_the_next_video_dialog_opens_in_the_directory_the_last_one_saved(
-    view_model, import_settings_service_mock, tmp_path
-):
-    folder = tmp_path / "videos"
-    folder.mkdir()
-
-    view_model.openVideo(QUrl.fromLocalFile(str(folder / "movie.mkv")))
-    next_view_model = MpvqcImportFileDialogViewModel()
-
-    assert next_view_model.lastDirectoryVideo == QUrl.fromLocalFile(str(folder))

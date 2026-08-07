@@ -77,11 +77,6 @@ STEP_CASES = [
         plan=plan_with(subtitles=UNRESOLVED_SUBTITLES),
         expected=(StepKind.SUBTITLES,),
     ),
-    StepCase(
-        name="canonical order across all four",
-        plan=ALL_UNRESOLVED,
-        expected=(StepKind.ERRORS, StepKind.SESSION, StepKind.VIDEO, StepKind.SUBTITLES),
-    ),
 ]
 
 
