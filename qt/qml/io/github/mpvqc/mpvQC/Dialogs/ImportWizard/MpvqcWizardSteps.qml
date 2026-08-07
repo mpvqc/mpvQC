@@ -16,10 +16,8 @@ StackView {
     readonly property real slideDistance: width / 4
     property int animationDuration: 120
 
-    property int _lastIndex: 0
-
-    function _stepComponentFor(kind: int): Component {
-        switch (kind) {
+    function _stepComponentFor(step: var): Component {
+        switch (step.kind) {
         case MpvqcImportWizardStepKind.StepKind.ERRORS:
             return _errorsStep;
         case MpvqcImportWizardStepKind.StepKind.SESSION:
@@ -31,8 +29,6 @@ StackView {
         }
         return null;
     }
-
-    initialItem: root._stepComponentFor(root.viewModel.stepKinds[0])
 
     pushEnter: Transition {
         ParallelAnimation {
@@ -110,50 +106,47 @@ StackView {
         }
     }
 
+    Component.onCompleted: {
+        const step = root.viewModel.steps[root.viewModel.currentStepIndex];
+        root.push(root._stepComponentFor(step), {
+            viewModel: step
+        }, StackView.Immediate);
+    }
+
     Connections {
         target: root.viewModel
 
-        function onCurrentStepChanged() {
-            const currentIndex = root.viewModel.currentStepIndex;
-            const kind = root.viewModel.stepKinds[currentIndex];
-            if (currentIndex > root._lastIndex) {
-                root.replace(root._stepComponentFor(kind), {}, StackView.PushTransition);
-            } else if (currentIndex < root._lastIndex) {
-                root.replace(root._stepComponentFor(kind), {}, StackView.PopTransition);
-            }
-            root._lastIndex = currentIndex;
+        function onNavigated(direction: int) {
+            const step = root.viewModel.steps[root.viewModel.currentStepIndex];
+            const forward = direction === MpvqcImportWizardNavigationDirection.NavigationDirection.FORWARD;
+            const operation = forward ? StackView.PushTransition : StackView.PopTransition;
+            root.replace(root._stepComponentFor(step), {
+                viewModel: step
+            }, operation);
         }
     }
 
     Component {
         id: _errorsStep
 
-        MpvqcWizardErrorsStep {
-            viewModel: root.viewModel.errorsStepViewModel
-        }
+        MpvqcWizardErrorsStep {}
     }
 
     Component {
         id: _sessionStep
 
-        MpvqcWizardSessionStep {
-            viewModel: root.viewModel.sessionStepViewModel
-        }
+        MpvqcWizardSessionStep {}
     }
 
     Component {
         id: _videoStep
 
-        MpvqcWizardVideoStep {
-            viewModel: root.viewModel.videoStepViewModel
-        }
+        MpvqcWizardVideoStep {}
     }
 
     Component {
         id: _subtitlesStep
 
-        MpvqcWizardSubtitlesStep {
-            viewModel: root.viewModel.subtitlesStepViewModel
-        }
+        MpvqcWizardSubtitlesStep {}
     }
 }

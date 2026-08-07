@@ -31,8 +31,9 @@ MpvqcDialog {
             id: _stepIndicator
             objectName: "stepIndicator"
 
-            stepKinds: root.viewModel.stepKinds
+            steps: root.viewModel.steps
             currentStepIndex: root.viewModel.currentStepIndex
+            visible: root.viewModel.showStepIndicator
 
             Layout.fillWidth: true
             Layout.topMargin: 32
@@ -62,6 +63,9 @@ MpvqcDialog {
         onCancelClicked: root.viewModel.cancelClicked()
         onPrimaryClicked: root.viewModel.primaryClicked()
     }
+
+    onAccepted: root.viewModel.finish()
+    onRejected: root.viewModel.dismiss()
 
     Connections {
         target: root.viewModel

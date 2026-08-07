@@ -13,11 +13,9 @@ from .file_startup import FileStartupService as FileStartupService
 from .font_loader import FontLoaderService as FontLoaderService
 from .formatter_time import TimeFormatterService as TimeFormatterService
 from .i18n import InternationalizationService as InternationalizationService
-from .importer import ImporterService as ImporterService
 from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
 from .main_window import MainWindowService as MainWindowService
-from .mimetype_provider import MimetypeProviderService as MimetypeProviderService
 from .platform import PlatformService as PlatformService
 from .platform import WindowButtonPreference as WindowButtonPreference
 from .player import PlayerService as PlayerService

@@ -14,6 +14,7 @@ import inject
 from PySide6.QtCore import QSettings, QUrl
 from PySide6.QtGui import QGuiApplication
 
+from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
@@ -90,9 +91,13 @@ class SettingsServiceOverride(SettingsService):
     def __init__(self, qsettings: QSettings) -> None:
         super().__init__(qsettings)
         # pyrefly: ignore [missing-override-decorator]
-        self.last_directory_documents = QUrl.fromLocalFile(str(FIXTURES_DIR))
-        # pyrefly: ignore [missing-override-decorator]
         self.backup_interval = 0
+
+
+class ImportSettingsServiceOverride(ImportSettingsService):
+    def __init__(self, qsettings: QSettings) -> None:
+        super().__init__(qsettings)
+        self.last_directory_documents = QUrl.fromLocalFile(str(FIXTURES_DIR))
 
 
 class PlayerServiceOverride(PlayerService):
@@ -226,6 +231,10 @@ def _settings_service_override() -> SettingsServiceOverride:
     return SettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
 
 
+def _import_settings_service_override() -> ImportSettingsServiceOverride:
+    return ImportSettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
+
+
 def configure_injections() -> None:
     MpvqcBackupTimerViewModel.MIN_INTERVAL_MS = 50
 
@@ -234,6 +243,7 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
+        binder.bind_to_constructor(ImportSettingsService, _import_settings_service_override)
         binder.bind_to_constructor(PlatformService, PlatformServiceOverride)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
         binder.bind_to_constructor(SettingsService, _settings_service_override)

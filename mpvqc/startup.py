@@ -88,9 +88,10 @@ def register_qml_types() -> None:
     import mpvqc.models  # ruff: ignore[unused-import]
     import mpvqc.viewmodels  # ruff: ignore[unused-import]
     import mpvqc.views  # ruff: ignore[unused-import]
-    from mpvqc import appearance
+    from mpvqc import appearance, importing
 
     appearance.register_qml_types()
+    importing.register_qml_types()
 
 
 def start_application(process_started_at: float) -> Never:

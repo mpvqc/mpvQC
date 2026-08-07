@@ -13,13 +13,10 @@ from PySide6.QtCore import (
     QLocale,
     QObject,
     QSettings,
-    QStandardPaths,
     Qt,
-    QUrl,
     Signal,
 )
 
-from mpvqc.datamodels import ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
 from mpvqc.languages import LANGUAGES
 
@@ -31,16 +28,6 @@ if TYPE_CHECKING:
 
 def default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
-
-
-def default_documents_location() -> QUrl:
-    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
-    return QUrl.fromLocalFile(location)
-
-
-def default_movie_location() -> QUrl:
-    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
-    return QUrl.fromLocalFile(location)
 
 
 def default_language(locale: QLocale | None = None) -> str:
@@ -189,38 +176,6 @@ class SettingsService(QObject):
         default=TimeDisplayMode.CURRENT_TOTAL_TIME.value,
         type_=int,
         signal=lambda s: s.time_display_mode_changed,
-    )
-
-    last_directory_video_changed = Signal(QUrl)
-    last_directory_video = _Setting(
-        "Import/lastDirectoryVideo",
-        default=default_movie_location,
-        type_=QUrl,
-        signal=lambda s: s.last_directory_video_changed,
-    )
-
-    last_directory_documents_changed = Signal(QUrl)
-    last_directory_documents = _Setting(
-        "Import/lastDirectoryDocuments",
-        default=default_documents_location,
-        type_=QUrl,
-        signal=lambda s: s.last_directory_documents_changed,
-    )
-
-    last_directory_subtitles_changed = Signal(QUrl)
-    last_directory_subtitles = _Setting(
-        "Import/lastDirectorySubtitles",
-        default=default_documents_location,
-        type_=QUrl,
-        signal=lambda s: s.last_directory_subtitles_changed,
-    )
-
-    import_found_video_changed = Signal(int)
-    import_found_video = _Setting(
-        "Import/importFoundVideo",
-        default=ImportFoundVideo.ASK_EVERY_TIME.value,
-        type_=int,
-        signal=lambda s: s.import_found_video_changed,
     )
 
     layout_orientation_changed = Signal(int)

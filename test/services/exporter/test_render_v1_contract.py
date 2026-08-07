@@ -13,8 +13,8 @@ import pytest
 from jsonschema import Draft202012Validator, ValidationError
 
 from mpvqc.datamodels import Comment
+from mpvqc.importing.services import read_documents
 from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
-from mpvqc.services.importer.reader import read_documents
 
 SCHEMA = Path(__file__).parents[3] / "docs" / "document-format" / "v1.json"
 README = Path(__file__).parents[3] / "docs" / "document-format" / "README.md"
@@ -130,9 +130,9 @@ def test_backup_imports_losslessly(make_context, tmp_path):
     document = tmp_path / "backup.json"
     document.write_text(render_backup(context), encoding="utf-8")
 
-    result = read_documents([document])
+    result = read_documents((document,))
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [(754321, "Spelling", "Lorem ipsum")]
 
 
@@ -152,9 +152,9 @@ def test_exported_document_imports_losslessly(make_context, tmp_path):
     document = tmp_path / "report.json"
     document.write_text(render_v1(context), encoding="utf-8")
 
-    result = read_documents([document])
+    result = read_documents((document,))
 
-    assert result.valid_documents == (document,)
+    assert result.rejected_documents == ()
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [
         (0, "Translation", "Lorem ipsum"),
         ((15 * 60 + 29) * 1000 + 340, "Spelling", ""),

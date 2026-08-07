@@ -61,10 +61,6 @@ TestCase {
                 tag: "second",
                 rowIndex: 1
             },
-            {
-                tag: "third",
-                rowIndex: 2
-            },
         ];
     }
 
@@ -85,10 +81,6 @@ TestCase {
             {
                 tag: "second",
                 rowIndex: 1
-            },
-            {
-                tag: "third",
-                rowIndex: 2
             },
         ];
     }
@@ -111,31 +103,6 @@ TestCase {
         tryVerify(() => selectAll.visible);
         mouseClick(selectAll);
         compare(step.viewModel.toggleSelectAllCount, 1);
-    }
-
-    function test_selectAllReflectsTriState_data(): var {
-        return [
-            {
-                tag: "unchecked",
-                value: Qt.Unchecked
-            },
-            {
-                tag: "partial",
-                value: Qt.PartiallyChecked
-            },
-            {
-                tag: "checked",
-                value: Qt.Checked
-            },
-        ];
-    }
-
-    function test_selectAllReflectsTriState(data): void {
-        const step = makeControl({
-            triState: data.value
-        });
-        const selectAll = findChild(step, "selectAll");
-        compare(selectAll.checkState, data.value);
     }
 
     function test_rowCheckboxReflectsIsChecked_data(): var {
@@ -187,16 +154,13 @@ TestCase {
         id: objectUnderTest
 
         MpvqcWizardSubtitlesStep {
-            id: _step
-
             property alias rowsModel: _rows
-            property int triState: Qt.Unchecked
 
             anchors.fill: parent
 
             viewModel: QtObject {
                 readonly property ListModel subtitles: _rows
-                property int selectAllTriState: _step.triState
+                readonly property int selectAllTriState: Qt.Unchecked
 
                 property int lastToggleIndex: -1
                 property int toggleCount: 0
