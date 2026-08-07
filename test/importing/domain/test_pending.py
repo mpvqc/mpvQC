@@ -10,6 +10,7 @@ import pytest
 
 from mpvqc.importing.domain import (
     FinishedPlan,
+    NotAsked,
     PendingImport,
     SessionMerge,
     SubtitlesSkip,
@@ -34,7 +35,7 @@ ANSWERED = FinishedPlan(
 def test_finish_resolves_the_plan_and_delivers_it() -> None:
     pending, finished, dismissals = record_pending(ASKS_ABOUT_VIDEO)
 
-    pending.finish(video=VideoLoad(path=VIDEO_A))
+    pending.finish(session=NotAsked(), video=VideoLoad(path=VIDEO_A), subtitles=NotAsked())
 
     assert finished == [ANSWERED]
     assert dismissals == []
@@ -50,7 +51,7 @@ def test_dismiss_delivers_the_dismissal() -> None:
 
 
 def finish(pending: PendingImport) -> None:
-    pending.finish(video=VideoLoad(path=VIDEO_A))
+    pending.finish(session=NotAsked(), video=VideoLoad(path=VIDEO_A), subtitles=NotAsked())
 
 
 def dismiss(pending: PendingImport) -> None:
@@ -88,7 +89,7 @@ def test_a_finish_the_plan_rejects_leaves_the_import_dismissible() -> None:
     pending, finished, dismissals = record_pending(ASKS_ABOUT_VIDEO)
 
     with pytest.raises(RuntimeError):
-        pending.finish()
+        pending.finish(session=NotAsked(), video=NotAsked(), subtitles=NotAsked())
 
     pending.dismiss()
 

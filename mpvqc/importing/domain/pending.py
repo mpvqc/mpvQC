@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from .concerns import SessionResolved, SubtitlesResolved, VideoResolved
-    from .plan import FinishedPlan, UnfinishedPlan
+    from .plan import FinishedPlan, NotAsked, UnfinishedPlan
 
 
 class PendingImport:
@@ -31,9 +31,9 @@ class PendingImport:
     def finish(
         self,
         *,
-        session: SessionResolved | None = None,
-        video: VideoResolved | None = None,
-        subtitles: SubtitlesResolved | None = None,
+        session: SessionResolved | NotAsked,
+        video: VideoResolved | NotAsked,
+        subtitles: SubtitlesResolved | NotAsked,
     ) -> None:
         if self._spent:
             return

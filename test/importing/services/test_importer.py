@@ -13,6 +13,7 @@ import pytest
 from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     LoadFoundVideo,
+    NotAsked,
     PendingImport,
     ScanResult,
     SessionReplace,
@@ -176,7 +177,7 @@ def test_finishing_the_import_dispatches_the_resolved_media_to_open_media(
     manual_executor.drain()
 
     assert spy.count() == 1
-    spy.at(invocation=0, argument=0).finish(video=case.video, subtitles=case.subtitles)
+    spy.at(invocation=0, argument=0).finish(session=NotAsked(), video=case.video, subtitles=case.subtitles)
 
     if case.expected is None:
         player_service_mock.open_media.assert_not_called()
@@ -252,7 +253,8 @@ def test_open_gates_state_record_import(
         assert spy.count() == 0
     else:
         assert spy.count() == 1
-        spy.at(invocation=0, argument=0).finish(video=case.resolve_video)
+        pending = spy.at(invocation=0, argument=0)
+        pending.finish(session=NotAsked(), video=case.resolve_video, subtitles=NotAsked())
 
     if case.expected_record:
         state_service_mock.record_import.assert_called_once()
@@ -276,7 +278,7 @@ def test_finishing_with_a_replacing_session_resets_the_application(
     manual_executor.drain()
 
     assert spy.count() == 1
-    spy.at(invocation=0, argument=0).finish(session=SessionReplace())
+    spy.at(invocation=0, argument=0).finish(session=SessionReplace(), video=NotAsked(), subtitles=NotAsked())
 
     reset_service_mock.reset.assert_called_once()
 
@@ -363,7 +365,7 @@ def test_finishing_the_announced_import_executes_the_resolved_plan(
     pending_importer: AnnouncedImport,
     player_service_mock: MagicMock,
 ) -> None:
-    pending_importer.pending.finish(video=VideoLoad(path=VIDEO_A))
+    pending_importer.pending.finish(session=NotAsked(), video=VideoLoad(path=VIDEO_A), subtitles=NotAsked())
 
     player_service_mock.open_media.assert_called_once_with(video=VIDEO_A, subtitles=())
 
@@ -375,7 +377,7 @@ def test_dismiss_after_finish_changes_nothing(
     player_service_mock: MagicMock,
 ) -> None:
     # One close both finishes and dismisses, so the trailing dismissal must neither undo the import nor latch.
-    pending_importer.pending.finish(video=VideoLoad(path=VIDEO_A))
+    pending_importer.pending.finish(session=NotAsked(), video=VideoLoad(path=VIDEO_A), subtitles=NotAsked())
     pending_importer.pending.dismiss()
     spy = make_spy(pending_importer.service.pending_import_ready)
 
@@ -415,7 +417,7 @@ def test_an_open_after_a_finish_proceeds(
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    pending_importer.pending.finish(video=VideoSkip())
+    pending_importer.pending.finish(session=NotAsked(), video=VideoSkip(), subtitles=NotAsked())
     spy = make_spy(pending_importer.service.pending_import_ready)
 
     pending_importer.service.open((), (), ())

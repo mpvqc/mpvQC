@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, assert_never
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
+from mpvqc.importing.domain import NotAsked
 from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection
 
 from .wizard_state import (
@@ -137,9 +138,9 @@ class MpvqcImportWizardViewModel(QObject):
     @Slot()
     def finish(self) -> None:
         self._pending.finish(
-            session=self._session_step.resolved if self._session_step is not None else None,
-            video=self._video_step.resolved if self._video_step is not None else None,
-            subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else None,
+            session=self._session_step.resolved if self._session_step is not None else NotAsked(),
+            video=self._video_step.resolved if self._video_step is not None else NotAsked(),
+            subtitles=self._subtitles_step.resolved if self._subtitles_step is not None else NotAsked(),
         )
 
     @Slot()

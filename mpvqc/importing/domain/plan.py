@@ -40,6 +40,11 @@ if TYPE_CHECKING:
 
 
 @dataclass(frozen=True)
+class NotAsked:
+    pass
+
+
+@dataclass(frozen=True)
 class FinishedPlan:
     comments: tuple[Comment, ...]
     session: SessionResolved
@@ -102,9 +107,9 @@ def make_plan(
 def finish_plan(
     plan: UnfinishedPlan,
     *,
-    session: SessionResolved | None = None,
-    video: VideoResolved | None = None,
-    subtitles: SubtitlesResolved | None = None,
+    session: SessionResolved | NotAsked,
+    video: VideoResolved | NotAsked,
+    subtitles: SubtitlesResolved | NotAsked,
 ) -> FinishedPlan:
     return FinishedPlan(
         comments=plan.comments,
@@ -114,7 +119,7 @@ def finish_plan(
     )
 
 
-def _finish_session(concern: SessionConcern, answer: SessionResolved | None) -> SessionResolved:
+def _finish_session(concern: SessionConcern, answer: SessionResolved | NotAsked) -> SessionResolved:
     match concern:
         case SessionMerge() | SessionReplace():
             return concern
@@ -124,7 +129,7 @@ def _finish_session(concern: SessionConcern, answer: SessionResolved | None) -> 
             assert_never(concern)
 
 
-def _finish_video(concern: VideoConcern, answer: VideoResolved | None) -> VideoResolved:
+def _finish_video(concern: VideoConcern, answer: VideoResolved | NotAsked) -> VideoResolved:
     match concern:
         case VideoLoad() | VideoSkip():
             return concern
@@ -134,7 +139,7 @@ def _finish_video(concern: VideoConcern, answer: VideoResolved | None) -> VideoR
             assert_never(concern)
 
 
-def _finish_subtitles(concern: SubtitlesConcern, answer: SubtitlesResolved | None) -> SubtitlesResolved:
+def _finish_subtitles(concern: SubtitlesConcern, answer: SubtitlesResolved | NotAsked) -> SubtitlesResolved:
     match concern:
         case SubtitlesLoad() | SubtitlesSkip():
             return concern
@@ -144,8 +149,10 @@ def _finish_subtitles(concern: SubtitlesConcern, answer: SubtitlesResolved | Non
             assert_never(concern)
 
 
-def _require_answer[T](answer: T | None) -> T:
-    if answer is None:
-        msg = "cannot finish a plan while a concern is unresolved"
-        raise RuntimeError(msg)
-    return answer
+def _require_answer[T](answer: T | NotAsked) -> T:
+    match answer:
+        case NotAsked():
+            msg = "cannot finish a plan while a concern is unresolved"
+            raise RuntimeError(msg)
+        case _:
+            return answer

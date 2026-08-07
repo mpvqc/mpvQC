@@ -31,6 +31,7 @@ from .file_kind import ClassifiedPaths as ClassifiedPaths
 from .file_kind import classify_paths as classify_paths
 from .pending import PendingImport as PendingImport
 from .plan import FinishedPlan as FinishedPlan
+from .plan import NotAsked as NotAsked
 from .plan import UnfinishedPlan as UnfinishedPlan
 from .plan import finish_plan as finish_plan
 from .plan import make_plan as make_plan

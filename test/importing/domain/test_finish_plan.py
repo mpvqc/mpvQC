@@ -4,18 +4,22 @@
 
 from __future__ import annotations
 
-from typing import Any, NamedTuple
+from typing import NamedTuple
 
 import pytest
 
 from mpvqc.importing.domain import (
     FinishedPlan,
+    NotAsked,
     SessionMerge,
     SessionReplace,
+    SessionResolved,
     SubtitlesLoad,
+    SubtitlesResolved,
     SubtitlesSkip,
     UnfinishedPlan,
     VideoLoad,
+    VideoResolved,
     VideoSkip,
     finish_plan,
 )
@@ -37,8 +41,10 @@ ASKS_ABOUT_SUBTITLES = plan_with(subtitles=UNRESOLVED_SUBTITLES)
 class FinishPlanCase(NamedTuple):
     name: str
     plan: UnfinishedPlan
-    answers: dict[str, Any]
     expected: FinishedPlan
+    session: SessionResolved | NotAsked = NotAsked()
+    video: VideoResolved | NotAsked = NotAsked()
+    subtitles: SubtitlesResolved | NotAsked = NotAsked()
 
 
 FINISH_PLAN_CASES = [
@@ -50,7 +56,7 @@ FINISH_PLAN_CASES = [
             video=VideoLoad(path=VIDEO_A),
             subtitles=SubtitlesLoad(paths=(SUB_A,)),
         ),
-        answers={"session": SessionReplace()},
+        session=SessionReplace(),
         expected=FinishedPlan(
             comments=(COMMENT,),
             session=SessionReplace(),
@@ -61,19 +67,20 @@ FINISH_PLAN_CASES = [
     FinishPlanCase(
         name="an answer is ignored when the concern is already resolved",
         plan=plan_with(session=SessionReplace(), video=UNRESOLVED_VIDEO),
-        answers={"session": SessionMerge(), "video": VideoSkip()},
+        session=SessionMerge(),
+        video=VideoSkip(),
         expected=FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     FinishPlanCase(
         name="unresolved session takes the given answer",
         plan=ASKS_ABOUT_SESSION,
-        answers={"session": SessionReplace()},
+        session=SessionReplace(),
         expected=FinishedPlan(comments=(), session=SessionReplace(), video=VideoSkip(), subtitles=SubtitlesSkip()),
     ),
     FinishPlanCase(
         name="unresolved video takes the given answer",
         plan=ASKS_ABOUT_VIDEO,
-        answers={"video": VideoLoad(path=VIDEO_A)},
+        video=VideoLoad(path=VIDEO_A),
         expected=FinishedPlan(
             comments=(),
             session=SessionMerge(),
@@ -84,7 +91,7 @@ FINISH_PLAN_CASES = [
     FinishPlanCase(
         name="unresolved subtitles takes the given answer",
         plan=ASKS_ABOUT_SUBTITLES,
-        answers={"subtitles": SubtitlesLoad(paths=(SUB_A,))},
+        subtitles=SubtitlesLoad(paths=(SUB_A,)),
         expected=FinishedPlan(
             comments=(),
             session=SessionMerge(),
@@ -97,7 +104,9 @@ FINISH_PLAN_CASES = [
 
 @pytest.mark.parametrize("case", FINISH_PLAN_CASES, ids=lambda c: c.name)
 def test_finish_plan(case: FinishPlanCase) -> None:
-    assert finish_plan(case.plan, **case.answers) == case.expected
+    finished = finish_plan(case.plan, session=case.session, video=case.video, subtitles=case.subtitles)
+
+    assert finished == case.expected
 
 
 class UnresolvedCase(NamedTuple):
@@ -115,4 +124,4 @@ UNRESOLVED_WITHOUT_ANSWER_CASES = [
 @pytest.mark.parametrize("case", UNRESOLVED_WITHOUT_ANSWER_CASES, ids=lambda c: c.name)
 def test_finish_plan_raises_when_a_concern_is_unresolved_without_an_answer(case: UnresolvedCase) -> None:
     with pytest.raises(RuntimeError):
-        finish_plan(case.plan)
+        finish_plan(case.plan, session=NotAsked(), video=NotAsked(), subtitles=NotAsked())
