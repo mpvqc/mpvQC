@@ -1,21 +1,37 @@
 # Domain glossary
 
-Terms the code uses. Keep entries short. Add a term when you name a module after a concept that is not listed here.
+Terms the code uses. Keep entries short. Add a term when you name a module after a domain concept that is not listed
+here. Architecture vocabulary is not domain vocabulary: it lives in `docs/architecture.md` and the ADRs.
 
 ## Import pipeline
 
-- **Concern**: one dimension of an import that may need user input (`errors`, `session`, `video`, `subtitles`). Each is
-  a tagged union with resolved variants (such as `Merge`, `Load`, `Skip`) and an `Unresolved` variant carrying the data
-  a user needs to decide.
-- **Resolve**: turn a Concern into one of its resolved variants, either from settings and scan results (`make_plan`) or
-  from wizard input (`build_finished_plan`).
-- **UnfinishedPlan**: scan output with at least one Concern unresolved or errors present. Presented to the user as the
-  import wizard.
-- **FinishedPlan**: every Concern resolved. The only input `ImporterService.execute()` accepts.
-- **Wizard step**: one page of the import wizard, one per unresolved Concern, in canonical order: errors, session,
-  video, subtitles.
-- **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
-  close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
+- **File kind**: what an import path is: document, video, or subtitle, decided by its extension.
+- **Video reference**: a video path a subtitle names as the one it was written against. A subtitle can name more than
+  one; parsing keeps every one, in the order it was written, because a dead reference can fall through to a live one
+  and deciding that needs them all. Distinct from the video and subtitles a document names: those are kept on import
+  only when they exist, decided as the document is read.
+- **Classic document**: mpvQC's original import document format: a text file, superseded by the v1 document but still
+  read on import.
+- **v1 document**: mpvQC's current import document format, versioned so a future format can succeed it without
+  breaking documents already written.
+- **Scan**: reading what an import was handed and following every video and subtitle named by what it reads. Each file
+  it turns up is kept with where it came from: handed in, named by a document, or named by a subtitle; turned up more
+  than once, it is one record carrying every origin. A scan decides nothing; the plan is made from its result.
+- **Concern**: one dimension of an import that may need user input: session, video, subtitles. Each is a tagged union
+  named concern-first, such as `SessionMerge` and `SessionUnresolved`: resolved variants for the concern, and its own
+  `Unresolved` variant carrying the data a user needs to decide.
+- **Import errors**: the rejected documents an import carries: absent, or present naming the ones rejected. Present
+  forces the wizard open. Not a Concern: the errors step only shows them, the user decides nothing about it.
+- **Resolve**: turn a Concern into one of its resolved variants, either when the plan is made, from settings and scan
+  results, or when the wizard finishes, from its input.
+- **UnfinishedPlan**: scan output with at least one Concern unresolved, or Import errors present. Presented to the user
+  as the import wizard.
+- **FinishedPlan**: every Concern resolved. The only input the importer executes.
+- **Pending import**: an import whose UnfinishedPlan is before the user. It ends finished, the wizard's input
+  resolving what was unresolved and the import executed, or dismissed, the wizard closed without confirming and the
+  import abandoned. The first outcome decides; later ones change nothing.
+- **MIME type**: the standard label for a file format, a type and a subtype joined by a slash, such as `video/mp4`.
+  Spelled MIME type, two words: the Qt spelling, as in `QMimeType`.
 
 ## Comments
 
@@ -43,6 +59,14 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   format when any time it may display can reach one hour. Exported documents always use the long format.
 - **Time display mode**: which time the footer shows: current, remaining, current over total, or none. Independent of
   the long and short time format, which only decides whether hours render.
+- **Wizard step**: one page of the import wizard: one per unresolved Concern, plus an errors page when documents were
+  rejected. Canonical order: errors, session, video, subtitles.
+- **Wizard state**: where the import wizard stands at one moment: the import it is deciding, and which Wizard step the
+  user is on. Everything the wizard shows follows from it.
+- **Navigation direction**: which way the user moved between Wizard steps: forward or back. A jump across several
+  steps is still one or the other.
+- **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
+  close the wizard. One decision sets both the title and the footer.
 
 ## Appearance
 
