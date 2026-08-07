@@ -32,10 +32,14 @@ class ClassifyCase(NamedTuple):
 
 CLASSIFY_CASES = [
     ClassifyCase(
-        name="txt is a document", path=Path("/work/report.txt"), expected=_only_document(Path("/work/report.txt"))
+        name="txt is a document",
+        path=Path("/work/report.txt"),
+        expected=_only_document(Path("/work/report.txt")),
     ),
     ClassifyCase(
-        name="json is a document", path=Path("/work/notes.json"), expected=_only_document(Path("/work/notes.json"))
+        name="json is a document",
+        path=Path("/work/notes.json"),
+        expected=_only_document(Path("/work/notes.json")),
     ),
     ClassifyCase(
         name="uppercase document suffix",
@@ -43,10 +47,14 @@ CLASSIFY_CASES = [
         expected=_only_document(Path("/work/notes.JSON")),
     ),
     ClassifyCase(
-        name="srt is a subtitle", path=Path("/work/subtitle.srt"), expected=_only_subtitle(Path("/work/subtitle.srt"))
+        name="srt is a subtitle",
+        path=Path("/work/subtitle.srt"),
+        expected=_only_subtitle(Path("/work/subtitle.srt")),
     ),
     ClassifyCase(
-        name="ass is a subtitle", path=Path("/work/subtitle.ass"), expected=_only_subtitle(Path("/work/subtitle.ass"))
+        name="ass is a subtitle",
+        path=Path("/work/subtitle.ass"),
+        expected=_only_subtitle(Path("/work/subtitle.ass")),
     ),
     ClassifyCase(
         name="mixed-case subtitle suffix",
@@ -54,7 +62,9 @@ CLASSIFY_CASES = [
         expected=_only_subtitle(Path("/work/other.SrT")),
     ),
     ClassifyCase(
-        name="mkv falls back to video", path=Path("/movies/movie.mkv"), expected=_only_video(Path("/movies/movie.mkv"))
+        name="mkv falls back to video",
+        path=Path("/movies/movie.mkv"),
+        expected=_only_video(Path("/movies/movie.mkv")),
     ),
     ClassifyCase(
         name="unrecognized suffix falls back to video",
@@ -62,7 +72,9 @@ CLASSIFY_CASES = [
         expected=_only_video(Path("/movies/movie.webm")),
     ),
     ClassifyCase(
-        name="no suffix falls back to video", path=Path("/movies/movie"), expected=_only_video(Path("/movies/movie"))
+        name="no suffix falls back to video",
+        path=Path("/movies/movie"),
+        expected=_only_video(Path("/movies/movie")),
     ),
 ]
 

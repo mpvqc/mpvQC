@@ -139,21 +139,9 @@ class MultiStepCase(NamedTuple):
 
 
 MULTI_STEP_CASES = [
-    MultiStepCase(
-        name="one step",
-        plan=plan_with(errors=PRESENT_ERRORS),
-        expected=False,
-    ),
-    MultiStepCase(
-        name="two steps",
-        plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
-        expected=True,
-    ),
-    MultiStepCase(
-        name="four steps",
-        plan=ALL_UNRESOLVED,
-        expected=True,
-    ),
+    MultiStepCase(name="one step", plan=plan_with(errors=PRESENT_ERRORS), expected=False),
+    MultiStepCase(name="two steps", plan=plan_with(errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO), expected=True),
+    MultiStepCase(name="four steps", plan=ALL_UNRESOLVED, expected=True),
 ]
 
 

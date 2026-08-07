@@ -84,26 +84,60 @@ class InvalidCase(NamedTuple):
 
 
 INVALID_V1_DATA = [
-    InvalidCase("missing comments", {}, "Expected 'comments'"),
-    InvalidCase("comments not a list", {"comments": "00:00:01.000"}, "Expected 'comments'"),
-    InvalidCase("comment entry not an object", make_data(["not a dict"]), "Expected a comment"),
-    InvalidCase("comment missing text", make_data([{"time": "00:00:01.000", "type": "T"}]), "Expected a comment"),
     InvalidCase(
-        "one-digit hours", make_data([{"time": "0:00:01.000", "type": "T", "text": "t"}]), "Expected a comment"
+        name="missing comments",
+        data={},
+        match="Expected 'comments'",
     ),
     InvalidCase(
-        "centisecond time", make_data([{"time": "00:00:01.00", "type": "T", "text": "t"}]), "Expected a comment"
+        name="comments not a list",
+        data={"comments": "00:00:01.000"},
+        match="Expected 'comments'",
     ),
     InvalidCase(
-        "minutes beyond 59", make_data([{"time": "00:75:01.000", "type": "T", "text": "t"}]), "Expected a comment"
+        name="comment entry not an object",
+        data=make_data(["not a dict"]),
+        match="Expected a comment",
     ),
-    InvalidCase("time as number", make_data([{"time": 1000, "type": "T", "text": "t"}]), "Expected a comment"),
-    InvalidCase("video not a string", make_data([], video=123), "Expected 'video'"),
-    InvalidCase("subtitle not a string", make_data([], subtitles=["/a.ass", 5]), "Expected 'subtitles'"),
+    InvalidCase(
+        name="comment missing text",
+        data=make_data([{"time": "00:00:01.000", "type": "T"}]),
+        match="Expected a comment",
+    ),
+    InvalidCase(
+        name="one-digit hours",
+        data=make_data([{"time": "0:00:01.000", "type": "T", "text": "t"}]),
+        match="Expected a comment",
+    ),
+    InvalidCase(
+        name="centisecond time",
+        data=make_data([{"time": "00:00:01.00", "type": "T", "text": "t"}]),
+        match="Expected a comment",
+    ),
+    InvalidCase(
+        name="minutes beyond 59",
+        data=make_data([{"time": "00:75:01.000", "type": "T", "text": "t"}]),
+        match="Expected a comment",
+    ),
+    InvalidCase(
+        name="time as number",
+        data=make_data([{"time": 1000, "type": "T", "text": "t"}]),
+        match="Expected a comment",
+    ),
+    InvalidCase(
+        name="video not a string",
+        data=make_data([], video=123),
+        match="Expected 'video'",
+    ),
+    InvalidCase(
+        name="subtitle not a string",
+        data=make_data([], subtitles=["/a.ass", 5]),
+        match="Expected 'subtitles'",
+    ),
 ]
 
 
 @pytest.mark.parametrize("case", INVALID_V1_DATA, ids=lambda case: case.name)
-def test_parse_v1_rejects_invalid_data(case):
+def test_parse_v1_rejects_invalid_data(case: InvalidCase):
     with pytest.raises(ValueError, match=case.match):
         parse_v1(case.data, identity)
