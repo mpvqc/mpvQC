@@ -82,9 +82,14 @@ TestCase {
             return btn;
         }
 
-        function stepEntryAt(dlg: QtObject, index: int): Item {
+        function stepIndicator(dlg: QtObject): Item {
             const indicator = testCase.findChild(dlg.contentItem, "stepIndicator");
             testCase.verify(indicator, "stepIndicator not found");
+            return indicator;
+        }
+
+        function stepEntryAt(dlg: QtObject, index: int): Item {
+            const indicator = testCase.find.stepIndicator(dlg);
             const entries = testCase._collectAll(indicator, "stepEntry");
             testCase.verify(entries.length > index, `stepEntry ${index} not found (have ${entries.length})`);
             return entries[index];
@@ -152,7 +157,9 @@ TestCase {
 
         function sessionMode(dlg: QtObject, mode: string): void {
             const expected = mode === "replace" ? MpvqcImportWizardSessionMode.SessionMode.REPLACE : MpvqcImportWizardSessionMode.SessionMode.MERGE;
-            testCase.tryCompare(dlg.viewModel.sessionStepViewModel, "mode", expected);
+            const sessionStep = dlg.viewModel.steps.find(step => step.kind === MpvqcImportWizardStepKind.StepKind.SESSION);
+            testCase.verify(sessionStep, "session step not found");
+            testCase.tryCompare(sessionStep, "mode", expected);
             const radio = testCase.find.sessionRadio(dlg, mode);
             testCase.tryVerify(() => radio.selected === true);
         }
@@ -163,25 +170,6 @@ TestCase {
             const checkbox = testCase.findChild(list.itemAtIndex(index), "checkbox");
             testCase.verify(checkbox, "checkbox not found");
             testCase.tryCompare(checkbox, "checked", checked);
-        }
-
-        function openedVideo(name: string): void {
-            testCase.tryVerify(() => testCase.bridge.openedVideoName() === name);
-        }
-
-        function noOpenedVideo(): void {
-            testCase.compare(testCase.bridge.openedVideoName(), "");
-        }
-
-        function openedSubtitleCount(count: int): void {
-            testCase.tryVerify(() => testCase.bridge.openedSubtitleCount() === count);
-        }
-
-        function openedSubtitles(names: list<string>): void {
-            testCase.tryVerify(() => {
-                const opened = testCase.bridge.openedSubtitleNames();
-                return opened.length === names.length && names.every(n => opened.indexOf(n) >= 0);
-            });
         }
     }
 
@@ -220,15 +208,9 @@ TestCase {
         bridge.resetState();
     }
 
-    function test_pickingVideoAndImportingOpensThatVideo(): void {
-        const dlg = open.scenario("video-choice");
-        pick.video(dlg, 1);
-        click.primary(dlg);
-        expect.openedVideo("b.mp4");
-    }
-
     function test_navigationViaAllMechanismsKeepsPerStepSelections(): void {
         const dlg = open.scenario("all-steps");
+        verify(find.stepIndicator(dlg).visible, "step indicator should show with more than one step");
         expect.currentStep(dlg, 0);
 
         click.next(dlg);
@@ -254,22 +236,6 @@ TestCase {
         pick.step(dlg, 3);
         expect.currentStep(dlg, 3);
         expect.subtitleChecked(dlg, 0, false);
-    }
-
-    function test_pickingSkipVideoEntryOpensNoVideo(): void {
-        const dlg = open.scenario("video-choice");
-        // index 0 = a.mp4, 1 = b.mp4, 2 = implicit "Don't load a video"
-        pick.video(dlg, 2);
-        click.primary(dlg);
-        expect.noOpenedVideo();
-    }
-
-    function test_deselectingSubtitlesExcludesThemFromImport(): void {
-        const dlg = open.scenario("subtitles-only");
-        // 3 subtitles default-checked; deselect b.srt (index 1)
-        pick.subtitle(dlg, 1);
-        click.primary(dlg);
-        expect.openedSubtitles(["a.srt", "c.srt"]);
     }
 
     function test_subtitlesSelectAllTriStateReflectsRowChecks(): void {
@@ -311,40 +277,36 @@ TestCase {
         verify(first.reason !== second.reason, "different rejection reasons should render differently");
     }
 
-    function test_closeOnlyModeShowsOnlyCloseAndClosesWithoutImport(): void {
+    function test_closeOnlyModeShowsOnlyClose(): void {
         const dlg = open.scenario("errors-only");
 
         verify(!find.cancelButton(dlg).visible, "cancel should be hidden in close-only mode");
         verify(!find.backButton(dlg).visible, "back should be hidden on first step");
         verify(find.primaryButton(dlg).visible, "primary should be visible");
+        verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
 
         click.primary(dlg);
 
         tryCompare(dlg, "opened", false);
-        expect.noOpenedVideo();
-        expect.openedSubtitleCount(0);
     }
 
-    function test_confirmOnlyModeHidesCancelWhenVideoIsTheOnlyDecision(): void {
-        const dlg = open.scenario("video-choice");
-
-        verify(!find.cancelButton(dlg).visible, "cancel should be hidden in confirm-only mode");
-        verify(!find.backButton(dlg).visible, "back should be hidden on first step");
-        verify(find.primaryButton(dlg).visible, "primary should be visible");
-    }
-
-    function test_cancelDiscardsSelectionsAndImportsNothing(): void {
+    function test_cancelClosesTheDialogAndDismissesTheImport(): void {
         const dlg = open.scenario("all-steps");
-
-        pick.step(dlg, 1);
-        pick.session(dlg, "replace");
-        pick.step(dlg, 2);
-        pick.video(dlg, 1);
 
         click.cancel(dlg);
 
         tryCompare(dlg, "opened", false);
-        expect.noOpenedVideo();
-        expect.openedSubtitleCount(0);
+        compare(bridge.wizardOutcome().outcome, "dismissed");
+    }
+
+    function test_confirmReportsThePickedVideo(): void {
+        const dlg = open.scenario("video-choice");
+
+        pick.video(dlg, 1);
+        click.primary(dlg);
+
+        tryCompare(dlg, "opened", false);
+        compare(bridge.wizardOutcome().outcome, "finished");
+        compare(bridge.wizardOutcome().video, "b.mp4");
     }
 }

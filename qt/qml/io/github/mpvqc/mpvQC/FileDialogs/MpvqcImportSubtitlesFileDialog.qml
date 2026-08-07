@@ -16,8 +16,5 @@ FileDialog {
     fileMode: FileDialog.OpenFiles
     nameFilters: [qsTranslate("FileInteractionDialogs", "Subtitle files") + viewModel.subtitleFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
-    onAccepted: {
-        viewModel.lastDirectorySubtitles = currentFolder;
-        viewModel.openSubtitles(selectedFiles);
-    }
+    onAccepted: viewModel.openSubtitles(selectedFiles)
 }

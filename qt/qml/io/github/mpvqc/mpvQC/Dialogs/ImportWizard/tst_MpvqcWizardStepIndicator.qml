@@ -7,8 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
-import io.github.mpvqc.mpvQC.Python
-
 TestCase {
     id: testCase
 
@@ -18,7 +16,21 @@ TestCase {
     when: windowShown
     name: "MpvqcWizardStepIndicator"
 
-    readonly property var allKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO, MpvqcImportWizardStepKind.StepKind.SUBTITLES,]
+    readonly property var fourSteps: [
+        {
+            indicatorLabel: "Errors"
+        },
+        {
+            indicatorLabel: "Session"
+        },
+        {
+            indicatorLabel: "Video"
+        },
+        {
+            indicatorLabel: "Subtitles"
+        },
+    ]
+    readonly property var threeSteps: testCase.fourSteps.slice(0, 3)
 
     function makeControl(properties = {}): Item {
         const indicator = createTemporaryObject(objectUnderTest, testCase, properties);
@@ -55,39 +67,6 @@ TestCase {
         return found;
     }
 
-    function test_hiddenWhenFewerThanTwoSteps_data() {
-        return [
-            {
-                tag: "zero",
-                kinds: [],
-                expectVisible: false
-            },
-            {
-                tag: "one",
-                kinds: [MpvqcImportWizardStepKind.StepKind.ERRORS],
-                expectVisible: false
-            },
-            {
-                tag: "two",
-                kinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.VIDEO],
-                expectVisible: true
-            },
-            {
-                tag: "four",
-                kinds: testCase.allKinds,
-                expectVisible: true
-            },
-        ];
-    }
-
-    function test_hiddenWhenFewerThanTwoSteps(data): void {
-        const indicator = makeControl({
-            stepKinds: data.kinds,
-            currentStepIndex: 0
-        });
-        compare(indicator.visible, data.expectVisible);
-    }
-
     function test_activeStateIconCountsReflectStepState_data() {
         return [
             {
@@ -113,7 +92,7 @@ TestCase {
 
     function test_activeStateIconCountsReflectStepState(data): void {
         const indicator = makeControl({
-            stepKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO],
+            steps: testCase.threeSteps,
             currentStepIndex: data.currentStepIndex
         });
         waitForRendering(indicator);
@@ -127,7 +106,7 @@ TestCase {
 
     function test_clickingEntryEmitsStepClicked(): void {
         const indicator = makeControl({
-            stepKinds: testCase.allKinds,
+            steps: testCase.fourSteps,
             currentStepIndex: 0
         });
         waitForRendering(indicator);
@@ -141,7 +120,7 @@ TestCase {
 
     function test_connectorHiddenOnLastEntryOnly(): void {
         const indicator = makeControl({
-            stepKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO],
+            steps: testCase.threeSteps,
             currentStepIndex: 0
         });
         waitForRendering(indicator);

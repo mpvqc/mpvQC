@@ -347,38 +347,38 @@ TestCase {
 
     function test_importSettingsDialog_changeOption_persistsOnAccept(): void {
         const control = it.makeControl();
-        const initial = it.settings.importFoundVideo();
+        const initial = it.settings.loadFoundVideo();
 
         it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
         const dialog = it.find.openedDialog(control, "importSettingsDialog");
 
-        const comboBox = findChild(dialog, "importFoundVideoComboBox");
-        verify(comboBox, "importFoundVideoComboBox not found");
+        const comboBox = findChild(dialog, "loadFoundVideoComboBox");
+        verify(comboBox, "loadFoundVideoComboBox not found");
         const newIndex = comboBox.currentIndex === 0 ? comboBox.count - 1 : 0;
         verify(newIndex !== comboBox.currentIndex, "expected to pick a different option");
         comboBox.activated(newIndex);
 
         it.dialog.accept(dialog);
-        tryVerify(() => it.settings.importFoundVideo() === newIndex);
-        verify(it.settings.importFoundVideo() !== initial, "setting should differ from initial value");
+        tryVerify(() => it.settings.loadFoundVideo() === newIndex);
+        verify(it.settings.loadFoundVideo() !== initial, "setting should differ from initial value");
     }
 
     function test_importSettingsDialog_reject_discardsSettings(): void {
         const control = it.makeControl();
-        const initial = it.settings.importFoundVideo();
+        const initial = it.settings.loadFoundVideo();
 
         it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
         const dialog = it.find.openedDialog(control, "importSettingsDialog");
 
-        const comboBox = findChild(dialog, "importFoundVideoComboBox");
-        verify(comboBox, "importFoundVideoComboBox not found");
+        const comboBox = findChild(dialog, "loadFoundVideoComboBox");
+        verify(comboBox, "loadFoundVideoComboBox not found");
         const newIndex = comboBox.currentIndex === 0 ? comboBox.count - 1 : 0;
         verify(newIndex !== comboBox.currentIndex, "expected to pick a different option");
         comboBox.activated(newIndex);
 
         it.dialog.reject(dialog);
 
-        verify(it.settings.importFoundVideo() === initial, "import found video should be unchanged after reject");
+        verify(it.settings.loadFoundVideo() === initial, "load found video should be unchanged after reject");
     }
 
     function test_editMpvDialog_resetEditAcceptAndLinkActivation(): void {

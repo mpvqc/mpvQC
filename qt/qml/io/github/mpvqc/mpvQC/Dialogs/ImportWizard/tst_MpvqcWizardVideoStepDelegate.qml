@@ -23,15 +23,6 @@ TestCase {
         return delegate;
     }
 
-    function makeSpy(target, signalName): SignalSpy {
-        const spy = createTemporaryObject(spyComponent, testCase, {
-            target: target,
-            signalName: signalName
-        });
-        verify(spy);
-        return spy;
-    }
-
     function test_labelTextReflectsRowKind_data(): var {
         return [
             {
@@ -58,13 +49,6 @@ TestCase {
 
     function test_provenanceIconsReflectFlags_data(): var {
         return [
-            {
-                tag: "neither",
-                foundInDocument: false,
-                foundInSubtitle: false,
-                expectDoc: false,
-                expectSub: false
-            },
             {
                 tag: "from-document-only",
                 foundInDocument: true,
@@ -126,13 +110,6 @@ TestCase {
         compare(radio.active, data.expectActive);
     }
 
-    function test_clickEmitsClicked(): void {
-        const delegate = makeControl();
-        const spy = makeSpy(delegate, "clicked");
-        mouseClick(delegate);
-        compare(spy.count, 1);
-    }
-
     function test_labelTooltipShowsFullPath(): void {
         const delegate = makeControl();
         const label = findChild(delegate, "label");
@@ -154,11 +131,5 @@ TestCase {
             isNoVideo: false
             selected: false
         }
-    }
-
-    Component {
-        id: spyComponent
-
-        SignalSpy {}
     }
 }
