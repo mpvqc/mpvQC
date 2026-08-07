@@ -29,6 +29,8 @@
 - A feature package under `mpvqc/<feature>/` bundles everything one area needs: `domain.py` at its root, plus role
   directories (`services/`, `models/`, `viewmodels/`) for what the area owns. It contributes its own bindings and the
   composition root calls them.
+- A class QML can name as a type keeps one full name in Python and QML: `Mpvqc`, the area, what it is, and its role.
+  The prefix marks exactly those classes; everything unregistered names itself for its package.
 - Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
   has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
 - Load the `load-bearing-comments` skill before adding a comment or docstring, and when reviewing code.
