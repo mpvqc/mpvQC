@@ -1,0 +1,158 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, assert_never
+
+from .concerns import (
+    SessionMerge,
+    SessionReplace,
+    SessionUnresolved,
+    SubtitlesLoad,
+    SubtitlesSkip,
+    SubtitlesUnresolved,
+    VideoLoad,
+    VideoSkip,
+    VideoUnresolved,
+    resolve_session,
+    resolve_subtitles,
+    resolve_video,
+)
+from .errors import ErrorsAbsent, ErrorsPresent, resolve_errors
+
+if TYPE_CHECKING:
+    from mpvqc.datamodels import Comment
+
+    from .concerns import (
+        LoadFoundVideo,
+        SessionConcern,
+        SessionResolved,
+        SubtitlesConcern,
+        SubtitlesResolved,
+        VideoConcern,
+        VideoResolved,
+    )
+    from .errors import ImportErrors
+    from .scan import ScanResult
+
+
+@dataclass(frozen=True)
+class NotAsked:
+    pass
+
+
+@dataclass(frozen=True)
+class FinishedPlan:
+    comments: tuple[Comment, ...]
+    session: SessionResolved
+    video: VideoResolved
+    subtitles: SubtitlesResolved
+
+
+@dataclass(frozen=True)
+class UnfinishedPlan:
+    comments: tuple[Comment, ...]
+    session: SessionConcern
+    video: VideoConcern
+    subtitles: SubtitlesConcern
+    errors: ImportErrors
+
+    def __post_init__(self) -> None:
+        if not self._has_unresolved_concern_or_errors():
+            msg = "an unfinished plan needs an unresolved concern or import errors"
+            raise ValueError(msg)
+
+    def _has_unresolved_concern_or_errors(self) -> bool:
+        return (
+            isinstance(self.errors, ErrorsPresent)
+            or isinstance(self.session, SessionUnresolved)
+            or isinstance(self.video, VideoUnresolved)
+            or isinstance(self.subtitles, SubtitlesUnresolved)
+        )
+
+
+def make_plan(
+    scan_result: ScanResult,
+    *,
+    found_video_setting: LoadFoundVideo,
+    has_existing_comments: bool,
+    any_candidate_loaded: bool,
+) -> FinishedPlan | UnfinishedPlan:
+    errors_outcome = resolve_errors(scan_result)
+    session_outcome = resolve_session(scan_result, has_existing_comments=has_existing_comments)
+    video_outcome = resolve_video(scan_result, setting=found_video_setting, any_candidate_loaded=any_candidate_loaded)
+    subtitles_outcome = resolve_subtitles(scan_result, video_concern=video_outcome)
+
+    match (errors_outcome, session_outcome, video_outcome, subtitles_outcome):
+        case (
+            ErrorsAbsent(),
+            SessionMerge() | SessionReplace() as s,
+            VideoLoad() | VideoSkip() as v,
+            SubtitlesLoad() | SubtitlesSkip() as sub,
+        ):
+            return FinishedPlan(comments=scan_result.comments, session=s, video=v, subtitles=sub)
+        case _:
+            return UnfinishedPlan(
+                comments=scan_result.comments,
+                session=session_outcome,
+                video=video_outcome,
+                subtitles=subtitles_outcome,
+                errors=errors_outcome,
+            )
+
+
+def finish_plan(
+    plan: UnfinishedPlan,
+    *,
+    session: SessionResolved | NotAsked,
+    video: VideoResolved | NotAsked,
+    subtitles: SubtitlesResolved | NotAsked,
+) -> FinishedPlan:
+    return FinishedPlan(
+        comments=plan.comments,
+        session=_finish_session(plan.session, session),
+        video=_finish_video(plan.video, video),
+        subtitles=_finish_subtitles(plan.subtitles, subtitles),
+    )
+
+
+def _finish_session(concern: SessionConcern, answer: SessionResolved | NotAsked) -> SessionResolved:
+    match concern:
+        case SessionMerge() | SessionReplace():
+            return concern
+        case SessionUnresolved():
+            return _require_answer(answer)
+        case _:
+            assert_never(concern)
+
+
+def _finish_video(concern: VideoConcern, answer: VideoResolved | NotAsked) -> VideoResolved:
+    match concern:
+        case VideoLoad() | VideoSkip():
+            return concern
+        case VideoUnresolved():
+            return _require_answer(answer)
+        case _:
+            assert_never(concern)
+
+
+def _finish_subtitles(concern: SubtitlesConcern, answer: SubtitlesResolved | NotAsked) -> SubtitlesResolved:
+    match concern:
+        case SubtitlesLoad() | SubtitlesSkip():
+            return concern
+        case SubtitlesUnresolved():
+            return _require_answer(answer)
+        case _:
+            assert_never(concern)
+
+
+def _require_answer[T](answer: T | NotAsked) -> T:
+    match answer:
+        case NotAsked():
+            msg = "cannot finish a plan while a concern is unresolved"
+            raise RuntimeError(msg)
+        case _:
+            return answer
