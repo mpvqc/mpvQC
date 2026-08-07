@@ -21,7 +21,7 @@ For setup, see [development.md](development.md).
    pyside6-linguist i18n/<locale>.ts
    ```
 
-3. Add the new language to the `LANGUAGES` list in `mpvqc/datamodels.py` so it appears in the application's language
+3. Add the new language to the `LANGUAGES` list in `mpvqc/languages.py` so it appears in the application's language
    menu. List the translator(s) on the same entry to credit them in the About dialog.
 
 4. Recompile resources and test:

@@ -181,6 +181,7 @@ files = [
     "mpvqc/importing/domain/video_reference.py",
     "mpvqc/injections.py",
     "mpvqc/jobs.py",
+    "mpvqc/languages.py",
     "mpvqc/logging_utils.py",
     "mpvqc/models/__init__.py",
     "mpvqc/models/dependencies.py",
