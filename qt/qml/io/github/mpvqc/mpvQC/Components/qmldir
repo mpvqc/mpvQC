@@ -5,6 +5,7 @@
 module io.github.mpvqc.mpvQC.Components
 
 MpvqcAnimatedIcon MpvqcAnimatedIcon.qml
+MpvqcCheckIndicator MpvqcCheckIndicator.qml
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
@@ -16,6 +17,7 @@ MpvqcMessageBox MpvqcMessageBox.qml
 MpvqcModalOverlayTracker MpvqcModalOverlayTracker.qml
 MpvqcOverlayLoader MpvqcOverlayLoader.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml
+MpvqcRadioIndicator MpvqcRadioIndicator.qml
 MpvqcSectionCard MpvqcSectionCard.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
