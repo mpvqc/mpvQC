@@ -316,7 +316,6 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/App/tst_MpvqcApplicationContent_VideoMenu.qml",
     "qt/qml/io/github/mpvqc/mpvQC/App/tst_MpvqcApplicationContent_WindowChrome.qml",
     "qt/qml/io/github/mpvqc/mpvQC/App/tst_MpvqcContentKeyHandler.qml",
-    "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcAnimatedIcon.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcCheckIndicator.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcDebugRectangle.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcDialog.qml",
