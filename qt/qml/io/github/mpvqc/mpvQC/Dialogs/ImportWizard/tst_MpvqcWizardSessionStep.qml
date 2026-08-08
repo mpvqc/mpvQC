@@ -27,15 +27,15 @@ TestCase {
 
     function test_defaultsToMerge(): void {
         const step = makeControl();
-        const merge = findChild(step, "mergeRadio");
-        const replace = findChild(step, "replaceRadio");
+        const merge = findChild(findChild(step, "mergeRow"), "radio");
+        const replace = findChild(findChild(step, "replaceRow"), "radio");
         verify(merge.selected);
         verify(!replace.selected);
     }
 
     function test_togglingReplaceUpdatesViewModelMode(): void {
         const step = makeControl();
-        const replace = findChild(step, "replaceRadio");
+        const replace = findChild(step, "replaceRow");
         mouseClick(replace);
         compare(step.viewModel.mode, MpvqcImportWizardSessionMode.SessionMode.REPLACE);
     }
@@ -44,9 +44,16 @@ TestCase {
         const step = makeControl({
             sessionMode: MpvqcImportWizardSessionMode.SessionMode.REPLACE
         });
-        const merge = findChild(step, "mergeRadio");
+        const merge = findChild(step, "mergeRow");
         mouseClick(merge);
         compare(step.viewModel.mode, MpvqcImportWizardSessionMode.SessionMode.MERGE);
+    }
+
+    function test_clickingPastTheLabelStillSelects(): void {
+        const step = makeControl();
+        const replace = findChild(step, "replaceRow");
+        mouseClick(replace, replace.width - 4, replace.height / 2);
+        compare(step.viewModel.mode, MpvqcImportWizardSessionMode.SessionMode.REPLACE);
     }
 
     function test_headerReflectsIncomingCount(): void {
