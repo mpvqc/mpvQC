@@ -59,14 +59,15 @@ ColumnLayout {
             property bool _animated: false
 
             width: ListView.view.width
-            height: Math.max(_delegate.implicitHeight, MpvqcConstants.listRowHeight)
-            verticalPadding: 10
-            horizontalPadding: 14
+            implicitHeight: Math.max(_delegate.implicitContentHeight + _delegate.topPadding + _delegate.bottomPadding, MpvqcConstants.listRowHeight)
+            verticalPadding: MpvqcConstants.listRowVerticalPadding
+            horizontalPadding: MpvqcConstants.listRowHorizontalPadding
             hoverEnabled: true
 
             background: Rectangle {
-                radius: height / 2
-                color: _delegate.selected ? Qt.alpha(MpvqcAppearance.palette.accent, 0.16) : _delegate.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, 0.08) : "transparent"
+                // Capped at the shared row height, so a wrapping row keeps its neighbours' corner
+                radius: Math.min(height, MpvqcConstants.listRowHeight) / 2
+                color: _delegate.selected ? Qt.alpha(MpvqcAppearance.palette.accent, 0.16) : _delegate.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, MpvqcAppearance.isDark ? 0.08 : 0.12) : "transparent"
 
                 Behavior on color {
                     enabled: _delegate._animated
@@ -78,7 +79,7 @@ ColumnLayout {
             }
 
             contentItem: RowLayout {
-                spacing: 12
+                spacing: MpvqcConstants.listRowContentSpacing
 
                 MpvqcRadioIndicator {
                     objectName: "radio"

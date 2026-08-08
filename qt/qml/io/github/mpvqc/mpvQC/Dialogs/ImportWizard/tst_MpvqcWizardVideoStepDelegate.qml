@@ -8,6 +8,8 @@ import QtQuick
 import QtQuick.Controls // qmllint disable unused-imports
 import QtTest
 
+import io.github.mpvqc.mpvQC.Utility
+
 TestCase {
     id: testCase
 
@@ -127,6 +129,12 @@ TestCase {
     function test_rowTooltipShowsFullPath(): void {
         const delegate = makeControl();
         compare(delegate.ToolTip.text, "/movies/foobar.mp4");
+    }
+
+    function test_theRowSizesItselfThroughItsImplicitHeight(): void {
+        const delegate = makeControl();
+        compare(delegate.implicitHeight, MpvqcConstants.listRowHeight);
+        compare(delegate.height, delegate.implicitHeight);
     }
 
     function test_longFilenameWrapsPastTwoLines(): void {

@@ -8,6 +8,7 @@ import QtQuick
 import QtTest
 
 import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
     id: testCase
@@ -54,6 +55,14 @@ TestCase {
         const replace = findChild(step, "replaceRow");
         mouseClick(replace, replace.width - 4, replace.height / 2);
         compare(step.viewModel.mode, MpvqcImportWizardSessionMode.SessionMode.REPLACE);
+    }
+
+    function test_rowsSizeThemselvesThroughTheirImplicitHeight(): void {
+        const step = makeControl();
+        const merge = findChild(step, "mergeRow");
+        verify(merge);
+        compare(merge.implicitHeight, MpvqcConstants.listRowHeight);
+        compare(merge.height, merge.implicitHeight);
     }
 
     function test_headerReflectsIncomingCount(): void {

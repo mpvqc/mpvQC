@@ -13,14 +13,19 @@ Rectangle {
 
     required property bool hovered
 
-    readonly property int _tintDuration: 150
+    property bool _animated: false
 
-    radius: height / 2
+    // Capped at the shared row height, so a wrapping row keeps its neighbours' corner
+    radius: Math.min(height, MpvqcConstants.listRowHeight) / 2
     color: root.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, MpvqcAppearance.isDark ? 0.08 : 0.12) : "transparent"
 
+    Component.onCompleted: root._animated = true
+
     Behavior on color {
+        enabled: root._animated
+
         ColorAnimation {
-            duration: root._tintDuration
+            duration: 120
         }
     }
 }

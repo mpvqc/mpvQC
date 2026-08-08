@@ -108,7 +108,7 @@ Rectangle {
         enabled: root._animated
 
         ColorAnimation {
-            duration: 150
+            duration: 120
         }
     }
 }

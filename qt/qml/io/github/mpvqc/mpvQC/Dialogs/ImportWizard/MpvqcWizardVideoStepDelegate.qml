@@ -25,9 +25,9 @@ ItemDelegate {
 
     property bool _animated: false
 
-    height: Math.max(root.implicitHeight, MpvqcConstants.listRowHeight)
-    verticalPadding: 10
-    horizontalPadding: 14
+    implicitHeight: Math.max(root.implicitContentHeight + root.topPadding + root.bottomPadding, MpvqcConstants.listRowHeight)
+    verticalPadding: MpvqcConstants.listRowVerticalPadding
+    horizontalPadding: MpvqcConstants.listRowHorizontalPadding
     hoverEnabled: true
 
     ToolTip.text: root.fullPath
@@ -36,13 +36,13 @@ ItemDelegate {
     ToolTip.delay: MpvqcConstants.tooltipDelay
 
     background: Rectangle {
-        // Capped at the shared row height, so a wrapped filename keeps the corner every other row has
+        // Capped at the shared row height, so a wrapping row keeps its neighbours' corner
         radius: Math.min(height, MpvqcConstants.listRowHeight) / 2
         color: {
             if (root.selected) {
                 return Qt.alpha(MpvqcAppearance.palette.accent, 0.16);
             }
-            return root.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, 0.08) : "transparent";
+            return root.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, MpvqcAppearance.isDark ? 0.08 : 0.12) : "transparent";
         }
 
         Behavior on color {
@@ -55,7 +55,7 @@ ItemDelegate {
     }
 
     contentItem: RowLayout {
-        spacing: 12
+        spacing: MpvqcConstants.listRowContentSpacing
 
         MpvqcRadioIndicator {
             objectName: "radioIndicator"

@@ -20,7 +20,7 @@ Row {
     readonly property int _indicatorHeight: 10
     readonly property int _pillWidth: 24
     readonly property int _stretchDuration: MpvqcConstants.wizardStepMotionDuration
-    readonly property int _tintDuration: 150
+    readonly property int _tintDuration: 120
 
     signal stepClicked(index: int)
 

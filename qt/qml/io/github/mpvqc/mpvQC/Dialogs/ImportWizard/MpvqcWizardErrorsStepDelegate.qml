@@ -21,7 +21,7 @@ Item {
     readonly property int _iconSize: 20
 
     // The floor keeps the card's sweep still for anything but real content
-    implicitHeight: Math.max(MpvqcConstants.listRowHeight, _row.implicitHeight)
+    implicitHeight: Math.max(_row.implicitHeight + 2 * MpvqcConstants.listRowVerticalPadding, MpvqcConstants.listRowHeight)
 
     ToolTip.text: root.fullPath
     ToolTip.visible: _hover.hovered
@@ -31,9 +31,11 @@ Item {
         id: _row
 
         anchors.left: parent.left
+        anchors.leftMargin: MpvqcConstants.listRowHorizontalPadding
         anchors.right: parent.right
+        anchors.rightMargin: MpvqcConstants.listRowHorizontalPadding
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 12
+        spacing: MpvqcConstants.listRowContentSpacing
 
         MpvqcIconLabel {
             iconColor: MpvqcAppearance.palette.error

@@ -73,7 +73,7 @@ ColumnLayout {
         model: root.viewModel.subtitles
         implicitHeight: contentHeight
         interactive: false
-        spacing: 4
+        spacing: 8
 
         delegate: MpvqcWizardSubtitlesStepDelegate {
             id: _delegate

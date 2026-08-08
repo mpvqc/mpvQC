@@ -21,8 +21,8 @@ ItemDelegate {
 
     // A row grows only when its filename wraps, so the sweep moves for real content alone
     implicitHeight: Math.max(root.implicitContentHeight + root.topPadding + root.bottomPadding, MpvqcConstants.listRowHeight)
-    verticalPadding: 10
-    horizontalPadding: 14
+    verticalPadding: MpvqcConstants.listRowVerticalPadding
+    horizontalPadding: MpvqcConstants.listRowHorizontalPadding
 
     ToolTip.text: root.fullPath
     ToolTip.visible: root.hovered
@@ -34,7 +34,7 @@ ItemDelegate {
     }
 
     contentItem: RowLayout {
-        spacing: 12
+        spacing: MpvqcConstants.listRowContentSpacing
 
         MpvqcCheckIndicator {
             objectName: "checkIndicator"
