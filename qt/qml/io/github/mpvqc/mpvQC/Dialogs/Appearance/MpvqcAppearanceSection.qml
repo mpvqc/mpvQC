@@ -32,6 +32,7 @@ Item {
     MpvqcSectionCard {
         id: _card
 
+        padding: 16
         anchors.fill: parent
     }
 

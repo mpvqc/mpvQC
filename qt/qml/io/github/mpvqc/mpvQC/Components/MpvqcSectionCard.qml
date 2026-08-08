@@ -17,9 +17,9 @@ Item {
     property alias titleActions: _titleActions.data
     default property alias content: _content.data
 
-    readonly property int _padding: 20
+    property int padding: 20
 
-    implicitHeight: _content.implicitHeight + 2 * root._padding
+    implicitHeight: _content.implicitHeight + 2 * root.padding
 
     Rectangle {
         objectName: "cardBackground"
@@ -35,7 +35,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: root._padding
+        anchors.margins: root.padding
 
         RowLayout {
             Layout.fillWidth: true
