@@ -229,7 +229,7 @@ QtObject {
             const dlg = root.find.openedDialog(control, "importWizardDialog");
             const stepView = root.testCase.findChild(dlg.contentItem, "stepView");
             if (stepView) {
-                stepView.animationDuration = 0;
+                stepView.sweepDuration = 0;
             }
             return dlg;
         }
@@ -248,9 +248,7 @@ QtObject {
 
         function advance(dlg: QtObject): void {
             root.wizard.clickPrimary(dlg);
-            const stepView = root.testCase.findChild(dlg.contentItem, "stepView");
-            root.testCase.verify(stepView, "stepView not found");
-            root.testCase.tryVerify(() => !stepView.busy);
+            root.testCase.waitForRendering(dlg.contentItem);
         }
 
         function pickVideo(dlg: QtObject, index: int): void {

@@ -38,9 +38,11 @@ class MpvqcImportWizardErrorsStepViewModel(QObject):
         super().__init__(parent)
         self._documents = ErrorsModel(inputs.rejected_documents)
 
+    KIND = MpvqcImportWizardStepKind.StepKind.ERRORS
+
     @Property(int, constant=True, final=True)
     def kind(self) -> int:
-        return MpvqcImportWizardStepKind.StepKind.ERRORS
+        return self.KIND
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def documents(self) -> ErrorsModel:
@@ -57,9 +59,11 @@ class MpvqcImportWizardSessionStepViewModel(QObject):
         self._incoming_comment_count = inputs.incoming_comment_count
         self._resolved: SessionResolved = SessionMerge()
 
+    KIND = MpvqcImportWizardStepKind.StepKind.SESSION
+
     @Property(int, constant=True, final=True)
     def kind(self) -> int:
-        return MpvqcImportWizardStepKind.StepKind.SESSION
+        return self.KIND
 
     @property
     def resolved(self) -> SessionResolved:
@@ -118,9 +122,11 @@ class MpvqcImportWizardVideoStepViewModel(QObject):
         self._candidates = VideosModel(inputs.candidates)
         self._selected_index = 0
 
+    KIND = MpvqcImportWizardStepKind.StepKind.VIDEO
+
     @Property(int, constant=True, final=True)
     def kind(self) -> int:
-        return MpvqcImportWizardStepKind.StepKind.VIDEO
+        return self.KIND
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def candidates(self) -> VideosModel:
@@ -154,9 +160,11 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
         self._subtitles = SubtitlesModel(inputs.candidates)
         self._subtitles.dataChanged.connect(self._emit_tri_state_changed)
 
+    KIND = MpvqcImportWizardStepKind.StepKind.SUBTITLES
+
     @Property(int, constant=True, final=True)
     def kind(self) -> int:
-        return MpvqcImportWizardStepKind.StepKind.SUBTITLES
+        return self.KIND
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def subtitles(self) -> SubtitlesModel:

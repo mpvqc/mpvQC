@@ -73,6 +73,22 @@ TestCase {
         compare(title.width, control.width - 2 * testCase.expectedPadding);
     }
 
+    function test_withoutATitleTheTitleRowIsGone(): void {
+        const titled = makeControl({
+            title: "Color scheme"
+        });
+        const untitled = makeControl();
+
+        const titledContent = findChild(titled, "cardContent");
+        const untitledContent = findChild(untitled, "cardContent");
+        verify(titledContent);
+        verify(untitledContent);
+
+        compare(untitledContent.mapToItem(untitled, 0, 0).y, testCase.expectedPadding);
+        verify(titledContent.mapToItem(titled, 0, 0).y > testCase.expectedPadding);
+        verify(untitled.implicitHeight < titled.implicitHeight);
+    }
+
     function test_aTitleActionSitsAtTheTrailingEdgeOfTheTitleRow(): void {
         const control = makeControlWithTitleAction({
             title: "Subtitles"

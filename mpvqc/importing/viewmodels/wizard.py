@@ -10,7 +10,6 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import NotAsked
-from mpvqc.importing.enums import MpvqcImportWizardNavigationDirection
 
 from .wizard_state import (
     ErrorsStep,
@@ -43,7 +42,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlUncreatable("constructed by MpvqcImportWizardRequestRelayViewModel with a PendingImport")
 class MpvqcImportWizardViewModel(QObject):
     currentStepChanged = Signal()
-    navigated = Signal(int)
     acceptRequested = Signal()
     rejectRequested = Signal()
 
@@ -97,6 +95,10 @@ class MpvqcImportWizardViewModel(QObject):
     @Property(str, notify=currentStepChanged, final=True)
     def currentStepName(self) -> str:
         return self._step_names[self._state.current_index]
+
+    @Property(int, notify=currentStepChanged, final=True)
+    def currentStepKind(self) -> int:
+        return self._steps[self._state.current_index].KIND
 
     @Property(str, constant=True, final=True)
     def title(self) -> str:
@@ -162,14 +164,8 @@ class MpvqcImportWizardViewModel(QObject):
     def _move_to(self, state: WizardState) -> None:
         if state.current_index == self._state.current_index:
             return
-        direction = (
-            MpvqcImportWizardNavigationDirection.NavigationDirection.FORWARD
-            if state.current_index > self._state.current_index
-            else MpvqcImportWizardNavigationDirection.NavigationDirection.BACK
-        )
         self._state = state
         self.currentStepChanged.emit()
-        self.navigated.emit(direction.value)
 
     @staticmethod
     def _step_name(step: WizardStep) -> str:

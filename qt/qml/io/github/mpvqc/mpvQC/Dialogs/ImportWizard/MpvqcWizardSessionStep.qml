@@ -43,9 +43,8 @@ ColumnLayout {
             },
         ]
 
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-        interactive: contentHeight > height
+        implicitHeight: contentHeight
+        interactive: false
         spacing: 0
 
         delegate: ItemDelegate {
@@ -91,6 +90,5 @@ ColumnLayout {
         }
 
         Layout.fillWidth: true
-        Layout.fillHeight: true
     }
 }

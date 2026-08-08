@@ -38,6 +38,8 @@ Item {
         anchors.margins: root.padding
 
         RowLayout {
+            visible: _title.text !== ""
+
             Layout.fillWidth: true
             Layout.bottomMargin: 6
 

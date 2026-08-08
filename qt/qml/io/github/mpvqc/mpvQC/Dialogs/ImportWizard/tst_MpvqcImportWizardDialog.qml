@@ -32,9 +32,8 @@ TestCase {
             dlg.open();
             testCase.tryCompare(dlg, "opened", true);
             const stepView = testCase.findChild(dlg.contentItem, "stepView");
-            if (stepView) {
-                stepView.animationDuration = 0;
-            }
+            testCase.verify(stepView, "stepView not found");
+            stepView.sweepDuration = 0;
             waitForRendering(dlg.contentItem);
             return dlg;
         }
@@ -95,6 +94,12 @@ TestCase {
             return label;
         }
 
+        function stepScroll(dlg: QtObject): Item {
+            const scroll = testCase.findChild(dlg.contentItem, "stepScroll");
+            testCase.verify(scroll, "stepScroll not found");
+            return scroll;
+        }
+
         function pagerDotAt(dlg: QtObject, index: int): Item {
             const dots = testCase._collectAll(testCase.find.stepPager(dlg), "pagerDot");
             testCase.verify(dots.length > index, `pagerDot ${index} not found (have ${dots.length})`);
@@ -125,7 +130,7 @@ TestCase {
 
         function step(dlg: QtObject, index: int): void {
             testCase.mouseClick(testCase.find.pagerDotAt(dlg, index));
-            testCase._waitForStepSettled(dlg);
+            testCase.waitForRendering(dlg.contentItem);
         }
     }
 
@@ -136,7 +141,7 @@ TestCase {
 
         function next(dlg: QtObject): void {
             testCase.click.primary(dlg);
-            testCase._waitForStepSettled(dlg);
+            testCase.waitForRendering(dlg.contentItem);
         }
 
         function cancel(dlg: QtObject): void {
@@ -145,7 +150,7 @@ TestCase {
 
         function back(dlg: QtObject): void {
             testCase.mouseClick(testCase.find.backButton(dlg));
-            testCase._waitForStepSettled(dlg);
+            testCase.waitForRendering(dlg.contentItem);
         }
     }
 
@@ -180,7 +185,11 @@ TestCase {
     }
 
     readonly property Component _dialogComponent: Component {
-        MpvqcImportWizardDialog {}
+        MpvqcImportWizardDialog {
+            // Opening and closing animate, and no test here is about that motion
+            enter: null
+            exit: null
+        }
     }
 
     function _collectAll(root: Item, objectName: string): list<Item> {
@@ -201,13 +210,6 @@ TestCase {
         }
         visit(root);
         return found;
-    }
-
-    function _waitForStepSettled(dlg: QtObject): void {
-        const stepView = findChild(dlg.contentItem, "stepView");
-        verify(stepView, "stepView not found");
-        tryVerify(() => !stepView.busy);
-        waitForRendering(dlg.contentItem);
     }
 
     function init(): void {
@@ -256,6 +258,18 @@ TestCase {
         click.next(dlg);
         expect.currentStep(dlg, 1);
         compare(find.stepName(dlg).text, names[1]);
+    }
+
+    function test_navigatingStartsTheNextStepAtTheTop(): void {
+        const dlg = open.scenario("all-steps");
+        const scroll = find.stepScroll(dlg);
+
+        scroll.contentItem.contentY = 40;
+
+        click.next(dlg);
+
+        expect.currentStep(dlg, 1);
+        tryCompare(scroll.contentItem, "contentY", 0);
     }
 
     function test_subtitlesSelectAllTriStateReflectsRowChecks(): void {

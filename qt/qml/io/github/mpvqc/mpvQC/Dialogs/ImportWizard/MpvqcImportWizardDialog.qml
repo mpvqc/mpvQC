@@ -58,16 +58,21 @@ MpvqcDialog {
             }
         }
 
-        MpvqcWizardSteps {
-            objectName: "stepView"
-
-            clip: true
-
-            viewModel: root.viewModel
+        MpvqcWizardStepScrollView {
+            id: _stepScroll
+            objectName: "stepScroll"
 
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: _stepNavigation.visible ? 0 : 24
+
+            MpvqcWizardSteps {
+                objectName: "stepView"
+
+                viewModel: root.viewModel
+
+                Layout.fillWidth: true
+            }
         }
     }
 
@@ -86,6 +91,9 @@ MpvqcDialog {
 
     Connections {
         target: root.viewModel
+        function onCurrentStepChanged(): void {
+            _stepScroll.scrollToTop();
+        }
         function onAcceptRequested(): void {
             root.accept();
         }

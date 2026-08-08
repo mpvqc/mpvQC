@@ -20,7 +20,6 @@ from mpvqc.importing.domain import (
     VideoUnresolved,
 )
 from mpvqc.importing.enums import (
-    MpvqcImportWizardNavigationDirection,
     MpvqcImportWizardSessionMode,
     MpvqcImportWizardStepKind,
 )
@@ -46,7 +45,6 @@ from test.importing.plans import (
     plan_with,
 )
 
-NavigationDirection = MpvqcImportWizardNavigationDirection.NavigationDirection
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
 StepKind = MpvqcImportWizardStepKind.StepKind
 
@@ -260,6 +258,16 @@ def test_current_step_name_follows_navigation(qt_app) -> None:
     assert view_model.currentStepName == "Video"
 
 
+def test_current_step_kind_follows_navigation(qt_app) -> None:
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
+
+    assert view_model.currentStepKind == StepKind.ERRORS
+
+    view_model.next()
+
+    assert view_model.currentStepKind == StepKind.VIDEO
+
+
 def test_back_returns_to_the_previous_step(qt_app, make_spy) -> None:
     view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
     view_model.next()
@@ -281,55 +289,34 @@ def test_back_on_the_first_step_stays_put(qt_app, make_spy) -> None:
     assert spy.count() == 0
 
 
-def test_next_navigates_forward(qt_app, make_spy) -> None:
-    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
-    spy = make_spy(view_model.navigated)
-
-    view_model.next()
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.FORWARD
-
-
-def test_back_navigates_back(qt_app, make_spy) -> None:
-    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
-    view_model.next()
-    spy = make_spy(view_model.navigated)
-
-    view_model.back()
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.BACK
-
-
-def test_jump_ahead_navigates_forward_once(qt_app, make_spy) -> None:
+def test_jumping_ahead_moves_to_the_target_step(qt_app, make_spy) -> None:
     view_model = make_wizard(THREE_STEPS).view_model
-    spy = make_spy(view_model.navigated)
+    spy = make_spy(view_model.currentStepChanged)
 
     view_model.setProperty("currentStepIndex", 2)
 
+    assert view_model.currentStepIndex == 2
     assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.FORWARD
 
 
-def test_jump_back_navigates_back_once(qt_app, make_spy) -> None:
+def test_jumping_back_moves_to_the_target_step(qt_app, make_spy) -> None:
     view_model = make_wizard(THREE_STEPS).view_model
     view_model.setProperty("currentStepIndex", 2)
-    spy = make_spy(view_model.navigated)
+    spy = make_spy(view_model.currentStepChanged)
 
     view_model.setProperty("currentStepIndex", 0)
 
+    assert view_model.currentStepIndex == 0
     assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.BACK
 
 
-def test_staying_put_emits_no_navigation(qt_app, make_spy) -> None:
+def test_jumping_to_the_current_step_stays_put(qt_app, make_spy) -> None:
     view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
-    spy = make_spy(view_model.navigated)
+    spy = make_spy(view_model.currentStepChanged)
 
-    view_model.back()
     view_model.setProperty("currentStepIndex", 0)
 
+    assert view_model.currentStepIndex == 0
     assert spy.count() == 0
 
 
