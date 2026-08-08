@@ -76,6 +76,7 @@ Rectangle {
 
     SequentialAnimation {
         id: _pop
+        objectName: "popAnimation"
 
         NumberAnimation {
             target: root

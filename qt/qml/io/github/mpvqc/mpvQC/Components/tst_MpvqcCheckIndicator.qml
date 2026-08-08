@@ -18,9 +18,14 @@ TestCase {
     visible: true
     when: windowShown
 
-    function makeControl(properties = {}): Item {
+    function buildControl(properties = {}): Item {
         const control = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(control);
+        return control;
+    }
+
+    function makeControl(properties = {}): Item {
+        const control = buildControl(properties);
         waitForRendering(control);
         return control;
     }
@@ -164,6 +169,44 @@ TestCase {
         tryCompare(dash, "scale", 0);
         tryCompare(control, "color", Qt.color("transparent"));
         compare(control.border.width, 2);
+    }
+
+    function test_nothingAnimatesOnConstruction_data(): list<var> {
+        return [
+            {
+                tag: "unchecked",
+                checked: false,
+                partial: false
+            },
+            {
+                tag: "checked",
+                checked: true,
+                partial: false
+            },
+            {
+                tag: "partial",
+                checked: false,
+                partial: true
+            },
+        ];
+    }
+
+    function test_nothingAnimatesOnConstruction(data): void {
+        const control = buildControl({
+            checked: data.checked,
+            partial: data.partial
+        });
+        const pop = findChild(control, "popAnimation");
+        verify(pop);
+        const checkMark = findChild(control, "checkMark");
+        verify(checkMark);
+        const dash = findChild(control, "partialDash");
+        verify(dash);
+
+        verify(!pop.running);
+        compare(control.scale, 1);
+        compare(checkMark.scale, data.checked ? 1 : 0);
+        compare(dash.scale, !data.checked && data.partial ? 1 : 0);
     }
 
     Component {
