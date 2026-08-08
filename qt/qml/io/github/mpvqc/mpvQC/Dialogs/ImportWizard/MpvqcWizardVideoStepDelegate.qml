@@ -23,23 +23,46 @@ ItemDelegate {
 
     required property bool selected
 
-    readonly property int iconSize: 24
+    property bool _animated: false
 
-    verticalPadding: 16
+    implicitHeight: Math.max(root.implicitContentHeight + root.topPadding + root.bottomPadding, MpvqcConstants.listRowHeight)
+    verticalPadding: MpvqcConstants.listRowVerticalPadding
+    horizontalPadding: MpvqcConstants.listRowHorizontalPadding
+    hoverEnabled: true
+
+    ToolTip.text: root.fullPath
+    // The pills carry their own tooltip, and two attached tooltips would fight over the shared popup
+    ToolTip.visible: !root.isNoVideo && root.hovered && !_documentPill.hovered && !_subtitlePill.hovered
+    ToolTip.delay: MpvqcConstants.tooltipDelay
+
+    background: Rectangle {
+        // Capped at the shared row height, so a wrapping row keeps its neighbours' corner
+        radius: Math.min(height, MpvqcConstants.listRowHeight) / 2
+        color: {
+            if (root.selected) {
+                return Qt.alpha(MpvqcAppearance.palette.accent, 0.16);
+            }
+            return root.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, MpvqcAppearance.isDark ? 0.08 : 0.12) : "transparent";
+        }
+
+        Behavior on color {
+            enabled: root._animated
+
+            ColorAnimation {
+                duration: 120
+            }
+        }
+    }
 
     contentItem: RowLayout {
-        spacing: 12
+        spacing: MpvqcConstants.listRowContentSpacing
 
-        MpvqcAnimatedIcon {
-            objectName: "radioIcon"
+        MpvqcRadioIndicator {
+            objectName: "radioIndicator"
 
-            active: root.selected
-            activeIcon: MpvqcIcons.radioButtonChecked
-            inactiveIcon: MpvqcIcons.radioButtonUnchecked
-            iconColor: MpvqcAppearance.palette.foreground
-            iconSize: root.iconSize
-            activationDuration: 150
-            deactivationDuration: 75
+            selected: root.selected
+
+            Layout.alignment: Qt.AlignVCenter
         }
 
         Label {
@@ -47,52 +70,40 @@ ItemDelegate {
 
             text: root.isNoVideo ? qsTranslate("ImportWizardDialog", "Skip video") : root.filename
             horizontalAlignment: Text.AlignLeft
-            wrapMode: Text.Wrap
-            maximumLineCount: 2
-            elide: Text.ElideRight
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
-
-            ToolTip.text: root.fullPath
-            ToolTip.visible: !root.isNoVideo && _labelHover.hovered
-            ToolTip.delay: MpvqcConstants.tooltipDelay
-
-            HoverHandler {
-                id: _labelHover
-            }
         }
 
-        MpvqcIconLabel {
-            objectName: "fromDocumentIcon"
+        MpvqcWizardOriginPill {
+            id: _documentPill
+            objectName: "fromDocumentPill"
 
             visible: root.foundInDocument
-            iconColor: MpvqcAppearance.palette.hint
-            icon.source: MpvqcIcons.description
-            icon.width: root.iconSize
-            icon.height: root.iconSize
+            icon: MpvqcIcons.description
+            selected: root.selected
 
-            //: Tooltip on the per-row icon — the candidate video is referenced by one of the QC documents being imported
+            //: Tooltip on the per-row origin pill — the candidate video is referenced by one of the QC documents being imported
             toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported QC document")
 
-            Layout.preferredWidth: root.iconSize
-            Layout.preferredHeight: root.iconSize
+            Layout.alignment: Qt.AlignVCenter
         }
 
-        MpvqcIconLabel {
-            objectName: "fromSubtitleIcon"
+        MpvqcWizardOriginPill {
+            id: _subtitlePill
+            objectName: "fromSubtitlePill"
 
             visible: root.foundInSubtitle
-            iconColor: MpvqcAppearance.palette.hint
-            icon.source: MpvqcIcons.subtitles
-            icon.width: root.iconSize
-            icon.height: root.iconSize
+            icon: MpvqcIcons.subtitles
+            selected: root.selected
 
-            //: Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported
+            //: Tooltip on the per-row origin pill — the candidate video is referenced by one of the subtitle files being imported
             toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported subtitle file")
 
-            Layout.preferredWidth: root.iconSize
-            Layout.preferredHeight: root.iconSize
+            Layout.alignment: Qt.AlignVCenter
         }
     }
+
+    Component.onCompleted: root._animated = true
 }

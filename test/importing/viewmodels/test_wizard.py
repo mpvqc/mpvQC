@@ -20,7 +20,6 @@ from mpvqc.importing.domain import (
     VideoUnresolved,
 )
 from mpvqc.importing.enums import (
-    MpvqcImportWizardNavigationDirection,
     MpvqcImportWizardSessionMode,
     MpvqcImportWizardStepKind,
 )
@@ -46,7 +45,6 @@ from test.importing.plans import (
     plan_with,
 )
 
-NavigationDirection = MpvqcImportWizardNavigationDirection.NavigationDirection
 SessionMode = MpvqcImportWizardSessionMode.SessionMode
 StepKind = MpvqcImportWizardStepKind.StepKind
 
@@ -158,10 +156,10 @@ def test_steps_hold_one_view_model_per_wizard_step(qt_app, case: StepsCase) -> N
     assert [type(step) for step in steps] == [STEP_VIEW_MODEL_BY_KIND[kind] for kind in case.expected_kinds]
 
 
-def test_each_step_carries_its_indicator_label(qt_app) -> None:
+def test_every_step_is_named_in_canonical_order(qt_app) -> None:
     view_model = make_wizard(ALL_UNRESOLVED).view_model
 
-    assert [step.property("indicatorLabel") for step in view_model.property("steps")] == [
+    assert view_model.stepNames == [
         "Errors",
         "Session",
         "Video",
@@ -245,9 +243,29 @@ def test_cancel_click_rejects(qt_app, make_spy) -> None:
     assert setup.dismissals == []
 
 
-def test_show_step_indicator_follows_the_step_count(qt_app) -> None:
-    assert make_wizard(ERRORS_THEN_VIDEO).view_model.showStepIndicator is True
-    assert make_wizard(ERRORS_ONLY).view_model.showStepIndicator is False
+def test_multi_step_follows_the_step_count(qt_app) -> None:
+    assert make_wizard(ERRORS_THEN_VIDEO).view_model.multiStep is True
+    assert make_wizard(ERRORS_ONLY).view_model.multiStep is False
+
+
+def test_current_step_name_follows_navigation(qt_app) -> None:
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
+
+    assert view_model.currentStepName == "Errors"
+
+    view_model.next()
+
+    assert view_model.currentStepName == "Video"
+
+
+def test_current_step_kind_follows_navigation(qt_app) -> None:
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
+
+    assert view_model.currentStepKind == StepKind.ERRORS
+
+    view_model.next()
+
+    assert view_model.currentStepKind == StepKind.VIDEO
 
 
 def test_back_returns_to_the_previous_step(qt_app, make_spy) -> None:
@@ -271,55 +289,34 @@ def test_back_on_the_first_step_stays_put(qt_app, make_spy) -> None:
     assert spy.count() == 0
 
 
-def test_next_navigates_forward(qt_app, make_spy) -> None:
-    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
-    spy = make_spy(view_model.navigated)
-
-    view_model.next()
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.FORWARD
-
-
-def test_back_navigates_back(qt_app, make_spy) -> None:
-    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
-    view_model.next()
-    spy = make_spy(view_model.navigated)
-
-    view_model.back()
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.BACK
-
-
-def test_jump_ahead_navigates_forward_once(qt_app, make_spy) -> None:
+def test_jumping_ahead_moves_to_the_target_step(qt_app, make_spy) -> None:
     view_model = make_wizard(THREE_STEPS).view_model
-    spy = make_spy(view_model.navigated)
+    spy = make_spy(view_model.currentStepChanged)
 
     view_model.setProperty("currentStepIndex", 2)
 
+    assert view_model.currentStepIndex == 2
     assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.FORWARD
 
 
-def test_jump_back_navigates_back_once(qt_app, make_spy) -> None:
+def test_jumping_back_moves_to_the_target_step(qt_app, make_spy) -> None:
     view_model = make_wizard(THREE_STEPS).view_model
     view_model.setProperty("currentStepIndex", 2)
-    spy = make_spy(view_model.navigated)
+    spy = make_spy(view_model.currentStepChanged)
 
     view_model.setProperty("currentStepIndex", 0)
 
+    assert view_model.currentStepIndex == 0
     assert spy.count() == 1
-    assert spy.at(0, 0) == NavigationDirection.BACK
 
 
-def test_staying_put_emits_no_navigation(qt_app, make_spy) -> None:
+def test_jumping_to_the_current_step_stays_put(qt_app, make_spy) -> None:
     view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
-    spy = make_spy(view_model.navigated)
+    spy = make_spy(view_model.currentStepChanged)
 
-    view_model.back()
     view_model.setProperty("currentStepIndex", 0)
 
+    assert view_model.currentStepIndex == 0
     assert spy.count() == 0
 
 

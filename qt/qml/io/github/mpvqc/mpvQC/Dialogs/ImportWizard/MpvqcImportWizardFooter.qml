@@ -79,4 +79,7 @@ Control {
             onClicked: root.primaryClicked()
         }
     }
+
+    // The same accent the style gives every other dialog's button box
+    M.Material.foreground: M.Material.accent
 }

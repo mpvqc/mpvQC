@@ -33,44 +33,60 @@ ColumnLayout {
                 mode: MpvqcImportWizardSessionMode.SessionMode.MERGE,
                 //: Merge option label — keeps the existing comments and appends the incoming ones
                 text: qsTranslate("ImportWizardDialog", "Add to your current comments"),
-                objectName: "mergeRadio"
+                objectName: "mergeRow"
             },
             {
                 mode: MpvqcImportWizardSessionMode.SessionMode.REPLACE,
                 //: Replace option label — discards the existing comments before importing the incoming ones
                 text: qsTranslate("ImportWizardDialog", "Start fresh with the new comments"),
-                objectName: "replaceRadio"
+                objectName: "replaceRow"
             },
         ]
 
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-        interactive: contentHeight > height
-        spacing: 0
+        implicitHeight: contentHeight
+        interactive: false
+        spacing: 8
 
         delegate: ItemDelegate {
             id: _delegate
             objectName: _delegate.modelData.objectName
 
-            required property int index
             required property var modelData
 
             readonly property bool selected: root.viewModel.mode === _delegate.modelData.mode
-            readonly property int iconSize: 24
+
+            // Picking a row animates the fill; building the step must not
+            property bool _animated: false
 
             width: ListView.view.width
-            verticalPadding: 16
+            implicitHeight: Math.max(_delegate.implicitContentHeight + _delegate.topPadding + _delegate.bottomPadding, MpvqcConstants.listRowHeight)
+            verticalPadding: MpvqcConstants.listRowVerticalPadding
+            horizontalPadding: MpvqcConstants.listRowHorizontalPadding
+            hoverEnabled: true
+
+            background: Rectangle {
+                // Capped at the shared row height, so a wrapping row keeps its neighbours' corner
+                radius: Math.min(height, MpvqcConstants.listRowHeight) / 2
+                color: _delegate.selected ? Qt.alpha(MpvqcAppearance.palette.accent, 0.16) : _delegate.hovered ? Qt.alpha(MpvqcAppearance.palette.foreground, MpvqcAppearance.isDark ? 0.08 : 0.12) : "transparent"
+
+                Behavior on color {
+                    enabled: _delegate._animated
+
+                    ColorAnimation {
+                        duration: 120
+                    }
+                }
+            }
 
             contentItem: RowLayout {
-                spacing: 12
+                spacing: MpvqcConstants.listRowContentSpacing
 
-                MpvqcAnimatedIcon {
-                    active: _delegate.selected
-                    activeIcon: MpvqcIcons.radioButtonChecked
-                    inactiveIcon: MpvqcIcons.radioButtonUnchecked
-                    iconSize: _delegate.iconSize
-                    activationDuration: 150
-                    deactivationDuration: 75
+                MpvqcRadioIndicator {
+                    objectName: "radio"
+
+                    selected: _delegate.selected
+
+                    Layout.alignment: Qt.AlignVCenter
                 }
 
                 Label {
@@ -88,9 +104,10 @@ ColumnLayout {
             }
 
             onClicked: root.viewModel.mode = _delegate.modelData.mode
+
+            Component.onCompleted: _delegate._animated = true
         }
 
         Layout.fillWidth: true
-        Layout.fillHeight: true
     }
 }

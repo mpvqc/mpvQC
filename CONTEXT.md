@@ -61,10 +61,11 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   the long and short time format, which only decides whether hours render.
 - **Wizard step**: one page of the import wizard: one per unresolved Concern, plus an errors page when documents were
   rejected. Canonical order: errors, session, video, subtitles.
+- **Choice row**: a row on a Wizard step the user picks, one per option or candidate, the whole row being the click
+  target. The session, video and subtitles steps have them. The errors step has none: its rows report a rejected
+  document and decide nothing.
 - **Wizard state**: where the import wizard stands at one moment: the import it is deciding, and which Wizard step the
   user is on. Everything the wizard shows follows from it.
-- **Navigation direction**: which way the user moved between Wizard steps: forward or back. A jump across several
-  steps is still one or the other.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. One decision sets both the title and the footer.
 

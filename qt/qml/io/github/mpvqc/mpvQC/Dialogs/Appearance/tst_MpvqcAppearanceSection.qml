@@ -8,8 +8,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtTest
 
-import io.github.mpvqc.mpvQC.Utility
-
 TestCase {
     id: testCase
 
@@ -26,20 +24,13 @@ TestCase {
         return control;
     }
 
-    function test_theTitleIsShown(): void {
+    function test_theSectionTitlesTheSharedCard(): void {
         const control = makeControl({
             title: "Color scheme"
         });
-        const title = findChild(control, "sectionTitle");
+        const title = findChild(control, "cardTitle");
         verify(title);
         compare(title.text, "Color scheme");
-    }
-
-    function test_theCardWearsTheSectionCardColorRole(): void {
-        const control = makeControl();
-        const card = findChild(control, "sectionCard");
-        verify(card);
-        tryCompare(card, "color", MpvqcAppearance.palette.sectionCard);
     }
 
     function test_foldingAwayCollapsesTheSection(): void {

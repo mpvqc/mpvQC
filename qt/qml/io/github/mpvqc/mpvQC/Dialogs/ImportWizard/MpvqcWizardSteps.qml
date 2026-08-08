@@ -5,148 +5,117 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Layouts
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
 
-StackView {
+Item {
     id: root
 
     required property MpvqcImportWizardViewModel viewModel
-    readonly property real slideDistance: width / 4
-    property int animationDuration: 120
 
-    function _stepComponentFor(step: var): Component {
-        switch (step.kind) {
-        case MpvqcImportWizardStepKind.StepKind.ERRORS:
-            return _errorsStep;
-        case MpvqcImportWizardStepKind.StepKind.SESSION:
-            return _sessionStep;
-        case MpvqcImportWizardStepKind.StepKind.VIDEO:
-            return _videoStep;
-        case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
-            return _subtitlesStep;
-        }
-        return null;
+    property int sweepDuration: MpvqcConstants.wizardStepMotionDuration
+
+    // No step scrolls on its own, so the card stands at the current step's full height and
+    // the scroll view around the wizard carries whatever overflows.
+    // Not readonly: the Behavior below writes the interpolated values into it.
+    property real _sweptHeight: _card.implicitHeight
+
+    // A step reaches its height while the dialog builds, and that is not motion anybody
+    // asked for: only navigating sweeps
+    property bool _navigated: false
+
+    function _stepFor(kind: int): var {
+        return root.viewModel.steps.find(step => step.kind === kind) ?? null;
     }
 
-    pushEnter: Transition {
-        ParallelAnimation {
-            NumberAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                property: "x"
-                from: root.slideDistance
-                to: 0
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
+    implicitHeight: root._sweptHeight
+    clip: true
 
-    pushExit: Transition {
-        ParallelAnimation {
-            NumberAnimation {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                property: "x"
-                from: 0
-                to: -root.slideDistance
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
+    MpvqcSectionCard {
+        id: _card
 
-    popEnter: Transition {
-        ParallelAnimation {
-            NumberAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                property: "x"
-                from: -root.slideDistance
-                to: 0
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
+        // The card takes the swept height while its content stays anchored to the top, and
+        // that is what makes the background ride the edge
+        width: root.width
+        height: root.height
 
-    popExit: Transition {
-        ParallelAnimation {
-            NumberAnimation {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                property: "x"
-                from: 0
-                to: root.slideDistance
-                duration: root.animationDuration
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
+        Loader {
+            id: _errorsStep
 
-    Component.onCompleted: {
-        const step = root.viewModel.steps[root.viewModel.currentStepIndex];
-        root.push(root._stepComponentFor(step), {
-            viewModel: step
-        }, StackView.Immediate);
+            readonly property var stepViewModel: root._stepFor(MpvqcImportWizardStepKind.StepKind.ERRORS)
+
+            active: _errorsStep.stepViewModel !== null
+            visible: root.viewModel.currentStepKind === MpvqcImportWizardStepKind.StepKind.ERRORS
+
+            sourceComponent: MpvqcWizardErrorsStep {
+                viewModel: _errorsStep.stepViewModel
+            }
+
+            Layout.fillWidth: true
+        }
+
+        Loader {
+            id: _sessionStep
+
+            readonly property var stepViewModel: root._stepFor(MpvqcImportWizardStepKind.StepKind.SESSION)
+
+            active: _sessionStep.stepViewModel !== null
+            visible: root.viewModel.currentStepKind === MpvqcImportWizardStepKind.StepKind.SESSION
+
+            sourceComponent: MpvqcWizardSessionStep {
+                viewModel: _sessionStep.stepViewModel
+            }
+
+            Layout.fillWidth: true
+        }
+
+        Loader {
+            id: _videoStep
+
+            readonly property var stepViewModel: root._stepFor(MpvqcImportWizardStepKind.StepKind.VIDEO)
+
+            active: _videoStep.stepViewModel !== null
+            visible: root.viewModel.currentStepKind === MpvqcImportWizardStepKind.StepKind.VIDEO
+
+            sourceComponent: MpvqcWizardVideoStep {
+                viewModel: _videoStep.stepViewModel
+            }
+
+            Layout.fillWidth: true
+        }
+
+        Loader {
+            id: _subtitlesStep
+
+            readonly property var stepViewModel: root._stepFor(MpvqcImportWizardStepKind.StepKind.SUBTITLES)
+
+            active: _subtitlesStep.stepViewModel !== null
+            visible: root.viewModel.currentStepKind === MpvqcImportWizardStepKind.StepKind.SUBTITLES
+
+            sourceComponent: MpvqcWizardSubtitlesStep {
+                viewModel: _subtitlesStep.stepViewModel
+            }
+
+            Layout.fillWidth: true
+        }
     }
 
     Connections {
         target: root.viewModel
-
-        function onNavigated(direction: int) {
-            const step = root.viewModel.steps[root.viewModel.currentStepIndex];
-            const forward = direction === MpvqcImportWizardNavigationDirection.NavigationDirection.FORWARD;
-            const operation = forward ? StackView.PushTransition : StackView.PopTransition;
-            root.replace(root._stepComponentFor(step), {
-                viewModel: step
-            }, operation);
+        function onCurrentStepChanged(): void {
+            root._navigated = true;
         }
     }
 
-    Component {
-        id: _errorsStep
+    Behavior on _sweptHeight {
+        enabled: root._navigated
 
-        MpvqcWizardErrorsStep {}
-    }
-
-    Component {
-        id: _sessionStep
-
-        MpvqcWizardSessionStep {}
-    }
-
-    Component {
-        id: _videoStep
-
-        MpvqcWizardVideoStep {}
-    }
-
-    Component {
-        id: _subtitlesStep
-
-        MpvqcWizardSubtitlesStep {}
+        NumberAnimation {
+            duration: root.sweepDuration
+            easing.type: Easing.OutCubic
+        }
     }
 }

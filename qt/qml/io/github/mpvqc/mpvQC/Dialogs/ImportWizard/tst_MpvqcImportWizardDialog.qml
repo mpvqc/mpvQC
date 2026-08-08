@@ -5,6 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls // qmllint disable unused-imports
 import QtTest
 
 import io.github.mpvqc.mpvQC.Python
@@ -31,9 +32,8 @@ TestCase {
             dlg.open();
             testCase.tryCompare(dlg, "opened", true);
             const stepView = testCase.findChild(dlg.contentItem, "stepView");
-            if (stepView) {
-                stepView.animationDuration = 0;
-            }
+            testCase.verify(stepView, "stepView not found");
+            stepView.sweepDuration = 0;
             waitForRendering(dlg.contentItem);
             return dlg;
         }
@@ -52,16 +52,22 @@ TestCase {
             return list;
         }
 
-        function sessionRadio(dlg: QtObject, mode: string): Item {
-            const radio = testCase.findChild(dlg.contentItem, mode + "Radio");
-            testCase.verify(radio, `${mode}Radio not found`);
-            return radio;
+        function sessionRow(dlg: QtObject, mode: string): Item {
+            const row = testCase.findChild(dlg.contentItem, mode + "Row");
+            testCase.verify(row, `${mode}Row not found`);
+            return row;
         }
 
         function selectAll(dlg: QtObject): Item {
-            const checkbox = testCase.findChild(dlg.contentItem, "selectAll");
-            testCase.verify(checkbox, "selectAll checkbox not found");
-            return checkbox;
+            const button = testCase.findChild(dlg.contentItem, "selectAll");
+            testCase.verify(button, "selectAll button not found");
+            return button;
+        }
+
+        function selectAllIndicator(dlg: QtObject): Item {
+            const indicator = testCase.findChild(dlg.contentItem, "selectAllIndicator");
+            testCase.verify(indicator, "selectAllIndicator not found");
+            return indicator;
         }
 
         function primaryButton(dlg: QtObject): Item {
@@ -82,17 +88,28 @@ TestCase {
             return btn;
         }
 
-        function stepIndicator(dlg: QtObject): Item {
-            const indicator = testCase.findChild(dlg.contentItem, "stepIndicator");
-            testCase.verify(indicator, "stepIndicator not found");
-            return indicator;
+        function stepPager(dlg: QtObject): Item {
+            const pager = testCase.findChild(dlg.contentItem, "stepPager");
+            testCase.verify(pager, "stepPager not found");
+            return pager;
         }
 
-        function stepEntryAt(dlg: QtObject, index: int): Item {
-            const indicator = testCase.find.stepIndicator(dlg);
-            const entries = testCase._collectAll(indicator, "stepEntry");
-            testCase.verify(entries.length > index, `stepEntry ${index} not found (have ${entries.length})`);
-            return entries[index];
+        function stepName(dlg: QtObject): Item {
+            const label = testCase.findChild(dlg.contentItem, "stepName");
+            testCase.verify(label, "stepName not found");
+            return label;
+        }
+
+        function stepScroll(dlg: QtObject): Item {
+            const scroll = testCase.findChild(dlg.contentItem, "stepScroll");
+            testCase.verify(scroll, "stepScroll not found");
+            return scroll;
+        }
+
+        function pagerDotAt(dlg: QtObject, index: int): Item {
+            const dots = testCase._collectAll(testCase.find.stepPager(dlg), "pagerDot");
+            testCase.verify(dots.length > index, `pagerDot ${index} not found (have ${dots.length})`);
+            return dots[index];
         }
     }
 
@@ -110,7 +127,7 @@ TestCase {
         }
 
         function session(dlg: QtObject, mode: string): void {
-            testCase.mouseClick(testCase.find.sessionRadio(dlg, mode));
+            testCase.mouseClick(testCase.find.sessionRow(dlg, mode));
         }
 
         function selectAll(dlg: QtObject): void {
@@ -118,8 +135,8 @@ TestCase {
         }
 
         function step(dlg: QtObject, index: int): void {
-            testCase.mouseClick(testCase.find.stepEntryAt(dlg, index));
-            testCase._waitForStepSettled(dlg);
+            testCase.mouseClick(testCase.find.pagerDotAt(dlg, index));
+            testCase.waitForRendering(dlg.contentItem);
         }
     }
 
@@ -130,7 +147,7 @@ TestCase {
 
         function next(dlg: QtObject): void {
             testCase.click.primary(dlg);
-            testCase._waitForStepSettled(dlg);
+            testCase.waitForRendering(dlg.contentItem);
         }
 
         function cancel(dlg: QtObject): void {
@@ -139,7 +156,7 @@ TestCase {
 
         function back(dlg: QtObject): void {
             testCase.mouseClick(testCase.find.backButton(dlg));
-            testCase._waitForStepSettled(dlg);
+            testCase.waitForRendering(dlg.contentItem);
         }
     }
 
@@ -160,21 +177,31 @@ TestCase {
             const sessionStep = dlg.viewModel.steps.find(step => step.kind === MpvqcImportWizardStepKind.StepKind.SESSION);
             testCase.verify(sessionStep, "session step not found");
             testCase.tryCompare(sessionStep, "mode", expected);
-            const radio = testCase.find.sessionRadio(dlg, mode);
-            testCase.tryVerify(() => radio.selected === true);
+            const row = testCase.find.sessionRow(dlg, mode);
+            testCase.tryVerify(() => row.selected === true);
         }
 
         function subtitleChecked(dlg: QtObject, index: int, checked: bool): void {
             const list = testCase.find.subtitleList(dlg);
             testCase.tryVerify(() => list.itemAtIndex(index) !== null);
-            const checkbox = testCase.findChild(list.itemAtIndex(index), "checkbox");
-            testCase.verify(checkbox, "checkbox not found");
-            testCase.tryCompare(checkbox, "checked", checked);
+            const indicator = testCase.findChild(list.itemAtIndex(index), "checkIndicator");
+            testCase.verify(indicator, "checkIndicator not found");
+            testCase.tryCompare(indicator, "checked", checked);
+        }
+
+        function selectAllTriState(dlg: QtObject, checked: bool, partial: bool): void {
+            const indicator = testCase.find.selectAllIndicator(dlg);
+            testCase.tryCompare(indicator, "checked", checked);
+            testCase.tryCompare(indicator, "partial", partial);
         }
     }
 
     readonly property Component _dialogComponent: Component {
-        MpvqcImportWizardDialog {}
+        MpvqcImportWizardDialog {
+            // Opening and closing animate, and no test here is about that motion
+            enter: null
+            exit: null
+        }
     }
 
     function _collectAll(root: Item, objectName: string): list<Item> {
@@ -197,20 +224,13 @@ TestCase {
         return found;
     }
 
-    function _waitForStepSettled(dlg: QtObject): void {
-        const stepView = findChild(dlg.contentItem, "stepView");
-        verify(stepView, "stepView not found");
-        tryVerify(() => !stepView.busy);
-        waitForRendering(dlg.contentItem);
-    }
-
     function init(): void {
         bridge.resetState();
     }
 
     function test_navigationViaAllMechanismsKeepsPerStepSelections(): void {
         const dlg = open.scenario("all-steps");
-        verify(find.stepIndicator(dlg).visible, "step indicator should show with more than one step");
+        verify(find.stepPager(dlg).visible, "pager should show with more than one step");
         expect.currentStep(dlg, 0);
 
         click.next(dlg);
@@ -238,37 +258,62 @@ TestCase {
         expect.subtitleChecked(dlg, 0, false);
     }
 
+    function test_theStepNavigationNamesEveryStepAndTracksTheCurrentOne(): void {
+        const dlg = open.scenario("all-steps");
+        const names = dlg.viewModel.stepNames;
+
+        for (let index = 0; index < names.length; index++) {
+            compare(find.pagerDotAt(dlg, index).ToolTip.text, names[index]);
+        }
+        compare(find.stepName(dlg).text, names[0]);
+
+        click.next(dlg);
+        expect.currentStep(dlg, 1);
+        compare(find.stepName(dlg).text, names[1]);
+    }
+
+    function test_navigatingStartsTheNextStepAtTheTop(): void {
+        const dlg = open.scenario("all-steps");
+        const scroll = find.stepScroll(dlg);
+
+        scroll.contentItem.contentY = 40;
+
+        click.next(dlg);
+
+        expect.currentStep(dlg, 1);
+        tryCompare(scroll.contentItem, "contentY", 0);
+    }
+
     function test_subtitlesSelectAllTriStateReflectsRowChecks(): void {
         const dlg = open.scenario("subtitles-only");
-        const selectAll = find.selectAll(dlg);
 
-        tryCompare(selectAll, "checkState", Qt.Checked);
+        expect.selectAllTriState(dlg, true, false);
 
         pick.subtitle(dlg, 1);
-        tryCompare(selectAll, "checkState", Qt.PartiallyChecked);
+        expect.selectAllTriState(dlg, false, true);
 
         pick.selectAll(dlg);
-        tryCompare(selectAll, "checkState", Qt.Checked);
+        expect.selectAllTriState(dlg, true, false);
 
         pick.selectAll(dlg);
-        tryCompare(selectAll, "checkState", Qt.Unchecked);
+        expect.selectAllTriState(dlg, false, false);
 
         pick.selectAll(dlg);
-        tryCompare(selectAll, "checkState", Qt.Checked);
+        expect.selectAllTriState(dlg, true, false);
     }
 
     function test_errorsStepShowsRejectionReasonPerDocument(): void {
         const dlg = open.scenario("errors-only");
 
-        const errorList = findChild(dlg, "errorList");
-        verify(errorList, "error list not found");
-        tryCompare(errorList, "count", 2);
+        const errorRows = findChild(dlg, "errorRows");
+        verify(errorRows, "error rows not found");
+        tryCompare(errorRows, "count", 2);
 
-        tryVerify(() => errorList.itemAtIndex(0) !== null);
-        tryVerify(() => errorList.itemAtIndex(1) !== null);
+        tryVerify(() => errorRows.itemAt(0) !== null);
+        tryVerify(() => errorRows.itemAt(1) !== null);
 
-        const first = errorList.itemAtIndex(0);
-        const second = errorList.itemAtIndex(1);
+        const first = errorRows.itemAt(0);
+        const second = errorRows.itemAt(1);
 
         compare(first.filename, "broken.qc");
         compare(second.filename, "future.json");
@@ -283,7 +328,8 @@ TestCase {
         verify(!find.cancelButton(dlg).visible, "cancel should be hidden in close-only mode");
         verify(!find.backButton(dlg).visible, "back should be hidden on first step");
         verify(find.primaryButton(dlg).visible, "primary should be visible");
-        verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
+        verify(!find.stepPager(dlg).visible, "pager should be hidden with a single step");
+        verify(!find.stepName(dlg).visible, "step name should be hidden with a single step");
 
         click.primary(dlg);
 

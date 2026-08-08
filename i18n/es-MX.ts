@@ -342,22 +342,22 @@
     </message>
     <message>
         <source>Errors</source>
-        <extracomment>Step indicator label for the errors step</extracomment>
+        <extracomment>Name of the errors step in the import wizard&apos;s step navigation</extracomment>
         <translation>Errores</translation>
     </message>
     <message>
         <source>Session</source>
-        <extracomment>Step indicator label for the session step</extracomment>
+        <extracomment>Name of the session step in the import wizard&apos;s step navigation</extracomment>
         <translation>Sesión</translation>
     </message>
     <message>
         <source>Video</source>
-        <extracomment>Step indicator label for the video step</extracomment>
+        <extracomment>Name of the video step in the import wizard&apos;s step navigation</extracomment>
         <translation>Video</translation>
     </message>
     <message>
         <source>Subtitles</source>
-        <extracomment>Step indicator label for the subtitles step</extracomment>
+        <extracomment>Name of the subtitles step in the import wizard&apos;s step navigation</extracomment>
         <translation>Subtítulos</translation>
     </message>
     <message>
@@ -412,10 +412,13 @@
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
         <translation>Referenciado por un archivo de subtítulos importado</translation>
     </message>
-    <message>
-        <source>Which subtitles should be loaded?</source>
-        <extracomment>Subtitles step prompt above the subtitles list</extracomment>
-        <translation>¿Qué subtítulos se deben cargar?</translation>
+    <message numerus="yes">
+        <source>Which subtitle(s) should be loaded?</source>
+        <extracomment>Subtitles step prompt above the subtitles list, in the singular when a single subtitle is offered</extracomment>
+        <translation>
+            <numerusform>¿Qué subtítulo se debe cargar?</numerusform>
+            <numerusform>¿Qué subtítulos se deben cargar?</numerusform>
+        </translation>
     </message>
     <message>
         <source>Select all</source>

@@ -25,32 +25,54 @@ MpvqcDialog {
     closePolicy: Popup.NoAutoClose
 
     contentItem: ColumnLayout {
-        spacing: 40
+        spacing: 20
 
-        MpvqcWizardStepIndicator {
-            id: _stepIndicator
-            objectName: "stepIndicator"
+        ColumnLayout {
+            id: _stepNavigation
 
-            steps: root.viewModel.steps
-            currentStepIndex: root.viewModel.currentStepIndex
-            visible: root.viewModel.showStepIndicator
+            spacing: 20
+            visible: root.viewModel.multiStep
 
-            Layout.fillWidth: true
-            Layout.topMargin: 32
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 24
 
-            onStepClicked: index => root.viewModel.currentStepIndex = index
+            MpvqcWizardStepPager {
+                objectName: "stepPager"
+
+                stepNames: root.viewModel.stepNames
+                currentStepIndex: root.viewModel.currentStepIndex
+
+                Layout.alignment: Qt.AlignHCenter
+
+                onStepClicked: index => root.viewModel.currentStepIndex = index
+            }
+
+            Label {
+                objectName: "stepName"
+
+                text: root.viewModel.currentStepName
+                font.weight: Font.DemiBold
+                horizontalAlignment: Text.AlignHCenter
+
+                Layout.alignment: Qt.AlignHCenter
+            }
         }
 
-        MpvqcWizardSteps {
-            objectName: "stepView"
-
-            clip: true
-
-            viewModel: root.viewModel
+        MpvqcWizardStepScrollView {
+            id: _stepScroll
+            objectName: "stepScroll"
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.topMargin: _stepIndicator.visible ? 0 : 32
+            Layout.topMargin: _stepNavigation.visible ? 0 : 24
+
+            MpvqcWizardSteps {
+                objectName: "stepView"
+
+                viewModel: root.viewModel
+
+                Layout.fillWidth: true
+            }
         }
     }
 
@@ -69,6 +91,9 @@ MpvqcDialog {
 
     Connections {
         target: root.viewModel
+        function onCurrentStepChanged(): void {
+            _stepScroll.scrollToTop();
+        }
         function onAcceptRequested(): void {
             root.accept();
         }
