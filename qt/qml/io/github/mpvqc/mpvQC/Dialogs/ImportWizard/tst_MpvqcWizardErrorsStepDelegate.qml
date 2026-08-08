@@ -46,6 +46,23 @@ TestCase {
         tryVerify(() => !delegate.ToolTip.visible);
     }
 
+    function test_rowMirrorsUnderRightToLeftLayouts(): void {
+        const delegate = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        waitForRendering(delegate);
+        const icon = findChild(delegate, "errorIcon");
+        const filename = findChild(delegate, "filenameLabel");
+        const reason = findChild(delegate, "reasonLabel");
+        verify(icon);
+        verify(filename);
+        verify(reason);
+        verify(icon.mapToItem(delegate, 0, 0).x > filename.mapToItem(delegate, 0, 0).x);
+        compare(filename.effectiveHorizontalAlignment, Text.AlignRight);
+        compare(reason.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
     Component {
         id: objectUnderTest
 

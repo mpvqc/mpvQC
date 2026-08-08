@@ -38,6 +38,8 @@ Item {
         spacing: MpvqcConstants.listRowContentSpacing
 
         MpvqcIconLabel {
+            objectName: "errorIcon"
+
             iconColor: MpvqcAppearance.palette.error
             icon.source: MpvqcIcons.error
             icon.width: root._iconSize

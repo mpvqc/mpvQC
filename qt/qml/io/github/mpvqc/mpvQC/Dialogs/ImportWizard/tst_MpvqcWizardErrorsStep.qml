@@ -76,6 +76,16 @@ TestCase {
         verify(plural.includes("2"), `header should name the count, was '${plural}'`);
     }
 
+    function test_questionMirrorsUnderRightToLeftLayouts(): void {
+        const step = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const question = findChild(step, "question");
+        verify(question);
+        compare(question.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
     Component {
         id: objectUnderTest
 

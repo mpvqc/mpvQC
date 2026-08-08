@@ -146,6 +146,23 @@ TestCase {
         verify(label.lineCount > 2);
     }
 
+    function test_rowMirrorsUnderRightToLeftLayouts(): void {
+        const delegate = makeControl({
+            foundInDocument: true,
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const radio = findChild(delegate, "radioIndicator");
+        const label = findChild(delegate, "label");
+        const docPill = findChild(delegate, "fromDocumentPill");
+        verify(radio);
+        verify(label);
+        verify(docPill);
+        verify(radio.x > label.x);
+        verify(docPill.x < label.x);
+        compare(label.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
     Component {
         id: objectUnderTest
 

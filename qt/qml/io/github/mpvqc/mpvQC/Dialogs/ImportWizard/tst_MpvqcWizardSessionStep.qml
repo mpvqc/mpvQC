@@ -73,6 +73,31 @@ TestCase {
         verify(header.text.indexOf("5") >= 0);
     }
 
+    function test_rowsMirrorUnderRightToLeftLayouts(): void {
+        const step = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const row = findChild(step, "mergeRow");
+        verify(row);
+        const radio = findChild(row, "radio");
+        const label = findChild(row, "label");
+        verify(radio);
+        verify(label);
+        verify(radio.x > label.x);
+        compare(label.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
+    function test_questionMirrorsUnderRightToLeftLayouts(): void {
+        const step = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const question = findChild(step, "question");
+        verify(question);
+        compare(question.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
     Component {
         id: objectUnderTest
 
