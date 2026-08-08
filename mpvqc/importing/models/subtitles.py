@@ -24,7 +24,8 @@ class _SubtitleEntry:
 
 class SubtitlesModel(QAbstractListModel):
     FilenameRole = Qt.ItemDataRole.UserRole + 1
-    IsCheckedRole = Qt.ItemDataRole.UserRole + 2
+    FullPathRole = Qt.ItemDataRole.UserRole + 2
+    IsCheckedRole = Qt.ItemDataRole.UserRole + 3
 
     def __init__(self, subtitles: tuple[Path, ...]) -> None:
         super().__init__()
@@ -46,6 +47,8 @@ class SubtitlesModel(QAbstractListModel):
         match role:
             case self.FilenameRole:
                 return item.path.name
+            case self.FullPathRole:
+                return str(item.path)
             case self.IsCheckedRole:
                 return item.checked
 
@@ -55,6 +58,7 @@ class SubtitlesModel(QAbstractListModel):
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.FilenameRole: QByteArray(b"filename"),
+            self.FullPathRole: QByteArray(b"fullPath"),
             self.IsCheckedRole: QByteArray(b"isChecked"),
         }
 

@@ -412,10 +412,13 @@
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
         <translation>Referenciado por un archivo de subtítulos importado</translation>
     </message>
-    <message>
-        <source>Which subtitles should be loaded?</source>
-        <extracomment>Subtitles step prompt above the subtitles list</extracomment>
-        <translation>¿Qué subtítulos se deben cargar?</translation>
+    <message numerus="yes">
+        <source>Which subtitle(s) should be loaded?</source>
+        <extracomment>Subtitles step prompt above the subtitles list, in the singular when a single subtitle is offered</extracomment>
+        <translation>
+            <numerusform>¿Qué subtítulo se debe cargar?</numerusform>
+            <numerusform>¿Qué subtítulos se deben cargar?</numerusform>
+        </translation>
     </message>
     <message>
         <source>Select all</source>
