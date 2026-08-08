@@ -294,15 +294,15 @@ TestCase {
     function test_errorsStepShowsRejectionReasonPerDocument(): void {
         const dlg = open.scenario("errors-only");
 
-        const errorList = findChild(dlg, "errorList");
-        verify(errorList, "error list not found");
-        tryCompare(errorList, "count", 2);
+        const errorRows = findChild(dlg, "errorRows");
+        verify(errorRows, "error rows not found");
+        tryCompare(errorRows, "count", 2);
 
-        tryVerify(() => errorList.itemAtIndex(0) !== null);
-        tryVerify(() => errorList.itemAtIndex(1) !== null);
+        tryVerify(() => errorRows.itemAt(0) !== null);
+        tryVerify(() => errorRows.itemAt(1) !== null);
 
-        const first = errorList.itemAtIndex(0);
-        const second = errorList.itemAtIndex(1);
+        const first = errorRows.itemAt(0);
+        const second = errorRows.itemAt(1);
 
         compare(first.filename, "broken.qc");
         compare(second.filename, "future.json");
