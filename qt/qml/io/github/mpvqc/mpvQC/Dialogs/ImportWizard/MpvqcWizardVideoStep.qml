@@ -26,12 +26,10 @@ ColumnLayout {
         model: root.viewModel.candidates
         implicitHeight: contentHeight
         interactive: false
-        spacing: 0
+        spacing: 8
 
         delegate: MpvqcWizardVideoStepDelegate {
             width: _listView.width
-            leftPadding: 16
-            rightPadding: 16
             selected: root.viewModel.selectedIndex === index
 
             onClicked: root.viewModel.selectedIndex = index

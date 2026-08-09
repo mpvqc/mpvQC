@@ -69,7 +69,6 @@ TestCase {
         it.imports.dropFiles(control, it.bridge.importMultiVideoDocuments());
 
         const wizard = it.wizard.opened(control);
-        // index 0 = alpha.mp4, 1 = beta.mp4, 2 = "Don't load a video"
         it.wizard.pickVideo(wizard, 1);
         it.wizard.clickPrimary(wizard);
 

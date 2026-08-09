@@ -8,11 +8,13 @@ import QtQuick
 import QtQuick.Controls // qmllint disable unused-imports
 import QtTest
 
+import io.github.mpvqc.mpvQC.Utility
+
 TestCase {
     id: testCase
 
     width: 500
-    height: 120
+    height: 300
     visible: true
     when: windowShown
     name: "MpvqcWizardVideoStepDelegate"
@@ -20,6 +22,7 @@ TestCase {
     function makeControl(properties = {}): Item {
         const delegate = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(delegate);
+        waitForRendering(delegate);
         return delegate;
     }
 
@@ -47,7 +50,7 @@ TestCase {
         compare(label.text, data.expectedText);
     }
 
-    function test_provenanceIconsReflectFlags_data(): var {
+    function test_originPillsReflectFlags_data(): var {
         return [
             {
                 tag: "from-document-only",
@@ -73,17 +76,30 @@ TestCase {
         ];
     }
 
-    function test_provenanceIconsReflectFlags(data): void {
+    function test_originPillsReflectFlags(data): void {
         const delegate = makeControl({
             foundInDocument: data.foundInDocument,
             foundInSubtitle: data.foundInSubtitle
         });
-        const docIcon = findChild(delegate, "fromDocumentIcon");
-        const subIcon = findChild(delegate, "fromSubtitleIcon");
-        verify(docIcon);
-        verify(subIcon);
-        compare(docIcon.visible, data.expectDoc);
-        compare(subIcon.visible, data.expectSub);
+        const docPill = findChild(delegate, "fromDocumentPill");
+        const subPill = findChild(delegate, "fromSubtitlePill");
+        verify(docPill);
+        verify(subPill);
+        compare(docPill.visible, data.expectDoc);
+        compare(subPill.visible, data.expectSub);
+    }
+
+    function test_originPillsFollowRowSelection(): void {
+        const delegate = makeControl({
+            foundInDocument: true
+        });
+        const docPill = findChild(delegate, "fromDocumentPill");
+        verify(docPill);
+        compare(docPill.selected, false);
+
+        delegate.selected = true;
+
+        compare(docPill.selected, true);
     }
 
     function test_radioReflectsSelected_data(): var {
@@ -91,12 +107,12 @@ TestCase {
             {
                 tag: "selected",
                 selected: true,
-                expectActive: true
+                expectSelected: true
             },
             {
                 tag: "unselected",
                 selected: false,
-                expectActive: false
+                expectSelected: false
             },
         ];
     }
@@ -105,23 +121,96 @@ TestCase {
         const delegate = makeControl({
             selected: data.selected
         });
-        const radio = findChild(delegate, "radioIcon");
+        const radio = findChild(delegate, "radioIndicator");
         verify(radio);
-        compare(radio.active, data.expectActive);
+        compare(radio.selected, data.expectSelected);
     }
 
-    function test_labelTooltipShowsFullPath(): void {
+    function test_rowTooltipShowsFullPath(): void {
         const delegate = makeControl();
+        compare(delegate.ToolTip.text, "/movies/foobar.mp4");
+    }
+
+    function test_sentinelRowHasNoPathToShow(): void {
+        const delegate = makeControl({
+            isNoVideo: true
+        });
+        compare(delegate.ToolTip.text, "");
+    }
+
+    function test_hoveringTheRowPastThePillsShowsTheFullPath(): void {
+        const delegate = makeControl({
+            foundInDocument: true
+        });
+        const shared = delegate.ToolTip.toolTip;
+        verify(shared);
+
+        mouseMove(delegate, 4, delegate.height / 2);
+        tryVerify(() => shared.visible);
+        compare(shared.text, "/movies/foobar.mp4");
+        verify(!delegate.toolTipSuppressed);
+    }
+
+    function test_hoveringAnOriginPillLeavesItsTooltipToThePill(): void {
+        const delegate = makeControl({
+            foundInDocument: true
+        });
+        const docPill = findChild(delegate, "fromDocumentPill");
+        verify(docPill);
+
+        const shared = delegate.ToolTip.toolTip;
+        verify(shared);
+
+        const center = docPill.mapToItem(delegate, docPill.width / 2, docPill.height / 2);
+        mouseMove(delegate, center.x, center.y);
+        tryVerify(() => delegate.toolTipSuppressed);
+        tryCompare(shared, "text", qsTranslate("ImportWizardDialog", "Referenced by an imported QC document"));
+    }
+
+    function test_selectedRowCarriesTheSelectionTint(): void {
+        const delegate = makeControl({
+            selected: true
+        });
+        compare(delegate.background.color, Qt.alpha(MpvqcAppearance.palette.accent, 0.16));
+    }
+
+    function test_theRowSizesItselfThroughItsImplicitHeight(): void {
+        const delegate = makeControl();
+        compare(delegate.implicitHeight, MpvqcConstants.listRowHeight);
+        compare(delegate.height, delegate.implicitHeight);
+    }
+
+    function test_longFilenameWrapsPastTwoLines(): void {
+        const delegate = makeControl({
+            filename: "[Group] A Very Long Release Name With Plenty Of Words And A Second Batch Of Words That Keeps Going (BD 1080p HEVC FLAC 10bit Dual Audio) [DEADBEEF].mkv"
+        });
         const label = findChild(delegate, "label");
         verify(label);
-        compare(label.ToolTip.text, "/movies/foobar.mp4");
+        verify(label.lineCount > 2);
+    }
+
+    function test_rowMirrorsUnderRightToLeftLayouts(): void {
+        const delegate = makeControl({
+            foundInDocument: true,
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const radio = findChild(delegate, "radioIndicator");
+        const label = findChild(delegate, "label");
+        const docPill = findChild(delegate, "fromDocumentPill");
+        verify(radio);
+        verify(label);
+        verify(docPill);
+        verify(radio.x > label.x);
+        verify(docPill.x < label.x);
+        compare(label.effectiveHorizontalAlignment, Text.AlignRight);
     }
 
     Component {
         id: objectUnderTest
 
         MpvqcWizardVideoStepDelegate {
-            anchors.fill: parent
+            width: testCase.width
 
             index: 0
             filename: "foobar.mp4"

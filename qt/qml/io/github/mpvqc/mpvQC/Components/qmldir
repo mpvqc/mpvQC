@@ -4,7 +4,6 @@
 
 module io.github.mpvqc.mpvQC.Components
 
-MpvqcAnimatedIcon MpvqcAnimatedIcon.qml
 MpvqcCheckIndicator MpvqcCheckIndicator.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
