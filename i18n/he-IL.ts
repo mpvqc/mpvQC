@@ -415,10 +415,13 @@
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Which subtitles should be loaded?</source>
-        <extracomment>Subtitles step prompt above the subtitles list</extracomment>
-        <translation type="unfinished"></translation>
+    <message numerus="yes">
+        <source>Which subtitle(s) should be loaded?</source>
+        <extracomment>Subtitles step prompt above the subtitles list, in the singular when a single subtitle is offered</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <source>Select all</source>

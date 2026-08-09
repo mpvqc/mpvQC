@@ -39,6 +39,14 @@ def test_subtitles_expose_their_filenames(make_model):
     assert filenames == ["one.srt", "two.srt", "three.srt"]
 
 
+def test_subtitles_expose_their_full_paths(make_model):
+    model = make_model()
+
+    full_paths = [model.data(model.index(row, 0), SubtitlesModel.FullPathRole) for row in range(model.rowCount())]
+
+    assert full_paths == [str(subtitle) for subtitle in SUBTITLES]
+
+
 def test_toggle_flips_the_row_alone_and_notifies_for_it(qt_app, make_model, make_spy):
     model = make_model()
     spy = make_spy(model.dataChanged)
