@@ -15,6 +15,7 @@ MpvqcMessageBox MpvqcMessageBox.qml
 MpvqcModalOverlayTracker MpvqcModalOverlayTracker.qml
 MpvqcOverlayLoader MpvqcOverlayLoader.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml
+MpvqcSectionCard MpvqcSectionCard.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
 MpvqcTextFieldRow MpvqcTextFieldRow.qml
