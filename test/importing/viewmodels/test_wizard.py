@@ -158,10 +158,10 @@ def test_steps_hold_one_view_model_per_wizard_step(qt_app, case: StepsCase) -> N
     assert [type(step) for step in steps] == [STEP_VIEW_MODEL_BY_KIND[kind] for kind in case.expected_kinds]
 
 
-def test_each_step_carries_its_indicator_label(qt_app) -> None:
+def test_every_step_is_named_in_canonical_order(qt_app) -> None:
     view_model = make_wizard(ALL_UNRESOLVED).view_model
 
-    assert [step.property("indicatorLabel") for step in view_model.property("steps")] == [
+    assert view_model.stepNames == [
         "Errors",
         "Session",
         "Video",
@@ -245,9 +245,19 @@ def test_cancel_click_rejects(qt_app, make_spy) -> None:
     assert setup.dismissals == []
 
 
-def test_show_step_indicator_follows_the_step_count(qt_app) -> None:
-    assert make_wizard(ERRORS_THEN_VIDEO).view_model.showStepIndicator is True
-    assert make_wizard(ERRORS_ONLY).view_model.showStepIndicator is False
+def test_multi_step_follows_the_step_count(qt_app) -> None:
+    assert make_wizard(ERRORS_THEN_VIDEO).view_model.multiStep is True
+    assert make_wizard(ERRORS_ONLY).view_model.multiStep is False
+
+
+def test_current_step_name_follows_navigation(qt_app) -> None:
+    view_model = make_wizard(ERRORS_THEN_VIDEO).view_model
+
+    assert view_model.currentStepName == "Errors"
+
+    view_model.next()
+
+    assert view_model.currentStepName == "Video"
 
 
 def test_back_returns_to_the_previous_step(qt_app, make_spy) -> None:

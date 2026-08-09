@@ -13,8 +13,6 @@ QtObject {
     readonly property url arrowDropDown: Qt.resolvedUrl("qrc:/data/icons/arrow_drop_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url aspectRatio: Qt.resolvedUrl("qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url check: Qt.resolvedUrl("qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
-    readonly property url circle: Qt.resolvedUrl("qrc:/data/icons/circle_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
-    readonly property url circleFilled: Qt.resolvedUrl("qrc:/data/icons/circle_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg")
     readonly property url close: Qt.resolvedUrl("qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url closeFullscreen: Qt.resolvedUrl("qrc:/data/icons/close_fullscreen_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url code: Qt.resolvedUrl("qrc:/data/icons/code_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")

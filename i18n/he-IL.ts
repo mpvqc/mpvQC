@@ -345,22 +345,22 @@
     </message>
     <message>
         <source>Errors</source>
-        <extracomment>Step indicator label for the errors step</extracomment>
+        <extracomment>Name of the errors step in the import wizard&apos;s step navigation</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Session</source>
-        <extracomment>Step indicator label for the session step</extracomment>
+        <extracomment>Name of the session step in the import wizard&apos;s step navigation</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Video</source>
-        <extracomment>Step indicator label for the video step</extracomment>
+        <extracomment>Name of the video step in the import wizard&apos;s step navigation</extracomment>
         <translation type="unfinished">וידאו</translation>
     </message>
     <message>
         <source>Subtitles</source>
-        <extracomment>Step indicator label for the subtitles step</extracomment>
+        <extracomment>Name of the subtitles step in the import wizard&apos;s step navigation</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>

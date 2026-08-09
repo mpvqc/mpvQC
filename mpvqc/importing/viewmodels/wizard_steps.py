@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import assert_never
 
-from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, Qt, Signal, Slot
+from PySide6.QtCore import Property, QAbstractItemModel, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.importing.domain import (
@@ -42,11 +42,6 @@ class MpvqcImportWizardErrorsStepViewModel(QObject):
     def kind(self) -> int:
         return MpvqcImportWizardStepKind.StepKind.ERRORS
 
-    @Property(str, constant=True, final=True)
-    def indicatorLabel(self) -> str:
-        #: Step indicator label for the errors step
-        return QCoreApplication.translate("ImportWizardDialog", "Errors")
-
     @Property(QAbstractItemModel, constant=True, final=True)
     def documents(self) -> ErrorsModel:
         return self._documents
@@ -65,11 +60,6 @@ class MpvqcImportWizardSessionStepViewModel(QObject):
     @Property(int, constant=True, final=True)
     def kind(self) -> int:
         return MpvqcImportWizardStepKind.StepKind.SESSION
-
-    @Property(str, constant=True, final=True)
-    def indicatorLabel(self) -> str:
-        #: Step indicator label for the session step
-        return QCoreApplication.translate("ImportWizardDialog", "Session")
 
     @property
     def resolved(self) -> SessionResolved:
@@ -132,11 +122,6 @@ class MpvqcImportWizardVideoStepViewModel(QObject):
     def kind(self) -> int:
         return MpvqcImportWizardStepKind.StepKind.VIDEO
 
-    @Property(str, constant=True, final=True)
-    def indicatorLabel(self) -> str:
-        #: Step indicator label for the video step
-        return QCoreApplication.translate("ImportWizardDialog", "Video")
-
     @Property(QAbstractItemModel, constant=True, final=True)
     def candidates(self) -> VideosModel:
         return self._candidates
@@ -172,11 +157,6 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
     @Property(int, constant=True, final=True)
     def kind(self) -> int:
         return MpvqcImportWizardStepKind.StepKind.SUBTITLES
-
-    @Property(str, constant=True, final=True)
-    def indicatorLabel(self) -> str:
-        #: Step indicator label for the subtitles step
-        return QCoreApplication.translate("ImportWizardDialog", "Subtitles")
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def subtitles(self) -> SubtitlesModel:
