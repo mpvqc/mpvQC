@@ -30,45 +30,60 @@ TestCase {
         }
     }
 
-    function findListView(step): ListView {
-        const list = findChild(step, "errorList");
-        verify(list);
-        return list;
+    function findRows(step): Item {
+        const rows = findChild(step, "errorRows");
+        verify(rows);
+        return rows;
     }
 
-    function test_delegateShowsFilenameAndReason(): void {
-        const step = makeControl();
-        seed(step, [
-            {
-                filename: "broken.qc",
-                fullPath: "/full/path/to/broken.qc",
-                reason: "mock reason"
-            }
-        ]);
-        const list = findListView(step);
-        tryCompare(list, "count", 1);
-        waitForRendering(list);
-        const item = list.itemAtIndex(0);
-        verify(item);
-        compare(findChild(item, "filenameLabel").text, "broken.qc");
-        compare(findChild(item, "reasonLabel").text, "mock reason");
+    function findHeader(step): Item {
+        const header = findChild(step, "errorsHeader");
+        verify(header);
+        return header;
     }
 
-    function test_delegateExposesFullPathAsTooltip(): void {
+    function rejectedDocument(name): var {
+        return {
+            filename: name,
+            fullPath: `/documents/${name}`,
+            reason: `${name} is broken`
+        };
+    }
+
+    function test_listsOneRowPerRejectedDocument(): void {
         const step = makeControl();
-        seed(step, [
-            {
-                filename: "broken.qc",
-                fullPath: "/full/path/to/broken.qc",
-                reason: "mock reason"
-            }
-        ]);
-        const list = findListView(step);
-        tryCompare(list, "count", 1);
-        waitForRendering(list);
-        const item = list.itemAtIndex(0);
-        verify(item);
-        compare(item.ToolTip.text, "/full/path/to/broken.qc");
+        seed(step, [rejectedDocument("broken.qc"), rejectedDocument("future.json")]);
+        const rows = findRows(step);
+        tryCompare(rows, "count", 2);
+        waitForRendering(step);
+        compare(rows.itemAt(0).filename, "broken.qc");
+        compare(rows.itemAt(1).filename, "future.json");
+        compare(rows.itemAt(0).reason, "broken.qc is broken");
+        compare(rows.itemAt(0).fullPath, "/documents/broken.qc");
+    }
+
+    function test_headerCountsRejectedDocuments(): void {
+        const step = makeControl();
+
+        seed(step, [rejectedDocument("broken.qc")]);
+        tryCompare(findRows(step), "count", 1);
+        const single = findHeader(step).text;
+        verify(single.includes("1"), `header should name the count, was '${single}'`);
+
+        seed(step, [rejectedDocument("broken.qc"), rejectedDocument("future.json")]);
+        tryCompare(findRows(step), "count", 2);
+        const plural = findHeader(step).text;
+        verify(plural.includes("2"), `header should name the count, was '${plural}'`);
+    }
+
+    function test_questionMirrorsUnderRightToLeftLayouts(): void {
+        const step = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const question = findChild(step, "question");
+        verify(question);
+        compare(question.effectiveHorizontalAlignment, Text.AlignRight);
     }
 
     Component {
