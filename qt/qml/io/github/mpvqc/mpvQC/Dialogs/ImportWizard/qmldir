@@ -10,6 +10,7 @@ internal MpvqcWizardErrorsStep MpvqcWizardErrorsStep.qml
 internal MpvqcWizardSessionStep MpvqcWizardSessionStep.qml
 internal MpvqcWizardStepHeader MpvqcWizardStepHeader.qml
 internal MpvqcWizardStepPager MpvqcWizardStepPager.qml
+internal MpvqcWizardStepScrollView MpvqcWizardStepScrollView.qml
 internal MpvqcWizardSteps MpvqcWizardSteps.qml
 internal MpvqcWizardSubtitlesStep MpvqcWizardSubtitlesStep.qml
 internal MpvqcWizardVideoStep MpvqcWizardVideoStep.qml

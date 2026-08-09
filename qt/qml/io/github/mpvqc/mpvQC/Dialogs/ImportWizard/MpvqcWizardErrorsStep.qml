@@ -16,8 +16,6 @@ ColumnLayout {
 
     required property var viewModel
 
-    readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
-
     spacing: 20
 
     MpvqcWizardStepHeader {
@@ -31,9 +29,8 @@ ColumnLayout {
         objectName: "errorList"
 
         model: root.viewModel.documents
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-        interactive: contentHeight > height
+        implicitHeight: contentHeight
+        interactive: false
         spacing: 0
 
         delegate: ItemDelegate {
@@ -48,10 +45,8 @@ ColumnLayout {
             width: ListView.view.width
             height: Math.max(implicitHeight, MpvqcConstants.listRowHeight)
             verticalPadding: 12
-            leftInset: root.isMirrored ? _scrollBar.visibleWidth : 0
-            rightInset: root.isMirrored ? 0 : _scrollBar.visibleWidth
-            leftPadding: leftInset + 16
-            rightPadding: rightInset + 16
+            leftPadding: 16
+            rightPadding: 16
 
             contentItem: RowLayout {
                 spacing: 12
@@ -100,15 +95,5 @@ ColumnLayout {
         }
 
         Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ScrollBar.vertical: ScrollBar {
-            id: _scrollBar
-
-            readonly property bool isShown: _listView.contentHeight > _listView.height
-            readonly property real visibleWidth: isShown ? width : 0
-
-            policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-        }
     }
 }

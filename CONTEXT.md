@@ -63,8 +63,6 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   rejected. Canonical order: errors, session, video, subtitles.
 - **Wizard state**: where the import wizard stands at one moment: the import it is deciding, and which Wizard step the
   user is on. Everything the wizard shows follows from it.
-- **Navigation direction**: which way the user moved between Wizard steps: forward or back. A jump across several
-  steps is still one or the other.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. One decision sets both the title and the footer.
 
