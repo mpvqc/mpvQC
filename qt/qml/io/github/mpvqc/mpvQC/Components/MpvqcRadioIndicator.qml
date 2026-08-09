@@ -18,6 +18,7 @@ Rectangle {
     implicitWidth: 20
     implicitHeight: 20
     radius: root.width / 2
+    // No disabled look: the mark keeps its full colors while the holding control is disabled.
     color: root.selected ? MpvqcAppearance.palette.accent : "transparent"
     border.width: root.selected ? 0 : 2
     border.color: MpvqcAppearance.palette.hint

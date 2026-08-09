@@ -64,6 +64,10 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Choice row**: a row on a Wizard step the user picks, one per option or candidate, the whole row being the click
   target. The session, video and subtitles steps have them. The errors step has none: its rows report a rejected
   document and decide nothing.
+- **Indicator**: the mark that shows whether something is chosen: a check indicator for a choice that stands on its
+  own, a radio indicator for a choice that excludes its siblings. A check indicator can also show a group only partly
+  chosen. It draws nothing but the state; the row, control or menu entry that holds it owns the click, the hover and
+  the focus.
 - **Wizard state**: where the import wizard stands at one moment: the import it is deciding, and which Wizard step the
   user is on. Everything the wizard shows follows from it.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
