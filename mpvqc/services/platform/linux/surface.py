@@ -63,6 +63,7 @@ class SurfaceController(QObject):
         window.widthChanged.connect(self._apply_input_mask)
         window.heightChanged.connect(self._apply_input_mask)
         window.windowStateChanged.connect(self._sync_drop_shadow_margin)
+        window.screenChanged.connect(self._on_screen_changed)
 
         self._sync_drop_shadow_margin()
 
@@ -95,6 +96,10 @@ class SurfaceController(QObject):
     def _on_visible_changed(self, visible: bool) -> None:
         if visible:
             self._reassert_surface()
+
+    @Slot()
+    def _on_screen_changed(self) -> None:
+        self._reassert_surface()
 
     def _reassert_surface(self) -> None:
         self._apply_window_geometry()

@@ -26,10 +26,12 @@ lib_dir="$(uv run python -c 'import PySide6, pathlib; print(pathlib.Path(PySide6
 
 declare -A library=(
     [_HANDLE_SYMBOL]="Qt6Gui"
+    [_SCALE_AND_ORIGIN_SYMBOL]="Qt6Gui"
     [_SET_CUSTOM_MARGINS_SYMBOL]="Qt6WaylandClient"
 )
 declare -A signature=(
     [_HANDLE_SYMBOL]="QWindow::handle() const"
+    [_SCALE_AND_ORIGIN_SYMBOL]="QHighDpiScaling::scaleAndOrigin(QWindow const*, QHighDpiScaling::Point)"
     [_SET_CUSTOM_MARGINS_SYMBOL]="QtWaylandClient::QWaylandWindow::setCustomMargins(QMargins const&)"
 )
 

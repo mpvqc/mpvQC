@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import ctypes
 import logging
-from ctypes import Structure, byref, c_int, c_void_p
+from ctypes import Structure, byref, c_double, c_int, c_void_p
 from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -40,12 +40,23 @@ logger = logging.getLogger(__name__)
 _HANDLE_SYMBOL = "_ZNK7QWindow6handleEv"
 # QtWaylandClient::QWaylandWindow::setCustomMargins(QMargins const&)
 _SET_CUSTOM_MARGINS_SYMBOL = "_ZN15QtWaylandClient14QWaylandWindow16setCustomMarginsERK8QMargins"
+# QHighDpiScaling::scaleAndOrigin(QWindow const*, QHighDpiScaling::Point)
+_SCALE_AND_ORIGIN_SYMBOL = "_ZN15QHighDpiScaling14scaleAndOriginEPK7QWindowNS_5PointE"
 
 _QOBJECT_BASE_OFFSET = 2 * ctypes.sizeof(c_void_p)
 
 
 class _QMargins(Structure):
     _fields_ = (("left", c_int), ("top", c_int), ("right", c_int), ("bottom", c_int))
+
+
+class _QHighDpiPoint(Structure):
+    # QHighDpiScaling::Point; kind 0 is Invalid, which resolves against the window's screen.
+    _fields_ = (("kind", c_int), ("x", c_int), ("y", c_int))
+
+
+class _QScaleAndOrigin(Structure):
+    _fields_ = (("factor", c_double), ("origin_x", c_int), ("origin_y", c_int))
 
 
 def _qt_lib(name: str) -> str:
@@ -76,6 +87,31 @@ def _resolve_symbols() -> tuple[Callable[..., int | None], Callable[..., None]] 
     return handle, set_custom_margins
 
 
+@lru_cache(maxsize=1)
+def _resolve_scale_and_origin() -> Callable[..., _QScaleAndOrigin] | None:
+    try:
+        gui = ctypes.CDLL(_qt_lib("Qt6Gui"))
+        scale_and_origin = gui[_SCALE_AND_ORIGIN_SYMBOL]
+    except (OSError, AttributeError):
+        logger.warning("High-DPI factor symbol unavailable; content margins assume factor 1")
+        return None
+
+    scale_and_origin.argtypes = [c_void_p, _QHighDpiPoint]
+    scale_and_origin.restype = _QScaleAndOrigin
+    return scale_and_origin
+
+
+def high_dpi_factor(window: QWindow) -> float:
+    # Not devicePixelRatio: compositor scaling sits below Qt and is already
+    # native. This is only the layer the env scale factors insert.
+    scale_and_origin = _resolve_scale_and_origin()
+    if scale_and_origin is None:
+        return 1.0
+
+    qwindow_ptr = shiboken6.Shiboken.getCppPointer(window)[0]
+    return scale_and_origin(c_void_p(qwindow_ptr), _QHighDpiPoint(0, 0, 0)).factor
+
+
 def apply_wayland_content_margins(window: QWindow, margin: int) -> None:
     symbols = _resolve_symbols()
     if symbols is None:
@@ -89,5 +125,7 @@ def apply_wayland_content_margins(window: QWindow, margin: int) -> None:
         return
 
     wayland_window_ptr = platform_ptr - _QOBJECT_BASE_OFFSET
-    margins = _QMargins(margin, margin, margin, margin)
+    # int(x + 0.5) is qRound: Qt rounds halves up where round() rounds to even.
+    native_margin = int(margin * high_dpi_factor(window) + 0.5)
+    margins = _QMargins(native_margin, native_margin, native_margin, native_margin)
     set_custom_margins(c_void_p(wayland_window_ptr), byref(margins))
