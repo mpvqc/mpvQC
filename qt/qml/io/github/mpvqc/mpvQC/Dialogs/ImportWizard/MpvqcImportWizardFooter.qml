@@ -79,4 +79,6 @@ Control {
             onClicked: root.primaryClicked()
         }
     }
+
+    M.Material.foreground: M.Material.accent
 }
