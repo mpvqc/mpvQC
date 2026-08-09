@@ -358,10 +358,13 @@
         <extracomment>Name of the video step in the import wizard&apos;s step navigation</extracomment>
         <translation type="unfinished">וידאו</translation>
     </message>
-    <message>
-        <source>Subtitles</source>
-        <extracomment>Name of the subtitles step in the import wizard&apos;s step navigation</extracomment>
-        <translation type="unfinished"></translation>
+    <message numerus="yes">
+        <source>Subtitle(s)</source>
+        <extracomment>Name of the subtitles step in the import wizard&apos;s step navigation, in the singular when a single subtitle is offered</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <source>Next</source>
@@ -407,12 +410,12 @@
     </message>
     <message>
         <source>Referenced by an imported QC document</source>
-        <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the QC documents being imported</extracomment>
+        <extracomment>Tooltip on the per-row origin pill — the candidate video is referenced by one of the QC documents being imported</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Referenced by an imported subtitle file</source>
-        <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
+        <extracomment>Tooltip on the per-row origin pill — the candidate video is referenced by one of the subtitle files being imported</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
