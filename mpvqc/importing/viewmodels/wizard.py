@@ -30,7 +30,7 @@ from .wizard_steps import (
 if TYPE_CHECKING:
     from mpvqc.importing.domain import PendingImport
 
-    from .wizard_state import WizardState, WizardStep
+    from .wizard_state import WizardState
     from .wizard_steps import WizardStepViewModel
 
 
@@ -55,9 +55,7 @@ class MpvqcImportWizardViewModel(QObject):
         self._subtitles_step: MpvqcImportWizardSubtitlesStepViewModel | None = None
 
         step_view_models: list[WizardStepViewModel] = []
-        step_names: list[str] = []
         for step in self._state.steps:
-            step_names.append(self._step_name(step))
             match step:
                 case ErrorsStep():
                     step_view_models.append(MpvqcImportWizardErrorsStepViewModel(self, step.errors))
@@ -74,7 +72,6 @@ class MpvqcImportWizardViewModel(QObject):
                     assert_never(step)
 
         self._steps: tuple[WizardStepViewModel, ...] = tuple(step_view_models)
-        self._step_names: tuple[str, ...] = tuple(step_names)
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepIndex(self) -> int:
@@ -87,14 +84,6 @@ class MpvqcImportWizardViewModel(QObject):
     @Property(list, constant=True, final=True)
     def steps(self) -> list[WizardStepViewModel]:
         return list(self._steps)
-
-    @Property(list, constant=True, final=True)
-    def stepNames(self) -> list[str]:
-        return list(self._step_names)
-
-    @Property(str, notify=currentStepChanged, final=True)
-    def currentStepName(self) -> str:
-        return self._step_names[self._state.current_index]
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepKind(self) -> int:
@@ -166,24 +155,6 @@ class MpvqcImportWizardViewModel(QObject):
             return
         self._state = state
         self.currentStepChanged.emit()
-
-    @staticmethod
-    def _step_name(step: WizardStep) -> str:
-        match step:
-            case ErrorsStep():
-                #: Name of the errors step in the import wizard's step navigation
-                return QCoreApplication.translate("ImportWizardDialog", "Errors")
-            case SessionStep():
-                #: Name of the session step in the import wizard's step navigation
-                return QCoreApplication.translate("ImportWizardDialog", "Session")
-            case VideoStep():
-                #: Name of the video step in the import wizard's step navigation
-                return QCoreApplication.translate("ImportWizardDialog", "Video")
-            case SubtitlesStep():
-                #: Name of the subtitles step in the import wizard's step navigation
-                return QCoreApplication.translate("ImportWizardDialog", "Subtitles")
-            case _:
-                assert_never(step)
 
     @staticmethod
     def _primary_label_text(label: PrimaryLabel) -> str:

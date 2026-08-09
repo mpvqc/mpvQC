@@ -170,6 +170,10 @@ class MpvqcImportWizardSubtitlesStepViewModel(QObject):
     def subtitles(self) -> SubtitlesModel:
         return self._subtitles
 
+    @Property(int, constant=True, final=True)
+    def candidateCount(self) -> int:
+        return self._subtitles.rowCount()
+
     @Property(int, notify=selectAllTriStateChanged, final=True)
     def selectAllTriState(self) -> int:
         total = self._subtitles.rowCount()

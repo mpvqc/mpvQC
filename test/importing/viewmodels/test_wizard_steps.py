@@ -10,6 +10,7 @@ from mpvqc.importing.domain import (
     SessionReplace,
     SubtitlesLoad,
     SubtitlesSkip,
+    SubtitlesUnresolved,
     VideoLoad,
     VideoSkip,
 )
@@ -21,6 +22,7 @@ from mpvqc.importing.viewmodels import (
 )
 from test.importing.plans import (
     SUB_A,
+    SUB_B,
     UNRESOLVED_SESSION,
     UNRESOLVED_SUBTITLES,
     UNRESOLVED_VIDEO,
@@ -115,3 +117,9 @@ def test_unchecking_everything_resolves_to_skip(subtitles_step):
     subtitles_step.toggleSelectAll()
 
     assert subtitles_step.resolved == SubtitlesSkip()
+
+
+def test_candidate_count_counts_the_offered_subtitles(parent):
+    step = MpvqcImportWizardSubtitlesStepViewModel(parent, SubtitlesUnresolved(candidates=(SUB_A, SUB_B)))
+
+    assert step.candidateCount == 2

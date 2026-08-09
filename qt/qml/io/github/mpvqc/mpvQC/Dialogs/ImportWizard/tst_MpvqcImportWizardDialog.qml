@@ -198,7 +198,6 @@ TestCase {
 
     readonly property Component _dialogComponent: Component {
         MpvqcImportWizardDialog {
-            // Opening and closing animate, and no test here is about that motion
             enter: null
             exit: null
         }
@@ -260,7 +259,8 @@ TestCase {
 
     function test_theStepNavigationNamesEveryStepAndTracksTheCurrentOne(): void {
         const dlg = open.scenario("all-steps");
-        const names = dlg.viewModel.stepNames;
+        // No translator is installed here, so a plural name renders its source text whatever the count
+        const names = ["Errors", "Session", "Video", "Subtitle(s)"];
 
         for (let index = 0; index < names.length; index++) {
             compare(find.pagerDotAt(dlg, index).ToolTip.text, names[index]);

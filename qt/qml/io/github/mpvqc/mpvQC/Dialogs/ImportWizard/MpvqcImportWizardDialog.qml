@@ -18,6 +18,29 @@ MpvqcDialog {
 
     required property MpvqcImportWizardViewModel viewModel
 
+    readonly property list<string> _stepNames: root.viewModel.steps.map(step => root._stepName(step))
+
+    // This belongs in Python. It sits here because lupdate marks the plural only where it reads the count
+    // as a literal. MOVE back when https://bugreports.qt.io/browse/PYSIDE-3418 is fixed
+    function _stepName(step: var): string {
+        switch (step.kind) {
+        case MpvqcImportWizardStepKind.StepKind.ERRORS:
+            //: Name of the errors step in the import wizard's step navigation
+            return qsTranslate("ImportWizardDialog", "Errors");
+        case MpvqcImportWizardStepKind.StepKind.SESSION:
+            //: Name of the session step in the import wizard's step navigation
+            return qsTranslate("ImportWizardDialog", "Session");
+        case MpvqcImportWizardStepKind.StepKind.VIDEO:
+            //: Name of the video step in the import wizard's step navigation
+            return qsTranslate("ImportWizardDialog", "Video");
+        case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
+            //: Name of the subtitles step in the import wizard's step navigation, in the singular when a single subtitle is offered
+            return qsTranslate("ImportWizardDialog", "Subtitle(s)", "", step.candidateCount);
+        default:
+            return "";
+        }
+    }
+
     title: root.viewModel.title
     standardButtons: Dialog.NoButton
     contentWidth: MpvqcConstants.mediumDialogContentWidth
@@ -39,7 +62,7 @@ MpvqcDialog {
             MpvqcWizardStepPager {
                 objectName: "stepPager"
 
-                stepNames: root.viewModel.stepNames
+                stepNames: root._stepNames
                 currentStepIndex: root.viewModel.currentStepIndex
 
                 Layout.alignment: Qt.AlignHCenter
@@ -50,7 +73,7 @@ MpvqcDialog {
             Label {
                 objectName: "stepName"
 
-                text: root.viewModel.currentStepName
+                text: root._stepNames[root.viewModel.currentStepIndex]
                 font.weight: Font.DemiBold
                 horizontalAlignment: Text.AlignHCenter
 
