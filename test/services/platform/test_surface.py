@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, NamedTuple
 import pytest
 from PySide6.QtCore import Qt
 
+from mpvqc.services.platform.linux import surface
 from mpvqc.services.platform.linux.surface import SurfaceController
 from mpvqc.services.platform.surface import NoSurfaceHandler
 
@@ -135,6 +136,21 @@ def test_drop_shadow_margin_pushes(case: PushTestCase, qt_app, make_recording_wi
         window.setWindowStates(states)
 
     assert pushed == case.pushed
+
+
+def test_screen_change_reapplies_content_margins(qt_app, make_recording_window, monkeypatch):
+    applied: list[int] = []
+    monkeypatch.setattr(surface, "apply_wayland_content_margins", lambda _window, margin: applied.append(margin))
+    monkeypatch.setattr(surface.QGuiApplication, "platformName", staticmethod(lambda: "wayland"))
+
+    window = make_recording_window(NO_STATE)
+    controller = SurfaceController(drop_shadow_margin=88)
+    controller.configure_window(qt_app, window)
+    assert applied == [88]
+
+    window.screenChanged.emit(window.screen())
+
+    assert applied == [88, 88]
 
 
 def test_no_surface_handler_reads_zero_and_never_pushes(make_recording_window):
