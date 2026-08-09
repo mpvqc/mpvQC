@@ -5,6 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls // qmllint disable unused-imports
 import QtTest
 
 import io.github.mpvqc.mpvQC.Python
@@ -82,17 +83,22 @@ TestCase {
             return btn;
         }
 
-        function stepIndicator(dlg: QtObject): Item {
-            const indicator = testCase.findChild(dlg.contentItem, "stepIndicator");
-            testCase.verify(indicator, "stepIndicator not found");
-            return indicator;
+        function stepPager(dlg: QtObject): Item {
+            const pager = testCase.findChild(dlg.contentItem, "stepPager");
+            testCase.verify(pager, "stepPager not found");
+            return pager;
         }
 
-        function stepEntryAt(dlg: QtObject, index: int): Item {
-            const indicator = testCase.find.stepIndicator(dlg);
-            const entries = testCase._collectAll(indicator, "stepEntry");
-            testCase.verify(entries.length > index, `stepEntry ${index} not found (have ${entries.length})`);
-            return entries[index];
+        function stepName(dlg: QtObject): Item {
+            const label = testCase.findChild(dlg.contentItem, "stepName");
+            testCase.verify(label, "stepName not found");
+            return label;
+        }
+
+        function pagerDotAt(dlg: QtObject, index: int): Item {
+            const dots = testCase._collectAll(testCase.find.stepPager(dlg), "pagerDot");
+            testCase.verify(dots.length > index, `pagerDot ${index} not found (have ${dots.length})`);
+            return dots[index];
         }
     }
 
@@ -118,7 +124,7 @@ TestCase {
         }
 
         function step(dlg: QtObject, index: int): void {
-            testCase.mouseClick(testCase.find.stepEntryAt(dlg, index));
+            testCase.mouseClick(testCase.find.pagerDotAt(dlg, index));
             testCase._waitForStepSettled(dlg);
         }
     }
@@ -210,7 +216,7 @@ TestCase {
 
     function test_navigationViaAllMechanismsKeepsPerStepSelections(): void {
         const dlg = open.scenario("all-steps");
-        verify(find.stepIndicator(dlg).visible, "step indicator should show with more than one step");
+        verify(find.stepPager(dlg).visible, "pager should show with more than one step");
         expect.currentStep(dlg, 0);
 
         click.next(dlg);
@@ -236,6 +242,20 @@ TestCase {
         pick.step(dlg, 3);
         expect.currentStep(dlg, 3);
         expect.subtitleChecked(dlg, 0, false);
+    }
+
+    function test_theStepNavigationNamesEveryStepAndTracksTheCurrentOne(): void {
+        const dlg = open.scenario("all-steps");
+        const names = dlg.viewModel.stepNames;
+
+        for (let index = 0; index < names.length; index++) {
+            compare(find.pagerDotAt(dlg, index).ToolTip.text, names[index]);
+        }
+        compare(find.stepName(dlg).text, names[0]);
+
+        click.next(dlg);
+        expect.currentStep(dlg, 1);
+        compare(find.stepName(dlg).text, names[1]);
     }
 
     function test_subtitlesSelectAllTriStateReflectsRowChecks(): void {
@@ -283,7 +303,8 @@ TestCase {
         verify(!find.cancelButton(dlg).visible, "cancel should be hidden in close-only mode");
         verify(!find.backButton(dlg).visible, "back should be hidden on first step");
         verify(find.primaryButton(dlg).visible, "primary should be visible");
-        verify(!find.stepIndicator(dlg).visible, "step indicator should be hidden with a single step");
+        verify(!find.stepPager(dlg).visible, "pager should be hidden with a single step");
+        verify(!find.stepName(dlg).visible, "step name should be hidden with a single step");
 
         click.primary(dlg);
 

@@ -30,4 +30,7 @@ QtObject {
 
     readonly property int popupWindowEdgeMargin: 8
     readonly property int tooltipDelay: 350
+
+    // The import wizard's pager pill and its card edge move together, so they share one curve
+    readonly property int wizardStepMotionDuration: 220
 }
