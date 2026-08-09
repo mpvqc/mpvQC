@@ -5,8 +5,12 @@
 module MpvqcStyle
 
 Button Button.qml
+CheckBox CheckBox.qml
 DialogButtonBox DialogButtonBox.qml
+Menu Menu.qml
+MenuItem MenuItem.qml
 MenuSeparator MenuSeparator.qml
+RadioButton RadioButton.qml
 ToolButton ToolButton.qml
 ToolSeparator ToolSeparator.qml
 ToolTip ToolTip.qml

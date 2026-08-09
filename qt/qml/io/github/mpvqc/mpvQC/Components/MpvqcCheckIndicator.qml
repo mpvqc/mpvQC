@@ -5,6 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Shapes
 
 import io.github.mpvqc.mpvQC.Utility
 
@@ -16,11 +17,12 @@ Rectangle {
 
     property bool _animated: false
 
-    readonly property int _morphDuration: 260
+    readonly property int _markDuration: 260
 
     implicitWidth: 20
     implicitHeight: 20
-    radius: root.checked ? root.width / 2 : 6
+    radius: 6
+    // No disabled look: the mark keeps its full colors while the holding control is disabled.
     color: root.checked || root.partial ? MpvqcAppearance.palette.accent : "transparent"
     border.width: root.checked || root.partial ? 0 : 2
     border.color: MpvqcAppearance.palette.hint
@@ -39,22 +41,40 @@ Rectangle {
 
     Component.onCompleted: root._animated = true
 
-    MpvqcIconLabel {
+    Shape {
         objectName: "checkMark"
 
         anchors.centerIn: parent
 
+        width: 16
+        height: 16
         scale: root.checked ? 1 : 0
-        iconColor: MpvqcAppearance.palette.dialogBackground
-        icon.source: MpvqcIcons.check
-        icon.width: 14
-        icon.height: 14
+        preferredRendererType: Shape.CurveRenderer
+
+        ShapePath {
+            strokeColor: MpvqcAppearance.palette.dialogBackground
+            strokeWidth: 3
+            fillColor: "transparent"
+            capStyle: ShapePath.RoundCap
+            joinStyle: ShapePath.RoundJoin
+            startX: 3.4
+            startY: 7.8
+
+            PathLine {
+                x: 6.6
+                y: 11
+            }
+            PathLine {
+                x: 12.6
+                y: 4.4
+            }
+        }
 
         Behavior on scale {
             enabled: root._animated
 
             NumberAnimation {
-                duration: root._morphDuration
+                duration: root._markDuration
                 easing.type: Easing.OutBack
             }
         }
@@ -66,7 +86,7 @@ Rectangle {
         anchors.centerIn: parent
 
         width: 10
-        height: 2.5
+        height: 3
         radius: height / 2
         scale: !root.checked && root.partial ? 1 : 0
         color: MpvqcAppearance.palette.dialogBackground
@@ -75,7 +95,7 @@ Rectangle {
             enabled: root._animated
 
             NumberAnimation {
-                duration: root._morphDuration
+                duration: root._markDuration
                 easing.type: Easing.OutBack
             }
         }
@@ -98,15 +118,6 @@ Rectangle {
             property: "scale"
             to: 1
             duration: 240
-            easing.type: Easing.OutBack
-        }
-    }
-
-    Behavior on radius {
-        enabled: root._animated
-
-        NumberAnimation {
-            duration: root._morphDuration
             easing.type: Easing.OutBack
         }
     }

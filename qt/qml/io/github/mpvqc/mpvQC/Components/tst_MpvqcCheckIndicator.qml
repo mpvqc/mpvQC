@@ -38,8 +38,7 @@ TestCase {
                 partial: false,
                 checkMarkScale: 0,
                 dashScale: 0,
-                outlineWidth: 2,
-                radius: 6
+                outlineWidth: 2
             },
             {
                 tag: "checked",
@@ -47,8 +46,7 @@ TestCase {
                 partial: false,
                 checkMarkScale: 1,
                 dashScale: 0,
-                outlineWidth: 0,
-                radius: 10
+                outlineWidth: 0
             },
             {
                 tag: "partial",
@@ -56,8 +54,7 @@ TestCase {
                 partial: true,
                 checkMarkScale: 0,
                 dashScale: 1,
-                outlineWidth: 0,
-                radius: 6
+                outlineWidth: 0
             },
             {
                 tag: "checked and partial",
@@ -65,8 +62,7 @@ TestCase {
                 partial: true,
                 checkMarkScale: 1,
                 dashScale: 0,
-                outlineWidth: 0,
-                radius: 10
+                outlineWidth: 0
             },
         ];
     }
@@ -84,7 +80,6 @@ TestCase {
         compare(checkMark.scale, data.checkMarkScale);
         compare(dash.scale, data.dashScale);
         compare(control.border.width, data.outlineWidth);
-        compare(control.radius, data.radius);
     }
 
     function test_uncheckedTheSquareIsHollow(): void {
@@ -124,7 +119,6 @@ TestCase {
         control.checked = true;
 
         tryCompare(checkMark, "scale", 1);
-        tryCompare(control, "radius", 10);
         tryCompare(control, "color", MpvqcAppearance.palette.accent);
     }
 
@@ -138,7 +132,6 @@ TestCase {
         control.checked = false;
 
         tryCompare(checkMark, "scale", 0);
-        tryCompare(control, "radius", 6);
         tryCompare(control, "color", Qt.color("transparent"));
     }
 
