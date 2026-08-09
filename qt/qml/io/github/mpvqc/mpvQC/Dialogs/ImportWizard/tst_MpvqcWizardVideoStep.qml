@@ -74,6 +74,16 @@ TestCase {
         compare(step.viewModel.selectedIndex, data.rowIndex);
     }
 
+    function test_questionMirrorsUnderRightToLeftLayouts(): void {
+        const step = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        const question = findChild(step, "question");
+        verify(question);
+        compare(question.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
     Component {
         id: objectUnderTest
 

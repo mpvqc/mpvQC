@@ -11,7 +11,7 @@ import QtQuick.Layouts
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility
 
-ItemDelegate {
+MpvqcWizardChoiceRow {
     id: root
 
     required property int index
@@ -21,78 +21,55 @@ ItemDelegate {
     required property bool foundInSubtitle
     required property bool isNoVideo
 
-    required property bool selected
+    required selected
 
-    readonly property int iconSize: 24
+    toolTipText: root.isNoVideo ? "" : root.fullPath
+    toolTipSuppressed: _documentPill.hovered || _subtitlePill.hovered
 
-    verticalPadding: 16
+    MpvqcRadioIndicator {
+        objectName: "radioIndicator"
 
-    contentItem: RowLayout {
-        spacing: 12
+        selected: root.selected
 
-        MpvqcAnimatedIcon {
-            objectName: "radioIcon"
+        Layout.alignment: Qt.AlignVCenter
+    }
 
-            active: root.selected
-            activeIcon: MpvqcIcons.radioButtonChecked
-            inactiveIcon: MpvqcIcons.radioButtonUnchecked
-            iconColor: MpvqcAppearance.palette.foreground
-            iconSize: root.iconSize
-            activationDuration: 150
-            deactivationDuration: 75
-        }
+    Label {
+        objectName: "label"
 
-        Label {
-            objectName: "label"
+        text: root.isNoVideo ? qsTranslate("ImportWizardDialog", "Skip video") : root.filename
+        horizontalAlignment: Text.AlignLeft
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-            text: root.isNoVideo ? qsTranslate("ImportWizardDialog", "Skip video") : root.filename
-            horizontalAlignment: Text.AlignLeft
-            wrapMode: Text.Wrap
-            maximumLineCount: 2
-            elide: Text.ElideRight
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignVCenter
+    }
 
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
+    MpvqcWizardOriginPill {
+        id: _documentPill
+        objectName: "fromDocumentPill"
 
-            ToolTip.text: root.fullPath
-            ToolTip.visible: !root.isNoVideo && _labelHover.hovered
-            ToolTip.delay: MpvqcConstants.tooltipDelay
+        visible: root.foundInDocument
+        icon: MpvqcIcons.description
+        selected: root.selected
 
-            HoverHandler {
-                id: _labelHover
-            }
-        }
+        //: Tooltip on the per-row origin pill — the candidate video is referenced by one of the QC documents being imported
+        toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported QC document")
 
-        MpvqcIconLabel {
-            objectName: "fromDocumentIcon"
+        Layout.alignment: Qt.AlignVCenter
+    }
 
-            visible: root.foundInDocument
-            iconColor: MpvqcAppearance.palette.hint
-            icon.source: MpvqcIcons.description
-            icon.width: root.iconSize
-            icon.height: root.iconSize
+    MpvqcWizardOriginPill {
+        id: _subtitlePill
+        objectName: "fromSubtitlePill"
 
-            //: Tooltip on the per-row icon — the candidate video is referenced by one of the QC documents being imported
-            toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported QC document")
+        visible: root.foundInSubtitle
+        icon: MpvqcIcons.subtitles
+        selected: root.selected
 
-            Layout.preferredWidth: root.iconSize
-            Layout.preferredHeight: root.iconSize
-        }
+        //: Tooltip on the per-row origin pill — the candidate video is referenced by one of the subtitle files being imported
+        toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported subtitle file")
 
-        MpvqcIconLabel {
-            objectName: "fromSubtitleIcon"
-
-            visible: root.foundInSubtitle
-            iconColor: MpvqcAppearance.palette.hint
-            icon.source: MpvqcIcons.subtitles
-            icon.width: root.iconSize
-            icon.height: root.iconSize
-
-            //: Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported
-            toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported subtitle file")
-
-            Layout.preferredWidth: root.iconSize
-            Layout.preferredHeight: root.iconSize
-        }
+        Layout.alignment: Qt.AlignVCenter
     }
 }
