@@ -52,10 +52,10 @@ TestCase {
             return list;
         }
 
-        function sessionRadio(dlg: QtObject, mode: string): Item {
-            const radio = testCase.findChild(dlg.contentItem, mode + "Radio");
-            testCase.verify(radio, `${mode}Radio not found`);
-            return radio;
+        function sessionRow(dlg: QtObject, mode: string): Item {
+            const row = testCase.findChild(dlg.contentItem, mode + "Row");
+            testCase.verify(row, `${mode}Row not found`);
+            return row;
         }
 
         function selectAll(dlg: QtObject): Item {
@@ -121,7 +121,7 @@ TestCase {
         }
 
         function session(dlg: QtObject, mode: string): void {
-            testCase.mouseClick(testCase.find.sessionRadio(dlg, mode));
+            testCase.mouseClick(testCase.find.sessionRow(dlg, mode));
         }
 
         function selectAll(dlg: QtObject): void {
@@ -171,8 +171,8 @@ TestCase {
             const sessionStep = dlg.viewModel.steps.find(step => step.kind === MpvqcImportWizardStepKind.StepKind.SESSION);
             testCase.verify(sessionStep, "session step not found");
             testCase.tryCompare(sessionStep, "mode", expected);
-            const radio = testCase.find.sessionRadio(dlg, mode);
-            testCase.tryVerify(() => radio.selected === true);
+            const row = testCase.find.sessionRow(dlg, mode);
+            testCase.tryVerify(() => row.selected === true);
         }
 
         function subtitleChecked(dlg: QtObject, index: int, checked: bool): void {

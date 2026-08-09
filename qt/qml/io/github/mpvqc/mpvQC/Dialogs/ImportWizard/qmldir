@@ -6,6 +6,7 @@ module io.github.mpvqc.mpvQC.Dialogs.ImportWizard
 
 MpvqcImportWizardDialog MpvqcImportWizardDialog.qml
 internal MpvqcImportWizardFooter MpvqcImportWizardFooter.qml
+internal MpvqcWizardChoiceRow MpvqcWizardChoiceRow.qml
 internal MpvqcWizardErrorsStep MpvqcWizardErrorsStep.qml
 internal MpvqcWizardSessionStep MpvqcWizardSessionStep.qml
 internal MpvqcWizardStepHeader MpvqcWizardStepHeader.qml

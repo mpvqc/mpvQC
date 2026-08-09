@@ -27,6 +27,9 @@ QtObject {
     readonly property int mediumDialogContentHeight: 540
 
     readonly property int listRowHeight: 44
+    readonly property int listRowVerticalPadding: 10
+    readonly property int listRowHorizontalPadding: 14
+    readonly property int listRowContentSpacing: 12
 
     readonly property int popupWindowEdgeMargin: 8
     readonly property int tooltipDelay: 350
