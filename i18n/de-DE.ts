@@ -412,10 +412,13 @@
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
         <translation>Wird von einer importierten Untertiteldatei referenziert</translation>
     </message>
-    <message>
-        <source>Which subtitles should be loaded?</source>
-        <extracomment>Subtitles step prompt above the subtitles list</extracomment>
-        <translation>Welche Untertitel sollen geladen werden?</translation>
+    <message numerus="yes">
+        <source>Which subtitle(s) should be loaded?</source>
+        <extracomment>Subtitles step prompt above the subtitles list, in the singular when a single subtitle is offered</extracomment>
+        <translation>
+            <numerusform>Welcher Untertitel soll geladen werden?</numerusform>
+            <numerusform>Welche Untertitel sollen geladen werden?</numerusform>
+        </translation>
     </message>
     <message>
         <source>Select all</source>

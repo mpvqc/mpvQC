@@ -5,7 +5,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls // qmllint disable unused-imports
 import QtTest
+
+import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
     id: testCase
@@ -32,6 +35,7 @@ TestCase {
     function entry(filename, isChecked): var {
         return {
             filename: filename,
+            fullPath: `/subtitles/${filename}`,
             isChecked: isChecked
         };
     }
@@ -72,7 +76,7 @@ TestCase {
         compare(step.viewModel.lastToggleIndex, data.rowIndex);
     }
 
-    function test_clickingRowCheckboxCallsToggle_data(): var {
+    function test_clickingRowIndicatorCallsToggle_data(): var {
         return [
             {
                 tag: "first",
@@ -85,13 +89,13 @@ TestCase {
         ];
     }
 
-    function test_clickingRowCheckboxCallsToggle(data): void {
+    function test_clickingRowIndicatorCallsToggle(data): void {
         const step = makeControl();
         seed(step, [entry("a.srt", true), entry("b.srt", false), entry("c.ass", true)]);
         const row = rowAt(step, data.rowIndex);
-        const checkbox = findChild(row, "checkbox");
-        verify(checkbox);
-        mouseClick(checkbox);
+        const indicator = findChild(row, "checkIndicator");
+        verify(indicator);
+        mouseClick(indicator);
         compare(step.viewModel.toggleCount, 1);
         compare(step.viewModel.lastToggleIndex, data.rowIndex);
     }
@@ -105,26 +109,17 @@ TestCase {
         compare(step.viewModel.toggleSelectAllCount, 1);
     }
 
-    function test_rowCheckboxReflectsIsChecked_data(): var {
-        return [
-            {
-                tag: "checked",
-                isChecked: true
-            },
-            {
-                tag: "unchecked",
-                isChecked: false
-            },
-        ];
-    }
-
-    function test_rowCheckboxReflectsIsChecked(data): void {
+    function test_rowsRenderTheModelRoles(): void {
         const step = makeControl();
-        seed(step, [entry("a.srt", data.isChecked)]);
-        const row = rowAt(step, 0);
-        const checkbox = findChild(row, "checkbox");
-        verify(checkbox);
-        compare(checkbox.checked, data.isChecked);
+        seed(step, [entry("a.srt", true), entry("b.srt", false)]);
+        const row = rowAt(step, 1);
+        const label = findChild(row, "label");
+        const indicator = findChild(row, "checkIndicator");
+        verify(label);
+        verify(indicator);
+        compare(label.text, "b.srt");
+        compare(row.ToolTip.text, "/subtitles/b.srt");
+        compare(indicator.checked, false);
     }
 
     function test_selectAllHiddenWhenSingleSubtitle_data(): var {
@@ -150,6 +145,63 @@ TestCase {
         tryCompare(selectAll, "visible", data.expectVisible);
     }
 
+    function test_selectAllStaysShorterThanARow(): void {
+        const step = makeControl();
+        seed(step, [entry("a.srt", true), entry("b.srt", true)]);
+        const selectAll = findChild(step, "selectAll");
+        verify(selectAll);
+        tryVerify(() => selectAll.visible);
+        verify(selectAll.height < MpvqcConstants.listRowHeight);
+    }
+
+    function test_selectAllIndicatorReflectsTriState_data(): var {
+        return [
+            {
+                tag: "all-checked",
+                triState: Qt.Checked,
+                expectChecked: true,
+                expectPartial: false
+            },
+            {
+                tag: "some-checked",
+                triState: Qt.PartiallyChecked,
+                expectChecked: false,
+                expectPartial: true
+            },
+            {
+                tag: "none-checked",
+                triState: Qt.Unchecked,
+                expectChecked: false,
+                expectPartial: false
+            },
+        ];
+    }
+
+    function test_selectAllSitsOnTheMirroredSideUnderRightToLeftLayouts(): void {
+        const step = makeControl({
+            "LayoutMirroring.enabled": true,
+            "LayoutMirroring.childrenInherit": true
+        });
+        seed(step, [entry("a.srt", true), entry("b.srt", true)]);
+        const selectAll = findChild(step, "selectAll");
+        const question = findChild(step, "question");
+        verify(selectAll);
+        verify(question);
+        waitForRendering(step);
+        verify(selectAll.mapToItem(step, 0, 0).x < question.mapToItem(step, 0, 0).x);
+        compare(question.effectiveHorizontalAlignment, Text.AlignRight);
+    }
+
+    function test_selectAllIndicatorReflectsTriState(data): void {
+        const step = makeControl();
+        seed(step, [entry("a.srt", true), entry("b.srt", true)]);
+        step.viewModel.selectAllTriState = data.triState;
+        const indicator = findChild(step, "selectAllIndicator");
+        verify(indicator);
+        tryCompare(indicator, "checked", data.expectChecked);
+        tryCompare(indicator, "partial", data.expectPartial);
+    }
+
     Component {
         id: objectUnderTest
 
@@ -160,8 +212,8 @@ TestCase {
 
             viewModel: QtObject {
                 readonly property ListModel subtitles: _rows
-                readonly property int selectAllTriState: Qt.Unchecked
 
+                property int selectAllTriState: Qt.Unchecked
                 property int lastToggleIndex: -1
                 property int toggleCount: 0
                 property int toggleSelectAllCount: 0

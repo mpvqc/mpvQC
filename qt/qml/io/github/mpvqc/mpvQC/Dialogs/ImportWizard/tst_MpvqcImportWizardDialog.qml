@@ -59,9 +59,15 @@ TestCase {
         }
 
         function selectAll(dlg: QtObject): Item {
-            const checkbox = testCase.findChild(dlg.contentItem, "selectAll");
-            testCase.verify(checkbox, "selectAll checkbox not found");
-            return checkbox;
+            const button = testCase.findChild(dlg.contentItem, "selectAll");
+            testCase.verify(button, "selectAll button not found");
+            return button;
+        }
+
+        function selectAllIndicator(dlg: QtObject): Item {
+            const indicator = testCase.findChild(dlg.contentItem, "selectAllIndicator");
+            testCase.verify(indicator, "selectAllIndicator not found");
+            return indicator;
         }
 
         function primaryButton(dlg: QtObject): Item {
@@ -178,9 +184,15 @@ TestCase {
         function subtitleChecked(dlg: QtObject, index: int, checked: bool): void {
             const list = testCase.find.subtitleList(dlg);
             testCase.tryVerify(() => list.itemAtIndex(index) !== null);
-            const checkbox = testCase.findChild(list.itemAtIndex(index), "checkbox");
-            testCase.verify(checkbox, "checkbox not found");
-            testCase.tryCompare(checkbox, "checked", checked);
+            const indicator = testCase.findChild(list.itemAtIndex(index), "checkIndicator");
+            testCase.verify(indicator, "checkIndicator not found");
+            testCase.tryCompare(indicator, "checked", checked);
+        }
+
+        function selectAllTriState(dlg: QtObject, checked: bool, partial: bool): void {
+            const indicator = testCase.find.selectAllIndicator(dlg);
+            testCase.tryCompare(indicator, "checked", checked);
+            testCase.tryCompare(indicator, "partial", partial);
         }
     }
 
@@ -274,21 +286,20 @@ TestCase {
 
     function test_subtitlesSelectAllTriStateReflectsRowChecks(): void {
         const dlg = open.scenario("subtitles-only");
-        const selectAll = find.selectAll(dlg);
 
-        tryCompare(selectAll, "checkState", Qt.Checked);
+        expect.selectAllTriState(dlg, true, false);
 
         pick.subtitle(dlg, 1);
-        tryCompare(selectAll, "checkState", Qt.PartiallyChecked);
+        expect.selectAllTriState(dlg, false, true);
 
         pick.selectAll(dlg);
-        tryCompare(selectAll, "checkState", Qt.Checked);
+        expect.selectAllTriState(dlg, true, false);
 
         pick.selectAll(dlg);
-        tryCompare(selectAll, "checkState", Qt.Unchecked);
+        expect.selectAllTriState(dlg, false, false);
 
         pick.selectAll(dlg);
-        tryCompare(selectAll, "checkState", Qt.Checked);
+        expect.selectAllTriState(dlg, true, false);
     }
 
     function test_errorsStepShowsRejectionReasonPerDocument(): void {
