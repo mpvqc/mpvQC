@@ -378,6 +378,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/CommentTypes/tst_MpvqcCommentTypesDialog.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/ImportWizard/MpvqcImportWizardDialog.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/ImportWizard/MpvqcImportWizardFooter.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/Dialogs/ImportWizard/MpvqcWizardChoiceRow.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/ImportWizard/MpvqcWizardErrorsStep.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/ImportWizard/MpvqcWizardSessionStep.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/ImportWizard/MpvqcWizardStepHeader.qml",
