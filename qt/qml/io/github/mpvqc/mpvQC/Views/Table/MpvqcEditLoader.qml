@@ -34,7 +34,9 @@ Loader {
     }
 
     function startEditingCommentType(index: int, currentCommentType: string, coordinates: point, commentTypes: var): void {
-        asynchronous = true;
+        // Sync on purpose: async creation hits a Qt race that mis-stacks
+        // Repeater-built menu items under popupType Window (QTBUG-84125).
+        asynchronous = false;
         setSource(editCommentTypeMenu, {
             currentCommentType: currentCommentType,
             currentListIndex: index,
@@ -117,7 +119,7 @@ Loader {
             // Guard: bail out if another editor is already open or still loading, to avoid
             // killing an in-flight async load triggered by a rapid editor transition.
             Qt.callLater(() => {
-                const anotherEditorIsOpen = root.item && root.item.opened;
+                const anotherEditorIsOpen = root.item && root.item.visible;
                 const anotherEditorIsLoading = !root.item && root.active;
                 if (anotherEditorIsOpen || anotherEditorIsLoading) {
                     return;

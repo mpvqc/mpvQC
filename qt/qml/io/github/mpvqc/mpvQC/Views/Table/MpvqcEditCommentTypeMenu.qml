@@ -43,28 +43,22 @@ MpvqcPositionedMenu {
         }
     }
 
-    Instantiator {
-        model: root.isCommentTypeUnknown ? 1 : 0
-
-        delegate: MenuSeparator {}
-
-        onObjectAdded: (_index, object) => root.addItem(object)
+    MenuSeparator {
+        visible: root.isCommentTypeUnknown
+        // Menu lays out invisible items; only a zero height collapses the slot.
+        height: visible ? implicitHeight : 0
     }
 
-    Instantiator {
-        model: root.isCommentTypeUnknown ? 1 : 0
+    MenuItem {
+        readonly property string commentType: root.currentCommentType
 
-        delegate: MenuItem {
-            readonly property string commentType: root.currentCommentType
+        visible: root.isCommentTypeUnknown
+        height: visible ? implicitHeight : 0
+        text: qsTranslate("CommentTypes", commentType)
+        autoExclusive: true
+        checkable: true
+        checked: root.isCommentTypeUnknown
 
-            text: qsTranslate("CommentTypes", commentType)
-            autoExclusive: true
-            checkable: true
-            checked: true
-
-            onTriggered: root._handleTriggered(commentType)
-        }
-
-        onObjectAdded: (_index, object) => root.addItem(object)
+        onTriggered: root._handleTriggered(commentType)
     }
 }
