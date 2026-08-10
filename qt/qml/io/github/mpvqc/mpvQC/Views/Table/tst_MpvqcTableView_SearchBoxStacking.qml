@@ -89,7 +89,7 @@ TestCase {
 
         for (let i = menu.count - 1; i >= 0; --i) {
             const entry = menu.itemAt(i); // qmllint disable
-            if (entry && entry.commentType !== currentCommentType && _covers(bounds, _globalCenterOf(entry))) {
+            if (entry && entry.visible && entry.commentType && entry.commentType !== currentCommentType && _covers(bounds, _globalCenterOf(entry))) {
                 return entry;
             }
         }
