@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material as M
+import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Utility
 
@@ -15,6 +16,8 @@ Dialog {
 
     property string text
 
+    readonly property int _panelPadding: 16
+
     popupType: MpvqcConstants.preferredPopupType
     contentWidth: 420
     z: MpvqcConstants.zModal
@@ -24,18 +27,52 @@ Dialog {
     modal: true
     dim: false
 
-    contentItem: Label {
-        text: root.text
-        horizontalAlignment: Text.AlignLeft
-        wrapMode: Label.WordWrap
-        elide: Text.ElideLeft
+    contentItem: ScrollView {
+        id: _scroll
 
-        onLinkActivated: link => {
-            Qt.openUrlExternally(link);
-        }
+        contentWidth: availableWidth
+        contentHeight: _sections.implicitHeight
 
-        HoverHandler {
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
+        ColumnLayout {
+            id: _sections
+
+            width: _scroll.availableWidth
+
+            Rectangle {
+                // A one-line message under the full card radius reads as a pill,
+                // so short messages flatten the corners
+                radius: _body.lineCount > 1 ? 16 : 10
+                color: MpvqcAppearance.palette.sectionCard
+                implicitHeight: _body.implicitHeight + 2 * root._panelPadding
+
+                Layout.fillWidth: true
+                Layout.topMargin: 8
+
+                Label {
+                    id: _body
+
+                    anchors.fill: parent
+                    anchors.margins: root._panelPadding
+                    text: root.text
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    wrapMode: Label.WordWrap
+
+                    onLinkActivated: link => {
+                        Qt.openUrlExternally(link);
+                    }
+
+                    HoverHandler {
+                        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
+                    }
+                }
+
+                Behavior on radius {
+                    NumberAnimation {
+                        duration: 150
+                    }
+                }
+            }
         }
     }
 
