@@ -10,10 +10,6 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   one; parsing keeps every one, in the order it was written, because a dead reference can fall through to a live one
   and deciding that needs them all. Distinct from the video and subtitles a document names: those are kept on import
   only when they exist, decided as the document is read.
-- **Classic document**: mpvQC's original import document format: a text file, superseded by the v1 document but still
-  read on import.
-- **v1 document**: mpvQC's current import document format, versioned so a future format can succeed it without
-  breaking documents already written.
 - **Scan**: reading what an import was handed and following every video and subtitle named by what it reads. Each file
   it turns up is kept with where it came from: handed in, named by a document, or named by a subtitle; turned up more
   than once, it is one record carrying every origin. A scan decides nothing; the plan is made from its result.
@@ -32,6 +28,20 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   import abandoned. The first outcome decides; later ones change nothing.
 - **MIME type**: the standard label for a file format, a type and a subtype joined by a slash, such as `video/mp4`.
   Spelled MIME type, two words: the Qt spelling, as in `QMimeType`.
+
+## Documents
+
+- **Classic document**: mpvQC's original document format: a text file, superseded by the v1 document but still read
+  and written.
+- **v1 document**: mpvQC's current document format, versioned so a future format can succeed it without breaking
+  documents already written.
+
+## Export
+
+- **Backup**: a v1 document the app writes on its own, so a crash loses little work. Not an export: the user names no
+  file and sees no result.
+- **Export template**: a file that renders the document for export. One ships for the classic document; a user may
+  supply their own for a format the app does not ship.
 
 ## Comments
 
