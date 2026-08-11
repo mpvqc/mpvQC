@@ -15,6 +15,7 @@
 - Run QML tests via `just test-qml`.
 - Rebuild the test resource bundle via `just prepare-tests` after changing production QML, data, or translation files.
   `just test-python` and `just test-qml` don't rebuild it, and tests pass against a stale bundle without a warning.
+- Never edit the file table in `pyproject.toml` by hand; `just build-develop` or `just prepare-tests` regenerates it.
 
 ## Coding
 
