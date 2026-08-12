@@ -1,6 +1,6 @@
 ---
 name: slice-imports
-description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/importing/) or its test tree, when moving code between roles, and when adding a new feature slice.
+description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/exporting/, mpvqc/importing/) or its test tree, when moving code between roles, and when adding a new feature slice.
 ---
 
 # Slice imports
@@ -11,39 +11,44 @@ table.
 
 ## The lattice
 
-An import is allowed when its row lists the target's role. Every role imports freely within its own directory.
+An import is allowed when its row lists the target's role. Every role imports freely within its own directory, and
+every role may import `mpvqc.shared`, the shared pure vocabulary.
 
 Same slice:
 
 | From          | May import (same slice)                     |
 | ------------- | ------------------------------------------- |
-| `domain`      | `domain` only                               |
-| `enums`       | `domain`                                    |
-| `models`      | `domain`, `enums`, `services`               |
-| `services`    | `services`, `domain`                        |
+| `enums`       | `shared`                                    |
+| `models`      | `enums`, `services`, `shared`               |
+| `services`    | `services`, `shared`                        |
 | `viewmodels`  | everything                                  |
 
 Another slice, and the shared layer (`mpvqc/services/`):
 
 | From          | May import (another slice)                  |
 | ------------- | ------------------------------------------- |
-| `domain`      | `domain`                                    |
-| `enums`       | `domain`                                    |
-| `models`      | `domain`, `enums`                           |
-| `services`    | `services`, `domain`                        |
-| `viewmodels`  | `services`, `domain`, `enums`               |
+| `enums`       | `shared`                                    |
+| `models`      | `enums`, `shared`                           |
+| `services`    | `services`, `shared`                        |
+| `viewmodels`  | `services`, `enums`, `shared`               |
 
 A foreign slice's `viewmodels` and `models` are off-limits to everyone: presentation never crosses a slice.
+
+## The remaining domains
+
+There is no domain role (ADR 0019): a slice's logic lives in its services role, as container-bound classes where
+there is state or Qt lifecycle and as plain module-level functions over frozen dataclasses where it is pure. A new
+slice never adds a `domain`. Appearance and importing still carry one until their own dissolution lands. While one
+exists, it imports the standard library, other domains, and `mpvqc.shared`, nothing else; `TYPE_CHECKING` blocks
+count the same as runtime imports. The other roles of its slice may import it as before.
 
 ## Beyond the tables
 
 - **Role root**: each role's `__init__` is its public API. Import names from the role root (`mpvqc.services`,
   `mpvqc.<slice>.<role>`), in production and in tests alike. A name worth reaching for is worth exporting from the
   root.
-- **Domain floor**: a domain imports the standard library and other domains, `mpvqc.datamodels` included, and nothing
-  else. `TYPE_CHECKING` blocks count the same as runtime imports.
-- **Top level**: `mpvqc.datamodels` is shared domain. `mpvqc.jobs` is a helper for services and view models. Any
-  other top-level module needs a row in the checker's tables before a slice uses it.
+- **Top level**: `mpvqc.shared` is the shared pure vocabulary. `mpvqc.jobs` is a helper for services and view models.
+  Any other top-level module needs a row in the checker's tables before a slice uses it.
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and the composition roots
   (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. `testqml/` stands outside all of these
   rules.

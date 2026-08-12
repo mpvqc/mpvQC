@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
     ErrorsAbsent,
@@ -21,6 +20,7 @@ from mpvqc.importing.domain import (
     VideoSource,
     VideoUnresolved,
 )
+from mpvqc.shared import Comment
 from testqml.injections import TEMP_ROOT
 
 if TYPE_CHECKING:

@@ -1,7 +1,9 @@
 # Group a feature into a feature package
 
 Superseded in part by [ADR 0014](0014-attach-a-feature-package-through-its-wiring.md): a feature package now exports its
-wiring from the package root, and the composition root calls that instead of importing role directories.
+wiring from the package root, and the composition root calls that instead of importing role directories. Superseded in
+part by [ADR 0019](0019-dissolve-the-domain-role-into-the-services-role.md): the domain no longer sits at the package
+root; the services role holds the area's logic, pure functions included.
 
 The layer packages sort code by what a class is, not by what it is about. Everything one area means then sits spread
 across all of them, held together only by a naming convention. Reading the area means opening every layer and picking

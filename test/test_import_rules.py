@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Enforces the import rules of the feature slices: the lattice, the role roots, the domain
-floor, and wiring purity. The slice-imports skill carries the same tables for writers; a slice
-joins the rules by being listed in SLICES."""
+"""Enforces the import rules of the feature slices: the lattice, the role roots, the floor of
+the remaining domains, and wiring purity. The slice-imports skill carries the same tables for
+writers; a slice joins the rules by being listed in SLICES."""
 
 from __future__ import annotations
 
@@ -19,22 +19,23 @@ REPO = Path(__file__).resolve().parents[1]
 SLICES = ("appearance", "importing")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
 HELPERS = ("jobs",)
-SHARED_ROLES = {"services": "services", "datamodels": "domain"}
+SHARED_ROLES = {"services": "services", "shared": "shared"}
 
+# The domain rows are transitional; see ADR 0019.
 SAME_SLICE = {
-    "domain": {"domain"},
-    "enums": {"domain"},
-    "models": {"domain", "enums", "services"},
-    "services": {"services", "domain"},
-    "viewmodels": {"viewmodels", "models", "services", "enums", "domain"},
+    "domain": {"domain", "shared"},
+    "enums": {"shared"},
+    "models": {"domain", "enums", "services", "shared"},
+    "services": {"services", "domain", "shared"},
+    "viewmodels": {"viewmodels", "models", "services", "enums", "domain", "shared"},
 }
 
 OTHER_SLICE = {
-    "domain": {"domain"},
-    "enums": {"domain"},
-    "models": {"domain", "enums"},
-    "services": {"services", "domain"},
-    "viewmodels": {"services", "domain", "enums"},
+    "domain": {"domain", "shared"},
+    "enums": {"shared"},
+    "models": {"enums", "shared"},
+    "services": {"services", "shared"},
+    "viewmodels": {"services", "enums", "shared"},
 }
 
 
@@ -111,7 +112,7 @@ def _root_exports(root: str) -> set[str]:
 
 def _reaches_past_role_root(target: str, kind: str, names: list[str]) -> bool:
     root = _role_root(target, kind)
-    if root == "mpvqc.datamodels":
+    if root == "mpvqc.shared":
         return False
     if target != root:
         return True
@@ -138,7 +139,7 @@ def _non_lattice_violation(where: str, role: str, kind: str, target: str) -> str
     if kind == "external" and role == "domain":
         return (
             f"{where}: the domain imports the third-party module {target}; "
-            f"a domain imports only the standard library and other domains"
+            f"a domain imports only the standard library, other domains, and mpvqc.shared"
         )
     if kind == "helper" and role not in ("services", "viewmodels"):
         return f"{where}: {role} may not import {target}; the helpers under mpvqc/ are for services and view models"

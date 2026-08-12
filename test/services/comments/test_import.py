@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.datamodels import Comment
 from mpvqc.services.comments import QuickSelection
+from mpvqc.shared import Comment
 
 
 def test_import_comments(comments):

@@ -7,8 +7,8 @@ from typing import Protocol
 
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.services.comments import CommentsService
+from mpvqc.shared import Comment
 
 DEFAULT_COMMENTS: tuple[Comment, ...] = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),

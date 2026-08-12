@@ -4,7 +4,7 @@
 
 from typing import Any
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 
 
 def assert_comments(expected: list[list[Any]], actual: tuple[Comment, ...]):

@@ -1,5 +1,9 @@
 # Let a feature package own its QML enums
 
+Superseded in part by [ADR 0019](0019-dissolve-the-domain-role-into-the-services-role.md): the domain role is
+dissolved, and with it the floor this page gave the linter. The enums role, the wire-schema restatement, and
+pin-or-translate stand; the plain vocabulary now lives in the services role.
+
 The shared enum package exists to register enums with QML, and two of its members were the import wizard's own
 vocabulary. The import domain named one of them, so importing a module of pure rules pulled in seventeen toolkit
 modules and ran seven QML registrations as a side effect. The lattice says a domain may import another slice's domain

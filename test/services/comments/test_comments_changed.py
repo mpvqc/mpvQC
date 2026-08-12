@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 
 
 @pytest.mark.parametrize(

@@ -9,7 +9,7 @@ from dataclasses import dataclass, replace
 from operator import attrgetter
 from typing import TYPE_CHECKING, ClassVar, Protocol
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 
 from .roles import Role
 from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickSelectionAndEdit, ViewAction

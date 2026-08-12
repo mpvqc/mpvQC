@@ -7,7 +7,6 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService
 from mpvqc.services.comments import (
     AnimatedSelection,
@@ -15,6 +14,7 @@ from mpvqc.services.comments import (
     QuickSelection,
     QuickSelectionAndEdit,
 )
+from mpvqc.shared import Comment
 from mpvqc.viewmodels import MpvqcCommentTableViewModel
 
 

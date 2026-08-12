@@ -14,7 +14,7 @@ from mpvqc.services.formatter_time import TimeFormatterService
 from mpvqc.services.type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
-    from mpvqc.datamodels import Comment
+    from mpvqc.shared import Comment
     from mpvqc.services.exporter.context import RenderContext
 
 _SCHEMA_URL = "https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json"

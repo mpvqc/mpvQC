@@ -24,7 +24,7 @@ from .concerns import (
 from .errors import ErrorsAbsent, ErrorsPresent, resolve_errors
 
 if TYPE_CHECKING:
-    from mpvqc.datamodels import Comment
+    from mpvqc.shared import Comment
 
     from .concerns import (
         LoadFoundVideo,

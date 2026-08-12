@@ -15,7 +15,7 @@ from mpvqc.services import ReverseTranslatorService
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mpvqc.datamodels import Comment
+    from mpvqc.shared import Comment
 
 logger = logging.getLogger(__name__)
 
