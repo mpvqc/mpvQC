@@ -16,7 +16,7 @@ MpvqcDialog {
     id: root
     objectName: "backupDialog"
 
-    readonly property MpvqcBackupDialogViewModel viewModel: MpvqcBackupDialogViewModel {}
+    readonly property MpvqcExportBackupDialogViewModel viewModel: MpvqcExportBackupDialogViewModel {}
 
     readonly property int minBackupInterval: 15
     readonly property int maxBackupInterval: 5 * 60

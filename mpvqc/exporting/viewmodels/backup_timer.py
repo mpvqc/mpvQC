@@ -13,7 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcBackupTimerViewModel(QObject):
+class MpvqcExportBackupTimerViewModel(QObject):
     _settings = inject.attr(ExportSettingsService)
     _exporter = inject.attr(ExportService)
 

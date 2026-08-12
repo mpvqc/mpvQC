@@ -8,8 +8,7 @@ from dataclasses import dataclass
 import inject
 from PySide6.QtCore import QUrl
 
-from .application_paths import ApplicationPathsService
-from .type_mapper import TypeMapperService
+from mpvqc.services import ApplicationPathsService, TypeMapperService
 
 
 @dataclass(frozen=True)

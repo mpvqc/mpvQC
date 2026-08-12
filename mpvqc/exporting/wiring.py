@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 def bindings(binder: inject.Binder) -> None:
     import inject
 
-    from mpvqc.exporting.services import ExportService, ExportSettingsService
+    from mpvqc.exporting.services import ExportService, ExportSettingsService, ExportTemplateCatalogService
     from mpvqc.services import SettingsFileService
 
     def export_settings_service() -> ExportSettingsService:
@@ -21,7 +21,9 @@ def bindings(binder: inject.Binder) -> None:
 
     binder.bind_to_constructor(ExportService, ExportService)
     binder.bind_to_constructor(ExportSettingsService, export_settings_service)
+    binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
 
 
 def register_qml_types() -> None:
-    pass
+    import mpvqc.exporting.models  # ruff: ignore[unused-import]
+    import mpvqc.exporting.viewmodels  # ruff: ignore[unused-import]

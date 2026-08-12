@@ -15,6 +15,7 @@ from PySide6.QtCore import QSettings, QUrl
 from PySide6.QtGui import QGuiApplication
 
 from mpvqc.exporting.services import ExportService, ExportSettingsService
+from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
@@ -37,7 +38,6 @@ from mpvqc.services.platform.window_state import QtWindowStateHandler
 from mpvqc.services.player.state import OBSERVED_PROPERTIES, make_observer
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
-from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -235,7 +235,7 @@ def _import_settings_service_override() -> ImportSettingsServiceOverride:
 
 
 def configure_injections() -> None:
-    MpvqcBackupTimerViewModel.MIN_INTERVAL_MS = 50
+    MpvqcExportBackupTimerViewModel.MIN_INTERVAL_MS = 50
 
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)

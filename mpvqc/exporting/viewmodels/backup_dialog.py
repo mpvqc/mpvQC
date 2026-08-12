@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcBackupDialogViewModel(QObject):
+class MpvqcExportBackupDialogViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _paths = inject.attr(ApplicationPathsService)
     _settings = inject.attr(ExportSettingsService)
