@@ -7,11 +7,12 @@ from typing import Final
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 
+from mpvqc.shared import MILLISECONDS_PER_SECOND
+
 from .comments import CommentsService
 from .player import PlayerService
 
 SECONDS_PER_HOUR: Final = 3600
-MILLISECONDS_PER_SECOND: Final = 1000
 
 
 class TimeFormatPolicyService(QObject):

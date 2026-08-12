@@ -8,11 +8,14 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from mpvqc.shared import Comment
 
 
 @dataclass(frozen=True)
-class RenderContext:
+class ExportSnapshot:
+    captured_at: datetime
     write_header_date: bool
     write_header_generator: bool
     write_header_nickname: bool

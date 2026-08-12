@@ -52,8 +52,3 @@ def test_format_time_to_string_short(service, expected, input_seconds):
 def test_format_milliseconds_to_string(service, expected, input_milliseconds, long_format):
     actual = service.format_milliseconds_to_string(input_milliseconds, long_format=long_format)
     assert expected == actual
-
-
-def test_format_milliseconds_to_subsecond_string_delegates_to_the_shared_formatter(service):
-    actual = service.format_milliseconds_to_subsecond_string(68 * 1000 + 1)
-    assert actual == "00:01:08.001"

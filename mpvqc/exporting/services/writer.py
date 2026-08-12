@@ -9,13 +9,8 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication
 
-from .documents import render_classic, render_v1
-
 if TYPE_CHECKING:
     from pathlib import Path
-
-    from mpvqc.exporting.services.context import RenderContext
-    from mpvqc.services import ResourceService
 
 logger = logging.getLogger(__name__)
 
@@ -29,38 +24,7 @@ class ExportError(Exception):
         self.lineno = lineno
 
 
-def save(file: Path, context: RenderContext) -> None:
-    _write(file, render_v1(context))
-
-
-def export_classic(file: Path, resources: ResourceService, context: RenderContext) -> None:
-    _write(file, render_classic(resources.default_export_template, context))
-
-
-def export_custom(file: Path, template: Path, context: RenderContext) -> None:
-    from jinja2 import TemplateError, TemplateSyntaxError
-
-    try:
-        user_template = template.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError) as e:
-        logger.exception("Failed to read export template %s", template)
-        #: Shown when a user-supplied export template cannot be read (file gone,
-        #: permission denied, or not valid UTF-8). The technical detail is logged,
-        #: not surfaced to the user.
-        msg = QCoreApplication.translate("MessageBoxes", "The export template could not be read.")
-        raise ExportError(msg) from e
-
-    try:
-        content = render_classic(user_template, context)
-    except TemplateSyntaxError as e:
-        raise ExportError(e.message or "", e.lineno) from e
-    except TemplateError as e:
-        raise ExportError(e.message or "") from e
-
-    _write(file, content)
-
-
-def _write(file: Path, content: str) -> None:
+def write(file: Path, content: str) -> None:
     try:
         file.write_text(content, encoding="utf-8", newline="\n")
     except OSError as e:

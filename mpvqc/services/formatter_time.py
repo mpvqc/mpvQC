@@ -2,14 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Final
-
-from mpvqc.shared import format_milliseconds_to_subsecond_string
+from mpvqc.shared import MILLISECONDS_PER_SECOND
 
 
 class TimeFormatterService:
-    MILLISECONDS_PER_SECOND: Final = 1000
-
     @staticmethod
     def format_time_to_string(input_seconds: float, *, long_format: bool) -> str:
         hours, remainder = divmod(input_seconds, 3600)
@@ -21,9 +17,5 @@ class TimeFormatterService:
 
     @staticmethod
     def format_milliseconds_to_string(input_milliseconds: int, *, long_format: bool) -> str:
-        seconds = input_milliseconds // TimeFormatterService.MILLISECONDS_PER_SECOND
+        seconds = input_milliseconds // MILLISECONDS_PER_SECOND
         return TimeFormatterService.format_time_to_string(seconds, long_format=long_format)
-
-    @staticmethod
-    def format_milliseconds_to_subsecond_string(input_milliseconds: int) -> str:
-        return format_milliseconds_to_subsecond_string(input_milliseconds)

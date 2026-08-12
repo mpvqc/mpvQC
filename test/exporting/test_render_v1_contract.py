@@ -56,10 +56,10 @@ CONFORMANCE_CASES = [
 
 
 @pytest.mark.parametrize("case", CONFORMANCE_CASES, ids=lambda case: case.name)
-def test_rendered_documents_validate_against_schema(make_context, validator, case):
-    context = make_context(generator="mpvQC 0.9.0", **case.settings)
+def test_rendered_documents_validate_against_schema(make_snapshot, validator, case):
+    snapshot = make_snapshot(generator="mpvQC 0.9.0", **case.settings)
 
-    document = json.loads(render_v1(context))
+    document = json.loads(render_v1(snapshot))
 
     validator.validate(document)
 
@@ -113,22 +113,22 @@ def test_readme_example_validates_against_schema(validator):
     validator.validate(json.loads(example.group(1)))
 
 
-def test_rendered_backup_validates_against_schema(make_context, validator):
-    context = make_context(
+def test_rendered_backup_validates_against_schema(make_snapshot, validator):
+    snapshot = make_snapshot(
         video="/path/to/video.mkv",
         comments=[Comment(time=754321, comment_type="Spelling", comment="Lorem ipsum")],
     )
 
-    document = json.loads(render_backup(context))
+    document = json.loads(render_backup(snapshot))
 
     validator.validate(document)
 
 
-def test_backup_imports_losslessly(make_context, tmp_path):
-    context = make_context(comments=[Comment(time=754321, comment_type="Spelling", comment="Lorem ipsum")])
+def test_backup_imports_losslessly(make_snapshot, tmp_path):
+    snapshot = make_snapshot(comments=[Comment(time=754321, comment_type="Spelling", comment="Lorem ipsum")])
 
     document = tmp_path / "backup.json"
-    document.write_text(render_backup(context), encoding="utf-8")
+    document.write_text(render_backup(snapshot), encoding="utf-8")
 
     result = read_documents((document,))
 
@@ -136,8 +136,8 @@ def test_backup_imports_losslessly(make_context, tmp_path):
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [(754321, "Spelling", "Lorem ipsum")]
 
 
-def test_exported_document_imports_losslessly(make_context, tmp_path):
-    context = make_context(
+def test_exported_document_imports_losslessly(make_snapshot, tmp_path):
+    snapshot = make_snapshot(
         comments=[
             Comment(time=0, comment_type="Translation", comment="Lorem ipsum"),
             Comment(time=(15 * 60 + 29) * 1000 + 340, comment_type="Spelling", comment=""),
@@ -150,7 +150,7 @@ def test_exported_document_imports_losslessly(make_context, tmp_path):
     )
 
     document = tmp_path / "report.json"
-    document.write_text(render_v1(context), encoding="utf-8")
+    document.write_text(render_v1(snapshot), encoding="utf-8")
 
     result = read_documents((document,))
 
