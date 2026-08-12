@@ -8,8 +8,7 @@ from typing import override
 
 import pytest
 
-from mpvqc.appearance.domain import ColorScheme, SystemColorScheme
-from mpvqc.appearance.services import AppearanceSettingsService
+from mpvqc.appearance.services import AppearanceSettingsService, ColorScheme, SystemColorScheme
 from mpvqc.services import ResourceService
 
 

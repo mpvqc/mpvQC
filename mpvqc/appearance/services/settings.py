@@ -8,12 +8,10 @@ from typing import TYPE_CHECKING, assert_never
 
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.appearance.domain import (
-    AccentColor,
-    AppearancePreference,
+from .preferences import AccentColor, AppearancePreference, NoPreference
+from .schemes import (
     Dark,
     Light,
-    NoPreference,
     format_color_scheme,
     format_color_scheme_preference,
     parse_color_scheme_preference_or_default,
@@ -22,7 +20,8 @@ from mpvqc.appearance.domain import (
 if TYPE_CHECKING:
     from PySide6.QtCore import QSettings
 
-    from mpvqc.appearance.domain import AccentColorPreference, ColorScheme, ColorSchemePreference
+    from .preferences import AccentColorPreference
+    from .schemes import ColorScheme, ColorSchemePreference
 
 _COLOR_SCHEME_PREFERENCE_KEY = "Appearance/colorSchemePreference"
 

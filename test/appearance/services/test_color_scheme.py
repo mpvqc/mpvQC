@@ -5,8 +5,14 @@
 import inject
 import pytest
 
-from mpvqc.appearance.domain import Dark, FollowSystem, Light, Unknown
-from mpvqc.appearance.services import AppearanceSettingsService, ColorSchemeService
+from mpvqc.appearance.services import (
+    AppearanceSettingsService,
+    ColorSchemeService,
+    Dark,
+    FollowSystem,
+    Light,
+    Unknown,
+)
 
 SYSTEM = FollowSystem()
 LIGHT = Light()

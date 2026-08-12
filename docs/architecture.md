@@ -69,8 +69,7 @@ shared settings file service. The application attaches a feature package through
 `wiring.py`, which names no mpvqc module and no Qt at module level, so importing a feature registers nothing.
 Vocabulary still travels by role directory: a call site imports a service or a view model from the role that owns it.
 The layer packages hold everything no feature package has claimed. `test/test_import_rules.py` enforces the import
-lattice between slices; the appearance and importing packages still carry a legacy `domain` module until their
-dissolution lands.
+lattice between slices; the importing package still carries a legacy `domain` module until its dissolution lands.
 
 ### Bootstrap
 
