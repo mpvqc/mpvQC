@@ -1,5 +1,8 @@
 # Communicate across slices with calls, not events
 
+Amended by [ADR 0019](0019-dissolve-the-domain-role-into-the-services-role.md): the lattice below predates the
+dissolution of the domain role, and the current table lives there. The reasoning on this page stands.
+
 Feature packages have to talk to each other, and the mainstream shape for that in a modular monolith is domain events
 between modules. We decided against it. A slice commands a more central slice by calling its public service API through
 injection, and the rest of the app learns what happened from the state the called slice already publishes. There is no

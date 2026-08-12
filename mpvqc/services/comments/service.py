@@ -28,7 +28,7 @@ from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickS
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from mpvqc.datamodels import Comment
+    from mpvqc.shared import Comment
 
     from .commands import Command
     from .search import SearchOutcome

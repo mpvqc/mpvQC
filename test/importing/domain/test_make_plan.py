@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
     ErrorsAbsent,
@@ -31,6 +30,7 @@ from mpvqc.importing.domain import (
     VideoUnresolved,
     make_plan,
 )
+from mpvqc.shared import Comment
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

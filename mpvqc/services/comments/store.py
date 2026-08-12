@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import QByteArray, QObject
 
-    from mpvqc.datamodels import Comment
+    from mpvqc.shared import Comment
 
 _seq_counter = itertools.count()
 

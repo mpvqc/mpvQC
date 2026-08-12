@@ -10,7 +10,6 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     LoadFoundVideo,
     NotAsked,
@@ -24,6 +23,7 @@ from mpvqc.importing.domain import (
 )
 from mpvqc.importing.services import ImporterService, ImportSettingsService
 from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
+from mpvqc.shared import Comment
 from test.importing.plans import (
     SUB_A,
     SUB_A_FROM_DOCUMENT,

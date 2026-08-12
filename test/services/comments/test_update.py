@@ -6,9 +6,9 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.services.comments import AnimatedSelection, QuickSelection
 from mpvqc.services.comments.roles import Role
+from mpvqc.shared import Comment
 
 
 def _data_at(comments, row, role):

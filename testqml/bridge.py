@@ -20,7 +20,7 @@ from mpvqc.appearance.domain import (
 )
 from mpvqc.appearance.services import AppearanceSettingsService
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 from mpvqc.importing.domain import (
     FinishedPlan,
     PendingImport,

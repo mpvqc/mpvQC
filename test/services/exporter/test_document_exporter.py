@@ -12,7 +12,7 @@ from unittest.mock import MagicMock
 import pytest
 from PySide6.QtCore import QStandardPaths
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 from mpvqc.services import ExportService
 
 

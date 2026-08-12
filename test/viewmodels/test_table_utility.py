@@ -5,8 +5,8 @@
 import inject
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.services import CommentsService, PlayerService, TimeFormatPolicyService
+from mpvqc.shared import Comment
 from mpvqc.viewmodels import MpvqcTableUtilityViewModel
 
 ONE_HOUR_MS = 3_600_000

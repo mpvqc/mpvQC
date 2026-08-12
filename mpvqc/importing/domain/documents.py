@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 
 if TYPE_CHECKING:
     from collections.abc import Callable

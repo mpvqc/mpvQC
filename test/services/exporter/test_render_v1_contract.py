@@ -12,7 +12,7 @@ from typing import NamedTuple
 import pytest
 from jsonschema import Draft202012Validator, ValidationError
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 from mpvqc.importing.services import read_documents
 from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
 

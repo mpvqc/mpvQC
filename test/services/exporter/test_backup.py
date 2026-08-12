@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PySide6.QtCore import QDateTime
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 from mpvqc.services.exporter.backup import backup
 
 

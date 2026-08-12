@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from mpvqc.datamodels import Comment
 from mpvqc.importing.domain import (
     DocumentRejectionReason,
     ErrorsAbsent,
@@ -26,6 +25,7 @@ from mpvqc.importing.domain import (
     VideoSource,
     VideoUnresolved,
 )
+from mpvqc.shared import Comment
 
 VIDEO_A = Path("/movies/a.mp4")
 VIDEO_B = Path("/movies/b.mp4")

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 from mpvqc.services import ResourceService
 from mpvqc.services.exporter.documents.classic import render_classic
 

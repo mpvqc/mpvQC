@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
-    from mpvqc.datamodels import Comment
+    from mpvqc.shared import Comment
 
 
 @dataclass(frozen=True)

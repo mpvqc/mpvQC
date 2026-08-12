@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.datamodels import Comment
+from mpvqc.shared import Comment
 
 
 def test_reports_distinct_types_of_document(make_comments):
