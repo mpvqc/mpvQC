@@ -44,6 +44,7 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   Every document is written from one, so edits made while it is being written cannot reach it.
 - **Export template**: a file that renders the document for export. One ships for the classic document; a user may
   supply their own for a format the app does not ship.
+- **Export template catalog**: every export template a user supplied, as one list to pick from.
 
 ## Comments
 

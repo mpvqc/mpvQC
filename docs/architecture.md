@@ -54,8 +54,8 @@ only what has state or Qt lifecycle (ADR 0019). Each service sits in its own mod
 calls each feature package's `bindings`, and startup's registration pass calls each feature package's
 `register_qml_types`.
 
-Pure vocabulary that several areas mean, such as the comment type and subsecond time formatting, lives in
-`mpvqc/shared`. Every role in every slice and layer may import it.
+Vocabulary that several areas mean, such as the comment type, subsecond time formatting, and the conversions among
+paths, URLs, and strings, lives in `mpvqc/shared`. Every role in every slice and layer may import it.
 
 ### Feature packages: `mpvqc/<feature>/`
 

@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication
 
-from mpvqc.services import TimeFormatterService, TypeMapperService
-from mpvqc.shared import MILLISECONDS_PER_SECOND, format_milliseconds_to_subsecond_string
+from mpvqc.services import TimeFormatterService
+from mpvqc.shared import MILLISECONDS_PER_SECOND, format_milliseconds_to_subsecond_string, map_path_to_str
 
 from .writer import ExportError
 
@@ -72,7 +72,7 @@ def _as_comment_type(comment_type: str) -> str:
 def _arguments(snapshot: ExportSnapshot) -> dict:
     if raw_path := snapshot.video_path:
         path = Path(raw_path)
-        video_path = TypeMapperService.map_path_to_str(path)
+        video_path = map_path_to_str(path)
         video_name = path.name
     else:
         video_path = ""
@@ -89,7 +89,7 @@ def _arguments(snapshot: ExportSnapshot) -> dict:
         "nickname": snapshot.nickname,
         "video_path": video_path,
         "video_name": video_name,
-        "subtitles": tuple(TypeMapperService.map_path_to_str(Path(s)) for s in snapshot.external_subtitles),
+        "subtitles": tuple(map_path_to_str(Path(s)) for s in snapshot.external_subtitles),
         "comments": [
             {
                 "time": c.time // MILLISECONDS_PER_SECOND,

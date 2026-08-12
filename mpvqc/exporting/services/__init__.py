@@ -9,5 +9,4 @@ from .render_v1 import render_backup as render_backup
 from .render_v1 import render_v1 as render_v1
 from .settings import ExportSettingsService as ExportSettingsService
 from .snapshot import ExportSnapshot as ExportSnapshot
-from .template_catalog import ExportTemplate as ExportTemplate
 from .template_catalog import ExportTemplateCatalogService as ExportTemplateCatalogService

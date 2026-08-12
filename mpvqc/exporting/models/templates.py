@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, override
 
 import inject
@@ -11,27 +12,37 @@ from PySide6.QtCore import Property, QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
 from mpvqc.exporting.services import ExportTemplateCatalogService
+from mpvqc.shared import map_path_to_url
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
+    from PySide6.QtCore import QModelIndex, QPersistentModelIndex, QUrl
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
+@dataclass(frozen=True, slots=True)
+class _TemplateEntry:
+    name: str
+    url: QUrl
+
+
 @QmlElement
 class MpvqcExportTemplateModel(QAbstractListModel):
-    _export_templates = inject.attr(ExportTemplateCatalogService)
+    _catalog = inject.attr(ExportTemplateCatalogService)
 
     NameRole = Qt.ItemDataRole.UserRole + 1
     PathRole = Qt.ItemDataRole.UserRole + 2
 
     def __init__(self) -> None:
         super().__init__()
-        self._items = self._export_templates.list_templates()
+        self._items = [
+            _TemplateEntry(name=template.name, url=map_path_to_url(template.path))
+            for template in self._catalog.list_templates()
+        ]
 
     @Property(int, constant=True, final=True)
     def count(self) -> int:
@@ -44,11 +55,7 @@ class MpvqcExportTemplateModel(QAbstractListModel):
         return len(self._items)
 
     @override
-    def data(
-        self,
-        index: QModelIndex | QPersistentModelIndex,
-        role: int = Qt.ItemDataRole.DisplayRole,
-    ) -> Any:
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
 

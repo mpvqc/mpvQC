@@ -8,7 +8,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.importing.domain import classify_paths
 from mpvqc.importing.services import ImporterService
-from mpvqc.services import TypeMapperService
+from mpvqc.shared import map_urls_to_paths
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,7 +17,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcImportDropAreaViewModel(QObject):
     _importer = inject.attr(ImporterService)
-    _type_mapper = inject.attr(TypeMapperService)
 
     _ACCEPTED_FORMAT = "text/uri-list"
 
@@ -27,6 +26,6 @@ class MpvqcImportDropAreaViewModel(QObject):
 
     @Slot(list)
     def open(self, urls: list[QUrl]) -> None:
-        paths = self._type_mapper.map_urls_to_path(urls)
+        paths = map_urls_to_paths(urls)
         classified = classify_paths(paths)
         self._importer.open(classified.documents, classified.videos, classified.subtitles)

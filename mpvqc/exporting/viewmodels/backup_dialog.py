@@ -7,7 +7,8 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.exporting.services import ExportSettingsService
-from mpvqc.services import ApplicationPathsService, DesktopService, TypeMapperService
+from mpvqc.services import ApplicationPathsService, DesktopService
+from mpvqc.shared import map_path_to_str
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -18,7 +19,6 @@ class MpvqcExportBackupDialogViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _paths = inject.attr(ApplicationPathsService)
     _settings = inject.attr(ExportSettingsService)
-    _type_mapper = inject.attr(TypeMapperService)
 
     temporaryBackupEnabledChanged = Signal(bool)
     temporaryBackupIntervalChanged = Signal(int)
@@ -51,7 +51,7 @@ class MpvqcExportBackupDialogViewModel(QObject):
     @Property(str, constant=True, final=True)
     def backupDirectory(self) -> str:
         path = self._paths.dir_backup
-        return self._type_mapper.map_path_to_str(path)
+        return map_path_to_str(path)
 
     @Slot()
     def openBackupDirectory(self) -> None:

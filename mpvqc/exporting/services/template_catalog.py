@@ -2,29 +2,30 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import operator
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QUrl
 
-from mpvqc.services import ApplicationPathsService, TypeMapperService
+from mpvqc.services import ApplicationPathsService
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @dataclass(frozen=True)
 class ExportTemplate:
     name: str
-    url: QUrl
+    path: Path
 
 
 class ExportTemplateCatalogService:
     _app_paths = inject.attr(ApplicationPathsService)
-    _type_mapper = inject.attr(TypeMapperService)
 
     def list_templates(self) -> list[ExportTemplate]:
-        templates = [
-            ExportTemplate(name=path.stem, url=self._type_mapper.map_path_to_url(path))
-            for path in self._app_paths.files_export_templates
-        ]
+        templates = [ExportTemplate(name=path.stem, path=path) for path in self._app_paths.files_export_templates]
         templates.sort(key=operator.attrgetter("name"))
         return templates
