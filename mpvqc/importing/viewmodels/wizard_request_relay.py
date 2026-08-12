@@ -9,7 +9,7 @@ from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.importing.domain import PendingImport
-from mpvqc.importing.services import ImporterService
+from mpvqc.importing.services import ImportService
 
 from .wizard import MpvqcImportWizardViewModel
 
@@ -19,7 +19,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcImportWizardRequestRelayViewModel(QObject):
-    _importer = inject.attr(ImporterService)
+    _importer = inject.attr(ImportService)
 
     importWizardRequested = Signal(MpvqcImportWizardViewModel)
 

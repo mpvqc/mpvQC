@@ -8,19 +8,19 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
-from mpvqc.importing.services import ImporterService
+from mpvqc.importing.services import ImportService
 from mpvqc.importing.viewmodels import MpvqcImportDropAreaViewModel
 
 
 @pytest.fixture
 def importer_service_mock() -> MagicMock:
-    return MagicMock(spec_set=ImporterService)
+    return MagicMock(spec_set=ImportService)
 
 
 @pytest.fixture(autouse=True)
 def configure_inject(common_bindings_with, importer_service_mock):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(ImporterService, importer_service_mock)
+        binder.bind(ImportService, importer_service_mock)
 
     common_bindings_with(custom_bindings)
 

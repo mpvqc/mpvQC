@@ -7,7 +7,7 @@ from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.importing.domain import classify_paths
-from mpvqc.importing.services import ImporterService
+from mpvqc.importing.services import ImportService
 from mpvqc.shared import map_urls_to_paths
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -16,7 +16,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcImportDropAreaViewModel(QObject):
-    _importer = inject.attr(ImporterService)
+    _importer = inject.attr(ImportService)
 
     _ACCEPTED_FORMAT = "text/uri-list"
 

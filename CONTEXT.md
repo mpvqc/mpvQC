@@ -22,7 +22,7 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   results, or when the wizard finishes, from its input.
 - **UnfinishedPlan**: scan output with at least one Concern unresolved, or Import errors present. Presented to the user
   as the import wizard.
-- **FinishedPlan**: every Concern resolved. The only input the importer executes.
+- **FinishedPlan**: every Concern resolved. The only plan that is executed.
 - **Pending import**: an import whose UnfinishedPlan is before the user. It ends finished, the wizard's input
   resolving what was unresolved and the import executed, or dismissed, the wizard closed without confirming and the
   import abandoned. The first outcome decides; later ones change nothing.

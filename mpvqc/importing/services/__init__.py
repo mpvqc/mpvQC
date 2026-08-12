@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .importer import ImporterService as ImporterService
+from .importer import ImportService as ImportService
 from .reader import read_documents as read_documents
 from .scan import scan as scan
 from .settings import ImportSettingsService as ImportSettingsService

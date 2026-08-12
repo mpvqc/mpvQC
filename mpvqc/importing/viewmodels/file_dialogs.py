@@ -7,7 +7,7 @@ from PySide6.QtCore import Property, QMimeDatabase, QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.importing.domain import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS, VIDEO_FALLBACK_EXTENSIONS
-from mpvqc.importing.services import ImporterService, ImportSettingsService
+from mpvqc.importing.services import ImportService, ImportSettingsService
 from mpvqc.shared import map_path_to_url, map_url_to_path
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -38,7 +38,7 @@ def _format_glob_pattern(patterns: set[str]) -> str:
 
 @QmlElement
 class MpvqcImportFileDialogViewModel(QObject):
-    _importer = inject.attr(ImporterService)
+    _importer = inject.attr(ImportService)
     _settings = inject.attr(ImportSettingsService)
 
     @Property(str, constant=True, final=True)

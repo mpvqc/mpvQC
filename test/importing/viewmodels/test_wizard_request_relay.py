@@ -11,7 +11,7 @@ import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 
 from mpvqc.importing.domain import PendingImport
-from mpvqc.importing.services import ImporterService
+from mpvqc.importing.services import ImportService
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
 from test.importing.pending import record_pending
 from test.importing.plans import PRESENT_ERRORS, plan_with
@@ -31,7 +31,7 @@ def importer_signals(qt_app) -> ImporterSignals:
 
 @pytest.fixture
 def importer_service_mock(importer_signals) -> MagicMock:
-    service = MagicMock(spec_set=ImporterService)
+    service = MagicMock(spec_set=ImportService)
     service.pending_import_ready = importer_signals.pending_import_ready
     return service
 
@@ -39,7 +39,7 @@ def importer_service_mock(importer_signals) -> MagicMock:
 @pytest.fixture(autouse=True)
 def configure_inject(common_bindings_with, importer_service_mock):
     def custom(binder: inject.Binder):
-        binder.bind(ImporterService, importer_service_mock)
+        binder.bind(ImportService, importer_service_mock)
 
     common_bindings_with(custom)
 
