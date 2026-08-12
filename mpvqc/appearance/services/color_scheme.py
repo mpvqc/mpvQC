@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING, Protocol, assert_never
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
-from mpvqc.appearance.domain import AppearancePreference, Dark, FollowSystem, Light, Unknown, resolve_color_scheme
-
+from .preferences import AppearancePreference
+from .schemes import Dark, FollowSystem, Light, Unknown, resolve_color_scheme
 from .settings import AppearanceSettingsService
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtGui import QStyleHints
 
-    from mpvqc.appearance.domain import ColorScheme, SystemColorScheme
+    from .schemes import ColorScheme, SystemColorScheme
 
 
 class StyleHints(Protocol):

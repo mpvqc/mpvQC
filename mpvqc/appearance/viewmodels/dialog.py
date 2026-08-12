@@ -11,23 +11,23 @@ import inject
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance.domain import (
+from mpvqc.appearance.models import MpvqcAccentColorModel
+from mpvqc.appearance.services import (
     COLOR_SCHEME_PREFERENCES,
     AccentColor,
     AppearancePreference,
+    AppearanceSettingsService,
     Dark,
     FollowSystem,
     Light,
+    PaletteCatalogService,
     parse_color_scheme_preference,
 )
-from mpvqc.appearance.models import MpvqcAccentColorModel
-from mpvqc.appearance.services import AppearanceSettingsService, PaletteCatalogService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from mpvqc.appearance.domain import ColorScheme
-    from mpvqc.appearance.services import PaletteFamily
+    from mpvqc.appearance.services import ColorScheme, PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

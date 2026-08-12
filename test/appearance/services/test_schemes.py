@@ -4,10 +4,8 @@
 
 import pytest
 
-from mpvqc.appearance.domain import (
+from mpvqc.appearance.services import (
     COLOR_SCHEME_PREFERENCES,
-    AccentColor,
-    AppearancePreference,
     Dark,
     FollowSystem,
     Light,
@@ -96,20 +94,3 @@ def test_stored_text_naming_no_preference_falls_back_to_the_default(text):
 
 def test_every_preference_is_offered_once_in_dialog_order():
     assert [format_color_scheme_preference(p) for p in COLOR_SCHEME_PREFERENCES] == ["system", "light", "dark"]
-
-
-@pytest.mark.parametrize(
-    ("color_scheme", "expected"),
-    [
-        (LIGHT, AccentColor("#l1")),
-        (DARK, AccentColor("#d1")),
-    ],
-)
-def test_appearance_preference_reads_the_accent_color_preference_of_the_asked_scheme(color_scheme, expected):
-    appearance_preference = AppearancePreference(
-        color_scheme_preference=SYSTEM,
-        light_accent_color_preference=AccentColor("#l1"),
-        dark_accent_color_preference=AccentColor("#d1"),
-    )
-
-    assert appearance_preference.accent_color_preference_for(color_scheme) == expected

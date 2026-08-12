@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """Enforces the import rules of the feature slices: the lattice, the role roots, the floor of
-the remaining domains, and wiring purity. The slice-imports skill carries the same tables for
+the remaining domain, and wiring purity. The slice-imports skill carries the same tables for
 writers; a slice joins the rules by being listed in SLICES."""
 
 from __future__ import annotations
@@ -253,5 +253,5 @@ def test_scan_sees_the_modules_policed_today():
     modules = {_module_name(path)[0] for path in _production_files()}
     edges = [edge for path in _production_files() for edge in _edges(path)]
     assert "mpvqc.importing.services.importer" in modules
-    assert "mpvqc.appearance.domain" in modules
+    assert "mpvqc.importing.domain.plan" in modules
     assert len(edges) >= 60

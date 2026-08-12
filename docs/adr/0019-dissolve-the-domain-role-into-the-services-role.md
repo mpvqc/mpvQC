@@ -37,8 +37,8 @@ A foreign slice's `viewmodels` and `models` stay off-limits to everyone.
 
 ## Transition
 
-Appearance and importing still carry a domain. The checker keeps their rows and the old floor (standard library,
-other domains, the shared vocabulary module) until each slice's own dissolution lands; the domain rows die with the
+Importing still carries a domain. The checker keeps its rows and the old floor (standard library,
+other domains, the shared vocabulary module) until importing's own dissolution lands; the domain rows die with the
 last domain module. Only the slice's own roles still reach its domain: the cross-slice rows follow the new table
 already, so a foreign slice never imports a remaining domain. A new slice never adds one.
 

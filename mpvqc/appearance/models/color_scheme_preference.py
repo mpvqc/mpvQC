@@ -11,22 +11,23 @@ import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance.domain import (
+from mpvqc.appearance.services import (
     COLOR_SCHEME_PREFERENCES,
     AppearancePreference,
+    AppearanceSettingsService,
     Dark,
     FollowSystem,
     Light,
+    PaletteCatalogService,
     format_color_scheme_preference,
 )
-from mpvqc.appearance.services import AppearanceSettingsService, PaletteCatalogService
 
 if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QObject, QPersistentModelIndex
 
-    from mpvqc.appearance.domain import ColorSchemePreference
+    from mpvqc.appearance.services import ColorSchemePreference
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

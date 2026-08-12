@@ -34,11 +34,11 @@ Another slice, and the shared layer (`mpvqc/services/`):
 
 A foreign slice's `viewmodels` and `models` are off-limits to everyone: presentation never crosses a slice.
 
-## The remaining domains
+## The remaining domain
 
 There is no domain role (ADR 0019): a slice's logic lives in its services role, as container-bound classes where
 there is state or Qt lifecycle and as plain module-level functions over frozen dataclasses where it is pure. A new
-slice never adds a `domain`. Appearance and importing still carry one until their own dissolution lands. While one
+slice never adds a `domain`. Importing still carries one until its own dissolution lands. While one
 exists, it imports the standard library, other domains, and `mpvqc.shared`, nothing else; `TYPE_CHECKING` blocks
 count the same as runtime imports. The other roles of its slice may import it as before.
 

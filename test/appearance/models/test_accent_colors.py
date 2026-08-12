@@ -6,9 +6,8 @@ import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance.domain import ColorSchemePreference, Dark, FollowSystem, Light
 from mpvqc.appearance.models import MpvqcAccentColorModel
-from mpvqc.appearance.services import PaletteCatalogService
+from mpvqc.appearance.services import ColorSchemePreference, Dark, FollowSystem, Light, PaletteCatalogService
 from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
