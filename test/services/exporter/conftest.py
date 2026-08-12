@@ -17,6 +17,7 @@ from mpvqc.services import (
     SettingsService,
     StateService,
 )
+from mpvqc.services.exporter import ExportSettingsService
 from mpvqc.services.exporter.context import RenderContext
 
 
@@ -51,6 +52,7 @@ def configure_injections(
     application_paths_service_mock,
     build_info_service_mock,
     comments_service_mock,
+    export_settings_service,
     player_service_mock,
     settings_service,
     state_service_mock,
@@ -59,6 +61,7 @@ def configure_injections(
         binder.bind(ApplicationPathsService, application_paths_service_mock)
         binder.bind(BuildInfoService, build_info_service_mock)
         binder.bind(CommentsService, comments_service_mock)
+        binder.bind(ExportSettingsService, export_settings_service)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
         binder.bind(StateService, state_service_mock)

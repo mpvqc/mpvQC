@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ExportService, SettingsService
+from mpvqc.services import ExportService, ExportSettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcBackupTimerViewModel(QObject):
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ExportSettingsService)
     _exporter = inject.attr(ExportService)
 
     MIN_INTERVAL_MS = 15000

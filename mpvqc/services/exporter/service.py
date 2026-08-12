@@ -18,11 +18,11 @@ from mpvqc.services.build_info import BuildInfoService
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resource import ResourceService
-from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
 from .backup import backup as create_backup
 from .context import RenderContext
+from .settings import ExportSettingsService
 from .writer import ExportError, export_classic, export_custom, save
 
 if TYPE_CHECKING:
@@ -42,7 +42,7 @@ class ExportService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _player = inject.attr(PlayerService)
     _resources = inject.attr(ResourceService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ExportSettingsService)
     _state = inject.attr(StateService)
     _build_info = inject.attr(BuildInfoService)
     _comments = inject.attr(CommentsService)

@@ -217,6 +217,7 @@ files = [
     "mpvqc/services/exporter/documents/classic.py",
     "mpvqc/services/exporter/documents/v1.py",
     "mpvqc/services/exporter/service.py",
+    "mpvqc/services/exporter/settings.py",
     "mpvqc/services/exporter/writer.py",
     "mpvqc/services/file_startup.py",
     "mpvqc/services/font_loader.py",

@@ -16,6 +16,7 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     BuildInfoService,
     CommentsService,
+    ExportSettingsService,
     ExportTemplateCatalogService,
     InternationalizationService,
     PlayerService,
@@ -185,6 +186,11 @@ def settings_file(tmp_path, type_mapper) -> SettingsFileService:
 @pytest.fixture
 def settings_service(settings_file) -> SettingsService:
     return SettingsService(settings_file.qsettings)
+
+
+@pytest.fixture
+def export_settings_service(settings_file) -> ExportSettingsService:
+    return ExportSettingsService(settings_file.qsettings)
 
 
 @pytest.fixture(autouse=True)

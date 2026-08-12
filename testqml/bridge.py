@@ -35,6 +35,7 @@ from mpvqc.services import (
     CommentsService,
     DesktopService,
     ExportService,
+    ExportSettingsService,
     PlayerService,
     SettingsService,
     StateService,
@@ -338,11 +339,11 @@ class MpvqcTestBridge(QObject):
 class MpvqcTestSettings(QObject):
     @Slot(result=bool)
     def backupEnabled(self) -> bool:
-        return inject.instance(SettingsService).backup_enabled
+        return inject.instance(ExportSettingsService).backup_enabled
 
     @Slot(result=int)
     def backupInterval(self) -> int:
-        return inject.instance(SettingsService).backup_interval
+        return inject.instance(ExportSettingsService).backup_interval
 
     @Slot(result=str)
     def colorSchemePreference(self) -> str:
@@ -370,27 +371,27 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=str)
     def nickname(self) -> str:
-        return inject.instance(SettingsService).nickname
+        return inject.instance(ExportSettingsService).nickname
 
     @Slot(result=bool)
     def writeHeaderDate(self) -> bool:
-        return inject.instance(SettingsService).write_header_date
+        return inject.instance(ExportSettingsService).write_header_date
 
     @Slot(result=bool)
     def writeHeaderGenerator(self) -> bool:
-        return inject.instance(SettingsService).write_header_generator
+        return inject.instance(ExportSettingsService).write_header_generator
 
     @Slot(result=bool)
     def writeHeaderNickname(self) -> bool:
-        return inject.instance(SettingsService).write_header_nickname
+        return inject.instance(ExportSettingsService).write_header_nickname
 
     @Slot(result=bool)
     def writeHeaderVideoPath(self) -> bool:
-        return inject.instance(SettingsService).write_header_video_path
+        return inject.instance(ExportSettingsService).write_header_video_path
 
     @Slot(result=bool)
     def writeHeaderSubtitles(self) -> bool:
-        return inject.instance(SettingsService).write_header_subtitles
+        return inject.instance(ExportSettingsService).write_header_subtitles
 
     @Slot(result=int)
     def windowTitleFormat(self) -> int:

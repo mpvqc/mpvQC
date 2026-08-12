@@ -20,11 +20,11 @@ from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
     ExportService,
+    ExportSettingsService,
     MainWindowService,
     PlatformService,
     PlayerService,
     SettingsFileService,
-    SettingsService,
     VersionCheckerService,
     VideoResizeService,
 )
@@ -87,7 +87,7 @@ class ApplicationPathsServiceOverride(ApplicationPathsService):
         super().__init__(base)
 
 
-class SettingsServiceOverride(SettingsService):
+class ExportSettingsServiceOverride(ExportSettingsService):
     def __init__(self, qsettings: QSettings) -> None:
         super().__init__(qsettings)
         # pyrefly: ignore [missing-override-decorator]
@@ -227,8 +227,8 @@ class DesktopServiceOverride(DesktopService):
         self.opened_urls.append(url)
 
 
-def _settings_service_override() -> SettingsServiceOverride:
-    return SettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
+def _export_settings_service_override() -> ExportSettingsServiceOverride:
+    return ExportSettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
 
 
 def _import_settings_service_override() -> ImportSettingsServiceOverride:
@@ -243,10 +243,10 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
+        binder.bind_to_constructor(ExportSettingsService, _export_settings_service_override)
         binder.bind_to_constructor(ImportSettingsService, _import_settings_service_override)
         binder.bind_to_constructor(PlatformService, PlatformServiceOverride)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
-        binder.bind_to_constructor(SettingsService, _settings_service_override)
         binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)
 
