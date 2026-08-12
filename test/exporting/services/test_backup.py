@@ -29,6 +29,26 @@ def test_archive_name(make_snapshot, zip_file, tmp_path):
     assert zip_name.name == "2026-03.zip"
 
 
+def test_entry_name_keeps_the_video_extension(make_snapshot, zip_file, tmp_path):
+    backup(tmp_path, make_snapshot(captured_at=_CAPTURED_AT, video="/path/to/video.mkv"))
+
+    writestr_mock = zip_file.return_value.__enter__.return_value.writestr
+    assert writestr_mock.called
+
+    filename, _ = writestr_mock.call_args.args
+    assert filename == "2026-03-04_05-06-07_video.mkv.json"
+
+
+def test_entry_name_falls_back_to_untitled(make_snapshot, zip_file, tmp_path):
+    backup(tmp_path, make_snapshot(captured_at=_CAPTURED_AT))
+
+    writestr_mock = zip_file.return_value.__enter__.return_value.writestr
+    assert writestr_mock.called
+
+    filename, _ = writestr_mock.call_args.args
+    assert filename == "2026-03-04_05-06-07_untitled.json"
+
+
 def test_writes_rendered_backup(make_snapshot, zip_file, tmp_path):
     snapshot = make_snapshot(
         captured_at=_CAPTURED_AT,
@@ -40,9 +60,7 @@ def test_writes_rendered_backup(make_snapshot, zip_file, tmp_path):
     writestr_mock = zip_file.return_value.__enter__.return_value.writestr
     assert writestr_mock.called
 
-    filename, content = writestr_mock.call_args.args
-    assert filename.startswith("2026-03-04_05-06-07_")
-    assert filename.endswith(".json")
+    _, content = writestr_mock.call_args.args
 
     document = json.loads(content)
     assert document["version"] == 1
