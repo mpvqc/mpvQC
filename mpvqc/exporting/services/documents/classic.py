@@ -10,13 +10,12 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, QDateTime
 
-from mpvqc.services.formatter_time import TimeFormatterService
-from mpvqc.services.type_mapper import TypeMapperService
+from mpvqc.services import TimeFormatterService, TypeMapperService
 
 if TYPE_CHECKING:
     from jinja2 import Environment
 
-    from mpvqc.services.exporter.context import RenderContext
+    from mpvqc.exporting.services.context import RenderContext
 
 
 def render_classic(template: str, context: RenderContext) -> str:

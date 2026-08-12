@@ -13,7 +13,7 @@ from PySide6.QtCore import QCoreApplication, QDateTime
 from .documents import render_backup
 
 if TYPE_CHECKING:
-    from .context import RenderContext
+    from mpvqc.exporting.services.context import RenderContext
 
 
 def backup(backup_dir: Path, context: RenderContext) -> None:

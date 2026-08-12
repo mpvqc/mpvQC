@@ -20,7 +20,7 @@ from mpvqc.appearance.domain import (
 )
 from mpvqc.appearance.services import AppearanceSettingsService
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
-from mpvqc.shared import Comment
+from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.importing.domain import (
     FinishedPlan,
     PendingImport,
@@ -34,12 +34,11 @@ from mpvqc.services import (
     ApplicationPathsService,
     CommentsService,
     DesktopService,
-    ExportService,
-    ExportSettingsService,
     PlayerService,
     SettingsService,
     StateService,
 )
+from mpvqc.shared import Comment
 from mpvqc.viewmodels import (
     MpvqcLabelWidthCalculatorViewModel,
     MpvqcTableUtilityViewModel,
