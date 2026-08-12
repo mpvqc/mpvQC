@@ -5,13 +5,12 @@
 from __future__ import annotations
 
 import logging
-import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 import inject
-from PySide6.QtCore import QCoreApplication, QObject, QStandardPaths, Signal
+from PySide6.QtCore import QObject, QStandardPaths, Signal
 
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services import (
@@ -24,11 +23,13 @@ from mpvqc.services import (
 )
 
 from .backup import backup as create_backup
+from .errors import ExportError
+from .file_names import propose_document_path
 from .render_template import render_template, render_template_file
 from .render_v1 import render_v1
 from .settings import ExportSettingsService
 from .snapshot import ExportSnapshot
-from .writer import ExportError, write
+from .writer import write
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -36,13 +37,6 @@ if TYPE_CHECKING:
     from mpvqc.jobs import JobExecutor, Result
 
 logger = logging.getLogger(__name__)
-
-
-_INVALID_FILENAME_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
-
-
-def _sanitize_filename_component(value: str) -> str:
-    return _INVALID_FILENAME_CHARS.sub("_", value)
 
 
 class ExportService(QObject):
@@ -76,18 +70,13 @@ class ExportService(QObject):
         )
 
     def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:
-        if raw_path := self._player.path:
-            path = Path(raw_path)
-            video_directory = str(path.parent)
-            video_name = path.stem
-        else:
-            video_directory = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
-            video_name = QCoreApplication.translate("FileInteractionDialogs", "untitled")
-
-        nickname = _sanitize_filename_component(self._settings.nickname or "")
-        file_name = f"[QC]_{video_name}_{nickname}.{suffix}" if nickname else f"[QC]_{video_name}.{suffix}"
-
-        return Path(video_directory).joinpath(file_name).absolute()
+        movies = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
+        return propose_document_path(
+            video_path=self._player.path,
+            nickname=self._settings.nickname,
+            suffix=suffix,
+            fallback_directory=Path(movies),
+        )
 
     def save(self, document: Path) -> None:
         snapshot = self._capture()
@@ -125,7 +114,8 @@ class ExportService(QObject):
                     if on_success is not None:
                         on_success()
                 case Err(ExportError(message, lineno)):
-                    self.export_error_occurred.emit(message, lineno)
+                    # Qt signals carry no optional int, so the absent line becomes -1 at this seam
+                    self.export_error_occurred.emit(message, -1 if lineno is None else lineno)
                 case Err(error):
                     logger.error(failure, exc_info=error)
 

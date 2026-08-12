@@ -14,7 +14,7 @@ from PySide6.QtCore import QCoreApplication
 from mpvqc.services import TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND, format_milliseconds_to_subsecond_string, map_path_to_str
 
-from .writer import ExportError
+from .errors import ExportError
 
 if TYPE_CHECKING:
     from jinja2 import Environment

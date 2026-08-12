@@ -4,7 +4,6 @@
 
 import json
 from collections.abc import Callable
-from dataclasses import dataclass
 from pathlib import Path
 from typing import NamedTuple
 from unittest.mock import MagicMock
@@ -50,57 +49,24 @@ def configure_mocks(qt_app, comments_service_mock, export_settings_service, sett
     return _make_mock
 
 
-@dataclass
-class FilePathProposalTestSet:
-    video: Path | None
-    nickname: str | None
-    suffix: str
-    expected: Path
-
-
 HOME = Path.home()
 MOVIES = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation))
 
 
-@pytest.mark.parametrize(
-    "case",
-    [
-        FilePathProposalTestSet(
-            video=HOME / "Documents" / "my-movie.mp4",
-            nickname="some-nickname",
-            suffix="json",
-            expected=HOME / "Documents" / "[QC]_my-movie_some-nickname.json",
-        ),
-        FilePathProposalTestSet(
-            video=HOME / "Documents" / "my-movie.mp4",
-            nickname=None,
-            suffix="txt",
-            expected=HOME / "Documents" / "[QC]_my-movie.txt",
-        ),
-        FilePathProposalTestSet(
-            video=None,
-            nickname="some-nickname",
-            suffix="txt",
-            expected=MOVIES / "[QC]_untitled_some-nickname.txt",
-        ),
-        FilePathProposalTestSet(
-            video=None,
-            nickname=None,
-            suffix="json",
-            expected=MOVIES / "[QC]_untitled.json",
-        ),
-        FilePathProposalTestSet(
-            video=HOME / "Documents" / "my-movie.mp4",
-            nickname="foo/bar\\baz:1",
-            suffix="json",
-            expected=HOME / "Documents" / "[QC]_my-movie_foo_bar_baz_1.json",
-        ),
-    ],
-)
-def test_generates_file_path_proposals(case, configure_mocks, service):
-    configure_mocks(video=case.video, nickname=case.nickname)
-    actual = service.generate_file_path_proposal(case.suffix)
-    assert actual == case.expected
+def test_proposal_sits_beside_the_video(configure_mocks, service):
+    configure_mocks(video=HOME / "Documents" / "my-movie.mp4", nickname="some-nickname")
+
+    actual = service.generate_file_path_proposal("json")
+
+    assert actual == HOME / "Documents" / "[QC]_my-movie_some-nickname.json"
+
+
+def test_proposal_falls_back_to_the_movies_directory(configure_mocks, service):
+    configure_mocks(video=None, nickname=None)
+
+    actual = service.generate_file_path_proposal("txt")
+
+    assert actual == MOVIES / "[QC]_untitled.txt"
 
 
 def test_save_writes_v1_document(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):

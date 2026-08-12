@@ -257,7 +257,7 @@
     <name>FileInteractionDialogs</name>
     <message>
         <source>untitled</source>
-        <extracomment>Will be used in the file name proposal when saving a qc document when there&apos;s no video being loaded</extracomment>
+        <extracomment>Stands in for the video&apos;s name wherever one is expected but no video is loaded: in the file name proposed when saving or exporting, and in a backup&apos;s entry name.</extracomment>
         <translation>ללא_כותרת</translation>
     </message>
     <message>
