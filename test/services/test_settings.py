@@ -31,51 +31,6 @@ def test_default_language(mock_languages, locale_string, expected):
     assert result == expected
 
 
-def test_backup_enabled_default(settings_service):
-    assert settings_service.backup_enabled
-
-
-def test_backup_enabled_set_and_get(settings_service):
-    settings_service.backup_enabled = False
-    assert not settings_service.backup_enabled
-
-    settings_service.backup_enabled = True
-    assert settings_service.backup_enabled
-
-
-def test_backup_enabled_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.backup_enabled_changed)
-
-    settings_service.backup_enabled = False
-    assert spy.count() == 1
-    assert spy.at(0, 0) is False
-
-    settings_service.backup_enabled = False
-    assert spy.count() == 1
-
-
-def test_backup_interval_default(settings_service):
-    assert settings_service.backup_interval == 60
-
-
-def test_backup_interval_set_and_get(settings_service):
-    test_interval = 120
-    settings_service.backup_interval = test_interval
-    assert settings_service.backup_interval == test_interval
-
-
-def test_backup_interval_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.backup_interval_changed)
-
-    test_interval = 90
-    settings_service.backup_interval = test_interval
-    assert spy.count() == 1
-    assert spy.at(0, 0) == test_interval
-
-    settings_service.backup_interval = test_interval
-    assert spy.count() == 1
-
-
 def test_time_display_mode_default(settings_service):
     assert settings_service.time_display_mode == 3
 

@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import ExportService, SettingsService
+from mpvqc.services import ExportService, ExportSettingsService
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 
@@ -23,10 +23,10 @@ def view_model() -> MpvqcBackupTimerViewModel:
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, export_service_mock, settings_service):
+def configure_inject(common_bindings_with, export_service_mock, export_settings_service):
     def custom_bindings(binder: inject.Binder):
         binder.bind(ExportService, export_service_mock)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(ExportSettingsService, export_settings_service)
 
     common_bindings_with(custom_bindings)
 

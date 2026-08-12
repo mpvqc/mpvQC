@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast, overload
 
@@ -24,10 +23,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtCore import SignalInstance
-
-
-def default_username() -> str:
-    return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
 
 
 def default_language(locale: QLocale | None = None) -> str:
@@ -82,22 +77,6 @@ class _Setting[T]:
 
 
 class SettingsService(QObject):
-    backup_enabled_changed = Signal(bool)
-    backup_enabled = _Setting(
-        "Backup/enabled",
-        default=True,
-        type_=bool,
-        signal=lambda s: s.backup_enabled_changed,
-    )
-
-    backup_interval_changed = Signal(int)
-    backup_interval = _Setting(
-        "Backup/interval",
-        default=60,
-        type_=int,
-        signal=lambda s: s.backup_interval_changed,
-    )
-
     language_changed = Signal(str)
     language = _Setting(
         "Common/language",
@@ -112,54 +91,6 @@ class SettingsService(QObject):
         default=default_comment_types,
         type_=list,
         signal=lambda s: s.comment_types_changed,
-    )
-
-    nickname_changed = Signal(str)
-    nickname = _Setting(
-        "Export/nickname",
-        default=default_username,
-        type_=str,
-        signal=lambda s: s.nickname_changed,
-    )
-
-    write_header_date_changed = Signal(bool)
-    write_header_date = _Setting(
-        "Export/writeHeaderDate",
-        default=True,
-        type_=bool,
-        signal=lambda s: s.write_header_date_changed,
-    )
-
-    write_header_generator_changed = Signal(bool)
-    write_header_generator = _Setting(
-        "Export/writeHeaderGenerator",
-        default=True,
-        type_=bool,
-        signal=lambda s: s.write_header_generator_changed,
-    )
-
-    write_header_nickname_changed = Signal(bool)
-    write_header_nickname = _Setting(
-        "Export/writeHeaderNickname",
-        default=False,
-        type_=bool,
-        signal=lambda s: s.write_header_nickname_changed,
-    )
-
-    write_header_video_path_changed = Signal(bool)
-    write_header_video_path = _Setting(
-        "Export/writeHeaderVideoPath",
-        default=True,
-        type_=bool,
-        signal=lambda s: s.write_header_video_path_changed,
-    )
-
-    write_header_subtitles_changed = Signal(bool)
-    write_header_subtitles = _Setting(
-        "Export/writeHeaderSubtitles",
-        default=False,
-        type_=bool,
-        signal=lambda s: s.write_header_subtitles_changed,
     )
 
     statusbar_percentage_changed = Signal(bool)

@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, DesktopService, SettingsService, TypeMapperService
+from mpvqc.services import ApplicationPathsService, DesktopService, ExportSettingsService, TypeMapperService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,7 +16,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcBackupDialogViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _paths = inject.attr(ApplicationPathsService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ExportSettingsService)
     _type_mapper = inject.attr(TypeMapperService)
 
     temporaryBackupEnabledChanged = Signal(bool)

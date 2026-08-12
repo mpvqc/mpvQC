@@ -22,7 +22,7 @@ def service(qt_app, manual_executor) -> ExportService:
 
 
 @pytest.fixture
-def configure_mocks(qt_app, comments_service_mock, settings_service, player_service_mock):
+def configure_mocks(qt_app, comments_service_mock, export_settings_service, settings_service, player_service_mock):
     def _make_mock(
         video: Path | str | None = None,
         nickname: str | None = None,
@@ -36,12 +36,12 @@ def configure_mocks(qt_app, comments_service_mock, settings_service, player_serv
     ):
         comments_service_mock.comments.return_value = tuple(comments or ())
 
-        settings_service.nickname = nickname
-        settings_service.write_header_date = write_header_date
-        settings_service.write_header_generator = write_header_generator
-        settings_service.write_header_nickname = write_header_nickname
-        settings_service.write_header_video_path = write_header_video_path
-        settings_service.write_header_subtitles = write_header_subtitles
+        export_settings_service.nickname = nickname
+        export_settings_service.write_header_date = write_header_date
+        export_settings_service.write_header_generator = write_header_generator
+        export_settings_service.write_header_nickname = write_header_nickname
+        export_settings_service.write_header_video_path = write_header_video_path
+        export_settings_service.write_header_subtitles = write_header_subtitles
         settings_service.language = "en-US"
 
         player_service_mock.path = str(video) if video else None
