@@ -13,11 +13,10 @@ from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, Sig
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
-from mpvqc.exporting.services import ExportSettingsService
+from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.services import (
     BuildInfoService,
     CommentsService,
-    ExportTemplateCatalogService,
     InternationalizationService,
     PlayerService,
     ResourceService,

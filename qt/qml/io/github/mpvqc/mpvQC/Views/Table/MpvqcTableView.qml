@@ -62,7 +62,7 @@ Item {
     }
 
     Timer {
-        readonly property MpvqcBackupTimerViewModel viewModel: MpvqcBackupTimerViewModel {}
+        readonly property MpvqcExportBackupTimerViewModel viewModel: MpvqcExportBackupTimerViewModel {}
 
         repeat: true
         interval: viewModel.backupInterval

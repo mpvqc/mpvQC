@@ -3,6 +3,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .dependencies import MpvqcDependencyModel as MpvqcDependencyModel
-from .export_templates import MpvqcExportTemplateModel as MpvqcExportTemplateModel
 from .languages import MpvqcLanguageModel as MpvqcLanguageModel
 from .shortcuts import MpvqcShortcutsModel as MpvqcShortcutsModel

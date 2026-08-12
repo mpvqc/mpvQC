@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.models import MpvqcExportTemplateModel
+from mpvqc.exporting.models import MpvqcExportTemplateModel
 from mpvqc.services import ApplicationPathsService
 
 

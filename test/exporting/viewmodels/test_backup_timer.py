@@ -8,7 +8,7 @@ import inject
 import pytest
 
 from mpvqc.exporting.services import ExportService, ExportSettingsService
-from mpvqc.viewmodels import MpvqcBackupTimerViewModel
+from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 
 
 @pytest.fixture
@@ -17,9 +17,9 @@ def export_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def view_model() -> MpvqcBackupTimerViewModel:
+def view_model() -> MpvqcExportBackupTimerViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcBackupTimerViewModel()
+    return MpvqcExportBackupTimerViewModel()
 
 
 @pytest.fixture(autouse=True)
@@ -31,6 +31,6 @@ def configure_inject(common_bindings_with, export_service_mock, export_settings_
     common_bindings_with(custom_bindings)
 
 
-def test_backup_backend(qt_app, view_model, export_service_mock):
+def test_backup(qt_app, view_model, export_service_mock):
     view_model.backup()
     assert export_service_mock.backup.called

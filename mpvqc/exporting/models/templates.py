@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import Property, QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ExportTemplateCatalogService
+from mpvqc.exporting.services import ExportTemplateCatalogService
 
 if TYPE_CHECKING:
     from typing import Any
