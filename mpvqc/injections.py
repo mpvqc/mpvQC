@@ -24,6 +24,7 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.ExportService, s.ExportService)
+    binder.bind_to_constructor(s.ExportTemplateCatalogService, s.ExportTemplateCatalogService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)
     binder.bind_to_constructor(s.InternationalizationService, s.InternationalizationService)
