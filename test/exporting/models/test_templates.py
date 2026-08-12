@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
+from PySide6.QtCore import QUrl
 
 from mpvqc.exporting.models import MpvqcExportTemplateModel
 from mpvqc.services import ApplicationPathsService
@@ -45,21 +46,18 @@ def test_templates(make_model):
     assert model.rowCount() == 2
 
 
-def test_templates_sorted(make_model):
-    model = make_model(
-        mocked_paths=(
-            Path("sub-path/xy"),
-            Path("sub-path/z"),
-            Path("sub-path/a"),
-            Path("sub-path/b"),
-        )
-    )
+def test_exposes_the_name(make_model):
+    model = make_model(mocked_paths=(Path.home() / "my-template.jinja",))
 
-    expected = ["a", "b", "xy", "z"]
-    actual = [
-        model.data(model.index(0), MpvqcExportTemplateModel.NameRole),
-        model.data(model.index(1), MpvqcExportTemplateModel.NameRole),
-        model.data(model.index(2), MpvqcExportTemplateModel.NameRole),
-        model.data(model.index(3), MpvqcExportTemplateModel.NameRole),
-    ]
-    assert actual == expected
+    actual = model.data(model.index(0), MpvqcExportTemplateModel.NameRole)
+
+    assert actual == "my-template"
+
+
+def test_exposes_the_path_as_url(make_model):
+    template = Path.home() / "sub" / ".." / "my-template.jinja"
+    model = make_model(mocked_paths=(template,))
+
+    actual = model.data(model.index(0), MpvqcExportTemplateModel.PathRole)
+
+    assert actual == QUrl.fromLocalFile(f"{template.resolve()}")

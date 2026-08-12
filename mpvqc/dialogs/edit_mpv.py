@@ -6,7 +6,8 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, DesktopService, ResourceService, TypeMapperService
+from mpvqc.services import ApplicationPathsService, DesktopService, ResourceService
+from mpvqc.shared import map_path_to_url
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,11 +18,10 @@ class MpvqcEditMpvDialogViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _paths = inject.attr(ApplicationPathsService)
     _resources = inject.attr(ResourceService)
-    _type_mapper = inject.attr(TypeMapperService)
 
     @Property(QUrl, constant=True, final=True)
     def mpvFileUrl(self) -> QUrl:
-        return self._type_mapper.map_path_to_url(self._paths.file_mpv_conf)
+        return map_path_to_url(self._paths.file_mpv_conf)
 
     @Property(str, constant=True, final=True)
     def defaultMpvConfiguration(self) -> str:

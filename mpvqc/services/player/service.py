@@ -15,7 +15,7 @@ from PySide6.QtCore import QObject, Signal, Slot
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
 from mpvqc.services.main_window import MainWindowService
-from mpvqc.services.type_mapper import TypeMapperService
+from mpvqc.shared import map_path_to_str
 
 from .coordinators import SubtitleLoadCoordinator
 from .events import EventMarshal
@@ -36,7 +36,6 @@ class PlayerService(QObject):
     _build_info = inject.attr(BuildInfoService)
     _main_window = inject.attr(MainWindowService)
     _paths = inject.attr(ApplicationPathsService)
-    _type_mapper = inject.attr(TypeMapperService)
 
     video_loaded_changed = Signal(bool)
     path_changed = Signal(str)
@@ -110,8 +109,8 @@ class PlayerService(QObject):
             "input_cursor": "no",
             "input_default_bindings": "no",
             "config": "yes",
-            "config_dir": self._type_mapper.map_path_to_str(self._paths.dir_config),
-            "screenshot_directory": self._type_mapper.map_path_to_str(self._paths.dir_screenshots),
+            "config_dir": map_path_to_str(self._paths.dir_config),
+            "screenshot_directory": map_path_to_str(self._paths.dir_screenshots),
             "audio_client_name": self._build_info.name,
             "ytdl": "yes",
         }
@@ -248,7 +247,7 @@ class PlayerService(QObject):
             return
 
         self._subtitle_coordinator.queue_for_next_load(subtitles)
-        path = self._type_mapper.map_path_to_str(video)
+        path = map_path_to_str(video)
         self._mpv_player.command("loadfile", path, "replace")
         self.play()
 
@@ -258,7 +257,7 @@ class PlayerService(QObject):
 
     def _load_subtitles_now(self, subtitles: tuple[Path, ...]) -> None:
         for subtitle in dict.fromkeys(subtitles):
-            path = self._type_mapper.map_path_to_str(subtitle)
+            path = map_path_to_str(subtitle)
             self._mpv_player.command("sub-add", path, "select")
 
     def play(self) -> None:

@@ -24,9 +24,9 @@ from mpvqc.services import (
     SettingsService,
     StateService,
     TimeFormatterService,
-    TypeMapperService,
 )
 from mpvqc.services.player.state import OBSERVED_PROPERTIES, RawPropertyValue, make_observer
+from mpvqc.shared import map_path_to_str
 
 
 class FakePlayerService(PlayerService):
@@ -149,11 +149,6 @@ def manual_executor() -> ManualJobExecutor:
     return ManualJobExecutor()
 
 
-@pytest.fixture(scope="session")
-def type_mapper() -> TypeMapperService:
-    return TypeMapperService()
-
-
 @pytest.fixture
 def state_service() -> StateService:
     return StateService()
@@ -177,9 +172,9 @@ def configure_state(state_service) -> Callable:
 
 
 @pytest.fixture
-def settings_file(tmp_path, type_mapper) -> SettingsFileService:
+def settings_file(tmp_path) -> SettingsFileService:
     file = tmp_path / "test_settings.ini"
-    return SettingsFileService(ini_file=type_mapper.map_path_to_str(file))
+    return SettingsFileService(ini_file=map_path_to_str(file))
 
 
 @pytest.fixture
@@ -236,7 +231,6 @@ def common_bindings_with():
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)
             binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)
-            binder.bind_to_constructor(TypeMapperService, TypeMapperService)
 
             # Custom services
             for custom_config in custom_configs:

@@ -41,7 +41,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.StateService, s.StateService)
     binder.bind_to_constructor(s.TimeFormatPolicyService, s.TimeFormatPolicyService)
     binder.bind_to_constructor(s.TimeFormatterService, s.TimeFormatterService)
-    binder.bind_to_constructor(s.TypeMapperService, s.TypeMapperService)
     binder.bind_to_constructor(s.VersionCheckerService, s.VersionCheckerService)
     binder.bind_to_constructor(s.VideoResizeService, s.VideoResizeService)
 
