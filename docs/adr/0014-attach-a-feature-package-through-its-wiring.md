@@ -31,7 +31,7 @@ arrive the same way, with someone hoisting an import to the top and nothing comp
 ## Why the root exports it
 
 ADR 0009 said the package root exports nothing. It now says no vocabulary, which is what the rule always meant.
-Re-exporting `ImporterService` from the root would give the class two names and let a call site drop the role it
+Re-exporting a slice's import service from the root would give the class two names and let a call site drop the role it
 belongs to, so each role directory does its own re-exporting and the root stays out of it. Vocabulary still travels by
 role: a call site importing a service or a view model names the role that owns it.
 

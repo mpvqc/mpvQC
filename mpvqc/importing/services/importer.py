@@ -44,7 +44,7 @@ class Scanning(Protocol):
     ) -> ScanResult: ...
 
 
-class ImporterService(QObject):
+class ImportService(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ImportSettingsService)
     _state = inject.attr(StateService)

@@ -21,7 +21,7 @@ from mpvqc.importing.domain import (
     VideoLoad,
     VideoSkip,
 )
-from mpvqc.importing.services import ImporterService, ImportSettingsService
+from mpvqc.importing.services import ImportService, ImportSettingsService
 from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
 from mpvqc.shared import Comment
 from test.importing.plans import (
@@ -93,9 +93,9 @@ def configure_inject(
 
 
 @pytest.fixture
-def make_importer(manual_executor: ManualJobExecutor) -> Callable[[ScanResult], ImporterService]:
-    def _make(scanned: ScanResult) -> ImporterService:
-        return ImporterService(manual_executor, scan=lambda *_args: scanned)
+def make_importer(manual_executor: ManualJobExecutor) -> Callable[[ScanResult], ImportService]:
+    def _make(scanned: ScanResult) -> ImportService:
+        return ImportService(manual_executor, scan=lambda *_args: scanned)
 
     return _make
 
@@ -340,7 +340,7 @@ def test_open_announces_a_pending_import_for_a_scan_needing_decisions(
 
 
 class AnnouncedImport(NamedTuple):
-    service: ImporterService
+    service: ImportService
     pending: PendingImport
 
 
@@ -348,7 +348,7 @@ class AnnouncedImport(NamedTuple):
 def pending_importer(
     qt_app,
     manual_executor: ManualJobExecutor,
-    make_importer: Callable[[ScanResult], ImporterService],
+    make_importer: Callable[[ScanResult], ImportService],
     make_spy,
 ) -> AnnouncedImport:
     service = make_importer(VIDEO_CHOICE_SCAN)
@@ -461,7 +461,7 @@ def test_open_recovers_when_the_scan_raises(
             raise RuntimeError(msg)
         return VIDEO_CHOICE_SCAN
 
-    service = ImporterService(manual_executor, scan=explode_once)
+    service = ImportService(manual_executor, scan=explode_once)
     spy = make_spy(service.pending_import_ready)
 
     service.open((), (), ())

@@ -13,13 +13,13 @@ if TYPE_CHECKING:
 def bindings(binder: inject.Binder) -> None:
     import inject
 
-    from mpvqc.importing.services import ImporterService, ImportSettingsService
+    from mpvqc.importing.services import ImportService, ImportSettingsService
     from mpvqc.services import SettingsFileService
 
     def import_settings_service() -> ImportSettingsService:
         return ImportSettingsService(inject.instance(SettingsFileService).qsettings)
 
-    binder.bind_to_constructor(ImporterService, ImporterService)
+    binder.bind_to_constructor(ImportService, ImportService)
     binder.bind_to_constructor(ImportSettingsService, import_settings_service)
 
 

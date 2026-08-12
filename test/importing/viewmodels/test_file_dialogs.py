@@ -9,13 +9,13 @@ import pytest
 from PySide6.QtCore import QUrl
 
 from mpvqc.importing.domain import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS
-from mpvqc.importing.services import ImporterService, ImportSettingsService
+from mpvqc.importing.services import ImportService, ImportSettingsService
 from mpvqc.importing.viewmodels import MpvqcImportFileDialogViewModel
 
 
 @pytest.fixture
 def importer_service_mock() -> MagicMock:
-    return MagicMock(spec_set=ImporterService)
+    return MagicMock(spec_set=ImportService)
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ def import_settings_service_mock() -> MagicMock:
 @pytest.fixture(autouse=True)
 def configure_inject(common_bindings_with, importer_service_mock, import_settings_service_mock):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(ImporterService, importer_service_mock)
+        binder.bind(ImportService, importer_service_mock)
         binder.bind(ImportSettingsService, import_settings_service_mock)
 
     common_bindings_with(custom_bindings)
