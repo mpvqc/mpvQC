@@ -9,6 +9,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.exporting.services import ExportSettingsService, RenderContext
 from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
@@ -17,8 +18,6 @@ from mpvqc.services import (
     SettingsService,
     StateService,
 )
-from mpvqc.services.exporter import ExportSettingsService
-from mpvqc.services.exporter.context import RenderContext
 
 
 @pytest.fixture

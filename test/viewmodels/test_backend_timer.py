@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import ExportService, ExportSettingsService
+from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 

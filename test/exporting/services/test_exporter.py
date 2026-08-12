@@ -12,8 +12,8 @@ from unittest.mock import MagicMock
 import pytest
 from PySide6.QtCore import QStandardPaths
 
+from mpvqc.exporting.services import ExportService
 from mpvqc.shared import Comment
-from mpvqc.services import ExportService
 
 
 @pytest.fixture
@@ -312,19 +312,19 @@ class UnexpectedErrorCase(NamedTuple):
     [
         UnexpectedErrorCase(
             name="save",
-            render_target="mpvqc.services.exporter.writer.render_v1",
+            render_target="mpvqc.exporting.services.writer.render_v1",
             log_message="Failed to save document",
             invoke=lambda service, tmp_path: service.save(tmp_path / "out.json"),
         ),
         UnexpectedErrorCase(
             name="export_classic",
-            render_target="mpvqc.services.exporter.writer.render_classic",
+            render_target="mpvqc.exporting.services.writer.render_classic",
             log_message="Failed to export document",
             invoke=lambda service, tmp_path: service.export_classic(tmp_path / "out.txt"),
         ),
         UnexpectedErrorCase(
             name="export_custom",
-            render_target="mpvqc.services.exporter.writer.render_classic",
+            render_target="mpvqc.exporting.services.writer.render_classic",
             log_message="Failed to export document",
             invoke=lambda service, tmp_path: service.export_custom(tmp_path / "out.txt", _make_template(tmp_path)),
         ),

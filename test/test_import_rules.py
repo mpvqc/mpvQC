@@ -16,7 +16,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 
-SLICES = ("appearance", "importing")
+SLICES = ("appearance", "exporting", "importing")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
 HELPERS = ("jobs",)
 SHARED_ROLES = {"services": "services", "shared": "shared"}

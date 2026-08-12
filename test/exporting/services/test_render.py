@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from mpvqc.shared import Comment
+from mpvqc.exporting.services import render_classic
 from mpvqc.services import ResourceService
-from mpvqc.services.exporter.documents.classic import render_classic
+from mpvqc.shared import Comment
 
 
 @pytest.fixture

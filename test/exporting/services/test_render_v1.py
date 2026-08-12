@@ -11,8 +11,8 @@ from typing import NamedTuple
 
 import pytest
 
+from mpvqc.exporting.services import render_v1
 from mpvqc.shared import Comment
-from mpvqc.services.exporter.documents.v1 import render_v1
 
 
 def test_renders_minimal_document(make_context):

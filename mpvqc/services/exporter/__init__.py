@@ -1,6 +1,0 @@
-# SPDX-FileCopyrightText: mpvQC developers
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-
-from .service import ExportService as ExportService
-from .settings import ExportSettingsService as ExportSettingsService

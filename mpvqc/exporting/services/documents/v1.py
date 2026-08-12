@@ -10,12 +10,11 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, QDateTime, Qt
 
-from mpvqc.services.formatter_time import TimeFormatterService
-from mpvqc.services.type_mapper import TypeMapperService
+from mpvqc.services import TimeFormatterService, TypeMapperService
 
 if TYPE_CHECKING:
+    from mpvqc.exporting.services.context import RenderContext
     from mpvqc.shared import Comment
-    from mpvqc.services.exporter.context import RenderContext
 
 _SCHEMA_URL = "https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json"
 

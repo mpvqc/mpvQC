@@ -9,13 +9,13 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PySide6.QtCore import QDateTime
 
+from mpvqc.exporting.services import backup
 from mpvqc.shared import Comment
-from mpvqc.services.exporter.backup import backup
 
 
 @pytest.fixture
 def zip_file():
-    with patch("mpvqc.services.exporter.backup.ZipFile", return_value=MagicMock()) as mock:
+    with patch("mpvqc.exporting.services.backup.ZipFile", return_value=MagicMock()) as mock:
         yield mock
 
 

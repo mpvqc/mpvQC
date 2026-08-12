@@ -12,12 +12,12 @@ from typing import NamedTuple
 import pytest
 from jsonschema import Draft202012Validator, ValidationError
 
-from mpvqc.shared import Comment
+from mpvqc.exporting.services import render_backup, render_v1
 from mpvqc.importing.services import read_documents
-from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
+from mpvqc.shared import Comment
 
-SCHEMA = Path(__file__).parents[3] / "docs" / "document-format" / "v1.json"
-README = Path(__file__).parents[3] / "docs" / "document-format" / "README.md"
+SCHEMA = Path(__file__).parents[2] / "docs" / "document-format" / "v1.json"
+README = Path(__file__).parents[2] / "docs" / "document-format" / "README.md"
 
 
 @pytest.fixture(scope="module")

@@ -5,7 +5,8 @@
 import inject
 import pytest
 
-from mpvqc.services import ExportService, QuitService
+from mpvqc.exporting.services import ExportService
+from mpvqc.services import QuitService
 from mpvqc.viewmodels import MpvqcMessageBoxRequestRelayViewModel
 
 

@@ -8,7 +8,7 @@ from textwrap import dedent
 import pytest
 from PySide6.QtCore import QSettings
 
-from mpvqc.services.exporter import ExportSettingsService
+from mpvqc.exporting.services import ExportSettingsService
 
 
 def ini_section(tmp_path, name) -> str:

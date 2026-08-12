@@ -14,9 +14,8 @@ from .documents import render_classic, render_v1
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mpvqc.services.resource import ResourceService
-
-    from .context import RenderContext
+    from mpvqc.exporting.services.context import RenderContext
+    from mpvqc.services import ResourceService
 
 logger = logging.getLogger(__name__)
 

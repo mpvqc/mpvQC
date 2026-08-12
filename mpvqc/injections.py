@@ -6,6 +6,7 @@ import inject
 
 import mpvqc.services as s
 from mpvqc.appearance import bindings as appearance_bindings
+from mpvqc.exporting import bindings as exporting_bindings
 from mpvqc.importing import bindings as importing_bindings
 
 
@@ -13,12 +14,9 @@ def _settings_service() -> s.SettingsService:
     return s.SettingsService(inject.instance(s.SettingsFileService).qsettings)
 
 
-def _export_settings_service() -> s.ExportSettingsService:
-    return s.ExportSettingsService(inject.instance(s.SettingsFileService).qsettings)
-
-
 def bindings(binder: inject.Binder) -> None:
     appearance_bindings(binder)
+    exporting_bindings(binder)
     importing_bindings(binder)
 
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
@@ -27,8 +25,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.CommentTypesPolicyService, s.CommentTypesPolicyService)
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
-    binder.bind_to_constructor(s.ExportService, s.ExportService)
-    binder.bind_to_constructor(s.ExportSettingsService, _export_settings_service)
     binder.bind_to_constructor(s.ExportTemplateCatalogService, s.ExportTemplateCatalogService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)

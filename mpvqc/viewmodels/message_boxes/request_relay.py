@@ -6,7 +6,8 @@ import inject
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ExportService, QuitService
+from mpvqc.exporting.services import ExportService
+from mpvqc.services import QuitService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
