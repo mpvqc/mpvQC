@@ -40,6 +40,8 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 
 - **Backup**: a v1 document the app writes on its own, so a crash loses little work. Not an export: the user names no
   file and sees no result.
+- **Export snapshot**: everything writing a document needs, taken the moment it is asked for and not changed after.
+  Every document is written from one, so edits made while it is being written cannot reach it.
 - **Export template**: a file that renders the document for export. One ships for the classic document; a user may
   supply their own for a format the app does not ship.
 

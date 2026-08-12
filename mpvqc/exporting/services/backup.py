@@ -8,23 +8,20 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from PySide6.QtCore import QCoreApplication, QDateTime
+from PySide6.QtCore import QCoreApplication
 
-from .documents import render_backup
+from .render_v1 import render_backup
 
 if TYPE_CHECKING:
-    from mpvqc.exporting.services.context import RenderContext
+    from .snapshot import ExportSnapshot
 
 
-def backup(backup_dir: Path, context: RenderContext) -> None:
-    now = QDateTime.currentDateTime()
-
-    zip_name = f"{now.toString('yyyy-MM')}.zip"
-    zip_path = backup_dir / zip_name
-    file_name = f"{now.toString('yyyy-MM-dd_HH-mm-ss')}_{_video_name(context.video_path)}.json"
+def backup(backup_dir: Path, snapshot: ExportSnapshot) -> None:
+    zip_path = backup_dir / f"{snapshot.captured_at:%Y-%m}.zip"
+    file_name = f"{snapshot.captured_at:%Y-%m-%d_%H-%M-%S}_{_video_name(snapshot.video_path)}.json"
 
     with ZipFile(zip_path, mode="a" if zip_path.exists() else "w", compression=ZIP_DEFLATED) as file:
-        file.writestr(file_name, render_backup(context))
+        file.writestr(file_name, render_backup(snapshot))
 
 
 def _video_name(video_path: str | None) -> str:

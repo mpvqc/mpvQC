@@ -18,6 +18,7 @@ from mpvqc.services.comments import (
     SelectionState,
     ViewAction,
 )
+from mpvqc.shared import MILLISECONDS_PER_SECOND
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -93,7 +94,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def jumpToTime(self, time: int) -> None:
-        self._player.jump_to(time / TimeFormatterService.MILLISECONDS_PER_SECOND)
+        self._player.jump_to(time / MILLISECONDS_PER_SECOND)
 
     @Slot()
     def pauseVideo(self) -> None:
@@ -110,7 +111,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(str)
     def addRow(self, comment_type: str) -> None:
-        time = round(self._player.exact_time_pos * TimeFormatterService.MILLISECONDS_PER_SECOND)
+        time = round(self._player.exact_time_pos * MILLISECONDS_PER_SECOND)
         self._comments.add_row(time, comment_type)
 
     @Slot(int)

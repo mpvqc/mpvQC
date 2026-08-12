@@ -3,13 +3,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
 import pytest
 
-from mpvqc.exporting.services import ExportSettingsService, RenderContext
+from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
 from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
@@ -74,8 +75,9 @@ def wait_for_jobs(manual_executor) -> Callable[[], None]:
 
 
 @pytest.fixture
-def make_context():
-    def _make_context(
+def make_snapshot():
+    def _make_snapshot(
+        captured_at: datetime = datetime(2026, 1, 1, 0, 0, 0, tzinfo=UTC),
         video: Path | str | None = None,
         nickname: str | None = None,
         generator: str = "mpvQC 0.0.0",
@@ -86,8 +88,9 @@ def make_context():
         write_header_nickname: bool = False,
         write_header_video_path: bool = False,
         write_header_subtitles: bool = False,
-    ) -> RenderContext:
-        return RenderContext(
+    ) -> ExportSnapshot:
+        return ExportSnapshot(
+            captured_at=captured_at,
             write_header_date=write_header_date,
             write_header_generator=write_header_generator,
             write_header_nickname=write_header_nickname,
@@ -100,4 +103,4 @@ def make_context():
             comments=tuple(comments or ()),
         )
 
-    return _make_context
+    return _make_snapshot

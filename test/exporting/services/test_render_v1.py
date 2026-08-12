@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import json
-import re
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 from typing import NamedTuple
 
@@ -14,9 +14,11 @@ import pytest
 from mpvqc.exporting.services import render_v1
 from mpvqc.shared import Comment
 
+_CAPTURED_AT = datetime(2026, 1, 1, 0, 0, 0, tzinfo=UTC)
 
-def test_renders_minimal_document(make_context):
-    content = render_v1(make_context())
+
+def test_renders_minimal_document(make_snapshot):
+    content = render_v1(make_snapshot())
 
     assert content.endswith("\n")
     assert json.loads(content) == {
@@ -26,8 +28,9 @@ def test_renders_minimal_document(make_context):
     }
 
 
-def test_renders_full_document(make_context):
-    context = make_context(
+def test_renders_full_document(make_snapshot):
+    snapshot = make_snapshot(
+        captured_at=_CAPTURED_AT,
         generator="mpvQC 0.9.0",
         video=Path.home() / "video.mkv",
         nickname="ಠ_ಠ",
@@ -43,13 +46,12 @@ def test_renders_full_document(make_context):
         write_header_subtitles=True,
     )
 
-    document = json.loads(render_v1(context))
+    document = json.loads(render_v1(snapshot))
 
-    created_at = document.pop("created_at")
-    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", created_at)
     assert document == {
         "$schema": "https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json",
         "version": 1,
+        "created_at": "2026-01-01T00:00:00Z",
         "generator": "mpvQC 0.9.0",
         "author": "ಠ_ಠ",
         "video": str((Path.home() / "video.mkv").resolve()),
@@ -61,8 +63,8 @@ def test_renders_full_document(make_context):
     }
 
 
-def test_renders_keys_in_specification_order(make_context):
-    context = make_context(
+def test_renders_keys_in_specification_order(make_snapshot):
+    snapshot = make_snapshot(
         video="/path/to/video.mkv",
         nickname="lorem",
         subtitles=["/path/to/video.de.ass"],
@@ -73,7 +75,7 @@ def test_renders_keys_in_specification_order(make_context):
         write_header_subtitles=True,
     )
 
-    document = json.loads(render_v1(context))
+    document = json.loads(render_v1(snapshot))
 
     assert list(document) == [
         "$schema",
@@ -101,7 +103,15 @@ OMITTED_WHEN_EMPTY = [
 
 
 @pytest.mark.parametrize("case", OMITTED_WHEN_EMPTY, ids=lambda case: case.name)
-def test_omits_field_when_toggled_on_but_empty(make_context, case):
-    document = json.loads(render_v1(make_context(**case.settings)))
+def test_omits_field_when_toggled_on_but_empty(make_snapshot, case):
+    document = json.loads(render_v1(make_snapshot(**case.settings)))
 
     assert case.absent_field not in document
+
+
+def test_renders_created_at_in_utc(make_snapshot):
+    captured_at = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone(timedelta(hours=2)))
+
+    document = json.loads(render_v1(make_snapshot(write_header_date=True, captured_at=captured_at)))
+
+    assert document["created_at"] == "2026-01-01T10:00:00Z"
