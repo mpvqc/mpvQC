@@ -4,14 +4,13 @@
 
 from __future__ import annotations
 
-import operator
 from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import Property, QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, TypeMapperService
+from mpvqc.services import ExportTemplateCatalogService
 
 if TYPE_CHECKING:
     from typing import Any
@@ -25,26 +24,14 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcExportTemplateModel(QAbstractListModel):
-    _app_paths = inject.attr(ApplicationPathsService)
-    _type_mapper = inject.attr(TypeMapperService)
+    _export_templates = inject.attr(ExportTemplateCatalogService)
 
     NameRole = Qt.ItemDataRole.UserRole + 1
     PathRole = Qt.ItemDataRole.UserRole + 2
 
     def __init__(self) -> None:
         super().__init__()
-        self._items = []
-
-        for template in self._app_paths.files_export_templates:
-            url = self._type_mapper.map_path_to_url(template)
-            self._items.append(
-                {
-                    "name": template.stem,
-                    "path": url,
-                }
-            )
-
-        self._items.sort(key=operator.itemgetter("name"))
+        self._items = self._export_templates.list_templates()
 
     @Property(int, constant=True, final=True)
     def count(self) -> int:
@@ -57,7 +44,11 @@ class MpvqcExportTemplateModel(QAbstractListModel):
         return len(self._items)
 
     @override
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
+    def data(
+        self,
+        index: QModelIndex | QPersistentModelIndex,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
 
@@ -65,9 +56,9 @@ class MpvqcExportTemplateModel(QAbstractListModel):
 
         match role:
             case self.NameRole:
-                return item["name"]
+                return item.name
             case self.PathRole:
-                return item["path"]
+                return item.url
 
         return None
 

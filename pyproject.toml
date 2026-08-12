@@ -209,6 +209,7 @@ files = [
     "mpvqc/services/comments/store.py",
     "mpvqc/services/comments/view_action.py",
     "mpvqc/services/desktop.py",
+    "mpvqc/services/export_template_catalog.py",
     "mpvqc/services/exporter/__init__.py",
     "mpvqc/services/exporter/backup.py",
     "mpvqc/services/exporter/context.py",

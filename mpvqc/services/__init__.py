@@ -8,6 +8,7 @@ from .comment_type_validator import CommentTypeValidatorService as CommentTypeVa
 from .comment_types_policy import CommentTypesPolicyService as CommentTypesPolicyService
 from .comments import CommentsService as CommentsService
 from .desktop import DesktopService as DesktopService
+from .export_template_catalog import ExportTemplateCatalogService as ExportTemplateCatalogService
 from .exporter import ExportService as ExportService
 from .file_startup import FileStartupService as FileStartupService
 from .font_loader import FontLoaderService as FontLoaderService

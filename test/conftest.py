@@ -16,6 +16,7 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     BuildInfoService,
     CommentsService,
+    ExportTemplateCatalogService,
     InternationalizationService,
     PlayerService,
     ResourceService,
@@ -225,6 +226,7 @@ def common_bindings_with():
             # Common & shared services
             binder.bind_to_constructor(BuildInfoService, BuildInfoService)
             binder.bind_to_constructor(CommentsService, CommentsService)
+            binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)
