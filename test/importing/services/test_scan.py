@@ -90,6 +90,79 @@ def test_video_sources_merge_when_spelling_differs(tmp_path: Path) -> None:
     assert result.videos == (VideoSource(path=real.resolve(), explicitly_provided=True, found_in_document=True),)
 
 
+def test_handed_in_video_is_kept_when_it_does_not_exist(tmp_path: Path) -> None:
+    missing = tmp_path / "gone.mp4"
+
+    result = scan(documents=(), videos=(missing,), subtitles=())
+
+    assert result.videos == (VideoSource(path=missing.resolve(), explicitly_provided=True),)
+
+
+def test_video_from_every_origin_is_one_record_with_every_flag(tmp_path: Path) -> None:
+    video = tmp_path / "movie.mp4"
+    video.touch()
+    subtitle = write_subtitle_referencing(tmp_path, "a.ass", video)
+    document = write_document(tmp_path, "a.qc", f"[FILE]\npath: {video}\n\n[DATA]\n")
+
+    result = scan(documents=(document,), videos=(video,), subtitles=(subtitle,))
+
+    assert result.videos == (
+        VideoSource(path=video.resolve(), explicitly_provided=True, found_in_document=True, found_in_subtitle=True),
+    )
+
+
+def test_handed_in_video_merges_with_a_subtitle_reference_spelled_differently(tmp_path: Path) -> None:
+    real = tmp_path / "movie.mkv"
+    real.touch()
+    (tmp_path / "sub").mkdir()
+    alias = tmp_path / "sub" / ".." / "movie.mkv"
+    subtitle = write_subtitle_referencing(tmp_path, "a.ass", real)
+
+    result = scan(documents=(), videos=(alias,), subtitles=(subtitle,))
+
+    assert result.videos == (VideoSource(path=real.resolve(), explicitly_provided=True, found_in_subtitle=True),)
+
+
+def test_duplicate_videos_within_one_origin_collapse(tmp_path: Path) -> None:
+    video = tmp_path / "movie.mp4"
+
+    result = scan(documents=(), videos=(video, video), subtitles=())
+
+    assert result.videos == (VideoSource(path=video.resolve(), explicitly_provided=True),)
+
+
+def test_collapsed_video_record_keeps_first_seen_position(tmp_path: Path) -> None:
+    first = tmp_path / "b.mp4"
+    second = tmp_path / "a.mp4"
+    first.touch()
+    document = write_document(tmp_path, "a.qc", f"[FILE]\npath: {first}\n\n[DATA]\n")
+
+    result = scan(documents=(document,), videos=(first, second), subtitles=())
+
+    assert result.videos == (
+        VideoSource(path=first.resolve(), explicitly_provided=True, found_in_document=True),
+        VideoSource(path=second.resolve(), explicitly_provided=True),
+    )
+
+
+def test_video_sources_keep_first_seen_order_explicit_before_document_before_subtitle(tmp_path: Path) -> None:
+    handed_in = tmp_path / "b.mp4"
+    named = tmp_path / "a.mp4"
+    referenced = tmp_path / "c.mp4"
+    named.touch()
+    referenced.touch()
+    subtitle = write_subtitle_referencing(tmp_path, "s.ass", referenced)
+    document = write_document(tmp_path, "a.qc", f"[FILE]\npath: {named}\n\n[DATA]\n")
+
+    result = scan(documents=(document,), videos=(handed_in,), subtitles=(subtitle,))
+
+    assert result.videos == (
+        VideoSource(path=handed_in.resolve(), explicitly_provided=True),
+        VideoSource(path=named.resolve(), found_in_document=True),
+        VideoSource(path=referenced.resolve(), found_in_subtitle=True),
+    )
+
+
 def test_subtitle_sources_merge_when_spelling_differs(tmp_path: Path) -> None:
     real = tmp_path / "subs.ass"
     real.write_text("", encoding="utf-8")
@@ -100,3 +173,33 @@ def test_subtitle_sources_merge_when_spelling_differs(tmp_path: Path) -> None:
     result = scan(documents=(document,), videos=(), subtitles=(real,))
 
     assert result.subtitles == (SubtitleSource(path=real.resolve(), explicitly_provided=True, found_in_document=True),)
+
+
+def test_handed_in_subtitle_is_kept_when_it_does_not_exist(tmp_path: Path) -> None:
+    missing = tmp_path / "gone.en.srt"
+
+    result = scan(documents=(), videos=(), subtitles=(missing,))
+
+    assert result.subtitles == (SubtitleSource(path=missing.resolve(), explicitly_provided=True),)
+
+
+def test_duplicate_subtitles_within_one_origin_collapse(tmp_path: Path) -> None:
+    subtitle = tmp_path / "a.en.srt"
+
+    result = scan(documents=(), videos=(), subtitles=(subtitle, subtitle))
+
+    assert result.subtitles == (SubtitleSource(path=subtitle.resolve(), explicitly_provided=True),)
+
+
+def test_subtitle_sources_keep_first_seen_order_explicit_before_document(tmp_path: Path) -> None:
+    handed_in = tmp_path / "b.en.srt"
+    named = tmp_path / "a.en.srt"
+    named.touch()
+    document = write_document(tmp_path, "a.qc", f"[FILE]\nsubtitle: {named}\n")
+
+    result = scan(documents=(document,), videos=(), subtitles=(handed_in,))
+
+    assert result.subtitles == (
+        SubtitleSource(path=handed_in.resolve(), explicitly_provided=True),
+        SubtitleSource(path=named.resolve(), found_in_document=True),
+    )
