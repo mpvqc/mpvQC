@@ -40,5 +40,3 @@ from .scan import RejectedDocument as RejectedDocument
 from .scan import ScanResult as ScanResult
 from .scan import SubtitleSource as SubtitleSource
 from .scan import VideoSource as VideoSource
-from .scan import collect_subtitle_sources as collect_subtitle_sources
-from .scan import collect_video_sources as collect_video_sources
