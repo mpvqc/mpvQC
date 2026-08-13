@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Enforces the import rules of the feature slices: the lattice, the role roots, the floor of
-the remaining domain, and wiring purity. The slice-imports skill carries the same tables for
-writers; a slice joins the rules by being listed in SLICES."""
+"""Enforces the import rules of the feature slices."""
 
 from __future__ import annotations
 
@@ -20,6 +18,7 @@ SLICES = ("appearance", "exporting", "importing")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
 HELPERS = ("jobs",)
 SHARED_ROLES = {"services": "services", "shared": "shared"}
+MIN_EDGES_PER_SLICE = 20
 
 # The domain rows are transitional; see ADR 0019.
 SAME_SLICE = {
@@ -130,9 +129,17 @@ def _root_import_hint(target: str, kind: str, names: list[str]) -> str:
     return f"import {', '.join(names)} from {root} instead"
 
 
-def _production_files():
-    for slice_ in SLICES:
-        yield from sorted((REPO / "mpvqc" / slice_).rglob("*.py"))
+def _production_files(slice_: str) -> list[Path]:
+    return sorted((REPO / "mpvqc" / slice_).rglob("*.py"))
+
+
+def _feature_test_files(slice_: str) -> list[Path]:
+    return sorted((REPO / "test" / slice_).rglob("*.py"))
+
+
+def _role_of(path: Path) -> str | None:
+    parts = _module_name(path)[0].split(".")
+    return parts[2] if len(parts) > 2 else None
 
 
 def _non_lattice_violation(where: str, role: str, kind: str, target: str) -> str | None:
@@ -176,28 +183,27 @@ def _lattice_violation(where: str, slice_: str, role: str, target: str, names: l
 
 def check_production() -> list[str]:
     violations = []
-    for path in _production_files():
-        name, _ = _module_name(path)
-        parts = name.split(".")
-        slice_, role = parts[1], parts[2] if len(parts) > 2 else None
-        if path.name == "wiring.py" or role is None:
-            continue
-        for target, names, line in _edges(path):
-            kind = _classify(target)[0]
-            where = f"{path.relative_to(REPO)}:{line}"
-            if kind in ("slice", "shared"):
-                violation = _lattice_violation(where, slice_, role, target, names)
-            else:
-                violation = _non_lattice_violation(where, role, kind, target)
-            if violation:
-                violations.append(violation)
+    for slice_ in SLICES:
+        for path in _production_files(slice_):
+            role = _role_of(path)
+            if path.name == "wiring.py" or role is None:
+                continue
+            for target, names, line in _edges(path):
+                kind = _classify(target)[0]
+                where = f"{path.relative_to(REPO)}:{line}"
+                if kind in ("slice", "shared"):
+                    violation = _lattice_violation(where, slice_, role, target, names)
+                else:
+                    violation = _non_lattice_violation(where, role, kind, target)
+                if violation:
+                    violations.append(violation)
     return violations
 
 
 def check_feature_tests() -> list[str]:
     violations = []
     for slice_ in SLICES:
-        for path in sorted((REPO / "test" / slice_).rglob("*.py")):
+        for path in _feature_test_files(slice_):
             for target, names, line in _edges(path):
                 kind, _, t_role = _classify(target)
                 if kind not in ("slice", "shared") or t_role == "root":
@@ -249,9 +255,18 @@ def test_wiring_imports_no_mpvqc_and_no_qt_at_module_level():
     _fail_on(check_wiring())
 
 
-def test_scan_sees_the_modules_policed_today():
-    modules = {_module_name(path)[0] for path in _production_files()}
-    edges = [edge for path in _production_files() for edge in _edges(path)]
-    assert "mpvqc.importing.services.importer" in modules
-    assert "mpvqc.importing.domain.plan" in modules
-    assert len(edges) >= 60
+@pytest.mark.parametrize("slice_", SLICES)
+def test_the_production_scan_sees_the_slice(slice_: str):
+    files = _production_files(slice_)
+    edges = [edge for path in files for edge in _edges(path)]
+    assert files, f"the production scan found no files under mpvqc/{slice_}"
+    assert {_role_of(path) for path in files} - {None}, f"no file under mpvqc/{slice_} resolved to a role"
+    assert len(edges) >= MIN_EDGES_PER_SLICE, f"the production scan read {len(edges)} imports under mpvqc/{slice_}"
+
+
+@pytest.mark.parametrize("slice_", SLICES)
+def test_the_feature_test_scan_sees_the_slice(slice_: str):
+    files = _feature_test_files(slice_)
+    edges = [edge for path in files for edge in _edges(path)]
+    assert files, f"the feature test scan found no files under test/{slice_}"
+    assert len(edges) >= MIN_EDGES_PER_SLICE, f"the feature test scan read {len(edges)} imports under test/{slice_}"
