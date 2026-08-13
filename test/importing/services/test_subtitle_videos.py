@@ -43,6 +43,12 @@ def test_skips_a_missing_subtitle(tmp_path: Path) -> None:
     assert find_videos_in_subtitles([missing]) == ()
 
 
+def test_skips_a_reference_that_is_not_a_usable_path(tmp_path: Path) -> None:
+    subtitle = write_subtitle(tmp_path, "subtitle.ass", "[Script Info]\nVideo File: /videos/mo\x00vie.mkv\n")
+
+    assert find_videos_in_subtitles([subtitle]) == ()
+
+
 def test_skips_a_subtitle_with_invalid_encoding(tmp_path: Path) -> None:
     subtitle = tmp_path / "subtitle.ass"
     subtitle.write_bytes(b"[Script Info]\n\xff\xfe not valid utf-8")

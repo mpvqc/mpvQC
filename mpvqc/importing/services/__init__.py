@@ -7,3 +7,4 @@ from .reader import read_documents as read_documents
 from .scan import scan as scan
 from .settings import ImportSettingsService as ImportSettingsService
 from .subtitle_videos import find_videos_in_subtitles as find_videos_in_subtitles
+from .subtitle_videos import parse_ass_video_references as parse_ass_video_references

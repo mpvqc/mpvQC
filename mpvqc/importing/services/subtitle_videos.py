@@ -5,39 +5,63 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING
-
-from mpvqc.importing.domain import SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS, parse_video_references
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
 def find_videos_in_subtitles(subtitles: Sequence[Path]) -> tuple[Path, ...]:
-    return tuple(video for subtitle in subtitles if (video := _parse_video_from(subtitle)) is not None)
+    videos = []
+
+    for subtitle in subtitles:
+        video = _parse_video_from(subtitle)
+        if video is not None:
+            videos.append(video)
+
+    return tuple(videos)
 
 
 def _parse_video_from(subtitle: Path) -> Path | None:
-    if subtitle.suffix.lower() not in SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS:
-        return None
-
     try:
-        return _find_existing_video_reference(subtitle)
+        references = _parse_video_references(subtitle)
+        return _first_existing_video(subtitle, references)
     except Exception:
         logger.exception("Failed to parse video path from subtitle file: %s", subtitle)
         return None
 
 
-def _find_existing_video_reference(subtitle: Path) -> Path | None:
-    content = subtitle.read_text(encoding="utf-8-sig")
+def _parse_video_references(subtitle: Path) -> tuple[Path, ...]:
+    match subtitle.suffix.lower():
+        case ".ass" | ".ssa":
+            return parse_ass_video_references(subtitle.read_text(encoding="utf-8-sig"))
+        case _:
+            return ()
 
-    for reference in parse_video_references(content):
+
+def _first_existing_video(subtitle: Path, references: tuple[Path, ...]) -> Path | None:
+    for reference in references:
         video_path = reference if reference.is_absolute() else subtitle.parent / reference
         resolved_path = video_path.resolve()
         if resolved_path.is_file():
             return resolved_path
 
     return None
+
+
+def parse_ass_video_references(content: str) -> tuple[Path, ...]:
+    references = []
+
+    for raw_line in content.splitlines():
+        line = raw_line.strip()
+        if not line.startswith("Video File:"):
+            continue
+
+        video_path = line.split(":", 1)[1].strip()
+        if video_path:
+            references.append(Path(video_path))
+
+    return tuple(references)

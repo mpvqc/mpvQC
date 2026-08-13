@@ -181,7 +181,6 @@ files = [
     "mpvqc/importing/domain/pending.py",
     "mpvqc/importing/domain/plan.py",
     "mpvqc/importing/domain/scan.py",
-    "mpvqc/importing/domain/video_reference.py",
     "mpvqc/importing/enums/__init__.py",
     "mpvqc/importing/enums/session_mode.py",
     "mpvqc/importing/enums/step_kind.py",
