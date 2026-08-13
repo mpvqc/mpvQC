@@ -87,7 +87,7 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Property(int, notify=currentStepChanged, final=True)
     def currentStepKind(self) -> int:
-        return self._steps[self._state.current_index].KIND
+        return self._state.current_step.kind
 
     @Property(str, constant=True, final=True)
     def title(self) -> str:
