@@ -26,7 +26,6 @@ from .errors import ErrorsPresent as ErrorsPresent
 from .errors import ImportErrors as ImportErrors
 from .file_kind import DOCUMENT_EXTENSIONS as DOCUMENT_EXTENSIONS
 from .file_kind import SUBTITLE_EXTENSIONS as SUBTITLE_EXTENSIONS
-from .file_kind import VIDEO_FALLBACK_EXTENSIONS as VIDEO_FALLBACK_EXTENSIONS
 from .file_kind import ClassifiedPaths as ClassifiedPaths
 from .file_kind import classify_paths as classify_paths
 from .pending import PendingImport as PendingImport
