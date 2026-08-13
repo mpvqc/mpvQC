@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, NamedTuple
 
-from mpvqc.importing.domain import PendingImport
+from mpvqc.importing.services import PendingImport
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import FinishedPlan, UnfinishedPlan
+    from mpvqc.importing.services import FinishedPlan, UnfinishedPlan
 
 
 class RecordedPending(NamedTuple):

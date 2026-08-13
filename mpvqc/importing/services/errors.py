@@ -8,7 +8,8 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .scan import RejectedDocument, ScanResult
+    from .reader import RejectedDocument
+    from .scan import ScanResult
 
 
 @dataclass(frozen=True)

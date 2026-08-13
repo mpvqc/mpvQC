@@ -20,17 +20,14 @@ HELPERS = ("jobs",)
 SHARED_ROLES = {"services": "services", "shared": "shared"}
 MIN_EDGES_PER_SLICE = 20
 
-# The domain rows are transitional; see ADR 0019.
 SAME_SLICE = {
-    "domain": {"domain", "shared"},
     "enums": {"shared"},
-    "models": {"domain", "enums", "services", "shared"},
-    "services": {"services", "domain", "shared"},
-    "viewmodels": {"viewmodels", "models", "services", "enums", "domain", "shared"},
+    "models": {"enums", "services", "shared"},
+    "services": {"services", "shared"},
+    "viewmodels": {"viewmodels", "models", "services", "enums", "shared"},
 }
 
 OTHER_SLICE = {
-    "domain": {"domain", "shared"},
     "enums": {"shared"},
     "models": {"enums", "shared"},
     "services": {"services", "shared"},
@@ -143,11 +140,6 @@ def _role_of(path: Path) -> str | None:
 
 
 def _non_lattice_violation(where: str, role: str, kind: str, target: str) -> str | None:
-    if kind == "external" and role == "domain":
-        return (
-            f"{where}: the domain imports the third-party module {target}; "
-            f"a domain imports only the standard library, other domains, and mpvqc.shared"
-        )
     if kind == "helper" and role not in ("services", "viewmodels"):
         return f"{where}: {role} may not import {target}; the helpers under mpvqc/ are for services and view models"
     if kind == "unplaced":

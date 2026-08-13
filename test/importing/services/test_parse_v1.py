@@ -7,7 +7,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.importing.domain import parse_v1
+from mpvqc.importing.services import parse_v1
 
 
 def identity(comment_type: str) -> str:

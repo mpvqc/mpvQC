@@ -7,7 +7,11 @@ from typing import NamedTuple
 import pytest
 from PySide6.QtCore import QObject
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.enums import (
+    MpvqcImportWizardSessionMode,
+    MpvqcImportWizardStepKind,
+)
+from mpvqc.importing.services import (
     FinishedPlan,
     SessionMerge,
     SessionReplace,
@@ -18,10 +22,6 @@ from mpvqc.importing.domain import (
     VideoLoad,
     VideoSource,
     VideoUnresolved,
-)
-from mpvqc.importing.enums import (
-    MpvqcImportWizardSessionMode,
-    MpvqcImportWizardStepKind,
 )
 from mpvqc.importing.viewmodels import (
     MpvqcImportWizardErrorsStepViewModel,

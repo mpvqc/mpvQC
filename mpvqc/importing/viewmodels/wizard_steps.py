@@ -9,7 +9,9 @@ from typing import assert_never
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.enums import MpvqcImportWizardSessionMode, MpvqcImportWizardStepKind
+from mpvqc.importing.models import ErrorsModel, SubtitlesModel, VideosModel
+from mpvqc.importing.services import (
     ErrorsPresent,
     SessionMerge,
     SessionReplace,
@@ -24,8 +26,6 @@ from mpvqc.importing.domain import (
     VideoSkip,
     VideoUnresolved,
 )
-from mpvqc.importing.enums import MpvqcImportWizardSessionMode, MpvqcImportWizardStepKind
-from mpvqc.importing.models import ErrorsModel, SubtitlesModel, VideosModel
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

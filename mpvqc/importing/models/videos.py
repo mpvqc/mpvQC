@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
-    from mpvqc.importing.domain import VideoSource
+    from mpvqc.importing.services import VideoSource
 
 
 @dataclass(frozen=True, slots=True)

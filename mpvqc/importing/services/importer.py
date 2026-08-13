@@ -10,29 +10,21 @@ from typing import TYPE_CHECKING, Protocol
 import inject
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.importing.domain import (
-    FinishedPlan,
-    PendingImport,
-    SessionMerge,
-    SessionReplace,
-    SubtitlesLoad,
-    SubtitlesSkip,
-    UnfinishedPlan,
-    VideoLoad,
-    VideoSkip,
-    make_plan,
-)
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
 
+from .concerns import SessionMerge, SessionReplace, SubtitlesLoad, SubtitlesSkip, VideoLoad, VideoSkip
+from .pending import PendingImport
+from .plan import FinishedPlan, UnfinishedPlan, make_plan
 from .scan import scan
 from .settings import ImportSettingsService
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mpvqc.importing.domain import ScanResult
     from mpvqc.jobs import JobExecutor, Result
+
+    from .scan import ScanResult
 
 
 logger = logging.getLogger(__name__)

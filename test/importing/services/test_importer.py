@@ -10,7 +10,9 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
+    ImportService,
+    ImportSettingsService,
     LoadFoundVideo,
     NotAsked,
     PendingImport,
@@ -21,7 +23,6 @@ from mpvqc.importing.domain import (
     VideoLoad,
     VideoSkip,
 )
-from mpvqc.importing.services import ImportService, ImportSettingsService
 from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
 from mpvqc.shared import Comment
 from test.importing.plans import (
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
 
-    from mpvqc.importing.domain import SubtitleSource, SubtitlesResolved, VideoResolved, VideoSource
+    from mpvqc.importing.services import SubtitleSource, SubtitlesResolved, VideoResolved, VideoSource
     from test.conftest import ManualJobExecutor
 
 

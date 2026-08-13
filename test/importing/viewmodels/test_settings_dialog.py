@@ -5,8 +5,7 @@
 import inject
 import pytest
 
-from mpvqc.importing.domain import LoadFoundVideo
-from mpvqc.importing.services import ImportSettingsService
+from mpvqc.importing.services import ImportSettingsService, LoadFoundVideo
 from mpvqc.importing.viewmodels import MpvqcImportSettingsDialogViewModel
 
 

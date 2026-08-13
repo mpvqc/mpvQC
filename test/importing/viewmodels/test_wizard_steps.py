@@ -5,7 +5,8 @@
 import pytest
 from PySide6.QtCore import QObject
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.enums import MpvqcImportWizardSessionMode
+from mpvqc.importing.services import (
     SessionMerge,
     SessionReplace,
     SubtitlesLoad,
@@ -14,7 +15,6 @@ from mpvqc.importing.domain import (
     VideoLoad,
     VideoSkip,
 )
-from mpvqc.importing.enums import MpvqcImportWizardSessionMode
 from mpvqc.importing.viewmodels import (
     MpvqcImportWizardSessionStepViewModel,
     MpvqcImportWizardSubtitlesStepViewModel,

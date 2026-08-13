@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QStandardPaths, QUrl
 
-from mpvqc.importing.domain import LoadFoundVideo
+from .concerns import LoadFoundVideo
 
 if TYPE_CHECKING:
     from collections.abc import Callable

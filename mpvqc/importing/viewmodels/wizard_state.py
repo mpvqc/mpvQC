@@ -8,7 +8,8 @@ from dataclasses import dataclass, replace
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING, ClassVar
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.enums import MpvqcImportWizardStepKind
+from mpvqc.importing.services import (
     ErrorsPresent,
     SessionUnresolved,
     SubtitlesLoad,
@@ -16,10 +17,9 @@ from mpvqc.importing.domain import (
     VideoLoad,
     VideoUnresolved,
 )
-from mpvqc.importing.enums import MpvqcImportWizardStepKind
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import UnfinishedPlan
+    from mpvqc.importing.services import UnfinishedPlan
 
 
 class PrimaryLabel(IntEnum):

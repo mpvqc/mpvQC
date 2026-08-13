@@ -6,8 +6,12 @@ import inject
 from PySide6.QtCore import Property, QMimeDatabase, QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.domain import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS
-from mpvqc.importing.services import ImportService, ImportSettingsService
+from mpvqc.importing.services import (
+    DOCUMENT_EXTENSIONS,
+    SUBTITLE_EXTENSIONS,
+    ImportService,
+    ImportSettingsService,
+)
 from mpvqc.shared import map_path_to_url, map_url_to_path
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

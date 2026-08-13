@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     DocumentRejectionReason,
     ErrorsAbsent,
     ErrorsPresent,

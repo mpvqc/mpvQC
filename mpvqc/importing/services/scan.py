@@ -4,10 +4,8 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
-
-from mpvqc.importing.domain import ScanResult, SubtitleSource, VideoSource
 
 from .reader import read_documents
 from .subtitle_videos import find_videos_in_subtitles
@@ -15,6 +13,33 @@ from .subtitle_videos import find_videos_in_subtitles
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
+
+    from mpvqc.shared import Comment
+
+    from .reader import RejectedDocument
+
+
+@dataclass(frozen=True)
+class VideoSource:
+    path: Path
+    explicitly_provided: bool = False
+    found_in_document: bool = False
+    found_in_subtitle: bool = False
+
+
+@dataclass(frozen=True)
+class SubtitleSource:
+    path: Path
+    explicitly_provided: bool = False
+    found_in_document: bool = False
+
+
+@dataclass(frozen=True)
+class ScanResult:
+    videos: tuple[VideoSource, ...]
+    subtitles: tuple[SubtitleSource, ...]
+    comments: tuple[Comment, ...]
+    rejected_documents: tuple[RejectedDocument, ...]
 
 
 def scan(documents: tuple[Path, ...], videos: tuple[Path, ...], subtitles: tuple[Path, ...]) -> ScanResult:

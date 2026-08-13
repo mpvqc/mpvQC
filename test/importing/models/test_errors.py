@@ -4,8 +4,8 @@
 
 from pathlib import Path
 
-from mpvqc.importing.domain import DocumentRejectionReason, RejectedDocument
 from mpvqc.importing.models import ErrorsModel
+from mpvqc.importing.services import DocumentRejectionReason, RejectedDocument
 
 REJECTED = (
     RejectedDocument(Path("/work/broken.qc"), DocumentRejectionReason.INVALID),
