@@ -11,16 +11,34 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-DOCUMENT_EXTENSIONS: frozenset[str] = frozenset({".txt", ".json"})
+DOCUMENT_EXTENSIONS: frozenset[str] = frozenset(
+    {
+        ".txt",
+        ".json",
+    }
+)
 
-VIDEO_FALLBACK_EXTENSIONS: frozenset[str] = frozenset({".avi", ".mkv", ".mp4"})
-
-# fmt: off
-SUBTITLE_EXTENSIONS: frozenset[str] = frozenset({
-    ".aqt", ".ass", ".idx", ".js", ".jss", ".mks", ".rt", ".scc", ".smi",
-    ".srt", ".ssa", ".sub", ".sup", ".utf", ".utf-8", ".utf8", ".vtt",
-})
-# fmt: on
+SUBTITLE_EXTENSIONS: frozenset[str] = frozenset(
+    {
+        ".aqt",
+        ".ass",
+        ".idx",
+        ".js",
+        ".jss",
+        ".mks",
+        ".rt",
+        ".scc",
+        ".smi",
+        ".srt",
+        ".ssa",
+        ".sub",
+        ".sup",
+        ".utf",
+        ".utf-8",
+        ".utf8",
+        ".vtt",
+    }
+)
 
 
 @dataclass(frozen=True, slots=True)
