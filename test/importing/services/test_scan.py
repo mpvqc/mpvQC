@@ -6,13 +6,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     DocumentRejectionReason,
     RejectedDocument,
     SubtitleSource,
     VideoSource,
+    scan,
 )
-from mpvqc.importing.services import scan
 
 if TYPE_CHECKING:
     from pathlib import Path

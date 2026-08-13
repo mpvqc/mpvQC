@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     DocumentRejectionReason,
     ErrorsAbsent,
     ErrorsPresent,

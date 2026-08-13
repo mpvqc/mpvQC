@@ -8,14 +8,14 @@ from typing import TYPE_CHECKING, assert_never, override
 
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 
-from mpvqc.importing.domain import DocumentRejectionReason
+from mpvqc.importing.services import DocumentRejectionReason
 
 if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
-    from mpvqc.importing.domain import RejectedDocument
+    from mpvqc.importing.services import RejectedDocument
 
 
 class ErrorsModel(QAbstractListModel):

@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.importing.domain import ErrorsPresent, SubtitlesLoad, UnfinishedPlan, VideoLoad
 from mpvqc.importing.enums import MpvqcImportWizardStepKind
+from mpvqc.importing.services import ErrorsPresent, SubtitlesLoad, UnfinishedPlan, VideoLoad
 from mpvqc.importing.viewmodels import (
     ErrorsStep,
     FooterState,

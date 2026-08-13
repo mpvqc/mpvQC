@@ -5,8 +5,7 @@
 import pytest
 from PySide6.QtCore import QSettings, QStandardPaths, QUrl
 
-from mpvqc.importing.domain import LoadFoundVideo
-from mpvqc.importing.services import ImportSettingsService
+from mpvqc.importing.services import ImportSettingsService, LoadFoundVideo
 
 ELSEWHERE = QUrl.fromLocalFile("/elsewhere")
 

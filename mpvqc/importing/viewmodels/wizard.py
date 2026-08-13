@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, assert_never
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.importing.domain import NotAsked
+from mpvqc.importing.services import NotAsked
 
 from .wizard_state import (
     ErrorsStep,
@@ -28,7 +28,7 @@ from .wizard_steps import (
 )
 
 if TYPE_CHECKING:
-    from mpvqc.importing.domain import PendingImport
+    from mpvqc.importing.services import PendingImport
 
     from .wizard_state import WizardState
     from .wizard_steps import WizardStepViewModel

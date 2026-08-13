@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from mpvqc.importing.domain import VideoSource
 from mpvqc.importing.models import VideosModel
+from mpvqc.importing.services import VideoSource
 
 CANDIDATES = (
     VideoSource(path=Path("/work/one.mp4"), found_in_document=True, found_in_subtitle=False),

@@ -4,7 +4,7 @@
 
 from pathlib import Path
 
-from mpvqc.importing.domain import parse_classic
+from mpvqc.importing.services import parse_classic
 
 
 def identity(comment_type: str) -> str:

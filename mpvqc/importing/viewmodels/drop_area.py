@@ -6,8 +6,7 @@ import inject
 from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.domain import classify_paths
-from mpvqc.importing.services import ImportService
+from mpvqc.importing.services import ImportService, classify_paths
 from mpvqc.shared import map_urls_to_paths
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

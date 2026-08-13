@@ -8,8 +8,7 @@ import inject
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.importing.domain import PendingImport
-from mpvqc.importing.services import ImportService
+from mpvqc.importing.services import ImportService, PendingImport
 
 from .wizard import MpvqcImportWizardViewModel
 

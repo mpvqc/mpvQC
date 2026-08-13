@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     FinishedPlan,
     NotAsked,
     PendingImport,

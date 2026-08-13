@@ -8,8 +8,7 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
-from mpvqc.importing.domain import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS
-from mpvqc.importing.services import ImportService, ImportSettingsService
+from mpvqc.importing.services import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS, ImportService, ImportSettingsService
 from mpvqc.importing.viewmodels import MpvqcImportFileDialogViewModel
 
 

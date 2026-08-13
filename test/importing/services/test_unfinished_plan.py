@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     ErrorsAbsent,
     SessionMerge,
     SubtitlesSkip,

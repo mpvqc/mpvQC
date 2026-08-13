@@ -18,8 +18,7 @@ the top of the package tree, and every role may import it. Subsecond time format
 comment type, so pure code reaches shared pure code by import instead of by parameter.
 
 The new shape has no mechanical purity floor. We considered one and dropped it: a pure module's own Qt-free tests are
-the guard, and a lapse breaks that one module, nothing more. The import checker still enforces the lattice below, and
-the floor of each remaining domain until it dissolves.
+the guard, and a lapse breaks that one module, nothing more. The import checker still enforces the lattice below.
 
 ## The lattice, amended
 
@@ -37,10 +36,9 @@ A foreign slice's `viewmodels` and `models` stay off-limits to everyone.
 
 ## Transition
 
-Importing still carries a domain. The checker keeps its rows and the old floor (standard library,
-other domains, the shared vocabulary module) until importing's own dissolution lands; the domain rows die with the
-last domain module. Only the slice's own roles still reach its domain: the cross-slice rows follow the new table
-already, so a foreign slice never imports a remaining domain. A new slice never adds one.
+The transition is done. Exporting piloted the shape, appearance followed, and importing was the last slice to move
+its domain into its services role. The checker's domain rows and the old floor (standard library, other domains, the
+shared vocabulary module) went with the last domain module. No slice carries a domain, and a new one never adds it.
 
 ## What stands
 

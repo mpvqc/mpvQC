@@ -9,7 +9,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.importing.domain import ClassifiedPaths, classify_paths
+from mpvqc.importing.services import ClassifiedPaths, classify_paths
 
 
 def _only_document(path: Path) -> ClassifiedPaths:

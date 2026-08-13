@@ -21,14 +21,14 @@ from mpvqc.appearance.services import (
 )
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.exporting.services import ExportService, ExportSettingsService
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     FinishedPlan,
+    ImportSettingsService,
     PendingImport,
     SessionReplace,
     SubtitlesLoad,
     VideoLoad,
 )
-from mpvqc.importing.services import ImportSettingsService
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,

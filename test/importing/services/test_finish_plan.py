@@ -8,7 +8,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.importing.domain import (
+from mpvqc.importing.services import (
     FinishedPlan,
     NotAsked,
     SessionMerge,

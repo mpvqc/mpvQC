@@ -7,10 +7,12 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass
+from enum import Enum, auto
 from typing import TYPE_CHECKING
 
-from mpvqc.importing.domain import DocumentRejectionReason, ParsedDocument, RejectedDocument, parse_classic, parse_v1
 from mpvqc.services import ReverseTranslatorService
+
+from .documents import ParsedDocument, parse_classic, parse_v1
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -18,6 +20,17 @@ if TYPE_CHECKING:
     from mpvqc.shared import Comment
 
 logger = logging.getLogger(__name__)
+
+
+class DocumentRejectionReason(Enum):
+    INVALID = auto()
+    UNSUPPORTED_VERSION = auto()
+
+
+@dataclass(frozen=True)
+class RejectedDocument:
+    path: Path
+    reason: DocumentRejectionReason
 
 
 @dataclass(frozen=True)

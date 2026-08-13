@@ -10,8 +10,7 @@ import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 
-from mpvqc.importing.domain import PendingImport
-from mpvqc.importing.services import ImportService
+from mpvqc.importing.services import ImportService, PendingImport
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
 from test.importing.pending import record_pending
 from test.importing.plans import PRESENT_ERRORS, plan_with
