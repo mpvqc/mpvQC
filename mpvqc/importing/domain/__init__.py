@@ -42,5 +42,3 @@ from .scan import SubtitleSource as SubtitleSource
 from .scan import VideoSource as VideoSource
 from .scan import collect_subtitle_sources as collect_subtitle_sources
 from .scan import collect_video_sources as collect_video_sources
-from .video_reference import SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS as SUBTITLE_WITH_VIDEO_REFERENCE_EXTENSIONS
-from .video_reference import parse_video_references as parse_video_references
