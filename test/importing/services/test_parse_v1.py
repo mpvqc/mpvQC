@@ -10,10 +10,6 @@ import pytest
 from mpvqc.importing.services import parse_v1
 
 
-def identity(comment_type: str) -> str:
-    return comment_type
-
-
 def make_data(comments: list, **fields) -> dict:
     return {"comments": comments, **fields}
 
@@ -27,7 +23,7 @@ def test_parse_v1_comments():
         ]
     )
 
-    result = parse_v1(data, identity)
+    result = parse_v1(data)
 
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [
         (0, "A SPECIAL Comment-_-Type", "Comment 1"),
@@ -39,10 +35,7 @@ def test_parse_v1_comments():
 def test_parse_v1_translates_comment_type():
     data = make_data([{"time": "00:00:00.000", "type": "ניסוח", "text": "x"}])
 
-    def translate(comment_type: str) -> str:
-        return {"ניסוח": "Phrasing"}.get(comment_type, comment_type)
-
-    result = parse_v1(data, translate)
+    result = parse_v1(data)
 
     assert result.comments[0].comment_type == "Phrasing"
 
@@ -50,14 +43,14 @@ def test_parse_v1_translates_comment_type():
 def test_parse_v1_video_and_subtitles():
     data = make_data([], video="/path/to/video.mkv", subtitles=["/a.ass", "/b.ass"])
 
-    result = parse_v1(data, identity)
+    result = parse_v1(data)
 
     assert result.video == Path("/path/to/video.mkv")
     assert result.subtitles == (Path("/a.ass"), Path("/b.ass"))
 
 
 def test_parse_v1_without_video_or_subtitles():
-    result = parse_v1(make_data([]), identity)
+    result = parse_v1(make_data([]))
 
     assert result.video is None
     assert result.subtitles == ()
@@ -72,7 +65,7 @@ def test_parse_v1_ignores_unknown_fields():
         custom_extension={"nested": True},
     )
 
-    result = parse_v1(data, identity)
+    result = parse_v1(data)
 
     assert len(result.comments) == 1
 
@@ -140,4 +133,4 @@ INVALID_V1_DATA = [
 @pytest.mark.parametrize("case", INVALID_V1_DATA, ids=lambda case: case.name)
 def test_parse_v1_rejects_invalid_data(case: InvalidCase):
     with pytest.raises(ValueError, match=case.match):
-        parse_v1(case.data, identity)
+        parse_v1(case.data)
