@@ -7,12 +7,9 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING
 
+from mpvqc.services import ReverseTranslatorService
 from mpvqc.shared import Comment
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 
 @dataclass(frozen=True)
@@ -28,7 +25,7 @@ _REGEX_CLASSIC_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<t
 _REGEX_V1_TIME = re.compile(r"^\d{2}:[0-5]\d:[0-5]\d\.\d{3}$")
 
 
-def parse_classic(content: str, translate_comment_type: Callable[[str], str]) -> ParsedDocument:
+def parse_classic(content: str) -> ParsedDocument:
     video: Path | None = None
     subtitles = []
     comments = []
@@ -43,7 +40,7 @@ def parse_classic(content: str, translate_comment_type: Callable[[str], str]) ->
             subtitles.append(subtitle)
             continue
 
-        if comment := _parse_classic_comment(line, translate_comment_type):
+        if comment := _parse_classic_comment(line):
             comments.append(comment)
 
     return ParsedDocument(video=video, subtitles=tuple(subtitles), comments=tuple(comments))
@@ -63,7 +60,7 @@ def _parse_classic_subtitle(line: str) -> Path | None:
     return Path(match.group("subtitle").strip())
 
 
-def _parse_classic_comment(line: str, translate_comment_type: Callable[[str], str]) -> Comment | None:
+def _parse_classic_comment(line: str) -> Comment | None:
     match = _REGEX_CLASSIC_COMMENT.match(line.strip())
     if match is None:
         return None
@@ -74,16 +71,16 @@ def _parse_classic_comment(line: str, translate_comment_type: Callable[[str], st
 
     return Comment(
         time=_parse_string_to_milliseconds(time),
-        comment_type=translate_comment_type(comment_type),
+        comment_type=ReverseTranslatorService.lookup(comment_type),
         comment=comment,
     )
 
 
-def parse_v1(data: dict, translate_comment_type: Callable[[str], str]) -> ParsedDocument:
+def parse_v1(data: dict) -> ParsedDocument:
     return ParsedDocument(
         video=_parse_v1_video(data),
         subtitles=_parse_v1_subtitles(data),
-        comments=_parse_v1_comments(data, translate_comment_type),
+        comments=_parse_v1_comments(data),
     )
 
 
@@ -109,16 +106,16 @@ def _parse_v1_subtitles(data: dict) -> tuple[Path, ...]:
             raise ValueError(msg)
 
 
-def _parse_v1_comments(data: dict, translate_comment_type: Callable[[str], str]) -> tuple[Comment, ...]:
+def _parse_v1_comments(data: dict) -> tuple[Comment, ...]:
     match data.get("comments"):
         case list(comments):
-            return tuple(_parse_v1_comment(comment, translate_comment_type) for comment in comments)
+            return tuple(_parse_v1_comment(comment) for comment in comments)
         case other:
             msg = f"Expected 'comments' to be a list, got: {type(other).__name__}"
             raise ValueError(msg)
 
 
-def _parse_v1_comment(entry: object, translate_comment_type: Callable[[str], str]) -> Comment:
+def _parse_v1_comment(entry: object) -> Comment:
     if isinstance(entry, dict):
         time = entry.get("time")
         comment_type = entry.get("type")
@@ -131,7 +128,7 @@ def _parse_v1_comment(entry: object, translate_comment_type: Callable[[str], str
         ):
             return Comment(
                 time=_parse_subsecond_string_to_milliseconds(time),
-                comment_type=translate_comment_type(comment_type),
+                comment_type=ReverseTranslatorService.lookup(comment_type),
                 comment=text,
             )
 

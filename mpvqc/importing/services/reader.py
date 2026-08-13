@@ -10,8 +10,6 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
-from mpvqc.services import ReverseTranslatorService
-
 from .documents import ParsedDocument, parse_classic, parse_v1
 
 if TYPE_CHECKING:
@@ -75,7 +73,7 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
 
 def _parse_document(content: str, document: Path) -> ParsedDocument | DocumentRejectionReason:
     if content.startswith("[FILE]"):
-        return parse_classic(content, ReverseTranslatorService.lookup)
+        return parse_classic(content)
 
     try:
         data = json.loads(content)
@@ -93,7 +91,7 @@ def _parse_document(content: str, document: Path) -> ParsedDocument | DocumentRe
             return DocumentRejectionReason.INVALID
         case 1:
             try:
-                return parse_v1(data, ReverseTranslatorService.lookup)
+                return parse_v1(data)
             except ValueError:
                 logger.exception("Malformed version 1 document: %s", document)
                 return DocumentRejectionReason.INVALID
