@@ -11,6 +11,8 @@ from .search import NoQuery as NoQuery
 from .search import SearchOutcome as SearchOutcome
 from .selection import SelectionState as SelectionState
 from .service import CommentsService as CommentsService
+from .settings import CommentsSettingsService as CommentsSettingsService
+from .settings import default_comment_types as default_comment_types
 from .store import StoreItem as StoreItem
 from .time_format_policy import TimeFormatPolicyService as TimeFormatPolicyService
 from .type_validator import CommentTypeValidatorService as CommentTypeValidatorService

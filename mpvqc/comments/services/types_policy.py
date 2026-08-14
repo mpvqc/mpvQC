@@ -5,14 +5,13 @@
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 
-from mpvqc.services import SettingsService
-
 from .service import CommentsService
+from .settings import CommentsSettingsService
 
 
 class CommentTypesPolicyService(QObject):
     _comments = inject.attr(CommentsService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(CommentsSettingsService)
 
     displayable_comment_types_changed = Signal(frozenset)
 

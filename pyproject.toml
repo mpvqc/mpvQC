@@ -151,6 +151,7 @@ files = [
     "mpvqc/comments/services/search.py",
     "mpvqc/comments/services/selection.py",
     "mpvqc/comments/services/service.py",
+    "mpvqc/comments/services/settings.py",
     "mpvqc/comments/services/store.py",
     "mpvqc/comments/services/time_format_policy.py",
     "mpvqc/comments/services/type_validator.py",

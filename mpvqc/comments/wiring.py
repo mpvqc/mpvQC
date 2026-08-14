@@ -16,16 +16,22 @@ def bindings(binder: inject.Binder) -> None:
     from mpvqc.comments.models import CommentStore
     from mpvqc.comments.services import (
         CommentsService,
+        CommentsSettingsService,
         CommentTypesPolicyService,
         CommentTypeValidatorService,
         TimeFormatPolicyService,
     )
+    from mpvqc.services import SettingsFileService
 
     def comments_service() -> CommentsService:
         return CommentsService(inject.instance(CommentStore))
 
+    def comments_settings_service() -> CommentsSettingsService:
+        return CommentsSettingsService(inject.instance(SettingsFileService).qsettings)
+
     binder.bind_to_constructor(CommentStore, CommentStore)
     binder.bind_to_constructor(CommentsService, comments_service)
+    binder.bind_to_constructor(CommentsSettingsService, comments_settings_service)
     binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
     binder.bind_to_constructor(CommentTypeValidatorService, CommentTypeValidatorService)
     binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)

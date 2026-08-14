@@ -33,15 +33,10 @@ def test_color_scheme_preference_set_and_get(appearance_settings_service, prefer
     assert appearance_settings_service.color_scheme_preference == preference
 
 
-def test_color_scheme_preference_writes_into_the_appearance_ini_section(
-    appearance_settings_service, settings_file, tmp_path
-):
+def test_color_scheme_preference_writes_into_the_appearance_ini_section(appearance_settings_service, ini_section):
     appearance_settings_service.color_scheme_preference = LIGHT
-    settings_file.qsettings.sync()
 
-    ini = (tmp_path / "test_settings.ini").read_text()
-    appearance_section = ini.split("[Appearance]", 1)[1].split("[", 1)[0]
-    assert "colorSchemePreference=light" in appearance_section
+    assert ini_section("Appearance")["colorSchemePreference"] == "light"
 
 
 def test_unreadable_color_scheme_preference_falls_back_to_system(appearance_settings_service, settings_file):
@@ -73,16 +68,11 @@ def test_set_accent_color_preference_to_no_preference_clears_the_stored_entry(ap
     assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == NO_PREFERENCE
 
 
-def test_set_accent_color_preference_writes_into_the_appearance_ini_section(
-    appearance_settings_service, settings_file, tmp_path
-):
+def test_set_accent_color_preference_writes_into_the_appearance_ini_section(appearance_settings_service, ini_section):
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
-    settings_file.qsettings.sync()
 
-    ini = (tmp_path / "test_settings.ini").read_text()
-    appearance_section = ini.split("[Appearance]", 1)[1].split("[", 1)[0]
     # QSettings writes the sub-key separator as a backslash in INI files
-    assert r"accentColor\light=#ff5722" in appearance_section
+    assert ini_section("Appearance")[r"accentColor\light"] == "#ff5722"
 
 
 def test_appearance_preference_projects_the_color_scheme_preference_and_both_stored_accents(

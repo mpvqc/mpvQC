@@ -4,17 +4,19 @@
 
 from collections import deque
 from collections.abc import Callable, Generator
+from configparser import RawConfigParser, SectionProxy
 from pathlib import Path
+from textwrap import dedent
 from typing import Any, override
 
 import inject
 import pytest
-from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, SignalInstance
+from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, QSettings, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
 from mpvqc.comments.models import CommentStore
-from mpvqc.comments.services import CommentsService
+from mpvqc.comments.services import CommentsService, CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.services import (
     BuildInfoService,
@@ -183,6 +185,43 @@ def settings_service(settings_file) -> SettingsService:
     return SettingsService(settings_file.qsettings)
 
 
+class QSettingsIniParser(RawConfigParser):
+    """Reads an ini the way QSettings wrote it: raw, because the interpolating parser rejects the percent
+    signs QSettings leaves in values, and case-sensitive, because it writes its keys in camel case."""
+
+    @override
+    def optionxform(self, optionstr: str) -> str:
+        return optionstr
+
+
+@pytest.fixture
+def ini_section(settings_file, tmp_path) -> Callable[[str], SectionProxy]:
+    def _section(name: str) -> SectionProxy:
+        settings_file.qsettings.sync()
+        parser = QSettingsIniParser()
+        parser.read(tmp_path / "test_settings.ini")
+        return parser[name]
+
+    return _section
+
+
+@pytest.fixture
+def read_existing_settings(tmp_path) -> Callable[[str], QSettings]:
+    def _read(content: str) -> QSettings:
+        file = tmp_path / "existing_settings.ini"
+        file.write_text(dedent(content).lstrip())
+        # a handle that never wrote the file, because QSettings serves a writer its own values back typed,
+        # hiding that an ini hands every value to a later run as text
+        return QSettings(str(file), QSettings.Format.IniFormat)
+
+    return _read
+
+
+@pytest.fixture
+def comments_settings_service(settings_file) -> CommentsSettingsService:
+    return CommentsSettingsService(settings_file.qsettings)
+
+
 @pytest.fixture
 def export_settings_service(settings_file) -> ExportSettingsService:
     return ExportSettingsService(settings_file.qsettings)
@@ -228,7 +267,6 @@ def _comments_service() -> CommentsService:
 def common_bindings_with():
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
-            # Common & shared services
             binder.bind_to_constructor(BuildInfoService, BuildInfoService)
             binder.bind_to_constructor(CommentStore, CommentStore)
             binder.bind_to_constructor(CommentsService, _comments_service)
@@ -238,7 +276,6 @@ def common_bindings_with():
             binder.bind_to_constructor(StateService, StateService)
             binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)
 
-            # Custom services
             for custom_config in custom_configs:
                 custom_config(binder)
 

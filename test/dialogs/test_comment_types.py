@@ -7,19 +7,17 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.comments.services import CommentTypeValidatorService
+from mpvqc.comments.services import (
+    CommentsSettingsService,
+    CommentTypeValidatorService,
+    default_comment_types,
+)
 from mpvqc.dialogs import MpvqcCommentTypesDialogViewModel
-from mpvqc.services import SettingsService
 
 
 @pytest.fixture
 def comment_types():
     return ["CommentType 1", "CommentType 2", "CommentType 3", "CommentType 4", "CommentType 5"]
-
-
-@pytest.fixture
-def comment_types_reset():
-    return ["OtherType 1", "OtherType 2", "OtherType 3", "OtherType 4", "OtherType 5"]
 
 
 @pytest.fixture
@@ -30,10 +28,9 @@ def comment_type_validator_service_mock():
 
 
 @pytest.fixture
-def settings_service_mock(comment_types, comment_types_reset):
-    mock = MagicMock(spec_set=SettingsService)
+def settings_service_mock(comment_types):
+    mock = MagicMock(spec_set=CommentsSettingsService)
     mock.comment_types = comment_types.copy()
-    mock.default_comment_types.return_value = comment_types_reset.copy()
     return mock
 
 
@@ -45,7 +42,7 @@ def configure_inject(
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(CommentTypeValidatorService, comment_type_validator_service_mock)
-        binder.bind(SettingsService, settings_service_mock)
+        binder.bind(CommentsSettingsService, settings_service_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -113,7 +110,7 @@ def test_save_writes_to_settings(view_model, settings_service_mock, comment_type
     assert settings_service_mock.comment_types == [*comment_types, "New Type"]
 
 
-def test_reset_to_defaults_replaces_list(view_model, comment_types_reset):
+def test_reset_to_defaults_replaces_list(view_model):
     view_model.append("Garbage")
     view_model.resetToDefaults()
-    assert view_model.commentTypesModel.stringList() == comment_types_reset
+    assert view_model.commentTypesModel.stringList() == default_comment_types()
