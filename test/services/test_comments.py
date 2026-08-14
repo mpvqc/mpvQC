@@ -8,6 +8,7 @@ import inject
 import pytest
 
 from mpvqc.services import CommentsService, StateService
+from mpvqc.services.comments import CommentStore
 
 
 @pytest.fixture
@@ -25,7 +26,7 @@ def configure_injections(common_bindings_with, state_service_mock):
 
 @pytest.fixture
 def service(qt_app) -> CommentsService:
-    return CommentsService()
+    return CommentsService(CommentStore())
 
 
 def test_mutations_record_change(service, state_service_mock):

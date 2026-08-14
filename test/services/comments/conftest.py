@@ -5,9 +5,10 @@
 from collections.abc import Iterable
 from typing import Protocol
 
+import inject
 import pytest
 
-from mpvqc.services.comments import CommentsService
+from mpvqc.services.comments import CommentsService, CommentStore
 from mpvqc.shared import Comment
 
 DEFAULT_COMMENTS: tuple[Comment, ...] = (
@@ -29,9 +30,14 @@ def configure_injections(common_bindings_with):
 
 
 @pytest.fixture
-def make_comments() -> CommentsFactory:
+def store() -> CommentStore:
+    return inject.instance(CommentStore)
+
+
+@pytest.fixture
+def make_comments(store) -> CommentsFactory:
     def _make_comments(*, set_comments: Iterable[Comment]) -> CommentsService:
-        service = CommentsService()
+        service = CommentsService(store)
         service.import_comments(tuple(set_comments))
         return service
 

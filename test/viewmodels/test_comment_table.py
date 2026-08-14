@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService
+from mpvqc.services import PlayerService, SettingsService, StateService
 from mpvqc.services.comments import (
     AnimatedSelection,
     NoViewAction,
@@ -31,7 +31,6 @@ def configure_inject(
     state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind_to_constructor(CommentsService, CommentsService)
         binder.bind(PlayerService, fake_player_service)
         binder.bind(StateService, state_service_mock)
         binder.bind(SettingsService, settings_service)

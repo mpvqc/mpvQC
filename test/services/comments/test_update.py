@@ -11,23 +11,22 @@ from mpvqc.services.comments.roles import Role
 from mpvqc.shared import Comment
 
 
-def _data_at(comments, row, role):
-    store = comments.store
+def _data_at(store, row, role):
     return store.data(store.index(row), role)
 
 
-def test_update_time_sorts_model_again(comments):
+def test_update_time_sorts_model_again(comments, store):
     comments.update_time(row=0, new_time=7)
-    assert _data_at(comments, 0, Role.COMMENT) == "Word 2"
-    assert _data_at(comments, 1, Role.COMMENT) == "Word 1"
+    assert _data_at(store, 0, Role.COMMENT) == "Word 2"
+    assert _data_at(store, 1, Role.COMMENT) == "Word 1"
 
     comments.undo()
-    assert _data_at(comments, 0, Role.COMMENT) == "Word 1"
-    assert _data_at(comments, 1, Role.COMMENT) == "Word 2"
+    assert _data_at(store, 0, Role.COMMENT) == "Word 1"
+    assert _data_at(store, 1, Role.COMMENT) == "Word 2"
 
     comments.redo()
-    assert _data_at(comments, 0, Role.COMMENT) == "Word 2"
-    assert _data_at(comments, 1, Role.COMMENT) == "Word 1"
+    assert _data_at(store, 0, Role.COMMENT) == "Word 2"
+    assert _data_at(store, 1, Role.COMMENT) == "Word 1"
 
 
 def test_update_time_fires_signals(comments, make_spy):
@@ -84,16 +83,16 @@ _RETIME_CASES = {
 
 
 @pytest.mark.parametrize("case", _RETIME_CASES.values(), ids=_RETIME_CASES.keys())
-def test_update_time_reorders(comments, make_spy, case: _RetimeCase):
+def test_update_time_reorders(comments, store, make_spy, case: _RetimeCase):
     spy = make_spy(comments.view_action)
 
     comments.update_time(row=case.src_row, new_time=case.new_time)
 
     assert spy.at(invocation=0, argument=0) == AnimatedSelection(row=case.expected_dst_row)
-    assert [_data_at(comments, i, Role.COMMENT) for i in range(comments.count)] == case.expected_order
+    assert [_data_at(store, i, Role.COMMENT) for i in range(comments.count)] == case.expected_order
 
 
-def test_update_time_into_tied_group_respects_seq_order(make_comments):
+def test_update_time_into_tied_group_respects_seq_order(make_comments, store):
     comments = make_comments(
         set_comments=(
             Comment(time=0, comment_type="t", comment="A"),
@@ -105,18 +104,18 @@ def test_update_time_into_tied_group_respects_seq_order(make_comments):
 
     comments.update_time(row=3, new_time=0)
 
-    assert [_data_at(comments, i, Role.COMMENT) for i in range(4)] == ["A", "D", "B", "C"]
+    assert [_data_at(store, i, Role.COMMENT) for i in range(4)] == ["A", "D", "B", "C"]
 
 
-def test_update_comment_type(comments):
+def test_update_comment_type(comments, store):
     comments.update_comment_type(row=0, comment_type="updated comment type")
-    assert _data_at(comments, 0, Role.TYPE) == "updated comment type"
+    assert _data_at(store, 0, Role.TYPE) == "updated comment type"
 
     comments.undo()
-    assert _data_at(comments, 0, Role.TYPE) == "commentType"
+    assert _data_at(store, 0, Role.TYPE) == "commentType"
 
     comments.redo()
-    assert _data_at(comments, 0, Role.TYPE) == "updated comment type"
+    assert _data_at(store, 0, Role.TYPE) == "updated comment type"
 
 
 def test_update_comment_type_fires_signals(comments, make_spy):
@@ -137,28 +136,28 @@ def test_update_comment_type_fires_signals(comments, make_spy):
     assert spy.at(invocation=0, argument=0) == AnimatedSelection(row=0)
 
 
-def test_update_comment_type_does_not_invalidate_search(comments, monkeypatch):
+def test_update_comment_type_does_not_invalidate_search(comments, store, monkeypatch):
     comments.search("Word", include_current_row=True, top_down=True)
 
     def fail(*_args, **_kwargs):
         pytest.fail("UpdateType must not trigger a fresh scan")
 
-    monkeypatch.setattr(comments.store, "search_rows", fail)
+    monkeypatch.setattr(store, "search_rows", fail)
     comments.update_comment_type(row=0, comment_type="other")
 
     after = comments.search("Word", include_current_row=True, top_down=True)
     assert after.total == 5
 
 
-def test_update_comment(comments):
+def test_update_comment(comments, store):
     comments.update_comment(row=0, comment="new comment")
-    assert _data_at(comments, 0, Role.COMMENT) == "new comment"
+    assert _data_at(store, 0, Role.COMMENT) == "new comment"
 
     comments.undo()
-    assert _data_at(comments, 0, Role.COMMENT) == "Word 1"
+    assert _data_at(store, 0, Role.COMMENT) == "Word 1"
 
     comments.redo()
-    assert _data_at(comments, 0, Role.COMMENT) == "new comment"
+    assert _data_at(store, 0, Role.COMMENT) == "new comment"
 
 
 def test_update_comment_invalidates_search(comments):
@@ -208,11 +207,11 @@ def test_update_comment_fires_signals(comments, make_spy):
     assert spy.at(invocation=0, argument=0) == AnimatedSelection(row=1)
 
 
-def test_update_comments_consecutively_undo_redo(comments):
+def test_update_comments_consecutively_undo_redo(comments, store):
     comments.add_row(999, "comment-type")
 
     comments.update_comment(row=5, comment="First")
     comments.update_comment(row=5, comment="First - Second")
     comments.undo()
 
-    assert _data_at(comments, 5, Role.COMMENT) == "First"
+    assert _data_at(store, 5, Role.COMMENT) == "First"

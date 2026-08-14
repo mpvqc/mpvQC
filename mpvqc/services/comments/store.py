@@ -18,7 +18,7 @@ from .roles import ROLE_NAMES, Role
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
-    from PySide6.QtCore import QByteArray, QObject
+    from PySide6.QtCore import QByteArray
 
     from mpvqc.shared import Comment
 
@@ -68,6 +68,8 @@ _sort_key = attrgetter("sort_key")
 class Store(Protocol):
     def rowCount(self) -> int: ...
     def item(self, row: int) -> StoreItem: ...
+    def comments(self) -> tuple[Comment, ...]: ...
+    def distinct_comment_types(self) -> frozenset[str]: ...
     def snapshot(self) -> tuple[StoreItem, ...]: ...
     def search_rows(self, query: str) -> list[int]: ...
     def mint(self, comment: Comment) -> StoreItem: ...
@@ -84,8 +86,8 @@ class CommentStore(QAbstractListModel):
     aboutToInsertRow = Signal(int)
     aboutToRemoveRow = Signal(int)
 
-    def __init__(self, parent: QObject | None = None) -> None:
-        super().__init__(parent)
+    def __init__(self) -> None:
+        super().__init__()
         self._rows: list[StoreItem] = []
         self._types = TypeTally()
 

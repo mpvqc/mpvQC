@@ -8,6 +8,7 @@ from .search import NoQuery as NoQuery
 from .search import SearchOutcome as SearchOutcome
 from .selection import SelectionState as SelectionState
 from .service import CommentsService as CommentsService
+from .store import CommentStore as CommentStore
 from .view_action import AnimatedSelection as AnimatedSelection
 from .view_action import NoViewAction as NoViewAction
 from .view_action import QuickSelection as QuickSelection

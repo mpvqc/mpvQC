@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, assert_never, cast
 
 import inject
-from PySide6.QtCore import QAbstractItemModel, QObject, Signal
+from PySide6.QtCore import QObject, Signal
 
 from mpvqc.services.state import StateService
 
@@ -22,7 +22,6 @@ from .commands import (
 from .history import History
 from .search import CommentSearchEngine
 from .selection import SelectionState
-from .store import CommentStore
 from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickSelectionAndEdit
 
 if TYPE_CHECKING:
@@ -32,6 +31,7 @@ if TYPE_CHECKING:
 
     from .commands import Command
     from .search import SearchOutcome
+    from .store import Store
     from .view_action import ViewAction
 
 
@@ -43,18 +43,14 @@ class CommentsService(QObject):
     comments_changed = Signal()
     about_to_import = Signal()
 
-    def __init__(self, parent: QObject | None = None) -> None:
+    def __init__(self, store: Store, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._store = CommentStore(parent=self)
+        self._store = store
         self._selection = SelectionState(parent=self)
         self._history = History(self._store)
         self._search = CommentSearchEngine(self._store, self._selection)
         self._selection.selectedRowChanged.connect(self._history.disarm_merge)
         self.dirty.connect(self._state.record_change)
-
-    @property
-    def store(self) -> QAbstractItemModel:
-        return self._store
 
     @property
     def selection(self) -> SelectionState:

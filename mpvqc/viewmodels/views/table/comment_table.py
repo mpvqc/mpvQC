@@ -12,6 +12,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
 from mpvqc.services.comments import (
     AnimatedSelection,
+    CommentStore,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
@@ -27,6 +28,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcCommentTableViewModel(QObject):
     _comments = inject.attr(CommentsService)
+    _comment_store = inject.attr(CommentStore)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
     _time_formatter = inject.attr(TimeFormatterService)
@@ -81,7 +83,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def model(self) -> QAbstractItemModel:
-        return self._comments.store
+        return self._comment_store
 
     @Property(SelectionState, constant=True, final=True)
     def selection(self) -> SelectionState:

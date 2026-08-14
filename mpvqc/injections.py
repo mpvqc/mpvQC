@@ -8,6 +8,11 @@ import mpvqc.services as s
 from mpvqc.appearance import bindings as appearance_bindings
 from mpvqc.exporting import bindings as exporting_bindings
 from mpvqc.importing import bindings as importing_bindings
+from mpvqc.services.comments import CommentStore
+
+
+def _comments_service() -> s.CommentsService:
+    return s.CommentsService(inject.instance(CommentStore))
 
 
 def _settings_service() -> s.SettingsService:
@@ -21,7 +26,8 @@ def bindings(binder: inject.Binder) -> None:
 
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
-    binder.bind_to_constructor(s.CommentsService, s.CommentsService)
+    binder.bind_to_constructor(CommentStore, CommentStore)
+    binder.bind_to_constructor(s.CommentsService, _comments_service)
     binder.bind_to_constructor(s.CommentTypesPolicyService, s.CommentTypesPolicyService)
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
