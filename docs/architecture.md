@@ -46,30 +46,21 @@ files by the consuming QML module. Not every view model lives there, though: see
 ### Services: `mpvqc/services/`
 
 Services hold the application's logic and own its mutable state. QML never talks to them directly: they are Python
-classes that other services and view models pull in via `inject.attr`. A few define Qt types that view models hand
-through to QML, such as the comment store and its selection state. Not everything in the role is a class: where logic
-is pure it sits beside the classes as plain module-level functions over frozen dataclasses, and the container binds
-only what has state or Qt lifecycle (ADR 0019). Each service sits in its own module or package, and
+classes that other services and view models pull in via `inject.attr`. Not everything in the role is a class: where
+logic is pure it sits beside the classes as plain module-level functions over frozen dataclasses, and the container
+binds only what has state or Qt lifecycle. Each service sits in its own module or package, and
 `mpvqc/injections.py` binds them for the inject container. Composition happens in two places: `mpvqc/injections.py`
 calls each feature package's `bindings`, and startup's registration pass calls each feature package's
 `register_qml_types`.
 
-Vocabulary that several areas mean, such as the comment type, subsecond time formatting, and the conversions among
+Vocabulary that several areas mean, such as what a comment is, subsecond time formatting, and the conversions among
 paths, URLs, and strings, lives in `mpvqc/shared`. Every role in every slice and layer may import it.
 
 ### Feature packages: `mpvqc/<feature>/`
 
 Some areas are grouped by what they are about instead of by layer. A feature package holds the services, models, view
-models, and QML enums the area owns. The services role is the area's logic under one admission rule: a class bound in
-the inject container where there is state or Qt lifecycle, a plain module-level function over frozen dataclasses where
-the logic is pure (ADR 0019). Pure presentation state lives in the view model role, a plain Python module beside the
-QObject adapters it feeds. A feature package also owns the settings keys its area means, reading the file through the
-shared settings file service. The application attaches a feature package through two functions its root exports:
-`bindings` for the inject container, and `register_qml_types` for the QML engine. Both sit in the package's
-`wiring.py`, which names no mpvqc module and no Qt at module level, so importing a feature registers nothing.
-Vocabulary still travels by role directory: a call site imports a service or a view model from the role that owns it.
-The layer packages hold everything no feature package has claimed. `test/test_import_rules.py` enforces the import
-lattice between slices.
+models, and QML enums its area owns, each in its own role directory. The layer packages hold everything no feature
+package has claimed.
 
 ### Bootstrap
 
