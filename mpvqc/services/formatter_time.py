@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.shared import MILLISECONDS_PER_SECOND
+from mpvqc.shared import MILLISECONDS_PER_SECOND, SECONDS_PER_HOUR
 
 
 class TimeFormatterService:
     @staticmethod
     def format_time_to_string(input_seconds: float, *, long_format: bool) -> str:
-        hours, remainder = divmod(input_seconds, 3600)
+        hours, remainder = divmod(input_seconds, SECONDS_PER_HOUR)
         minutes, seconds = divmod(remainder, 60)
         if long_format:
             return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"

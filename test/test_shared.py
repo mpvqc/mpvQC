@@ -13,7 +13,21 @@ from mpvqc.shared import (
     map_path_to_url,
     map_url_to_path,
     map_urls_to_paths,
+    needs_long_format,
 )
+
+
+@pytest.mark.parametrize(
+    ("seconds", "expected"),
+    [
+        (0, False),
+        (3599, False),
+        (3600, True),
+        (3601, True),
+    ],
+)
+def test_needs_long_format_is_inclusive_at_one_hour(seconds, expected):
+    assert needs_long_format(seconds) is expected
 
 
 @pytest.mark.parametrize(

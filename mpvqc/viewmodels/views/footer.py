@@ -14,9 +14,9 @@ from mpvqc.services import (
     LabelWidthCalculatorService,
     PlayerService,
     SettingsService,
-    TimeFormatPolicyService,
     TimeFormatterService,
 )
+from mpvqc.shared import needs_long_format
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -60,7 +60,7 @@ def derive_footer_props(inputs: FooterInputs, measure_width: Callable[[str], int
 def _derive_time_text(inputs: FooterInputs) -> str:
     if not inputs.video_loaded:
         return ""
-    long_format = TimeFormatPolicyService.uses_long_format(inputs.duration)
+    long_format = needs_long_format(inputs.duration)
     to_string = TimeFormatterService.format_time_to_string
     match inputs.time_display_mode:
         case TimeDisplayMode.CURRENT_TIME:

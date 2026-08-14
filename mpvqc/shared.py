@@ -9,9 +9,10 @@ from typing import Final
 from PySide6.QtCore import QUrl
 
 MILLISECONDS_PER_SECOND: Final = 1000
+SECONDS_PER_HOUR: Final = 3600
 
 # The document format caps times at two hour digits
-_MAX_SUBSECOND_TIME: Final = ((99 * 3600 + 59 * 60 + 59) * 1000) + 999
+_MAX_SUBSECOND_TIME: Final = ((99 * SECONDS_PER_HOUR + 59 * 60 + 59) * 1000) + 999
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,10 +22,14 @@ class Comment:
     comment: str
 
 
+def needs_long_format(seconds: float) -> bool:
+    return seconds >= SECONDS_PER_HOUR
+
+
 def format_milliseconds_to_subsecond_string(input_milliseconds: int) -> str:
     clamped = min(input_milliseconds, _MAX_SUBSECOND_TIME)
     seconds, milliseconds = divmod(clamped, MILLISECONDS_PER_SECOND)
-    hours, remainder = divmod(seconds, 3600)
+    hours, remainder = divmod(seconds, SECONDS_PER_HOUR)
     minutes, seconds = divmod(remainder, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}.{milliseconds:03d}"
 

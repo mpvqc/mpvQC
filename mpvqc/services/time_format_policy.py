@@ -2,17 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Final
-
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 
-from mpvqc.shared import MILLISECONDS_PER_SECOND
+from mpvqc.shared import MILLISECONDS_PER_SECOND, needs_long_format
 
 from .comments import CommentsService
 from .player import PlayerService
-
-SECONDS_PER_HOUR: Final = 3600
 
 
 class TimeFormatPolicyService(QObject):
@@ -27,10 +23,6 @@ class TimeFormatPolicyService(QObject):
         self._player.duration_changed.connect(self._recompute)
         self._comments.comments_changed.connect(self._recompute)
 
-    @staticmethod
-    def uses_long_format(seconds: float) -> bool:
-        return seconds >= SECONDS_PER_HOUR
-
     @property
     def table_long_format(self) -> bool:
         return self._table_long_format
@@ -43,11 +35,11 @@ class TimeFormatPolicyService(QObject):
             self.table_long_format_changed.emit(value)
 
     def _compute_table_long_format(self) -> bool:
-        if self.uses_long_format(self._player.duration):
+        if needs_long_format(self._player.duration):
             return True
         count = self._comments.count
         if count == 0:
             return False
         # Comments are sorted by time, so the last one carries the maximum
         last_comment = self._comments.comment_at(count - 1)
-        return self.uses_long_format(last_comment.time / MILLISECONDS_PER_SECOND)
+        return needs_long_format(last_comment.time / MILLISECONDS_PER_SECOND)

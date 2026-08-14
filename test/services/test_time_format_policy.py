@@ -55,19 +55,6 @@ def policy() -> TimeFormatPolicyService:
     return TimeFormatPolicyService()
 
 
-@pytest.mark.parametrize(
-    ("duration_seconds", "expected"),
-    [
-        (0, False),
-        (3599, False),
-        (3600, True),
-        (3601, True),
-    ],
-)
-def test_uses_long_format_is_inclusive_at_one_hour(duration_seconds, expected):
-    assert TimeFormatPolicyService.uses_long_format(duration_seconds) is expected
-
-
 def test_duration_crossing_one_hour_flips_flag(policy, fake_player_service, make_spy):
     spy = make_spy(policy.table_long_format_changed)
     assert not policy.table_long_format
