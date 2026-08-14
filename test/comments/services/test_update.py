@@ -47,41 +47,46 @@ def test_update_time_fires_signals(comments, make_spy):
 
 
 class _RetimeCase(NamedTuple):
+    name: str
     src_row: int
     new_time: int
     expected_dst_row: int
     expected_order: list[str]
 
 
-_RETIME_CASES = {
-    "no_reorder": _RetimeCase(
+_RETIME_CASES = [
+    _RetimeCase(
+        name="no reorder",
         src_row=1,
         new_time=4,
         expected_dst_row=1,
         expected_order=["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"],
     ),
-    "same_time": _RetimeCase(
+    _RetimeCase(
+        name="same time",
         src_row=2,
         new_time=10,
         expected_dst_row=2,
         expected_order=["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"],
     ),
-    "move_to_head": _RetimeCase(
+    _RetimeCase(
+        name="move to head",
         src_row=3,
         new_time=-5,
         expected_dst_row=0,
         expected_order=["Word 4", "Word 1", "Word 2", "Word 3", "Word 5"],
     ),
-    "move_to_tail": _RetimeCase(
+    _RetimeCase(
+        name="move to tail",
         src_row=1,
         new_time=999,
         expected_dst_row=4,
         expected_order=["Word 1", "Word 3", "Word 4", "Word 5", "Word 2"],
     ),
-}
+]
 
 
-@pytest.mark.parametrize("case", _RETIME_CASES.values(), ids=_RETIME_CASES.keys())
+@pytest.mark.parametrize("case", _RETIME_CASES, ids=lambda case: case.name)
 def test_update_time_reorders(comments, store, make_spy, case: _RetimeCase):
     spy = make_spy(comments.view_action)
 
