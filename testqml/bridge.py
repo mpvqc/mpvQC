@@ -20,7 +20,7 @@ from mpvqc.appearance.services import (
     parse_color_scheme,
 )
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
-from mpvqc.comments.services import CommentsService
+from mpvqc.comments.services import CommentsService, CommentsSettingsService
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.importing.services import (
     FinishedPlan,
@@ -362,7 +362,7 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:
-        return list(inject.instance(SettingsService).comment_types)
+        return list(inject.instance(CommentsSettingsService).comment_types)
 
     @Slot(result=int)
     def loadFoundVideo(self) -> int:

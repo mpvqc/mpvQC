@@ -7,7 +7,8 @@ from PySide6.QtCore import Property, QObject, QPoint, Signal, Slot
 from PySide6.QtGui import QCursor
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService, SettingsService
+from mpvqc.comments.services import CommentsSettingsService
+from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,7 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcNewCommentMenuViewModel(QObject):
     _player = inject.attr(PlayerService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(CommentsSettingsService)
 
     commentTypesChanged = Signal(list)
 

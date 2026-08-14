@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast, overload
 
 from PySide6.QtCore import (
-    QT_TRANSLATE_NOOP,
     QLocale,
     QObject,
     QSettings,
@@ -36,18 +35,6 @@ def default_language(locale: QLocale | None = None) -> str:
             return language.identifier
 
     return "en-US"
-
-
-def default_comment_types() -> list[str]:
-    return [
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Translation")),
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Spelling")),
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Punctuation")),
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Phrasing")),
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Timing")),
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Typeset")),
-        str(QT_TRANSLATE_NOOP("CommentTypes", "Note")),
-    ]
 
 
 @dataclass(eq=False)
@@ -85,14 +72,6 @@ class SettingsService(QObject):
         signal=lambda s: s.language_changed,
     )
 
-    comment_types_changed = Signal(list)
-    comment_types = _Setting(
-        "Common/commentTypes",
-        default=default_comment_types,
-        type_=list,
-        signal=lambda s: s.comment_types_changed,
-    )
-
     statusbar_percentage_changed = Signal(bool)
     statusbar_percentage = _Setting(
         "StatusBar/statusbarPercentage",
@@ -128,7 +107,3 @@ class SettingsService(QObject):
     def __init__(self, qsettings: QSettings, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self.qsettings = qsettings
-
-    @staticmethod
-    def default_comment_types() -> list[str]:
-        return default_comment_types()

@@ -13,13 +13,14 @@ from mpvqc.comments.models import CommentStore
 from mpvqc.comments.services import (
     AnimatedSelection,
     CommentsService,
+    CommentsSettingsService,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
     SelectionState,
     ViewAction,
 )
-from mpvqc.services import PlayerService, SettingsService, TimeFormatterService
+from mpvqc.services import PlayerService, TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -31,7 +32,7 @@ class MpvqcCommentTableViewModel(QObject):
     _comments = inject.attr(CommentsService)
     _comment_store = inject.attr(CommentStore)
     _player = inject.attr(PlayerService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(CommentsSettingsService)
     _time_formatter = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)

@@ -9,11 +9,12 @@ import pytest
 
 from mpvqc.comments.services import (
     AnimatedSelection,
+    CommentsSettingsService,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
 )
-from mpvqc.services import PlayerService, SettingsService, StateService
+from mpvqc.services import PlayerService, StateService
 from mpvqc.shared import Comment
 from mpvqc.viewmodels import MpvqcCommentTableViewModel
 
@@ -26,14 +27,14 @@ def state_service_mock():
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
+    comments_settings_service,
     fake_player_service,
-    settings_service,
     state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, fake_player_service)
         binder.bind(StateService, state_service_mock)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(CommentsSettingsService, comments_settings_service)
 
     common_bindings_with(custom_bindings)
 

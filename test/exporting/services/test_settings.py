@@ -3,27 +3,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Callable
-from textwrap import dedent
 
 import pytest
-from PySide6.QtCore import QSettings
 
 from mpvqc.exporting.services import ExportSettingsService
 
 
-def ini_section(tmp_path, name) -> str:
-    ini = (tmp_path / "test_settings.ini").read_text()
-    return ini.split(f"[{name}]", 1)[1].split("[", 1)[0]
-
-
 @pytest.fixture
-def read_ini(tmp_path) -> Callable[[str], ExportSettingsService]:
-    # written as text and read through a handle that never wrote it, because QSettings serves a writer its own
-    # cached values back, typed, and so hides that an ini file hands every value to a later run as text
+def existing_settings_service(read_existing_settings) -> Callable[[str], ExportSettingsService]:
     def read(content: str) -> ExportSettingsService:
-        file = tmp_path / "earlier_run.ini"
-        file.write_text(dedent(content).lstrip())
-        return ExportSettingsService(QSettings(str(file), QSettings.Format.IniFormat))
+        return ExportSettingsService(read_existing_settings(content))
 
     return read
 
@@ -154,7 +143,7 @@ def test_write_header_subtitles_set_and_get(export_settings_service):
 
 
 def test_every_write_lands_under_its_stored_key_in_the_backup_and_export_ini_sections(
-    export_settings_service, settings_file, tmp_path
+    export_settings_service, ini_section
 ):
     export_settings_service.backup_enabled = False
     export_settings_service.backup_interval = 90
@@ -164,22 +153,22 @@ def test_every_write_lands_under_its_stored_key_in_the_backup_and_export_ini_sec
     export_settings_service.write_header_nickname = True
     export_settings_service.write_header_video_path = False
     export_settings_service.write_header_subtitles = True
-    settings_file.qsettings.sync()
 
-    assert "enabled=false" in ini_section(tmp_path, "Backup")
-    assert "interval=90" in ini_section(tmp_path, "Backup")
+    backup = ini_section("Backup")
+    assert backup["enabled"] == "false"
+    assert backup["interval"] == "90"
 
-    section = ini_section(tmp_path, "Export")
-    assert "nickname=lorem" in section
-    assert "writeHeaderDate=false" in section
-    assert "writeHeaderGenerator=false" in section
-    assert "writeHeaderNickname=true" in section
-    assert "writeHeaderVideoPath=false" in section
-    assert "writeHeaderSubtitles=true" in section
+    export = ini_section("Export")
+    assert export["nickname"] == "lorem"
+    assert export["writeHeaderDate"] == "false"
+    assert export["writeHeaderGenerator"] == "false"
+    assert export["writeHeaderNickname"] == "true"
+    assert export["writeHeaderVideoPath"] == "false"
+    assert export["writeHeaderSubtitles"] == "true"
 
 
-def test_a_settings_file_from_an_earlier_run_reads_back_unchanged(read_ini):
-    service = read_ini(
+def test_a_settings_file_from_an_earlier_run_reads_back_unchanged(existing_settings_service):
+    service = existing_settings_service(
         """
         [Backup]
         enabled=false
@@ -210,8 +199,8 @@ def test_a_settings_file_from_an_earlier_run_reads_back_unchanged(read_ini):
     ["banana", "", "2", "1.0"],
     ids=["text", "empty", "number", "fractional"],
 )
-def test_an_earlier_run_storing_an_unreadable_backup_enabled_falls_back_to_on(read_ini, stored):
-    assert read_ini(f"[Backup]\nenabled={stored}\n").backup_enabled
+def test_an_earlier_run_storing_an_unreadable_backup_enabled_falls_back_to_on(existing_settings_service, stored):
+    assert existing_settings_service(f"[Backup]\nenabled={stored}\n").backup_enabled
 
 
 @pytest.mark.parametrize(
@@ -219,5 +208,7 @@ def test_an_earlier_run_storing_an_unreadable_backup_enabled_falls_back_to_on(re
     ["banana", "", "true", "4.5"],
     ids=["text", "empty", "boolean", "fractional"],
 )
-def test_an_earlier_run_storing_an_unreadable_backup_interval_falls_back_to_one_minute(read_ini, stored):
-    assert read_ini(f"[Backup]\ninterval={stored}\n").backup_interval == 60
+def test_an_earlier_run_storing_an_unreadable_backup_interval_falls_back_to_one_minute(
+    existing_settings_service, stored
+):
+    assert existing_settings_service(f"[Backup]\ninterval={stored}\n").backup_interval == 60

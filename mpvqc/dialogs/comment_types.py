@@ -15,8 +15,11 @@ from PySide6.QtCore import (
 )
 from PySide6.QtQml import QmlElement
 
-from mpvqc.comments.services import CommentTypeValidatorService
-from mpvqc.services import SettingsService
+from mpvqc.comments.services import (
+    CommentsSettingsService,
+    CommentTypeValidatorService,
+    default_comment_types,
+)
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -24,7 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 class CommentTypeList:
     _validator = inject.attr(CommentTypeValidatorService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(CommentsSettingsService)
 
     def __init__(self, parent: QObject) -> None:
         self._model = QStringListModel(list(self._settings.comment_types), parent)
@@ -53,7 +56,7 @@ class CommentTypeList:
         return self._validator.validate_new_comment_type(text, self._model.stringList()) or ""
 
     def reset_to_defaults(self) -> None:
-        self._model.setStringList(list(self._settings.default_comment_types()))
+        self._model.setStringList(default_comment_types())
 
     def save(self) -> None:
         self._settings.comment_types = self._model.stringList()

@@ -18,11 +18,6 @@ def documents_location() -> QUrl:
     return QUrl.fromLocalFile(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation))
 
 
-def import_section(tmp_path) -> str:
-    ini = (tmp_path / "test_settings.ini").read_text()
-    return ini.split("[Import]", 1)[1].split("[", 1)[0]
-
-
 def test_import_found_video_defaults_to_ask_every_time(import_settings_service):
     assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME
 
@@ -75,21 +70,18 @@ def test_last_directory_subtitles_set_and_get(import_settings_service):
     assert import_settings_service.last_directory_subtitles == ELSEWHERE
 
 
-def test_every_write_lands_under_its_stored_key_in_the_import_ini_section(
-    import_settings_service, settings_file, tmp_path
-):
+def test_every_write_lands_under_its_stored_key_in_the_import_ini_section(import_settings_service, ini_section):
     import_settings_service.import_found_video = LoadFoundVideo.NEVER
     import_settings_service.last_directory_video = ELSEWHERE
     import_settings_service.last_directory_documents = ELSEWHERE
     import_settings_service.last_directory_subtitles = ELSEWHERE
-    settings_file.qsettings.sync()
 
-    section = import_section(tmp_path)
-    assert "loadFoundVideo=2" in section
+    section = ini_section("Import")
+    assert section["loadFoundVideo"] == "2"
     # QSettings serializes a QUrl into an opaque variant, so only the key name is readable for the directories
-    assert "lastDirectoryVideo=" in section
-    assert "lastDirectoryDocuments=" in section
-    assert "lastDirectorySubtitles=" in section
+    assert "lastDirectoryVideo" in section
+    assert "lastDirectoryDocuments" in section
+    assert "lastDirectorySubtitles" in section
 
 
 def test_a_settings_file_from_an_earlier_run_reads_back_unchanged(settings_file, tmp_path):
