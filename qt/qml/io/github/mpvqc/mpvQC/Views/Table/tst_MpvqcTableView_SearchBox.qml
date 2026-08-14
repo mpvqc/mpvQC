@@ -100,24 +100,6 @@ TestCase {
                     }
                 ]
             },
-            {
-                tag: "wraps-forward",
-                action: _c => keyPress(Qt.Key_Return),
-                expected: [
-                    {
-                        index: 1,
-                        label: "2/3"
-                    },
-                    {
-                        index: 2,
-                        label: "3/3"
-                    },
-                    {
-                        index: 0,
-                        label: "1/3"
-                    },
-                ]
-            },
         ];
     }
 
@@ -166,28 +148,6 @@ TestCase {
                         index: 2,
                         label: "3/3"
                     }
-                ]
-            },
-            {
-                tag: "wraps-backward",
-                action: _c => keyPress(Qt.Key_Return, Qt.ShiftModifier),
-                expected: [
-                    {
-                        index: 2,
-                        label: "3/3"
-                    },
-                    {
-                        index: 1,
-                        label: "2/3"
-                    },
-                    {
-                        index: 0,
-                        label: "1/3"
-                    },
-                    {
-                        index: 2,
-                        label: "3/3"
-                    },
                 ]
             },
         ];

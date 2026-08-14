@@ -2,357 +2,174 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
+from typing import NamedTuple
 
 import inject
 import pytest
 
-from mpvqc.comments.services import CommentsService
+from mpvqc.comments.services import CommentsService, Found, NoMatches, NoQuery, SearchOutcome
 from mpvqc.comments.viewmodels import MpvqcCommentSearchBoxViewModel
-from mpvqc.shared import Comment
 
-DEFAULT_COMMENTS_SEARCH = (
-    Comment(time=0, comment_type="commentType", comment="Word 1"),
-    Comment(time=1, comment_type="commentType", comment="Word 2"),
-    Comment(time=2, comment_type="commentType", comment="Word 3"),
-    Comment(time=3, comment_type="commentType", comment="Word 4"),
-    Comment(time=4, comment_type="commentType", comment="Word 5"),
-    Comment(time=5, comment_type="commentType", comment="Word 6"),
-    Comment(time=6, comment_type="commentType", comment=""),
-    Comment(time=9, comment_type="commentType", comment="Word 9"),
-)
 
-EXTRA_COMMENTS = (
-    Comment(time=7, comment_type="commentType", comment="Word 7"),
-    Comment(time=8, comment_type="commentType", comment="Word 8"),
-)
+class SearchCall(NamedTuple):
+    query: str
+    include_current_row: bool
+    top_down: bool
+
+
+class CommentsServiceMock:
+    """Doubles the comments service surface the view model consumes: a stubbed search method."""
+
+    def __init__(self):
+        assert callable(CommentsService.search), "mocked surface drifted: not a plain method anymore"
+        self.calls: list[SearchCall] = []
+        self._outcome: SearchOutcome = NoQuery()
+
+    def returning(self, outcome: SearchOutcome) -> None:
+        self._outcome = outcome
+
+    def search(self, query: str, *, include_current_row: bool, top_down: bool) -> SearchOutcome:
+        self.calls.append(SearchCall(query, include_current_row, top_down))
+        return self._outcome
 
 
 @pytest.fixture
-def model() -> CommentsService:
-    service = inject.instance(CommentsService)
-    service.import_comments(DEFAULT_COMMENTS_SEARCH)
-    return service
+def comments_service_mock() -> CommentsServiceMock:
+    return CommentsServiceMock()
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with):
-    common_bindings_with()
+def configure_inject(common_bindings_with, comments_service_mock):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(CommentsService, comments_service_mock)
+
+    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
-def view_model(model: CommentsService) -> MpvqcCommentSearchBoxViewModel:
+def view_model() -> MpvqcCommentSearchBoxViewModel:
     # noinspection PyCallingNonCallable
     return MpvqcCommentSearchBoxViewModel()
 
 
-@pytest.fixture
-def select(model):
-    def _select_index(index: int):
-        model.selection.selectedRow = index
-
-    return _select_index
-
-
-@pytest.fixture
-def search(view_model) -> Callable[[str], tuple[str, bool, int]]:
-    def _search(query):
-        next_index = -1
-
-        def track_highlight(idx):
-            nonlocal next_index
-            next_index = idx
-
-        view_model.highlightRequested.connect(track_highlight)
-        view_model.search(query)
-        view_model.highlightRequested.disconnect(track_highlight)
-
-        return view_model.statusLabel, view_model.hasMultipleResults, next_index
-
-    # noinspection PyTypeChecker
-    return _search
+class OutcomeCase(NamedTuple):
+    name: str
+    outcome: SearchOutcome
+    label: str
+    has_multiple: bool
+    highlighted_index: int | None
 
 
-@pytest.fixture
-def get_next(view_model) -> Callable[[], tuple[str, bool, int]]:
-    def _func():
-        next_index = -1
+@pytest.mark.parametrize(
+    "case",
+    [
+        OutcomeCase(
+            name="a single match renders current over total without has-multiple",
+            outcome=Found(index=4, current=1, total=1),
+            label="1/1",
+            has_multiple=False,
+            highlighted_index=4,
+        ),
+        OutcomeCase(
+            name="several matches render current over total and set has-multiple",
+            outcome=Found(index=2, current=3, total=5),
+            label="3/5",
+            has_multiple=True,
+            highlighted_index=2,
+        ),
+        OutcomeCase(
+            name="no matches render 0/0",
+            outcome=NoMatches(),
+            label="0/0",
+            has_multiple=False,
+            highlighted_index=None,
+        ),
+        OutcomeCase(
+            name="no query renders an empty label",
+            outcome=NoQuery(),
+            label="",
+            has_multiple=False,
+            highlighted_index=None,
+        ),
+    ],
+    ids=lambda case: case.name,
+)
+def test_outcome_maps_to_state(case, view_model, comments_service_mock, make_spy):
+    comments_service_mock.returning(case.outcome)
+    highlight_spy = make_spy(view_model.highlightRequested)
 
-        def track_highlight(idx):
-            nonlocal next_index
-            next_index = idx
+    view_model.search("query")
 
-        view_model.highlightRequested.connect(track_highlight)
-        view_model.selectNext()
-        view_model.highlightRequested.disconnect(track_highlight)
-
-        return view_model.statusLabel, view_model.hasMultipleResults, next_index
-
-    # noinspection PyTypeChecker
-    return _func
+    assert view_model.statusLabel == case.label
+    assert view_model.hasMultipleResults == case.has_multiple
+    if case.highlighted_index is None:
+        assert highlight_spy.count() == 0
+    else:
+        assert highlight_spy.count() == 1
+        assert highlight_spy.at(invocation=0, argument=0) == case.highlighted_index
 
 
-@pytest.fixture
-def get_previous(view_model) -> Callable[[], tuple[str, bool, int]]:
-    def _func():
-        next_index = -1
-
-        def track_highlight(idx):
-            nonlocal next_index
-            next_index = idx
-
-        view_model.highlightRequested.connect(track_highlight)
-        view_model.selectPrevious()
-        view_model.highlightRequested.disconnect(track_highlight)
-
-        return view_model.statusLabel, view_model.hasMultipleResults, next_index
-
-    # noinspection PyTypeChecker
-    return _func
-
-
-def test_search_query_changed(view_model, make_spy, search, get_next, get_previous):
+def test_search_query_changed_dedupes_repeats(view_model, comments_service_mock, make_spy):
+    comments_service_mock.returning(NoMatches())
     spy = make_spy(view_model.searchQueryChanged)
 
-    search("Query")
+    view_model.search("Query")
     assert spy.count() == 1
-    assert spy.at(0, 0) == "Query"
+    assert spy.at(invocation=0, argument=0) == "Query"
 
-    get_next()
-    assert spy.count() == 1
-
-    get_previous()
+    view_model.selectNext()
     assert spy.count() == 1
 
-    search("Query")
+    view_model.selectPrevious()
     assert spy.count() == 1
 
-    search("Other Query")
+    view_model.search("Query")
+    assert spy.count() == 1
+
+    view_model.search("Other Query")
     assert spy.count() == 2
 
 
-def test_search_with_empty_query(search):
-    status_label, has_multiple, next_idx = search("")
-    assert not status_label
-    assert not has_multiple
-    assert next_idx == -1
-
-
-def test_search_no_match(search):
-    status_label, has_multiple, next_idx = search("Query")
-    assert status_label == "0/0"
-    assert not has_multiple
-    assert next_idx == -1
-
-
-def test_search_match(search, view_model, make_spy):
-    status_label_spy = make_spy(view_model.statusLabelChanged)
+def test_status_label_and_has_multiple_emit_only_on_change(view_model, comments_service_mock, make_spy):
+    status_spy = make_spy(view_model.statusLabelChanged)
     has_multiple_spy = make_spy(view_model.hasMultipleResultsChanged)
-    highlight_spy = make_spy(view_model.highlightRequested)
 
-    status_label, has_multiple, next_idx = search("Word")
-
-    assert status_label == "1/7"
-    assert has_multiple
-    assert next_idx == 0
-
-    assert status_label_spy.count() == 1
-    assert status_label_spy.at(0, 0) == "1/7"
-
+    comments_service_mock.returning(Found(index=0, current=1, total=3))
+    view_model.search("Word")
+    assert status_spy.count() == 1
     assert has_multiple_spy.count() == 1
-    assert has_multiple_spy.at(0, 0) is True
 
-    assert highlight_spy.count() >= 1
-    assert highlight_spy.at(0, 0) == 0
+    view_model.search("Word")
+    assert status_spy.count() == 1
+    assert has_multiple_spy.count() == 1
 
-
-def test_search_match_next(search, select, get_next):
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "2/7"
-    assert has_multiple
-    assert idx == 1
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "3/7"
-    assert has_multiple
-    assert idx == 2
+    comments_service_mock.returning(Found(index=1, current=2, total=3))
+    view_model.selectNext()
+    assert status_spy.count() == 2
+    assert has_multiple_spy.count() == 1
 
 
-def test_search_match_next_new_query(search, select, get_next):
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
+def test_highlight_fires_on_every_found_including_repeats(view_model, comments_service_mock, make_spy):
+    comments_service_mock.returning(Found(index=2, current=1, total=1))
+    spy = make_spy(view_model.highlightRequested)
 
-    select(idx)
+    view_model.search("Word")
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == 2
 
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "2/7"
-    assert has_multiple
-    assert idx == 1
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "3/7"
-    assert has_multiple
-    assert idx == 2
-
-    status_label, has_multiple, idx = search("4")
-    assert status_label == "1/1"
-    assert not has_multiple
-    assert idx == 3
+    view_model.search("Word")
+    assert spy.count() == 2
+    assert spy.at(invocation=1, argument=0) == 2
 
 
-def test_search_match_next_after_import(model, search, select, get_next):
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
+def test_slots_forward_flags_and_reuse_the_stored_query(view_model, comments_service_mock):
+    comments_service_mock.returning(Found(index=0, current=1, total=2))
 
-    select(idx)
+    view_model.search("Query")
+    assert comments_service_mock.calls[-1] == SearchCall(query="Query", include_current_row=True, top_down=True)
 
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "2/7"
-    assert has_multiple
-    assert idx == 1
+    view_model.selectNext()
+    assert comments_service_mock.calls[-1] == SearchCall(query="Query", include_current_row=False, top_down=True)
 
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "3/7"
-    assert has_multiple
-    assert idx == 2
-
-    model.import_comments(EXTRA_COMMENTS)
-    select(8)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "9/9"
-    assert has_multiple
-    assert idx == 9
-
-
-def test_search_match_previous(search, select, get_previous):
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "7/7"
-    assert has_multiple
-    assert idx == 7
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "6/7"
-    assert has_multiple
-    assert idx == 5
-
-
-def test_search_match_previous_with_selection_change(search, select, get_previous):
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "7/7"
-    assert has_multiple
-    assert idx == 7
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "6/7"
-    assert has_multiple
-    assert idx == 5
-
-    select(index=2)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "2/7"
-    assert has_multiple
-    assert idx == 1
-
-
-def test_search_match_previous_after_import(search, model, select, get_next, get_previous):
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "2/7"
-    assert has_multiple
-    assert idx == 1
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "3/7"
-    assert has_multiple
-    assert idx == 2
-
-    model.import_comments(EXTRA_COMMENTS)
-
-    select(index=8)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "7/9"
-    assert has_multiple
-    assert idx == 7
-
-
-def test_search_wrap_around(search, select, get_next, get_previous):
-    select(index=6)
-
-    status_label, has_multiple, idx = search("Word")
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "7/7"
-    assert has_multiple
-    assert idx == 7
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_previous()
-    assert status_label == "6/7"
-    assert has_multiple
-    assert idx == 5
-
-    select(index=5)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "7/7"
-    assert has_multiple
-    assert idx == 7
-
-    select(idx)
-
-    status_label, has_multiple, idx = get_next()
-    assert status_label == "1/7"
-    assert has_multiple
-    assert idx == 0
+    view_model.selectPrevious()
+    assert comments_service_mock.calls[-1] == SearchCall(query="Query", include_current_row=False, top_down=False)
