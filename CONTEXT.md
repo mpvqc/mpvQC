@@ -51,9 +51,16 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Unknown comment type**: a type a comment carries that is not in the configured list. Imported documents introduce
   them; removing a configured type leaves them behind. They render and export verbatim, since they have no translation
   catalog entry.
-- **Displayable comment types**: the types the comment table may show: every configured type plus every type present in
-  the document. The table reserves label space for all of them. The new-comment menu (configured types only) and the
-  edit-type menu (configured types plus the row's own type) show different sets by design.
+- **Distinct comment types**: the comment types the comments carry, each named once. Set by the comments alone:
+  configuring a type does not put it in, and leaving one unconfigured does not keep it out.
+- **Displayable comment types**: the types the comment table may show: the types the user configured and the distinct
+  comment types together. The table reserves label space for all of them. The new-comment menu (configured types only)
+  and the edit-type menu (configured types plus the row's own type) show different sets by design.
+- **View action**: what a change to the comments asks the comment table to do beyond redrawing the rows: jump to a row
+  with animation, jump to it without, jump to it without and open the editor, or nothing. Undo and redo also send one
+  on their own, to move the user to the row a step is about to change before it changes.
+- **Selection state**: where the selection stands in the comment table: which row it is on, and whether that row is on
+  screen. It is where a search carries on from, and what undo and redo check before they move the user.
 
 ## UI
 
