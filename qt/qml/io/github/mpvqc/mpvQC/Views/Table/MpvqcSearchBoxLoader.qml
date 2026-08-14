@@ -11,7 +11,7 @@ import io.github.mpvqc.mpvQC.Python
 Loader {
     id: root
 
-    readonly property MpvqcSearchBoxViewModel viewModel: MpvqcSearchBoxViewModel {
+    readonly property MpvqcCommentSearchBoxViewModel viewModel: MpvqcCommentSearchBoxViewModel {
         onHighlightRequested: index => root.highlightRequested(index)
     }
 

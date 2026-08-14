@@ -13,7 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 @QmlUncreatable("constructed by CommentsService")
-class SelectionState(QObject):
+class MpvqcCommentSelectionState(QObject):
     """One-way view state updated from QML to Python."""
 
     selectedRowChanged = Signal(int)

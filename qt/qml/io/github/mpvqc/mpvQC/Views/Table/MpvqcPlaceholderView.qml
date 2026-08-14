@@ -15,7 +15,7 @@ Item {
     id: root
     objectName: "placeholder"
 
-    readonly property MpvqcPlaceholderViewModel viewModel: MpvqcPlaceholderViewModel {}
+    readonly property MpvqcCommentPlaceholderViewModel viewModel: MpvqcCommentPlaceholderViewModel {}
 
     readonly property bool horizontalLayout: viewModel.layoutOrientation === Qt.Horizontal
     readonly property int textAlignment: horizontalLayout ? Qt.AlignLeft : (Qt.AlignVCenter | Qt.AlignRight)

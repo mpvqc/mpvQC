@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    from .selection import SelectionState
+    from .selection import MpvqcCommentSelectionState
     from .store import Store
 
 
@@ -34,7 +34,7 @@ type SearchOutcome = NoQuery | NoMatches | Found
 
 
 class CommentSearchEngine:
-    def __init__(self, store: Store, selection: SelectionState) -> None:
+    def __init__(self, store: Store, selection: MpvqcCommentSelectionState) -> None:
         self._store = store
         self._selection = selection
         self._query = ""

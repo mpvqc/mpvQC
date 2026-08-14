@@ -8,7 +8,7 @@ import inject
 import pytest
 
 from mpvqc.comments.services import CommentsService
-from mpvqc.comments.viewmodels import MpvqcSearchBoxViewModel
+from mpvqc.comments.viewmodels import MpvqcCommentSearchBoxViewModel
 from mpvqc.shared import Comment
 
 DEFAULT_COMMENTS_SEARCH = (
@@ -41,9 +41,9 @@ def configure_inject(common_bindings_with):
 
 
 @pytest.fixture
-def view_model(model: CommentsService) -> MpvqcSearchBoxViewModel:
+def view_model(model: CommentsService) -> MpvqcCommentSearchBoxViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcSearchBoxViewModel()
+    return MpvqcCommentSearchBoxViewModel()
 
 
 @pytest.fixture

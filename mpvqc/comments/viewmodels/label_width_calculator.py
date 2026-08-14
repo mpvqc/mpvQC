@@ -27,35 +27,35 @@ def _translate_comment_types(types: frozenset[str]) -> tuple[str, ...]:
 
 
 @dataclass(frozen=True)
-class LabelWidthCalculatorInputs:
+class CommentLabelWidthCalculatorInputs:
     displayable_comment_types: frozenset[str]
     """The derivation never reads this. The retranslation fold does, to translate the types under the new language."""
 
     comment_type_labels: tuple[str, ...]
     table_long_format: bool
 
-    def with_types(self, types: frozenset[str]) -> "LabelWidthCalculatorInputs":
+    def with_types(self, types: frozenset[str]) -> "CommentLabelWidthCalculatorInputs":
         return replace(self, displayable_comment_types=types, comment_type_labels=_translate_comment_types(types))
 
 
 @dataclass(frozen=True)
-class LabelWidthCalculatorProps:
+class CommentLabelWidthCalculatorProps:
     comment_types_label_width: int
     time_label_width: int
 
 
-def derive_label_width_calculator_props(
-    inputs: LabelWidthCalculatorInputs,
+def derive_comment_label_width_calculator_props(
+    inputs: CommentLabelWidthCalculatorInputs,
     measure_width: Callable[[Iterable[str]], int],
-) -> LabelWidthCalculatorProps:
-    return LabelWidthCalculatorProps(
+) -> CommentLabelWidthCalculatorProps:
+    return CommentLabelWidthCalculatorProps(
         comment_types_label_width=measure_width(inputs.comment_type_labels),
         time_label_width=measure_width(_time_candidates(long_format=inputs.table_long_format)),
     )
 
 
 @QmlElement
-class MpvqcLabelWidthCalculatorViewModel(QObject):
+class MpvqcCommentLabelWidthCalculatorViewModel(QObject):
     _i18n = inject.attr(InternationalizationService)
     _comment_types_policy = inject.attr(CommentTypesPolicyService)
     _time_format_policy = inject.attr(TimeFormatPolicyService)
@@ -68,7 +68,7 @@ class MpvqcLabelWidthCalculatorViewModel(QObject):
         super().__init__(parent)
 
         types = self._comment_types_policy.displayable_comment_types
-        self._inputs = LabelWidthCalculatorInputs(
+        self._inputs = CommentLabelWidthCalculatorInputs(
             displayable_comment_types=types,
             comment_type_labels=_translate_comment_types(types),
             table_long_format=self._time_format_policy.table_long_format,
@@ -79,8 +79,8 @@ class MpvqcLabelWidthCalculatorViewModel(QObject):
         self._comment_types_policy.displayable_comment_types_changed.connect(self._fold_displayable_comment_types)
         self._time_format_policy.table_long_format_changed.connect(self._fold_table_long_format)
 
-    def _derive(self) -> LabelWidthCalculatorProps:
-        return derive_label_width_calculator_props(self._inputs, self._width_service.calculate_width_for)
+    def _derive(self) -> CommentLabelWidthCalculatorProps:
+        return derive_comment_label_width_calculator_props(self._inputs, self._width_service.calculate_width_for)
 
     @Slot()
     def _fold_retranslated(self) -> None:
@@ -94,7 +94,7 @@ class MpvqcLabelWidthCalculatorViewModel(QObject):
     def _fold_table_long_format(self, value: bool) -> None:
         self._update(replace(self._inputs, table_long_format=value))
 
-    def _update(self, inputs: LabelWidthCalculatorInputs) -> None:
+    def _update(self, inputs: CommentLabelWidthCalculatorInputs) -> None:
         self._inputs = inputs
         new, old = self._derive(), self._props
         if new == old:

@@ -9,7 +9,7 @@ from .search import Found as Found
 from .search import NoMatches as NoMatches
 from .search import NoQuery as NoQuery
 from .search import SearchOutcome as SearchOutcome
-from .selection import SelectionState as SelectionState
+from .selection import MpvqcCommentSelectionState as MpvqcCommentSelectionState
 from .service import CommentsService as CommentsService
 from .settings import CommentsSettingsService as CommentsSettingsService
 from .settings import default_comment_types as default_comment_types

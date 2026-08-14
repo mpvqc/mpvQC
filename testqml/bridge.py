@@ -21,7 +21,7 @@ from mpvqc.appearance.services import (
 )
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.comments.services import CommentsService, CommentsSettingsService
-from mpvqc.comments.viewmodels import MpvqcLabelWidthCalculatorViewModel, MpvqcTableUtilityViewModel
+from mpvqc.comments.viewmodels import MpvqcCommentLabelWidthCalculatorViewModel, MpvqcCommentTableTimeFormatViewModel
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.importing.services import (
     FinishedPlan,
@@ -139,13 +139,13 @@ _SWAPPED_VIEW_MODELS = (
         "io.github.mpvqc.mpvQC.Utility",
         "MpvqcLabelWidthCalculator",
         "viewModel",
-        MpvqcLabelWidthCalculatorViewModel,
+        MpvqcCommentLabelWidthCalculatorViewModel,
     ),
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Views.Table",
         "MpvqcTableUtility",
         "viewModel",
-        MpvqcTableUtilityViewModel,
+        MpvqcCommentTableTimeFormatViewModel,
     ),
 )
 

@@ -10,7 +10,7 @@ import io.github.mpvqc.mpvQC.Python
 
 QtObject {
     // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
-    property MpvqcLabelWidthCalculatorViewModel viewModel: MpvqcLabelWidthCalculatorViewModel {}
+    property MpvqcCommentLabelWidthCalculatorViewModel viewModel: MpvqcCommentLabelWidthCalculatorViewModel {}
 
     property int commentTypesLabelWidth: viewModel.commentTypesLabelWidth
     property int timeLabelWidth: viewModel.timeLabelWidth

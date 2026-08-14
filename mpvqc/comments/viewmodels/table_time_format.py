@@ -13,15 +13,15 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcTableUtilityViewModel(QObject):
+class MpvqcCommentTableTimeFormatViewModel(QObject):
     _policy = inject.attr(TimeFormatPolicyService)
 
-    tableLongFormatChanged = Signal(bool)
+    useLongFormatChanged = Signal(bool)
 
     def __init__(self, /) -> None:
         super().__init__()
-        self._policy.table_long_format_changed.connect(self.tableLongFormatChanged)
+        self._policy.table_long_format_changed.connect(self.useLongFormatChanged)
 
-    @Property(bool, notify=tableLongFormatChanged)
-    def tableLongFormat(self) -> bool:
+    @Property(bool, notify=useLongFormatChanged)
+    def useLongFormat(self) -> bool:
         return self._policy.table_long_format

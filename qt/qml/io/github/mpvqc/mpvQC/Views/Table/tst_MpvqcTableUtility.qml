@@ -18,7 +18,7 @@ TestCase {
 
     function makeUtility(useLongFormat = false): var {
         const viewModel = createTemporaryObject(viewModelMockComponent, testCase, {
-            tableLongFormat: useLongFormat
+            useLongFormat
         });
         verify(viewModel);
         const utility = createTemporaryObject(utilityComponent, testCase, {
@@ -270,7 +270,7 @@ TestCase {
         id: viewModelMockComponent
 
         QtObject {
-            property bool tableLongFormat: false
+            property bool useLongFormat: false
         }
     }
 }
