@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.comments.services import ReverseTranslatorService
+from mpvqc.comments.services import reverse_translate
 
 
 @pytest.mark.parametrize(
@@ -20,4 +20,4 @@ from mpvqc.comments.services import ReverseTranslatorService
     ],
 )
 def test_lookup_maps_translated_comment_types_to_english(expected, translated):
-    assert expected == ReverseTranslatorService.lookup(translated)
+    assert expected == reverse_translate(translated)

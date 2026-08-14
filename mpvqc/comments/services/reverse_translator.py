@@ -9,11 +9,9 @@ from PySide6.QtCore import QDir, QTranslator
 from .settings import default_comment_types
 
 
-class ReverseTranslatorService:
-    @staticmethod
-    def lookup(comment_type_in_current_language: str) -> str:
-        table = _lookup_table()
-        return table.get(comment_type_in_current_language, comment_type_in_current_language)
+def reverse_translate(comment_type_in_current_language: str) -> str:
+    table = _lookup_table()
+    return table.get(comment_type_in_current_language, comment_type_in_current_language)
 
 
 @functools.cache

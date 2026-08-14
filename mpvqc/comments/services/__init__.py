@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .resetter import ResetService as ResetService
-from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
+from .reverse_translator import reverse_translate as reverse_translate
 from .roles import ROLE_NAMES as ROLE_NAMES
 from .roles import Role as Role
 from .search import CommentSearchEngine as CommentSearchEngine
@@ -17,7 +17,7 @@ from .settings import CommentsSettingsService as CommentsSettingsService
 from .settings import default_comment_types as default_comment_types
 from .store import StoreItem as StoreItem
 from .time_format_policy import TimeFormatPolicyService as TimeFormatPolicyService
-from .type_validator import CommentTypeValidatorService as CommentTypeValidatorService
+from .type_validator import validate_new_comment_type as validate_new_comment_type
 from .types_policy import CommentTypesPolicyService as CommentTypesPolicyService
 from .view_action import AnimatedSelection as AnimatedSelection
 from .view_action import NoViewAction as NoViewAction

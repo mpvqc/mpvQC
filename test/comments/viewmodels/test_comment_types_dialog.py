@@ -7,24 +7,13 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.comments.services import (
-    CommentsSettingsService,
-    CommentTypeValidatorService,
-    default_comment_types,
-)
+from mpvqc.comments.services import CommentsSettingsService, default_comment_types
 from mpvqc.comments.viewmodels import MpvqcCommentTypesDialogViewModel
 
 
 @pytest.fixture
 def comment_types():
     return ["CommentType 1", "CommentType 2", "CommentType 3", "CommentType 4", "CommentType 5"]
-
-
-@pytest.fixture
-def comment_type_validator_service_mock():
-    mock = MagicMock(spec_set=CommentTypeValidatorService)
-    mock.validate_new_comment_type.return_value = None
-    return mock
 
 
 @pytest.fixture
@@ -37,11 +26,9 @@ def settings_service_mock(comment_types):
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
-    comment_type_validator_service_mock,
     settings_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(CommentTypeValidatorService, comment_type_validator_service_mock)
         binder.bind(CommentsSettingsService, settings_service_mock)
 
     common_bindings_with(custom_bindings)
@@ -58,15 +45,13 @@ def test_initial_model_state(view_model, comment_types):
     assert view_model.commentTypesModel.stringList() == comment_types
 
 
-def test_validate_new_passes_through_to_service(view_model, comment_type_validator_service_mock, comment_types):
-    comment_type_validator_service_mock.validate_new_comment_type.return_value = None
-    assert not view_model.validateNew("anything")
-    comment_type_validator_service_mock.validate_new_comment_type.assert_called_once_with("anything", comment_types)
+def test_validate_new_accepts_an_unused_name(view_model):
+    assert not view_model.validateNew("Something new")
 
 
-def test_validate_new_returns_error_message(view_model, comment_type_validator_service_mock):
-    comment_type_validator_service_mock.validate_new_comment_type.return_value = "Duplicate"
-    assert view_model.validateNew("anything") == "Duplicate"
+def test_validate_new_checks_the_unsaved_list(view_model):
+    view_model.append("New Type")
+    assert view_model.validateNew("New Type")
 
 
 def test_append_adds_item_and_returns_new_index(view_model, comment_types):

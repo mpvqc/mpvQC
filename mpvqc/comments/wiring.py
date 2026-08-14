@@ -18,7 +18,6 @@ def bindings(binder: inject.Binder) -> None:
         CommentsService,
         CommentsSettingsService,
         CommentTypesPolicyService,
-        CommentTypeValidatorService,
         ResetService,
         TimeFormatPolicyService,
     )
@@ -34,7 +33,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(CommentsService, comments_service)
     binder.bind_to_constructor(CommentsSettingsService, comments_settings_service)
     binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
-    binder.bind_to_constructor(CommentTypeValidatorService, CommentTypeValidatorService)
     binder.bind_to_constructor(ResetService, ResetService)
     binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
 
