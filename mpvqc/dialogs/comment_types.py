@@ -15,7 +15,8 @@ from PySide6.QtCore import (
 )
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import CommentTypeValidatorService, SettingsService
+from mpvqc.comments.services import CommentTypeValidatorService
+from mpvqc.services import SettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

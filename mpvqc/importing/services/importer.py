@@ -10,8 +10,9 @@ from typing import TYPE_CHECKING, Protocol
 import inject
 from PySide6.QtCore import QObject, Signal
 
+from mpvqc.comments.services import CommentsService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
-from mpvqc.services import CommentsService, PlayerService, ResetService, StateService
+from mpvqc.services import PlayerService, ResetService, StateService
 
 from .concerns import SessionMerge, SessionReplace, SubtitlesLoad, SubtitlesSkip, VideoLoad, VideoSkip
 from .pending import PendingImport

@@ -12,11 +12,11 @@ from typing import TYPE_CHECKING, Literal
 import inject
 from PySide6.QtCore import QObject, QStandardPaths, Signal
 
+from mpvqc.comments.services import CommentsService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
-    CommentsService,
     PlayerService,
     ResourceService,
     StateService,

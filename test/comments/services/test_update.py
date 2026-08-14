@@ -6,8 +6,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.comments import AnimatedSelection, QuickSelection
-from mpvqc.services.comments.roles import Role
+from mpvqc.comments.services import AnimatedSelection, QuickSelection, Role
 from mpvqc.shared import Comment
 
 

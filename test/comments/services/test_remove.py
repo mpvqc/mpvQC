@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.services.comments import NoViewAction, QuickSelection
+from mpvqc.comments.services import NoViewAction, QuickSelection
 
 
 def test_remove_comment(comments):

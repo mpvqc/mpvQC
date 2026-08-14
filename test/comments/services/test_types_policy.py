@@ -6,7 +6,8 @@ import inject
 import pytest
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services import CommentsService, CommentTypesPolicyService, SettingsService
+from mpvqc.comments.services import CommentsService, CommentTypesPolicyService
+from mpvqc.services import SettingsService
 
 
 class CommentsServiceMock(QObject):

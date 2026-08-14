@@ -7,13 +7,12 @@ from __future__ import annotations
 import bisect
 import itertools
 from collections import Counter
-from dataclasses import dataclass
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Protocol, override
+from typing import TYPE_CHECKING, Any, override
 
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelIndex, Qt, Signal
 
-from .roles import ROLE_NAMES, Role
+from mpvqc.comments.services import ROLE_NAMES, Role, StoreItem
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -23,6 +22,8 @@ if TYPE_CHECKING:
     from mpvqc.shared import Comment
 
 _seq_counter = itertools.count()
+
+_sort_key = attrgetter("sort_key")
 
 
 class TypeTally:
@@ -50,36 +51,6 @@ class TypeTally:
 
     def distinct(self) -> frozenset[str]:
         return frozenset(self._counts)
-
-
-@dataclass(frozen=True, slots=True)
-class StoreItem:
-    comment: Comment
-    seq: int
-
-    @property
-    def sort_key(self) -> tuple[int, int]:
-        return self.comment.time, self.seq
-
-
-_sort_key = attrgetter("sort_key")
-
-
-class Store(Protocol):
-    def rowCount(self) -> int: ...
-    def item(self, row: int) -> StoreItem: ...
-    def comments(self) -> tuple[Comment, ...]: ...
-    def distinct_comment_types(self) -> frozenset[str]: ...
-    def snapshot(self) -> tuple[StoreItem, ...]: ...
-    def search_rows(self, query: str) -> list[int]: ...
-    def mint(self, comment: Comment) -> StoreItem: ...
-    def insert_position_for_new(self, time: int) -> int: ...
-    def insert_position_for_retimed(self, excluded_row: int, new_time: int) -> int: ...
-    def insert(self, row: int, item: StoreItem) -> None: ...
-    def remove(self, row: int) -> None: ...
-    def replace(self, row: int, new_comment: Comment, role: Role) -> None: ...
-    def move_replace(self, src: int, dst: int, new_comment: Comment, role: Role) -> None: ...
-    def reset(self, items: Sequence[StoreItem]) -> None: ...
 
 
 class CommentStore(QAbstractListModel):

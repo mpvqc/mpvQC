@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import TimeFormatPolicyService
+from mpvqc.comments.services import TimeFormatPolicyService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

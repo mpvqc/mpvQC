@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.services.comments import Found, NoMatches
+from mpvqc.comments.services import Found, NoMatches
 
 
 def test_reset_empties_store(comments):

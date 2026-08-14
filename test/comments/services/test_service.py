@@ -7,8 +7,9 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import CommentsService, StateService
-from mpvqc.services.comments import CommentStore
+from mpvqc.comments.models import CommentStore
+from mpvqc.comments.services import CommentsService
+from mpvqc.services import StateService
 
 
 @pytest.fixture

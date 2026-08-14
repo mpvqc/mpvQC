@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.services import CommentTypeValidatorService
+from mpvqc.comments.services import CommentTypeValidatorService
 
 
 @pytest.fixture(scope="module")

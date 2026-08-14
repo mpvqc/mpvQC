@@ -13,10 +13,11 @@ from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, Sig
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
+from mpvqc.comments.models import CommentStore
+from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.services import (
     BuildInfoService,
-    CommentsService,
     InternationalizationService,
     PlayerService,
     ResourceService,
@@ -25,7 +26,6 @@ from mpvqc.services import (
     StateService,
     TimeFormatterService,
 )
-from mpvqc.services.comments import CommentStore
 from mpvqc.services.player.state import OBSERVED_PROPERTIES, RawPropertyValue, make_observer
 from mpvqc.shared import map_path_to_str
 

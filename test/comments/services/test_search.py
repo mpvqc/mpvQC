@@ -7,7 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from mpvqc.services.comments.search import CommentSearchEngine, Found, NoMatches, NoQuery, SearchOutcome
+from mpvqc.comments.services import CommentSearchEngine, Found, NoMatches, NoQuery, SearchOutcome
 
 
 @pytest.fixture

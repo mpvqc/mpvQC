@@ -10,11 +10,11 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
 from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
-    CommentsService,
     PlayerService,
     SettingsService,
     StateService,

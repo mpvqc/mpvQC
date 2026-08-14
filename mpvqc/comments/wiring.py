@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import inject
+
+
+def bindings(binder: inject.Binder) -> None:
+    import inject
+
+    from mpvqc.comments.models import CommentStore
+    from mpvqc.comments.services import (
+        CommentsService,
+        CommentTypesPolicyService,
+        CommentTypeValidatorService,
+        TimeFormatPolicyService,
+    )
+
+    def comments_service() -> CommentsService:
+        return CommentsService(inject.instance(CommentStore))
+
+    binder.bind_to_constructor(CommentStore, CommentStore)
+    binder.bind_to_constructor(CommentsService, comments_service)
+    binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
+    binder.bind_to_constructor(CommentTypeValidatorService, CommentTypeValidatorService)
+    binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
+
+
+def register_qml_types() -> None:
+    import mpvqc.comments.services  # ruff: ignore[unused-import]
