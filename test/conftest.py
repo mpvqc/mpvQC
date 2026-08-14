@@ -25,6 +25,7 @@ from mpvqc.services import (
     StateService,
     TimeFormatterService,
 )
+from mpvqc.services.comments import CommentStore
 from mpvqc.services.player.state import OBSERVED_PROPERTIES, RawPropertyValue, make_observer
 from mpvqc.shared import map_path_to_str
 
@@ -219,13 +220,18 @@ def check_generated_resources():
         raise FileNotFoundError(message)
 
 
+def _comments_service() -> CommentsService:
+    return CommentsService(inject.instance(CommentStore))
+
+
 @pytest.fixture(scope="session")
 def common_bindings_with():
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
             # Common & shared services
             binder.bind_to_constructor(BuildInfoService, BuildInfoService)
-            binder.bind_to_constructor(CommentsService, CommentsService)
+            binder.bind_to_constructor(CommentStore, CommentStore)
+            binder.bind_to_constructor(CommentsService, _comments_service)
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)
