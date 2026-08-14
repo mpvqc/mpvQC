@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
 from .roles import ROLE_NAMES as ROLE_NAMES
 from .roles import Role as Role
 from .search import CommentSearchEngine as CommentSearchEngine

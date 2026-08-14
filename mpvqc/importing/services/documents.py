@@ -8,7 +8,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from mpvqc.services import ReverseTranslatorService
+from mpvqc.comments.services import ReverseTranslatorService
 from mpvqc.shared import Comment
 
 

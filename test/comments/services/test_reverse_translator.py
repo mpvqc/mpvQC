@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.services import ReverseTranslatorService
+from mpvqc.comments.services import ReverseTranslatorService
 
 
 @pytest.mark.parametrize(

@@ -6,6 +6,8 @@ import functools
 
 from PySide6.QtCore import QDir, QTranslator
 
+from .settings import default_comment_types
+
 
 class ReverseTranslatorService:
     @staticmethod
@@ -16,9 +18,6 @@ class ReverseTranslatorService:
 
 @functools.cache
 def _lookup_table() -> dict[str, str]:
-    # Imported here because the comments slice imports this layer while it initializes
-    from mpvqc.comments.services import default_comment_types
-
     table: dict[str, str] = {}
     translator = QTranslator()
 
