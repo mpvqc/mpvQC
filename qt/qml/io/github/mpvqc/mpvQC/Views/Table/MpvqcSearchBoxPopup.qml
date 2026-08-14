@@ -15,7 +15,7 @@ Popup {
     id: root
     objectName: "searchBoxPopup"
 
-    required property MpvqcSearchBoxViewModel viewModel
+    required property MpvqcCommentSearchBoxViewModel viewModel
 
     readonly property bool isApplicationFullScreen: MpvqcWindowUtility.isFullscreen
     readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""

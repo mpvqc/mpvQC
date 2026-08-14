@@ -11,10 +11,10 @@ from PySide6.QtCore import QObject, Signal
 
 from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService
 from mpvqc.comments.viewmodels import (
-    LabelWidthCalculatorInputs,
-    LabelWidthCalculatorProps,
-    MpvqcLabelWidthCalculatorViewModel,
-    derive_label_width_calculator_props,
+    CommentLabelWidthCalculatorInputs,
+    CommentLabelWidthCalculatorProps,
+    MpvqcCommentLabelWidthCalculatorViewModel,
+    derive_comment_label_width_calculator_props,
 )
 from mpvqc.services import (
     FontLoaderService,
@@ -71,14 +71,14 @@ def qt_app_must_be_running(qt_app):
 
 
 @pytest.fixture
-def view_model() -> MpvqcLabelWidthCalculatorViewModel:
+def view_model() -> MpvqcCommentLabelWidthCalculatorViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcLabelWidthCalculatorViewModel()
+    return MpvqcCommentLabelWidthCalculatorViewModel()
 
 
 @pytest.fixture
 def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcLabelWidthCalculatorViewModel) -> dict:
+    def _spy(view_model: MpvqcCommentLabelWidthCalculatorViewModel) -> dict:
         return {
             "commentTypesLabelWidth": make_spy(view_model.commentTypesLabelWidthChanged),
             "timeLabelWidth": make_spy(view_model.timeLabelWidthChanged),
@@ -97,8 +97,8 @@ def measure_by_length(texts: Iterable[str]) -> int:
 
 class DerivationCase(NamedTuple):
     name: str
-    inputs: LabelWidthCalculatorInputs
-    expected: LabelWidthCalculatorProps
+    inputs: CommentLabelWidthCalculatorInputs
+    expected: CommentLabelWidthCalculatorProps
 
 
 @pytest.mark.parametrize(
@@ -106,33 +106,33 @@ class DerivationCase(NamedTuple):
     [
         DerivationCase(
             name="no comment types leave that column at zero",
-            inputs=LabelWidthCalculatorInputs(
+            inputs=CommentLabelWidthCalculatorInputs(
                 displayable_comment_types=frozenset(),
                 comment_type_labels=(),
                 table_long_format=False,
             ),
-            expected=LabelWidthCalculatorProps(comment_types_label_width=0, time_label_width=len("00:00")),
+            expected=CommentLabelWidthCalculatorProps(comment_types_label_width=0, time_label_width=len("00:00")),
         ),
         DerivationCase(
             name="the longest label sets the comment types width",
-            inputs=LabelWidthCalculatorInputs(
+            inputs=CommentLabelWidthCalculatorInputs(
                 displayable_comment_types=frozenset({"i", "Spelling"}),
                 comment_type_labels=("i", "Spelling"),
                 table_long_format=False,
             ),
-            expected=LabelWidthCalculatorProps(
+            expected=CommentLabelWidthCalculatorProps(
                 comment_types_label_width=len("Spelling"),
                 time_label_width=len("00:00"),
             ),
         ),
         DerivationCase(
             name="the long format widens the time column",
-            inputs=LabelWidthCalculatorInputs(
+            inputs=CommentLabelWidthCalculatorInputs(
                 displayable_comment_types=frozenset({"i"}),
                 comment_type_labels=("i",),
                 table_long_format=True,
             ),
-            expected=LabelWidthCalculatorProps(
+            expected=CommentLabelWidthCalculatorProps(
                 comment_types_label_width=len("i"),
                 time_label_width=len("00:00:00"),
             ),
@@ -141,7 +141,7 @@ class DerivationCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_derivation(case: DerivationCase):
-    assert derive_label_width_calculator_props(case.inputs, measure_by_length) == case.expected
+    assert derive_comment_label_width_calculator_props(case.inputs, measure_by_length) == case.expected
 
 
 def test_comment_types_width_follows_displayable_types(view_model, comment_types_policy_mock, spy_notifies):

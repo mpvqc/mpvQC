@@ -21,7 +21,7 @@ from .commands import (
 )
 from .history import History
 from .search import CommentSearchEngine
-from .selection import SelectionState
+from .selection import MpvqcCommentSelectionState
 from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickSelectionAndEdit
 
 if TYPE_CHECKING:
@@ -46,14 +46,14 @@ class CommentsService(QObject):
     def __init__(self, store: Store, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._store = store
-        self._selection = SelectionState(parent=self)
+        self._selection = MpvqcCommentSelectionState(parent=self)
         self._history = History(self._store)
         self._search = CommentSearchEngine(self._store, self._selection)
         self._selection.selectedRowChanged.connect(self._history.disarm_merge)
         self.dirty.connect(self._state.record_change)
 
     @property
-    def selection(self) -> SelectionState:
+    def selection(self) -> MpvqcCommentSelectionState:
         return self._selection
 
     @property

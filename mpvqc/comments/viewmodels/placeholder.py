@@ -13,7 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcPlaceholderViewModel(QObject):
+class MpvqcCommentPlaceholderViewModel(QObject):
     _settings = inject.attr(SettingsService)
 
     layoutOrientationChanged = Signal(int)

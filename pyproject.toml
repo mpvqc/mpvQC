@@ -163,7 +163,7 @@ files = [
     "mpvqc/comments/viewmodels/label_width_calculator.py",
     "mpvqc/comments/viewmodels/placeholder.py",
     "mpvqc/comments/viewmodels/search_box.py",
-    "mpvqc/comments/viewmodels/table_utility.py",
+    "mpvqc/comments/viewmodels/table_time_format.py",
     "mpvqc/comments/wiring.py",
     "mpvqc/dialogs/__init__.py",
     "mpvqc/dialogs/about.py",

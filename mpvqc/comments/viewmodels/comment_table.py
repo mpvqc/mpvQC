@@ -14,10 +14,10 @@ from mpvqc.comments.services import (
     AnimatedSelection,
     CommentsService,
     CommentsSettingsService,
+    MpvqcCommentSelectionState,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
-    SelectionState,
     ViewAction,
 )
 from mpvqc.services import PlayerService, TimeFormatterService
@@ -87,8 +87,8 @@ class MpvqcCommentTableViewModel(QObject):
     def model(self) -> QAbstractItemModel:
         return self._comment_store
 
-    @Property(SelectionState, constant=True, final=True)
-    def selection(self) -> SelectionState:
+    @Property(MpvqcCommentSelectionState, constant=True, final=True)
+    def selection(self) -> MpvqcCommentSelectionState:
         return self._comments.selection
 
     @Slot(int)

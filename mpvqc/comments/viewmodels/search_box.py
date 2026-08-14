@@ -17,7 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcSearchBoxViewModel(QObject):
+class MpvqcCommentSearchBoxViewModel(QObject):
     _comments_service = inject.attr(CommentsService)
 
     searchQueryChanged = Signal(str)
