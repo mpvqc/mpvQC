@@ -8,7 +8,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from mpvqc.comments.services import ReverseTranslatorService
+from mpvqc.comments.services import reverse_translate
 from mpvqc.shared import Comment
 
 
@@ -71,7 +71,7 @@ def _parse_classic_comment(line: str) -> Comment | None:
 
     return Comment(
         time=_parse_string_to_milliseconds(time),
-        comment_type=ReverseTranslatorService.lookup(comment_type),
+        comment_type=reverse_translate(comment_type),
         comment=comment,
     )
 
@@ -128,7 +128,7 @@ def _parse_v1_comment(entry: object) -> Comment:
         ):
             return Comment(
                 time=_parse_subsecond_string_to_milliseconds(time),
-                comment_type=ReverseTranslatorService.lookup(comment_type),
+                comment_type=reverse_translate(comment_type),
                 comment=text,
             )
 

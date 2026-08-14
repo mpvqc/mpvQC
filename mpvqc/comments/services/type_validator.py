@@ -6,44 +6,23 @@ import re
 
 from PySide6.QtCore import QCoreApplication
 
-from .reverse_translator import ReverseTranslatorService
+from .reverse_translator import reverse_translate
+
+_FORBIDDEN_CHARACTERS = "[]"
+_FORBIDDEN_CHARACTERS_PATTERN = re.compile(f"[{re.escape(_FORBIDDEN_CHARACTERS)}]")
 
 
-class CommentTypeValidatorService:
-    _forbidden_characters = re.compile(r"[\[\]]")
-
-    def validate_new_comment_type(
-        self,
-        new_comment_type: str,
-        existing_comment_types: list[str],
-    ) -> str | None:
-        if not new_comment_type:
-            return self._must_not_be_blank()
-        if self._contains_forbidden_characters(new_comment_type):
-            return self._must_not_contain_forbidden_characters()
-        if self._already_exists(new_comment_type, existing_comment_types):
-            return self._must_not_already_exist()
-        return None
-
-    def _contains_forbidden_characters(self, new_comment_type: str) -> bool:
-        return bool(self._forbidden_characters.search(new_comment_type))
-
-    def _already_exists(
-        self,
-        new_comment_type: str,
-        existing_comment_types: list[str],
-    ) -> bool:
-        translated = ReverseTranslatorService.lookup(new_comment_type)
-        return new_comment_type in existing_comment_types or translated in existing_comment_types
-
-    @staticmethod
-    def _must_not_be_blank() -> str:
+def validate_new_comment_type(new_comment_type: str, existing_comment_types: list[str]) -> str | None:
+    if not new_comment_type:
         return QCoreApplication.translate("CommentTypesDialog", "A comment type must not be blank")
-
-    @staticmethod
-    def _must_not_contain_forbidden_characters() -> str:
-        return QCoreApplication.translate("CommentTypesDialog", "Characters '{}' not allowed").format("[]")
-
-    @staticmethod
-    def _must_not_already_exist() -> str:
+    if _FORBIDDEN_CHARACTERS_PATTERN.search(new_comment_type):
+        message = QCoreApplication.translate("CommentTypesDialog", "Characters '{}' not allowed")
+        return message.format(_FORBIDDEN_CHARACTERS)
+    if _already_exists(new_comment_type, existing_comment_types):
         return QCoreApplication.translate("CommentTypesDialog", "Comment type already exists")
+    return None
+
+
+def _already_exists(new_comment_type: str, existing_comment_types: list[str]) -> bool:
+    translated = reverse_translate(new_comment_type)
+    return new_comment_type in existing_comment_types or translated in existing_comment_types
