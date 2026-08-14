@@ -14,9 +14,9 @@ from mpvqc.comments.services import (
     QuickSelection,
     QuickSelectionAndEdit,
 )
+from mpvqc.comments.viewmodels import MpvqcCommentTableViewModel
 from mpvqc.services import PlayerService, StateService
 from mpvqc.shared import Comment
-from mpvqc.viewmodels import MpvqcCommentTableViewModel
 
 
 @pytest.fixture

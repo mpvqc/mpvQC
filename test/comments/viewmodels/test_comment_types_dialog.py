@@ -12,7 +12,7 @@ from mpvqc.comments.services import (
     CommentTypeValidatorService,
     default_comment_types,
 )
-from mpvqc.dialogs import MpvqcCommentTypesDialogViewModel
+from mpvqc.comments.viewmodels import MpvqcCommentTypesDialogViewModel
 
 
 @pytest.fixture

@@ -9,16 +9,11 @@ from .message_boxes import MpvqcQuitMessageBoxViewModel as MpvqcQuitMessageBoxVi
 from .message_boxes import MpvqcResetMessageBoxViewModel as MpvqcResetMessageBoxViewModel
 from .message_boxes import MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionCheckMessageBoxViewModel
 from .utility import MpvqcFontsViewModel as MpvqcFontsViewModel
-from .utility import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
 from .utility import MpvqcWindowViewModel as MpvqcWindowViewModel
-from .views import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
 from .views import MpvqcFooterViewModel as MpvqcFooterViewModel
 from .views import MpvqcHeaderViewModel as MpvqcHeaderViewModel
 from .views import MpvqcMenuBarViewModel as MpvqcMenuBarViewModel
 from .views import MpvqcNewCommentMenuViewModel as MpvqcNewCommentMenuViewModel
-from .views import MpvqcPlaceholderViewModel as MpvqcPlaceholderViewModel
 from .views import MpvqcPlayerViewModel as MpvqcPlayerViewModel
-from .views import MpvqcSearchBoxViewModel as MpvqcSearchBoxViewModel
-from .views import MpvqcTableUtilityViewModel as MpvqcTableUtilityViewModel
 from .views import MpvqcToolBarViewModel as MpvqcToolBarViewModel
 from .views import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel

@@ -9,7 +9,3 @@ from .header import MpvqcToolBarViewModel as MpvqcToolBarViewModel
 from .header import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel
 from .player import MpvqcNewCommentMenuViewModel as MpvqcNewCommentMenuViewModel
 from .player import MpvqcPlayerViewModel as MpvqcPlayerViewModel
-from .table import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
-from .table import MpvqcPlaceholderViewModel as MpvqcPlaceholderViewModel
-from .table import MpvqcSearchBoxViewModel as MpvqcSearchBoxViewModel
-from .table import MpvqcTableUtilityViewModel as MpvqcTableUtilityViewModel

@@ -21,6 +21,7 @@ from mpvqc.appearance.services import (
 )
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.comments.services import CommentsService, CommentsSettingsService
+from mpvqc.comments.viewmodels import MpvqcLabelWidthCalculatorViewModel, MpvqcTableUtilityViewModel
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.importing.services import (
     FinishedPlan,
@@ -39,11 +40,7 @@ from mpvqc.services import (
     StateService,
 )
 from mpvqc.shared import Comment
-from mpvqc.viewmodels import (
-    MpvqcLabelWidthCalculatorViewModel,
-    MpvqcTableUtilityViewModel,
-    MpvqcWindowViewModel,
-)
+from mpvqc.viewmodels import MpvqcWindowViewModel
 from testqml import import_wizard_fixtures
 from testqml.injections import (
     FIXTURES_DIR,

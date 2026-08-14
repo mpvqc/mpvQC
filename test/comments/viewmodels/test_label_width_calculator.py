@@ -10,17 +10,17 @@ import pytest
 from PySide6.QtCore import QObject, Signal
 
 from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService
+from mpvqc.comments.viewmodels import (
+    LabelWidthCalculatorInputs,
+    LabelWidthCalculatorProps,
+    MpvqcLabelWidthCalculatorViewModel,
+    derive_label_width_calculator_props,
+)
 from mpvqc.services import (
     FontLoaderService,
     InternationalizationService,
     LabelWidthCalculatorService,
     PlayerService,
-)
-from mpvqc.viewmodels import MpvqcLabelWidthCalculatorViewModel
-from mpvqc.viewmodels.utility.label_width_calculator import (
-    LabelWidthCalculatorInputs,
-    LabelWidthCalculatorProps,
-    derive_label_width_calculator_props,
 )
 
 
