@@ -6,7 +6,8 @@ import inject
 import pytest
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services import CommentsService, PlayerService, TimeFormatPolicyService
+from mpvqc.comments.services import CommentsService, TimeFormatPolicyService
+from mpvqc.services import PlayerService
 from mpvqc.shared import Comment
 
 ONE_HOUR_MS = 3_600_000

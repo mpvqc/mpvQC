@@ -5,8 +5,9 @@
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 
-from .comments import CommentsService
-from .settings import SettingsService
+from mpvqc.services import SettingsService
+
+from .service import CommentsService
 
 
 class CommentTypesPolicyService(QObject):

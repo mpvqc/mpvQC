@@ -9,12 +9,8 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import (
-    CommentTypesPolicyService,
-    InternationalizationService,
-    LabelWidthCalculatorService,
-    TimeFormatPolicyService,
-)
+from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService
+from mpvqc.services import InternationalizationService, LabelWidthCalculatorService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

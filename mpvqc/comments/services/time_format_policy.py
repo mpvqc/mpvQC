@@ -5,10 +5,10 @@
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 
+from mpvqc.services import PlayerService
 from mpvqc.shared import MILLISECONDS_PER_SECOND, needs_long_format
 
-from .comments import CommentsService
-from .player import PlayerService
+from .service import CommentsService
 
 
 class TimeFormatPolicyService(QObject):

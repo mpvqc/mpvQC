@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.services.comments import QuickSelection
+from mpvqc.comments.services import QuickSelection
 from mpvqc.shared import Comment
 
 

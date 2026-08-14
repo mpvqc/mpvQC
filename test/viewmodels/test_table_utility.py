@@ -5,7 +5,8 @@
 import inject
 import pytest
 
-from mpvqc.services import CommentsService, PlayerService, TimeFormatPolicyService
+from mpvqc.comments.services import CommentsService, TimeFormatPolicyService
+from mpvqc.services import PlayerService
 from mpvqc.shared import Comment
 from mpvqc.viewmodels import MpvqcTableUtilityViewModel
 

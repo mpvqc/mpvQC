@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, assert_never, cast
 import inject
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services.state import StateService
+from mpvqc.services import StateService
 
 from .commands import (
     AddComment,

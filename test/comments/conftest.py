@@ -8,7 +8,8 @@ from typing import Protocol
 import inject
 import pytest
 
-from mpvqc.services.comments import CommentsService, CommentStore
+from mpvqc.comments.models import CommentStore
+from mpvqc.comments.services import CommentsService
 from mpvqc.shared import Comment
 
 DEFAULT_COMMENTS: tuple[Comment, ...] = (

@@ -9,13 +9,12 @@ import inject
 import pytest
 from PySide6.QtCore import QObject, Signal
 
+from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService
 from mpvqc.services import (
-    CommentTypesPolicyService,
     FontLoaderService,
     InternationalizationService,
     LabelWidthCalculatorService,
     PlayerService,
-    TimeFormatPolicyService,
 )
 from mpvqc.viewmodels import MpvqcLabelWidthCalculatorViewModel
 from mpvqc.viewmodels.utility.label_width_calculator import (

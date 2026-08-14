@@ -10,8 +10,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import CommentsService
-from mpvqc.services.comments import Found, NoMatches, NoQuery
+from mpvqc.comments.services import CommentsService, Found, NoMatches, NoQuery
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

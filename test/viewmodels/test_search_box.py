@@ -7,7 +7,7 @@ from collections.abc import Callable
 import inject
 import pytest
 
-from mpvqc.services import CommentsService
+from mpvqc.comments.services import CommentsService
 from mpvqc.shared import Comment
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 

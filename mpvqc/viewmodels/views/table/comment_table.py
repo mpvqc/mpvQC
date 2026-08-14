@@ -9,16 +9,17 @@ from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObje
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
-from mpvqc.services.comments import (
+from mpvqc.comments.models import CommentStore
+from mpvqc.comments.services import (
     AnimatedSelection,
-    CommentStore,
+    CommentsService,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
     SelectionState,
     ViewAction,
 )
+from mpvqc.services import PlayerService, SettingsService, TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

@@ -7,7 +7,8 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import CommentsService, ResetService, StateService
+from mpvqc.comments.services import CommentsService
+from mpvqc.services import ResetService, StateService
 
 
 @pytest.fixture
@@ -21,21 +22,16 @@ def state_service_mock() -> MagicMock:
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(
-    common_bindings_with,
-    comments_service_mock,
-    state_service_mock,
-):
+def configure_injections(common_bindings_with, state_service_mock):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(CommentsService, comments_service_mock)
         binder.bind(StateService, state_service_mock)
 
     common_bindings_with(custom_bindings)
 
 
 @pytest.fixture(autouse=True)
-def service():
-    return ResetService()
+def service(comments_service_mock):
+    return ResetService(comments_service_mock)
 
 
 def test_reset(service, comments_service_mock, state_service_mock):

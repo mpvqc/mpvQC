@@ -20,6 +20,7 @@ from mpvqc.appearance.services import (
     parse_color_scheme,
 )
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
+from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.importing.services import (
     FinishedPlan,
@@ -32,7 +33,6 @@ from mpvqc.importing.services import (
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,
-    CommentsService,
     DesktopService,
     PlayerService,
     SettingsService,

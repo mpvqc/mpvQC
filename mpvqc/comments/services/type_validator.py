@@ -6,7 +6,7 @@ import re
 
 from PySide6.QtCore import QCoreApplication
 
-from .reverse_translator import ReverseTranslatorService
+from mpvqc.services import ReverseTranslatorService
 
 
 class CommentTypeValidatorService:
