@@ -13,7 +13,6 @@ from .utility import MpvqcWindowViewModel as MpvqcWindowViewModel
 from .views import MpvqcFooterViewModel as MpvqcFooterViewModel
 from .views import MpvqcHeaderViewModel as MpvqcHeaderViewModel
 from .views import MpvqcMenuBarViewModel as MpvqcMenuBarViewModel
-from .views import MpvqcNewCommentMenuViewModel as MpvqcNewCommentMenuViewModel
 from .views import MpvqcPlayerViewModel as MpvqcPlayerViewModel
 from .views import MpvqcToolBarViewModel as MpvqcToolBarViewModel
 from .views import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel
