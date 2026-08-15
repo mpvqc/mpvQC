@@ -15,4 +15,5 @@ from .label_width_calculator import (
 from .new_comment_menu import MpvqcCommentNewCommentMenuViewModel as MpvqcCommentNewCommentMenuViewModel
 from .placeholder import MpvqcCommentPlaceholderViewModel as MpvqcCommentPlaceholderViewModel
 from .search_box import MpvqcCommentSearchBoxViewModel as MpvqcCommentSearchBoxViewModel
+from .selection import MpvqcCommentSelectionViewModel as MpvqcCommentSelectionViewModel
 from .table_time_format import MpvqcCommentTableTimeFormatViewModel as MpvqcCommentTableTimeFormatViewModel

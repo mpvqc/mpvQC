@@ -4,42 +4,41 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Property, QObject, Signal
-from PySide6.QtQml import QmlElement, QmlUncreatable
-
-QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
-QML_IMPORT_MAJOR_VERSION = 1
+from PySide6.QtCore import QObject, Signal
 
 
-@QmlElement
-@QmlUncreatable("constructed by CommentsService")
-class MpvqcCommentSelectionState(QObject):
-    """One-way view state updated from QML to Python."""
+class SelectionCell(QObject):
+    """The selected row and whether it is on screen.
 
-    selectedRowChanged = Signal(int)
-    selectedRowVisibleChanged = Signal(bool)
+    Service state and the view's at once, merged here: the last write wins.
+    """
+
+    row_selected = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._selected_row = -1
-        self._selected_row_visible = True
+        self._row = -1
+        self._row_visible = True
 
-    @Property(int, notify=selectedRowChanged)
-    def selectedRow(self) -> int:
-        return self._selected_row
+    @property
+    def row(self) -> int:
+        return self._row
 
-    @selectedRow.setter
-    def selectedRow(self, value: int) -> None:
-        if self._selected_row != value:
-            self._selected_row = value
-            self.selectedRowChanged.emit(value)
+    @property
+    def row_visible(self) -> bool:
+        return self._row_visible
 
-    @Property(bool, notify=selectedRowVisibleChanged)
-    def selectedRowVisible(self) -> bool:
-        return self._selected_row_visible
+    def select(self, row: int) -> None:
+        if self._row == row:
+            return
+        self._row = row
+        self.row_selected.emit(row)
 
-    @selectedRowVisible.setter
-    def selectedRowVisible(self, value: bool) -> None:
-        if self._selected_row_visible != value:
-            self._selected_row_visible = value
-            self.selectedRowVisibleChanged.emit(value)
+    def set_row(self, row: int) -> None:
+        self._row = row
+
+    def clear_row(self) -> None:
+        self._row = -1
+
+    def set_row_visible(self, visible: bool) -> None:
+        self._row_visible = visible

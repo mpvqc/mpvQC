@@ -7,7 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from mpvqc.comments.services import CommentSearchEngine, Found, NoMatches, NoQuery, SearchOutcome
+from mpvqc.comments.services import CommentSearchEngine, Found, NoMatches, NoQuery, SearchOutcome, SelectionCell
 
 
 @pytest.fixture
@@ -23,13 +23,14 @@ def store():
 
 
 @pytest.fixture
-def selection():
-    return SimpleNamespace(selectedRow=0)
+def selection() -> SelectionCell:
+    cell = SelectionCell()
+    cell.select(0)
+    return cell
 
 
 @pytest.fixture
 def engine(store, selection):
-    # pyrefly: ignore [bad-argument-type]
     return CommentSearchEngine(store, selection)
 
 
@@ -72,7 +73,7 @@ def test_invalidate_drops_cache(engine, store):
 
 def test_next_wraps_forward(engine, selection):
     engine.search("wrap", include_current_row=True, top_down=True)
-    selection.selectedRow = 5
+    selection.select(5)
     result = engine.search("wrap", include_current_row=False, top_down=True)
 
     assert result == Found(index=1, current=1, total=3)
@@ -80,7 +81,7 @@ def test_next_wraps_forward(engine, selection):
 
 def test_previous_wraps_backward(engine, selection):
     engine.search("wrap", include_current_row=True, top_down=True)
-    selection.selectedRow = 1
+    selection.select(1)
     result = engine.search("wrap", include_current_row=False, top_down=False)
 
     assert result == Found(index=5, current=3, total=3)

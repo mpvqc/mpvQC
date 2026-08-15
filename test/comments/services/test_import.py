@@ -117,7 +117,7 @@ def test_import_invalidates_search(comments):
 def test_import_comments_undo_redo_fires_signals(comments, make_spy):
     spy = make_spy(comments.view_action)
 
-    comments.selection.selectedRow = 3
+    comments.selection.select(3)
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     comments.import_comments((comment,))

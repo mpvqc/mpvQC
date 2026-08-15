@@ -38,5 +38,4 @@ def bindings(binder: inject.Binder) -> None:
 
 
 def register_qml_types() -> None:
-    import mpvqc.comments.services  # ruff: ignore[unused-import]
     import mpvqc.comments.viewmodels  # ruff: ignore[unused-import]

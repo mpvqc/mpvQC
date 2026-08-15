@@ -166,6 +166,7 @@ files = [
     "mpvqc/comments/viewmodels/new_comment_menu.py",
     "mpvqc/comments/viewmodels/placeholder.py",
     "mpvqc/comments/viewmodels/search_box.py",
+    "mpvqc/comments/viewmodels/selection.py",
     "mpvqc/comments/viewmodels/table_time_format.py",
     "mpvqc/comments/wiring.py",
     "mpvqc/dialogs/__init__.py",

@@ -14,7 +14,6 @@ from mpvqc.comments.services import (
     AnimatedSelection,
     CommentsService,
     CommentsSettingsService,
-    MpvqcCommentSelectionState,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
@@ -23,6 +22,8 @@ from mpvqc.comments.services import (
 )
 from mpvqc.services import PlayerService, TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND
+
+from .selection import MpvqcCommentSelectionViewModel
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -56,6 +57,7 @@ class MpvqcCommentTableViewModel(QObject):
         self._player.duration_changed.connect(self.videoDurationChanged)
 
         self._clipboard = QGuiApplication.clipboard()
+        self._selection = MpvqcCommentSelectionViewModel(self._comments.selection, parent=self)
 
         self._comments.view_action.connect(self._on_view_action)
         self._comments.about_to_import.connect(self.commentsAboutToBeImported)
@@ -88,9 +90,9 @@ class MpvqcCommentTableViewModel(QObject):
     def model(self) -> QAbstractItemModel:
         return self._comment_store
 
-    @Property(MpvqcCommentSelectionState, constant=True, final=True)
-    def selection(self) -> MpvqcCommentSelectionState:
-        return self._comments.selection
+    @Property(MpvqcCommentSelectionViewModel, constant=True, final=True)
+    def selection(self) -> MpvqcCommentSelectionViewModel:
+        return self._selection
 
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:

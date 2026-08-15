@@ -6,10 +6,10 @@ from __future__ import annotations
 
 import bisect
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .selection import MpvqcCommentSelectionState
+    from .selection import SelectionCell
     from .store import Store
 
 
@@ -34,7 +34,7 @@ type SearchOutcome = NoQuery | NoMatches | Found
 
 
 class CommentSearchEngine:
-    def __init__(self, store: Store, selection: MpvqcCommentSelectionState) -> None:
+    def __init__(self, store: Store, selection: SelectionCell) -> None:
         self._store = store
         self._selection = selection
         self._query = ""
@@ -62,7 +62,7 @@ class CommentSearchEngine:
         if query_changed:
             return Found(index=self._hits[0], current=1, total=total)
 
-        selected_index = cast("int", self._selection.selectedRow)
+        selected_index = self._selection.row
 
         if top_down:
             start = selected_index if include_current_row else selected_index + 1

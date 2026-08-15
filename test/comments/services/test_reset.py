@@ -23,7 +23,7 @@ def test_reset_clears_undo_history(comments):
 
 def test_reset_clears_redo_history(comments):
     comments.add_row(25, "commentType")
-    comments.selection.selectedRowVisible = True
+    comments.selection.set_row_visible(True)
     comments.undo()
 
     comments.reset()
@@ -33,11 +33,11 @@ def test_reset_clears_redo_history(comments):
 
 
 def test_reset_clears_selection(comments):
-    comments.selection.selectedRow = 3
+    comments.selection.select(3)
 
     comments.reset()
 
-    assert comments.selection.selectedRow == -1
+    assert comments.selection.row == -1
 
 
 def test_reset_invalidates_search(comments):
