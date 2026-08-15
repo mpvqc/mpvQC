@@ -45,12 +45,11 @@ def test_initial_model_state(view_model, comment_types):
     assert view_model.commentTypesModel.stringList() == comment_types
 
 
-def test_validate_new_accepts_an_unused_name(view_model):
-    assert not view_model.validateNew("Something new")
-
-
 def test_validate_new_checks_the_unsaved_list(view_model):
+    assert not view_model.validateNew("New Type")
+
     view_model.append("New Type")
+
     assert view_model.validateNew("New Type")
 
 

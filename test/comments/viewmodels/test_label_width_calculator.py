@@ -7,60 +7,26 @@ from typing import NamedTuple
 
 import inject
 import pytest
-from PySide6.QtCore import QObject, Signal
 
-from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService
+from mpvqc.comments.services import CommentsSettingsService, CommentTypesPolicyService, TimeFormatPolicyService
 from mpvqc.comments.viewmodels import (
     CommentLabelWidthCalculatorInputs,
     CommentLabelWidthCalculatorProps,
     MpvqcCommentLabelWidthCalculatorViewModel,
     derive_comment_label_width_calculator_props,
 )
-from mpvqc.services import (
-    FontLoaderService,
-    InternationalizationService,
-    LabelWidthCalculatorService,
-    PlayerService,
-)
-
-
-class CommentTypesPolicyServiceMock(QObject):
-    """Doubles the policy surface the view model consumes: a real signal, a stubbed accessor."""
-
-    displayable_comment_types_changed = Signal(frozenset)
-
-    def __init__(self):
-        super().__init__()
-        assert isinstance(CommentTypesPolicyService.displayable_comment_types_changed, Signal), (
-            "mocked surface drifted: not a signal anymore"
-        )
-        assert isinstance(CommentTypesPolicyService.displayable_comment_types, property), (
-            "mocked surface drifted: not a property anymore"
-        )
-        self._types: frozenset[str] = frozenset()
-
-    @property
-    def displayable_comment_types(self) -> frozenset[str]:
-        return self._types
-
-    def change_displayable_types(self, *types: str) -> None:
-        self._types = frozenset(types)
-        self.displayable_comment_types_changed.emit(self._types)
-
-
-@pytest.fixture
-def comment_types_policy_mock() -> CommentTypesPolicyServiceMock:
-    return CommentTypesPolicyServiceMock()
+from mpvqc.services import FontLoaderService, InternationalizationService, LabelWidthCalculatorService, PlayerService
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, fake_player_service, comment_types_policy_mock):
+def configure_inject(common_bindings_with, comments_settings_service, fake_player_service):
     def custom_bindings(binder: inject.Binder):
+        binder.bind(CommentsSettingsService, comments_settings_service)
         binder.bind(PlayerService, fake_player_service)
-        binder.bind(CommentTypesPolicyService, comment_types_policy_mock)
+        binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
+        binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
         binder.bind_to_constructor(LabelWidthCalculatorService, LabelWidthCalculatorService)
-        binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
 
     common_bindings_with(custom_bindings)
 
@@ -144,29 +110,29 @@ def test_derivation(case: DerivationCase):
     assert derive_comment_label_width_calculator_props(case.inputs, measure_by_length) == case.expected
 
 
-def test_comment_types_width_follows_displayable_types(view_model, comment_types_policy_mock, spy_notifies):
+def test_comment_types_width_follows_displayable_types(view_model, comments_settings_service, spy_notifies):
     spies = spy_notifies(view_model)
 
-    comment_types_policy_mock.change_displayable_types("i")
+    comments_settings_service.comment_types = ["i"]
     narrow_width = view_model.commentTypesLabelWidth
     assert narrow_width > 0
     assert spies["commentTypesLabelWidth"].count() == 1
 
-    comment_types_policy_mock.change_displayable_types("i", "Wwwwwwwwwwwwwwwwwwww")
+    comments_settings_service.comment_types = ["i", "Wwwwwwwwwwwwwwwwwwww"]
     wide_width = view_model.commentTypesLabelWidth
     assert wide_width > narrow_width
     assert spies["commentTypesLabelWidth"].count() == 2
     assert spies["commentTypesLabelWidth"].at(invocation=1, argument=0) == wide_width
 
-    comment_types_policy_mock.change_displayable_types("i")
+    comments_settings_service.comment_types = ["i"]
     assert view_model.commentTypesLabelWidth == narrow_width
 
     assert emissions(spies) == {"commentTypesLabelWidth": 3, "timeLabelWidth": 0}
 
 
-def test_comment_types_width_recomputes_on_retranslation(qt_app, view_model, comment_types_policy_mock, spy_notifies):
+def test_comment_types_width_recomputes_on_retranslation(qt_app, view_model, comments_settings_service, spy_notifies):
     # "Spelling" -> "Rechtschreibung" grows on every font engine; near-equal pairs tie on Windows.
-    comment_types_policy_mock.change_displayable_types("Spelling")
+    comments_settings_service.comment_types = ["Spelling"]
     spies = spy_notifies(view_model)
     english_width = view_model.commentTypesLabelWidth
     assert english_width > 0
@@ -179,9 +145,9 @@ def test_comment_types_width_recomputes_on_retranslation(qt_app, view_model, com
 
 
 def test_unknown_type_measures_verbatim_after_retranslation(
-    qt_app, view_model, comment_types_policy_mock, spy_notifies
+    qt_app, view_model, comments_settings_service, spy_notifies
 ):
-    comment_types_policy_mock.change_displayable_types("CustomTypeXyz")
+    comments_settings_service.comment_types = ["CustomTypeXyz"]
     spies = spy_notifies(view_model)
     english_width = view_model.commentTypesLabelWidth
     assert english_width > 0
@@ -192,11 +158,11 @@ def test_unknown_type_measures_verbatim_after_retranslation(
     assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 0}
 
 
-def test_comment_types_width_of_same_value_does_not_emit(view_model, comment_types_policy_mock, spy_notifies):
-    comment_types_policy_mock.change_displayable_types("Wwwwwwwwww")
+def test_comment_types_width_of_same_value_does_not_emit(view_model, comments_settings_service, spy_notifies):
+    comments_settings_service.comment_types = ["Wwwwwwwwww"]
     spies = spy_notifies(view_model)
 
-    comment_types_policy_mock.change_displayable_types("Wwwwwwwwww", "i")
+    comments_settings_service.comment_types = ["Wwwwwwwwww", "i"]
 
     assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 0}
 
@@ -219,8 +185,8 @@ def test_time_width_flips_with_format(view_model, fake_player_service, spy_notif
     assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 2}
 
 
-def test_props_swap_completes_before_the_comment_types_emission(view_model, comment_types_policy_mock):
-    comment_types_policy_mock.change_displayable_types("i")
+def test_props_swap_completes_before_the_comment_types_emission(view_model, comments_settings_service):
+    comments_settings_service.comment_types = ["i"]
     narrow_width = view_model.commentTypesLabelWidth
     observed: list[tuple[int, int]] = []
 
@@ -228,7 +194,7 @@ def test_props_swap_completes_before_the_comment_types_emission(view_model, comm
         lambda _: observed.append((view_model.commentTypesLabelWidth, view_model.timeLabelWidth))
     )
 
-    comment_types_policy_mock.change_displayable_types("Wwwwwwwwwwwwwwwwwwww")
+    comments_settings_service.comment_types = ["Wwwwwwwwwwwwwwwwwwww"]
 
     settled = (view_model.commentTypesLabelWidth, view_model.timeLabelWidth)
     assert observed == [settled]

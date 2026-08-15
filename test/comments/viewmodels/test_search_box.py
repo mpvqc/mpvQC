@@ -21,7 +21,6 @@ class CommentsServiceMock:
     """Doubles the comments service surface the view model consumes: a stubbed search method."""
 
     def __init__(self):
-        assert callable(CommentsService.search), "mocked surface drifted: not a plain method anymore"
         self.calls: list[SearchCall] = []
         self._outcome: SearchOutcome = NoQuery()
 

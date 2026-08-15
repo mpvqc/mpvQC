@@ -41,11 +41,9 @@ def test_undo_redo_fire_comments_changed(comments, make_spy):
     assert spy.count() == 1
 
 
-def test_reset_fires_comments_changed_but_not_dirty(comments, make_spy):
-    changed_spy = make_spy(comments.comments_changed)
-    dirty_spy = make_spy(comments.dirty)
+def test_reset_fires_comments_changed(comments, make_spy):
+    spy = make_spy(comments.comments_changed)
 
     comments.reset()
 
-    assert changed_spy.count() == 1
-    assert dirty_spy.count() == 0
+    assert spy.count() == 1

@@ -4,44 +4,19 @@
 
 import inject
 import pytest
-from PySide6.QtCore import QObject, Signal
 
 from mpvqc.comments.services import CommentsService, CommentsSettingsService, CommentTypesPolicyService
 
 
-class CommentsServiceMock(QObject):
-    """Doubles the comments service surface the policy consumes: a real signal, a stubbed accessor."""
-
-    comments_changed = Signal()
-
-    def __init__(self):
-        super().__init__()
-        assert isinstance(CommentsService.comments_changed, Signal), "mocked surface drifted: not a signal anymore"
-        assert isinstance(CommentsService.distinct_comment_types, property), (
-            "mocked surface drifted: not a property anymore"
-        )
-        self._types: frozenset[str] = frozenset()
-
-    @property
-    def distinct_comment_types(self) -> frozenset[str]:
-        return self._types
-
-    def mutate_comments(self, *types: str) -> None:
-        """Simulates any committed document mutation, leaving these types present."""
-        self._types = frozenset(types)
-        self.comments_changed.emit()
-
-
 @pytest.fixture
-def comments_service_mock() -> CommentsServiceMock:
-    return CommentsServiceMock()
+def comments_service() -> CommentsService:
+    return inject.instance(CommentsService)
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, comments_settings_service, comments_service_mock):
+def configure_inject(common_bindings_with, comments_settings_service):
     def custom_bindings(binder: inject.Binder):
         binder.bind(CommentsSettingsService, comments_settings_service)
-        binder.bind(CommentsService, comments_service_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -56,24 +31,25 @@ def policy() -> CommentTypesPolicyService:
     return CommentTypesPolicyService()
 
 
-def test_displayable_types_union_configured_and_document_types(comments_settings_service, comments_service_mock):
-    comments_service_mock.mutate_comments("Spelling", "CustomType")
+def test_displayable_types_union_configured_and_document_types(comments_settings_service, comments_service):
+    comments_service.add_row(time=0, comment_type="Spelling")
+    comments_service.add_row(time=1, comment_type="CustomType")
 
     policy = CommentTypesPolicyService()
 
     assert policy.displayable_comment_types == frozenset({"Translation", "Spelling", "CustomType"})
 
 
-def test_unknown_type_entering_and_leaving_document_emits(policy, comments_service_mock, make_spy):
+def test_unknown_type_entering_and_leaving_document_emits(policy, comments_service, make_spy):
     spy = make_spy(policy.displayable_comment_types_changed)
 
-    comments_service_mock.mutate_comments("CustomType")
+    comments_service.add_row(time=0, comment_type="CustomType")
 
     assert policy.displayable_comment_types == frozenset({"Translation", "Spelling", "CustomType"})
     assert spy.count() == 1
     assert spy.at(invocation=0, argument=0) == frozenset({"Translation", "Spelling", "CustomType"})
 
-    comments_service_mock.mutate_comments()
+    comments_service.remove_row(0)
 
     assert policy.displayable_comment_types == frozenset({"Translation", "Spelling"})
     assert spy.count() == 2
@@ -94,19 +70,19 @@ def test_configured_type_list_change_emits(policy, comments_settings_service, ma
     assert spy.count() == 2
 
 
-def test_mutation_keeping_types_does_not_emit(policy, comments_service_mock, make_spy):
-    comments_service_mock.mutate_comments("CustomType")
+def test_mutation_keeping_types_does_not_emit(policy, comments_service, make_spy):
+    comments_service.add_row(time=0, comment_type="CustomType")
     spy = make_spy(policy.displayable_comment_types_changed)
 
-    comments_service_mock.mutate_comments("CustomType")
+    comments_service.update_comment(row=0, comment="Edited")
 
     assert spy.count() == 0
 
 
-def test_adding_comment_with_configured_type_does_not_emit(policy, comments_service_mock, make_spy):
+def test_adding_comment_with_configured_type_does_not_emit(policy, comments_service, make_spy):
     spy = make_spy(policy.displayable_comment_types_changed)
 
-    comments_service_mock.mutate_comments("Spelling")
+    comments_service.add_row(time=0, comment_type="Spelling")
 
     assert spy.count() == 0
 
@@ -120,9 +96,9 @@ def test_reordering_configured_types_does_not_emit(policy, comments_settings_ser
 
 
 def test_removing_configured_type_still_in_document_does_not_emit(
-    policy, comments_settings_service, comments_service_mock, make_spy
+    policy, comments_settings_service, comments_service, make_spy
 ):
-    comments_service_mock.mutate_comments("Spelling")
+    comments_service.add_row(time=0, comment_type="Spelling")
     spy = make_spy(policy.displayable_comment_types_changed)
 
     comments_settings_service.comment_types = ["Translation"]
