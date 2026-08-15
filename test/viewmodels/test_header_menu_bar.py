@@ -9,11 +9,11 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
+from mpvqc.comments.services import ResetService
 from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
 from mpvqc.services import (
     DesktopService,
-    ResetService,
     SettingsService,
     StateService,
 )

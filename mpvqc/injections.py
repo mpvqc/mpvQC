@@ -7,13 +7,8 @@ import inject
 import mpvqc.services as s
 from mpvqc.appearance import bindings as appearance_bindings
 from mpvqc.comments import bindings as comments_bindings
-from mpvqc.comments.services import CommentsService
 from mpvqc.exporting import bindings as exporting_bindings
 from mpvqc.importing import bindings as importing_bindings
-
-
-def _reset_service() -> s.ResetService:
-    return s.ResetService(inject.instance(CommentsService))
 
 
 def _settings_service() -> s.SettingsService:
@@ -38,7 +33,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.PlatformService, s.PlatformService)
     binder.bind_to_constructor(s.PlayerService, s.PlayerService)
     binder.bind_to_constructor(s.QuitService, s.QuitService)
-    binder.bind_to_constructor(s.ResetService, _reset_service)
     binder.bind_to_constructor(s.ResourceService, s.ResourceService)
     binder.bind_to_constructor(s.SettingsFileService, s.SettingsFileService)
     binder.bind_to_constructor(s.SettingsService, _settings_service)

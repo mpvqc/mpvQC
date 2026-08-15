@@ -19,6 +19,7 @@ def bindings(binder: inject.Binder) -> None:
         CommentsSettingsService,
         CommentTypesPolicyService,
         CommentTypeValidatorService,
+        ResetService,
         TimeFormatPolicyService,
     )
     from mpvqc.services import SettingsFileService
@@ -34,6 +35,7 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(CommentsSettingsService, comments_settings_service)
     binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
     binder.bind_to_constructor(CommentTypeValidatorService, CommentTypeValidatorService)
+    binder.bind_to_constructor(ResetService, ResetService)
     binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
 
 
