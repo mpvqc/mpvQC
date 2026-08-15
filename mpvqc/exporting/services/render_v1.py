@@ -9,8 +9,7 @@ from datetime import UTC
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication
-
+from mpvqc.comments.services import translate_comment_type
 from mpvqc.shared import format_milliseconds_to_subsecond_string
 
 if TYPE_CHECKING:
@@ -73,7 +72,7 @@ def _render_comments(comments: tuple[Comment, ...]) -> list[dict[str, str]]:
     return [
         {
             "time": format_milliseconds_to_subsecond_string(comment.time),
-            "type": QCoreApplication.translate("CommentTypes", comment.comment_type),
+            "type": translate_comment_type(comment.comment_type),
             "text": comment.comment,
         }
         for comment in comments

@@ -6,7 +6,7 @@ import re
 
 from PySide6.QtCore import QCoreApplication
 
-from .reverse_translator import reverse_translate
+from .translator import reverse_translate_comment_type
 
 _FORBIDDEN_CHARACTERS = "[]"
 _FORBIDDEN_CHARACTERS_PATTERN = re.compile(f"[{re.escape(_FORBIDDEN_CHARACTERS)}]")
@@ -24,5 +24,5 @@ def validate_new_comment_type(new_comment_type: str, existing_comment_types: lis
 
 
 def _already_exists(new_comment_type: str, existing_comment_types: list[str]) -> bool:
-    translated = reverse_translate(new_comment_type)
+    translated = reverse_translate_comment_type(new_comment_type)
     return new_comment_type in existing_comment_types or translated in existing_comment_types
