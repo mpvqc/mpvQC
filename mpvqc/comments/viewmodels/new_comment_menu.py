@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcNewCommentMenuViewModel(QObject):
+class MpvqcCommentNewCommentMenuViewModel(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(CommentsSettingsService)
 
@@ -25,7 +25,8 @@ class MpvqcNewCommentMenuViewModel(QObject):
         super().__init__(parent)
         self._settings.comment_types_changed.connect(self.commentTypesChanged)
 
-    @Property(list, notify=commentTypesChanged)
+    # pyrefly: ignore [bad-argument-type]
+    @Property("QStringList", notify=commentTypesChanged)
     def commentTypes(self) -> list[str]:
         return self._settings.comment_types
 

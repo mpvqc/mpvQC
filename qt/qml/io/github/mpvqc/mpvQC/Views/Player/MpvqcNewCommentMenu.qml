@@ -14,7 +14,7 @@ MpvqcPositionedMenu {
     id: root
     objectName: "newCommentMenu"
 
-    property var viewModel: MpvqcNewCommentMenuViewModel {}
+    property var viewModel: MpvqcCommentNewCommentMenuViewModel {}
 
     signal commentTypeChosen(commentType: string)
 

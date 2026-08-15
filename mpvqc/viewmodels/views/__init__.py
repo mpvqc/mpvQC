@@ -7,5 +7,4 @@ from .header import MpvqcHeaderViewModel as MpvqcHeaderViewModel
 from .header import MpvqcMenuBarViewModel as MpvqcMenuBarViewModel
 from .header import MpvqcToolBarViewModel as MpvqcToolBarViewModel
 from .header import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel
-from .player import MpvqcNewCommentMenuViewModel as MpvqcNewCommentMenuViewModel
 from .player import MpvqcPlayerViewModel as MpvqcPlayerViewModel
