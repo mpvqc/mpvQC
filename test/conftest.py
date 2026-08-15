@@ -15,8 +15,8 @@ from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, QSe
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
-from mpvqc.comments.models import CommentStore
-from mpvqc.comments.services import CommentsService, CommentsSettingsService
+from mpvqc.comments import bindings as comments_bindings
+from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.services import (
     BuildInfoService,
@@ -259,17 +259,12 @@ def check_generated_resources():
         raise FileNotFoundError(message)
 
 
-def _comments_service() -> CommentsService:
-    return CommentsService(inject.instance(CommentStore))
-
-
 @pytest.fixture(scope="session")
 def common_bindings_with():
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
+            comments_bindings(binder)
             binder.bind_to_constructor(BuildInfoService, BuildInfoService)
-            binder.bind_to_constructor(CommentStore, CommentStore)
-            binder.bind_to_constructor(CommentsService, _comments_service)
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)

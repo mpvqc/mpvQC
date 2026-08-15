@@ -353,6 +353,15 @@ QtObject {
         function hasLastJumpedToTime(control: MpvqcTableView, expected: int): void {
             root.testCase.compare(control.viewModel.lastJumpToTime, expected);
         }
+
+        function describesRow(payload: string, control: MpvqcTableView, index: int): void {
+            const comment = control.getItem(index, "comment");
+            const commentType = control.getItem(index, "commentType");
+            root.testCase.verify(comment, `Row ${index} carries no comment text to look for`);
+            root.testCase.verify(commentType, `Row ${index} carries no comment type to look for`);
+            root.testCase.verify(payload.includes(comment), `Payload '${payload}' should contain comment text '${comment}'`);
+            root.testCase.verify(payload.includes(commentType), `Payload '${payload}' should contain comment type '${commentType}'`);
+        }
     }
 
     readonly property var find: QtObject {

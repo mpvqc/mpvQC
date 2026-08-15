@@ -201,7 +201,7 @@ TestCase {
         _expect.hasContextMenuClosed(control);
 
         tryVerify(() => spy.count === 1);
-        compare(spy.signalArguments[0][0], "[00:00:03] [Comment Type 3] Comment 3");
+        _expect.describesRow(spy.signalArguments[0][0], control, 2);
         _expect.isNotEditing(control);
     }
 

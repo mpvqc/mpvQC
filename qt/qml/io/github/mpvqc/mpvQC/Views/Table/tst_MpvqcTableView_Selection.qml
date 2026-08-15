@@ -350,11 +350,7 @@ TestCase {
         keyPress(Qt.Key_C, Qt.ControlModifier);
 
         tryVerify(() => spy.count === 1);
-        const payload = spy.signalArguments[0][0];
-        const selected = control.getItem(2, "comment");
-        const selectedCommentType = control.getItem(2, "commentType");
-        verify(payload.includes(selected), `Payload '${payload}' should contain comment text '${selected}'`);
-        verify(payload.includes(selectedCommentType), `Payload '${payload}' should contain comment type '${selectedCommentType}'`);
+        _expect.describesRow(spy.signalArguments[0][0], control, 2);
     }
 
     function test_keyPressCtrlPlusFOpensSearch(): void {

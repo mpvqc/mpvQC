@@ -4,7 +4,6 @@
 
 import inject
 import pytest
-from PySide6.QtCore import QObject, Signal
 
 from mpvqc.comments.services import CommentsService, TimeFormatPolicyService
 from mpvqc.services import PlayerService
@@ -13,40 +12,27 @@ from mpvqc.shared import Comment
 ONE_HOUR_MS = 3_600_000
 
 
-class CommentsServiceMock(QObject):
-    """Doubles the comments service surface the policy consumes: a real signal, a stubbed accessor."""
-
-    comments_changed = Signal()
-
-    def __init__(self):
-        super().__init__()
-        assert isinstance(CommentsService.comments_changed, Signal), "mocked surface drifted: not a signal anymore"
-        assert isinstance(CommentsService.count, property), "mocked surface drifted: not a property anymore"
-        assert callable(CommentsService.comment_at), "mocked surface drifted: not a plain method anymore"
-        self._comments: tuple[Comment, ...] = ()
-
-    @property
-    def count(self) -> int:
-        return len(self._comments)
-
-    def comment_at(self, row: int) -> Comment:
-        return self._comments[row]
-
-    def set_comments(self, *times: int) -> None:
-        self._comments = tuple(Comment(time=time, comment_type="commentType", comment="") for time in sorted(times))
-        self.comments_changed.emit()
+@pytest.fixture
+def comments_service() -> CommentsService:
+    return inject.instance(CommentsService)
 
 
 @pytest.fixture
-def comments_service_mock() -> CommentsServiceMock:
-    return CommentsServiceMock()
+def replace_comments(comments_service):
+    def _replace_comments(*times: int) -> None:
+        comments_service.reset()
+        if times:
+            comments_service.import_comments(
+                tuple(Comment(time=time, comment_type="commentType", comment="") for time in times)
+            )
+
+    return _replace_comments
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, fake_player_service, comments_service_mock):
+def configure_inject(common_bindings_with, fake_player_service):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, fake_player_service)
-        binder.bind(CommentsService, comments_service_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -71,52 +57,52 @@ def test_duration_crossing_one_hour_flips_flag(policy, fake_player_service, make
     assert spy.at(invocation=1, argument=0) is False
 
 
-def test_long_comment_appearing_and_disappearing_flips_flag(policy, comments_service_mock):
-    comments_service_mock.set_comments(0, ONE_HOUR_MS)
+def test_long_comment_appearing_and_disappearing_flips_flag(policy, replace_comments):
+    replace_comments(0, ONE_HOUR_MS)
     assert policy.table_long_format
 
-    comments_service_mock.set_comments(0)
+    replace_comments(0)
     assert not policy.table_long_format
 
 
-def test_comment_times_normalize_from_milliseconds(policy, comments_service_mock):
-    comments_service_mock.set_comments(ONE_HOUR_MS - 1)
+def test_comment_times_normalize_from_milliseconds(policy, replace_comments):
+    replace_comments(ONE_HOUR_MS - 1)
     assert not policy.table_long_format
 
-    comments_service_mock.set_comments(ONE_HOUR_MS)
+    replace_comments(ONE_HOUR_MS)
     assert policy.table_long_format
 
 
-def test_duration_and_comment_times_combine(policy, fake_player_service, comments_service_mock):
+def test_duration_and_comment_times_combine(policy, fake_player_service, replace_comments):
     fake_player_service.update(duration=3600.0)
-    comments_service_mock.set_comments(1_000)
+    replace_comments(1_000)
     assert policy.table_long_format
 
     fake_player_service.update(duration=10.0)
     assert not policy.table_long_format
 
-    comments_service_mock.set_comments(1_000, ONE_HOUR_MS)
+    replace_comments(1_000, ONE_HOUR_MS)
     assert policy.table_long_format
 
 
-def test_reset_returns_flag_to_short(policy, comments_service_mock):
-    comments_service_mock.set_comments(ONE_HOUR_MS)
+def test_reset_returns_flag_to_short(policy, replace_comments):
+    replace_comments(ONE_HOUR_MS)
     assert policy.table_long_format
 
-    comments_service_mock.set_comments()
+    replace_comments()
     assert not policy.table_long_format
 
 
-def test_unchanged_flag_does_not_emit(policy, fake_player_service, comments_service_mock, make_spy):
+def test_unchanged_flag_does_not_emit(policy, fake_player_service, replace_comments, make_spy):
     spy = make_spy(policy.table_long_format_changed)
 
     fake_player_service.update(duration=10.0)
     fake_player_service.update(duration=20.0)
-    comments_service_mock.set_comments(1_000)
+    replace_comments(1_000)
     assert spy.count() == 0
 
     fake_player_service.update(duration=3600.0)
-    comments_service_mock.set_comments(1_000, ONE_HOUR_MS)
+    replace_comments(1_000, ONE_HOUR_MS)
     assert spy.count() == 1
 
 

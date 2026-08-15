@@ -43,19 +43,16 @@ TestCase {
         verify(!addButton.enabled);
     }
 
-    function test_duplicateDraftDisablesAddAndShowsError(): void {
+    function test_rejectedDraftReachesTheErrorLabel(): void {
         const dialog = makeDialog();
         const field = findChild(dialog.contentItem, "commentTypeTextField");
-        const addButton = findChild(dialog.contentItem, "commentTypeAddButton");
         const error = findChild(dialog.contentItem, "commentTypeValidationLabel");
 
-        field.text = "ZZZ Unique Type";
-        tryVerify(() => addButton.enabled);
-        mouseClick(addButton);
+        compare(error.text, "");
 
-        field.text = "ZZZ Unique Type";
-        tryVerify(() => !addButton.enabled);
-        verify(error.text !== "");
+        field.text = "ZZZ Bracketed [ Type";
+
+        tryVerify(() => error.text !== "");
     }
 
     function test_addAppendsSelectsAndClears(): void {

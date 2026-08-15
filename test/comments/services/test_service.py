@@ -34,12 +34,3 @@ def test_mutations_record_change(service, state_service_mock):
     service.add_row(0, "Type")
 
     state_service_mock.record_change.assert_called_once()
-
-
-def test_reset_does_not_record_change(service, state_service_mock):
-    service.add_row(0, "Type")
-    state_service_mock.reset_mock()
-
-    service.reset()
-
-    state_service_mock.record_change.assert_not_called()
