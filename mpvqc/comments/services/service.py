@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, assert_never, cast
+from typing import TYPE_CHECKING, assert_never
 
 import inject
 from PySide6.QtCore import QObject, Signal
@@ -21,7 +21,7 @@ from .commands import (
 )
 from .history import History
 from .search import CommentSearchEngine
-from .selection import MpvqcCommentSelectionState
+from .selection import SelectionCell
 from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickSelectionAndEdit
 
 if TYPE_CHECKING:
@@ -46,14 +46,14 @@ class CommentsService(QObject):
     def __init__(self, store: Store, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._store = store
-        self._selection = MpvqcCommentSelectionState(parent=self)
+        self._selection = SelectionCell(parent=self)
         self._history = History(self._store)
         self._search = CommentSearchEngine(self._store, self._selection)
-        self._selection.selectedRowChanged.connect(self._history.disarm_merge)
+        self._selection.row_selected.connect(self._history.disarm_merge)
         self.dirty.connect(self._state.record_change)
 
     @property
-    def selection(self) -> MpvqcCommentSelectionState:
+    def selection(self) -> SelectionCell:
         return self._selection
 
     @property
@@ -109,7 +109,7 @@ class CommentsService(QObject):
         cmd = ImportComments.build(
             self._store,
             comments=comments,
-            previously_selected_row=cast("int", self._selection.selectedRow),
+            previously_selected_row=self._selection.row,
         )
         action = self._history.push(cmd)
         self._emit_apply(cmd, action)
@@ -118,8 +118,7 @@ class CommentsService(QObject):
         self._history.clear()
         self._search.invalidate()
         self._store.reset(())
-        # pyrefly: ignore [bad-assignment]
-        self._selection.selectedRow = -1
+        self._selection.clear_row()
         self.comments_changed.emit()
 
     def undo(self) -> None:
@@ -143,7 +142,7 @@ class CommentsService(QObject):
         self._emit_apply(*self._history.commit_redo())
 
     def _needs_focus_phase(self, target: int) -> bool:
-        return cast("int", self._selection.selectedRow) != target or not self._selection.selectedRowVisible
+        return self._selection.row != target or not self._selection.row_visible
 
     def _emit_apply(self, cmd: Command, action: ViewAction) -> None:
         if cmd.invalidates_search:
@@ -155,8 +154,7 @@ class CommentsService(QObject):
     def _emit_view_action(self, action: ViewAction) -> None:
         match action:
             case QuickSelection(row=row) | AnimatedSelection(row=row) | QuickSelectionAndEdit(row=row):
-                # pyrefly: ignore [bad-assignment]
-                self._selection.selectedRow = row
+                self._selection.set_row(row)
             case NoViewAction():
                 pass
             case _ as unreachable:
