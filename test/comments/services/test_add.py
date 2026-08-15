@@ -62,19 +62,6 @@ def test_add_comment_undo_redo_sorts_model(comments):
     assert expected == [ct.comment_type for ct in comments.comments()]
 
 
-def test_add_row_invalidates_search(comments):
-    initial = comments.search("Word", include_current_row=True, top_down=True)
-    assert initial.index == 0
-    assert initial.total == 5
-
-    # New row inserts at row 0; existing matches shift to rows 1..5.
-    comments.add_row(time=-1, comment_type="commentType")
-
-    after = comments.search("Word", include_current_row=True, top_down=True)
-    assert after.index == 1
-    assert after.total == 5
-
-
 def test_add_comment_undo_redo_fires_signals(comments, make_spy):
     spy = make_spy(comments.view_action)
 

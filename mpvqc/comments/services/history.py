@@ -4,38 +4,65 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, assert_never
 
-from .commands import AddAndUpdateText, AddComment
+from .steps import AddAndUpdateText, AddComment, UpdateText
+from .view_action import AnimatedSelection
 
 if TYPE_CHECKING:
-    from .commands import Command
+    from .selection import SelectionCell
+    from .steps import FreshStep, Step
     from .store import Store
     from .view_action import ViewAction
 
 
+@dataclass(frozen=True)
+class NoStep:
+    pass
+
+
+@dataclass(frozen=True)
+class FocusFirst:
+    action: AnimatedSelection
+
+
+@dataclass(frozen=True)
+class NoFocusNeeded:
+    pass
+
+
+@dataclass(frozen=True)
+class Applied:
+    action: ViewAction
+
+
+type StepOutcome = NoStep | FocusFirst | Applied
+type FocusOutcome = FocusFirst | NoFocusNeeded
+
+
 class _UndoStack:
     def __init__(self) -> None:
-        self._undo: list[Command] = []
-        self._redo: list[Command] = []
+        self._undo: list[Step] = []
+        self._redo: list[Step] = []
 
-    def push(self, cmd: Command) -> None:
+    def push(self, step: Step) -> None:
         self._redo.clear()
-        self._undo.append(cmd)
+        self._undo.append(step)
 
     def clear(self) -> None:
         self._undo.clear()
         self._redo.clear()
 
-    def replace_top(self, cmd: Command) -> None:
-        self._undo[-1] = cmd
+    def replace_top(self, step: Step) -> None:
+        self._undo[-1] = step
 
     @property
-    def top_undo(self) -> Command | None:
+    def top_undo(self) -> Step | None:
         return self._undo[-1] if self._undo else None
 
     @property
-    def top_redo(self) -> Command | None:
+    def top_redo(self) -> Step | None:
         return self._redo[-1] if self._redo else None
 
     def commit_undo(self) -> None:
@@ -46,65 +73,73 @@ class _UndoStack:
 
 
 class History:
-    def __init__(self, store: Store) -> None:
+    def __init__(self, store: Store, selection: SelectionCell) -> None:
         self._store = store
+        self._selection = selection
         self._stack = _UndoStack()
-        self._mergeable: AddComment | None = None
+        self._armed_add: AddComment | None = None
+        self._selection.row_selected.connect(self._disarm_merge)
 
-    def push(self, cmd: Command) -> ViewAction:
-        self._mergeable = None
-        action = cmd.initial(self._store)
-        self._stack.push(cmd)
-        return action
+    def push(self, step: FreshStep) -> Applied:
+        self._disarm_merge()
+        action = step.initial(self._store)
+        self._stack.push(step)
+        if isinstance(step, AddComment):
+            self._armed_add = step
+        return Applied(action=action)
 
     def clear(self) -> None:
-        self._mergeable = None
+        self._disarm_merge()
         self._stack.clear()
 
-    def arm_merge(self, cmd: AddComment) -> None:
-        self._mergeable = cmd
+    def _disarm_merge(self) -> None:
+        self._armed_add = None
 
-    def disarm_merge(self) -> None:
-        self._mergeable = None
-
-    def try_fuse_text(self, row: int, new_text: str) -> tuple[Command, ViewAction] | None:
-        add = self._mergeable
+    def update_text(self, row: int, new_text: str) -> Applied:
+        add = self._armed_add
         if add is None or add.row != row:
-            return None
-        fused = AddAndUpdateText.fuse(add, new_text)
-        action = fused.apply_fusion(self._store)
-        self._stack.replace_top(fused)
-        self._mergeable = None
-        return fused, action
+            return self.push(UpdateText.build(self._store, row=row, new_text=new_text))
+        merged = AddAndUpdateText.merge(add, new_text)
+        action = merged.apply_merge(self._store)
+        self._stack.replace_top(merged)
+        self._disarm_merge()
+        return Applied(action=action)
 
-    def has_undo(self) -> bool:
-        return self._stack.top_undo is not None
+    def undo(self) -> StepOutcome:
+        self._disarm_merge()
+        step = self._stack.top_undo
+        if step is None:
+            return NoStep()
+        focus = self._focus_first(step.focus_undo())
+        match focus:
+            case FocusFirst():
+                return focus
+            case NoFocusNeeded():
+                action = step.undo(self._store)
+                self._stack.commit_undo()
+                return Applied(action=action)
+            case _ as unreachable:
+                assert_never(unreachable)
 
-    def undo_focus_target(self) -> int | None:
-        cmd = self._stack.top_undo
-        return cmd.focus_undo() if cmd is not None else None
+    def redo(self) -> StepOutcome:
+        self._disarm_merge()
+        step = self._stack.top_redo
+        if step is None:
+            return NoStep()
+        focus = self._focus_first(step.focus_redo())
+        match focus:
+            case FocusFirst():
+                return focus
+            case NoFocusNeeded():
+                action = step.redo(self._store)
+                self._stack.commit_redo()
+                return Applied(action=action)
+            case _ as unreachable:
+                assert_never(unreachable)
 
-    def commit_undo(self) -> tuple[Command, ViewAction]:
-        cmd = self._stack.top_undo
-        if cmd is None:
-            msg = "commit_undo called with no top of stack; check has_undo first"
-            raise RuntimeError(msg)
-        action = cmd.undo(self._store)
-        self._stack.commit_undo()
-        return cmd, action
-
-    def has_redo(self) -> bool:
-        return self._stack.top_redo is not None
-
-    def redo_focus_target(self) -> int | None:
-        cmd = self._stack.top_redo
-        return cmd.focus_redo() if cmd is not None else None
-
-    def commit_redo(self) -> tuple[Command, ViewAction]:
-        cmd = self._stack.top_redo
-        if cmd is None:
-            msg = "commit_redo called with no top of stack; check has_redo first"
-            raise RuntimeError(msg)
-        action = cmd.redo(self._store)
-        self._stack.commit_redo()
-        return cmd, action
+    def _focus_first(self, target: int | None) -> FocusOutcome:
+        if target is None:
+            return NoFocusNeeded()
+        if self._selection.row == target and self._selection.row_visible:
+            return NoFocusNeeded()
+        return FocusFirst(action=AnimatedSelection(row=target))

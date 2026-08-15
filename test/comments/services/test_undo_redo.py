@@ -262,6 +262,48 @@ def test_merge_add_and_update_survives_reselecting_the_added_row(make_comments):
     )
 
 
+def test_merge_add_and_update_declined_for_another_row(make_comments):
+    comments = make_comments(set_comments=[Comment(time=10, comment_type="type 1", comment="Word 1")])
+
+    comments.add_row(25, "added 1")
+    comments.update_comment(0, "Word Edited 1")
+
+    comments.undo()
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+            [25, "added 1", ""],
+        ],
+    )
+
+    comments.selection.select(1)
+    comments.undo()
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+        ],
+    )
+
+
+def test_merge_add_and_update_declined_on_no_op_redo(make_comments):
+    comments = make_comments(set_comments=[Comment(time=10, comment_type="type 1", comment="Word 1")])
+
+    comments.add_row(25, "added 1")
+    comments.redo()
+    comments.update_comment(1, "Word Added 1")
+
+    comments.undo()
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+            [25, "added 1", ""],
+        ],
+    )
+
+
 def test_merge_add_and_update_declined_because_of_other_command(make_comments):
     comments = make_comments(set_comments=[])
     comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))

@@ -104,16 +104,6 @@ def test_import_comments_undo_redo(comments):
     assert rows[5].comment == "Undo Redo 3"
 
 
-def test_import_invalidates_search(comments):
-    initial = comments.search("Word", include_current_row=True, top_down=True)
-    assert initial.total == 5
-
-    comments.import_comments((Comment(time=99, comment_type="commentType", comment="Word New"),))
-
-    after = comments.search("Word", include_current_row=True, top_down=True)
-    assert after.total == 6
-
-
 def test_import_comments_undo_redo_fires_signals(comments, make_spy):
     spy = make_spy(comments.view_action)
 

@@ -244,7 +244,7 @@ TestCase {
 
     function test_userJourneyAddEditUndoRedoRoundTrips(): void {
         // Add A: opens the comment popup; cancel it, then commit the text via
-        // a direct updateComment which fuses with the armed AddComment.
+        // a direct updateComment which merges with the armed AddComment.
         control.viewModel.addRow("Comment Type 1");
         _wait.editControlOpened(control);
         keyClick(Qt.Key_Escape);
@@ -266,7 +266,7 @@ TestCase {
         control.commentList.currentIndex = 0;
         waitForRendering(control);
 
-        // Edit A's text — separate UpdateComment, not fused.
+        // Edit A's text — separate UpdateComment, not merged.
         control.viewModel.updateComment(0, "first edited");
         compare(_helpers.bridge.comment(0).comment, "first edited");
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 import bisect
 from dataclasses import dataclass, replace
 from operator import attrgetter
-from typing import TYPE_CHECKING, ClassVar, Protocol
+from typing import TYPE_CHECKING, Protocol
 
 from mpvqc.shared import Comment
 
@@ -23,20 +23,19 @@ if TYPE_CHECKING:
 _sort_key = attrgetter("sort_key")
 
 
-class Command(Protocol):
-    invalidates_search: ClassVar[bool]
-
-    def initial(self, store: Store, /) -> ViewAction: ...
+class Step(Protocol):
     def focus_undo(self) -> int | None: ...
     def undo(self, store: Store, /) -> ViewAction: ...
     def focus_redo(self) -> int | None: ...
     def redo(self, store: Store, /) -> ViewAction: ...
 
 
+class FreshStep(Step, Protocol):
+    def initial(self, store: Store, /) -> ViewAction: ...
+
+
 @dataclass(frozen=True)
 class AddComment:
-    invalidates_search: ClassVar[bool] = True
-
     payload: StoreItem
     row: int
 
@@ -68,8 +67,6 @@ class AddComment:
 
 @dataclass(frozen=True)
 class RemoveComment:
-    invalidates_search: ClassVar[bool] = True
-
     payload: StoreItem
     row: int
 
@@ -97,8 +94,6 @@ class RemoveComment:
 
 @dataclass(frozen=True)
 class UpdateTime:
-    invalidates_search: ClassVar[bool] = True
-
     old: Comment
     new: Comment
     src_row: int
@@ -130,8 +125,6 @@ class UpdateTime:
 
 @dataclass(frozen=True)
 class UpdateType:
-    invalidates_search: ClassVar[bool] = False
-
     old: Comment
     new: Comment
     row: int
@@ -162,8 +155,6 @@ class UpdateType:
 
 @dataclass(frozen=True)
 class UpdateText:
-    invalidates_search: ClassVar[bool] = True
-
     old: Comment
     new: Comment
     row: int
@@ -194,23 +185,17 @@ class UpdateText:
 
 @dataclass(frozen=True)
 class AddAndUpdateText:
-    invalidates_search: ClassVar[bool] = True
-
     payload: StoreItem
     row: int
 
     @classmethod
-    def fuse(cls, add: AddComment, new_text: str) -> AddAndUpdateText:
+    def merge(cls, add: AddComment, new_text: str) -> AddAndUpdateText:
         return cls(
             payload=replace(add.payload, comment=replace(add.payload.comment, comment=new_text)),
             row=add.row,
         )
 
-    def initial(self, _: Store) -> ViewAction:
-        msg = "Must never be called. It must never be pushed onto the stack in a normal operation"
-        raise AssertionError(msg)
-
-    def apply_fusion(self, store: Store) -> ViewAction:
+    def apply_merge(self, store: Store) -> ViewAction:
         store.replace(self.row, self.payload.comment, Role.COMMENT)
         return QuickSelection(row=self.row)
 
@@ -231,8 +216,6 @@ class AddAndUpdateText:
 
 @dataclass(frozen=True)
 class ImportComments:
-    invalidates_search: ClassVar[bool] = True
-
     before: tuple[StoreItem, ...]
     after: tuple[StoreItem, ...]
     last_row: int
