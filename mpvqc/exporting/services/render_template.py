@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication
 
+from mpvqc.comments.services import translate_comment_type
 from mpvqc.services import TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND, format_milliseconds_to_subsecond_string, map_path_to_str
 
@@ -57,16 +58,12 @@ def _environment() -> Environment:
     environment = ImmutableSandboxedEnvironment(loader=BaseLoader(), keep_trailing_newline=True)
     environment.filters["as_time"] = _as_time
     environment.filters["as_time_ms"] = format_milliseconds_to_subsecond_string
-    environment.filters["as_comment_type"] = _as_comment_type
+    environment.filters["as_comment_type"] = translate_comment_type
     return environment
 
 
 def _as_time(seconds: int) -> str:
     return TimeFormatterService.format_time_to_string(seconds, long_format=True)
-
-
-def _as_comment_type(comment_type: str) -> str:
-    return QCoreApplication.translate("CommentTypes", comment_type)
 
 
 def _arguments(snapshot: ExportSnapshot) -> dict:

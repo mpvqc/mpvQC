@@ -4,14 +4,18 @@
 
 import functools
 
-from PySide6.QtCore import QDir, QTranslator
+from PySide6.QtCore import QCoreApplication, QDir, QTranslator
 
 from .settings import default_comment_types
 
 
-def reverse_translate(comment_type_in_current_language: str) -> str:
+def translate_comment_type(comment_type: str) -> str:
+    return QCoreApplication.translate("CommentTypes", comment_type)
+
+
+def reverse_translate_comment_type(translated_comment_type: str) -> str:
     table = _lookup_table()
-    return table.get(comment_type_in_current_language, comment_type_in_current_language)
+    return table.get(translated_comment_type, translated_comment_type)
 
 
 @functools.cache

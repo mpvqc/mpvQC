@@ -6,10 +6,10 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, replace
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService
+from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService, translate_comment_type
 from mpvqc.services import InternationalizationService, LabelWidthCalculatorService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -23,7 +23,7 @@ def _time_candidates(*, long_format: bool) -> Iterator[str]:
 
 def _translate_comment_types(types: frozenset[str]) -> tuple[str, ...]:
     # sorted, so that equal type sets always give an equal snapshot: frozenset iteration is hash order
-    return tuple(QCoreApplication.translate("CommentTypes", comment_type) for comment_type in sorted(types))
+    return tuple(translate_comment_type(comment_type) for comment_type in sorted(types))
 
 
 @dataclass(frozen=True)

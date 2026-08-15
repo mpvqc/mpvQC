@@ -5,7 +5,7 @@
 from typing import assert_never
 
 import inject
-from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, Signal, Slot
+from PySide6.QtCore import Property, QAbstractItemModel, QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
@@ -19,6 +19,7 @@ from mpvqc.comments.services import (
     QuickSelection,
     QuickSelectionAndEdit,
     ViewAction,
+    translate_comment_type,
 )
 from mpvqc.services import PlayerService, TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND
@@ -108,7 +109,7 @@ class MpvqcCommentTableViewModel(QObject):
     def copyToClipboard(self, row: int) -> None:
         comment = self._comments.comment_at(row)
         time = self._time_formatter.format_milliseconds_to_string(comment.time, long_format=True)
-        comment_type = QCoreApplication.translate("CommentTypes", comment.comment_type)
+        comment_type = translate_comment_type(comment.comment_type)
         content = f"[{time}] [{comment_type}] {comment.comment}"
         self._clipboard.setText(content)
         self.copiedToClipboard.emit(content)
