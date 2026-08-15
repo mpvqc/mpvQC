@@ -11,17 +11,16 @@ from PySide6.QtCore import QObject, Signal
 
 from mpvqc.services import StateService
 
-from .commands import (
+from .history import Applied, FocusFirst, History, NoStep
+from .search import CommentSearchEngine
+from .selection import SelectionCell
+from .steps import (
     AddComment,
     ImportComments,
     RemoveComment,
-    UpdateText,
     UpdateTime,
     UpdateType,
 )
-from .history import History
-from .search import CommentSearchEngine
-from .selection import SelectionCell
 from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickSelectionAndEdit
 
 if TYPE_CHECKING:
@@ -29,7 +28,7 @@ if TYPE_CHECKING:
 
     from mpvqc.shared import Comment
 
-    from .commands import Command
+    from .history import StepOutcome
     from .search import SearchOutcome
     from .store import Store
     from .view_action import ViewAction
@@ -47,9 +46,8 @@ class CommentsService(QObject):
         super().__init__(parent)
         self._store = store
         self._selection = SelectionCell(parent=self)
-        self._history = History(self._store)
+        self._history = History(self._store, self._selection)
         self._search = CommentSearchEngine(self._store, self._selection)
-        self._selection.row_selected.connect(self._history.disarm_merge)
         self.dirty.connect(self._state.record_change)
 
     @property
@@ -74,45 +72,34 @@ class CommentsService(QObject):
         return self._search.search(query, include_current_row=include_current_row, top_down=top_down)
 
     def add_row(self, time: int, comment_type: str) -> None:
-        cmd = AddComment.build(self._store, time=time, comment_type=comment_type)
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
-        self._history.arm_merge(cmd)
+        step = AddComment.build(self._store, time=time, comment_type=comment_type)
+        self._emit_applied(self._history.push(step))
 
     def update_comment(self, row: int, comment: str) -> None:
-        if fused := self._history.try_fuse_text(row, comment):
-            self._emit_apply(*fused)
-            return
-        cmd = UpdateText.build(self._store, row=row, new_text=comment)
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
+        self._emit_applied(self._history.update_text(row, comment))
 
     def update_comment_type(self, row: int, comment_type: str) -> None:
-        cmd = UpdateType.build(self._store, row=row, new_comment_type=comment_type)
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
+        step = UpdateType.build(self._store, row=row, new_comment_type=comment_type)
+        self._emit_applied(self._history.push(step))
 
     def update_time(self, row: int, new_time: int) -> None:
-        cmd = UpdateTime.build(self._store, row=row, new_time=new_time)
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
+        step = UpdateTime.build(self._store, row=row, new_time=new_time)
+        self._emit_applied(self._history.push(step))
 
     def remove_row(self, row: int) -> None:
-        cmd = RemoveComment.build(self._store, row=row)
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
+        step = RemoveComment.build(self._store, row=row)
+        self._emit_applied(self._history.push(step))
 
     def import_comments(self, comments: Sequence[Comment]) -> None:
         if not comments:
             return
         self.about_to_import.emit()
-        cmd = ImportComments.build(
+        step = ImportComments.build(
             self._store,
             comments=comments,
             previously_selected_row=self._selection.row,
         )
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
+        self._emit_applied(self._history.push(step))
 
     def reset(self) -> None:
         self._history.clear()
@@ -122,34 +109,27 @@ class CommentsService(QObject):
         self.comments_changed.emit()
 
     def undo(self) -> None:
-        self._history.disarm_merge()
-        if not self._history.has_undo():
-            return
-        target = self._history.undo_focus_target()
-        if target is not None and self._needs_focus_phase(target):
-            self._emit_view_action(AnimatedSelection(row=target))
-            return
-        self._emit_apply(*self._history.commit_undo())
+        self._dispatch_step(self._history.undo())
 
     def redo(self) -> None:
-        self._history.disarm_merge()
-        if not self._history.has_redo():
-            return
-        target = self._history.redo_focus_target()
-        if target is not None and self._needs_focus_phase(target):
-            self._emit_view_action(AnimatedSelection(row=target))
-            return
-        self._emit_apply(*self._history.commit_redo())
+        self._dispatch_step(self._history.redo())
 
-    def _needs_focus_phase(self, target: int) -> bool:
-        return self._selection.row != target or not self._selection.row_visible
+    def _dispatch_step(self, outcome: StepOutcome) -> None:
+        match outcome:
+            case NoStep():
+                pass
+            case FocusFirst(action=action):
+                self._emit_view_action(action)
+            case Applied() as applied:
+                self._emit_applied(applied)
+            case _ as unreachable:
+                assert_never(unreachable)
 
-    def _emit_apply(self, cmd: Command, action: ViewAction) -> None:
-        if cmd.invalidates_search:
-            self._search.invalidate()
+    def _emit_applied(self, applied: Applied) -> None:
+        self._search.invalidate()
         self.dirty.emit()
         self.comments_changed.emit()
-        self._emit_view_action(action)
+        self._emit_view_action(applied.action)
 
     def _emit_view_action(self, action: ViewAction) -> None:
         match action:

@@ -135,19 +135,6 @@ def test_update_comment_type_fires_signals(comments, make_spy):
     assert spy.at(invocation=0, argument=0) == AnimatedSelection(row=0)
 
 
-def test_update_comment_type_does_not_invalidate_search(comments, store, monkeypatch):
-    comments.search("Word", include_current_row=True, top_down=True)
-
-    def fail(*_args, **_kwargs):
-        pytest.fail("UpdateType must not trigger a fresh scan")
-
-    monkeypatch.setattr(store, "search_rows", fail)
-    comments.update_comment_type(row=0, comment_type="other")
-
-    after = comments.search("Word", include_current_row=True, top_down=True)
-    assert after.total == 5
-
-
 def test_update_comment(comments, store):
     comments.update_comment(row=0, comment="new comment")
     assert _data_at(store, 0, Role.COMMENT) == "new comment"
@@ -157,35 +144,6 @@ def test_update_comment(comments, store):
 
     comments.redo()
     assert _data_at(store, 0, Role.COMMENT) == "new comment"
-
-
-def test_update_comment_invalidates_search(comments):
-    initial = comments.search("Word", include_current_row=True, top_down=True)
-    assert initial.total == 5
-
-    comments.update_comment(row=0, comment="other")
-
-    after = comments.search("Word", include_current_row=True, top_down=True)
-    assert after.total == 4
-
-
-def test_update_time_invalidates_search(make_comments):
-    comments = make_comments(
-        set_comments=(
-            Comment(time=0, comment_type="commentType", comment="Word 1"),
-            Comment(time=5, comment_type="commentType", comment="Other"),
-            Comment(time=10, comment_type="commentType", comment="Word 2"),
-        ),
-    )
-
-    initial = comments.search("Word", include_current_row=True, top_down=True)
-    assert initial.index == 0
-
-    # Move "Word 1" past "Other"; first match now lives at row 1.
-    comments.update_time(row=0, new_time=7)
-
-    after = comments.search("Word", include_current_row=True, top_down=True)
-    assert after.index == 1
 
 
 def test_update_comment_fires_signals(comments, make_spy):

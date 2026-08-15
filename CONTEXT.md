@@ -56,9 +56,12 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Displayable comment types**: the types the comment table may show: the types the user configured and the distinct
   comment types together. The table reserves label space for all of them. The new-comment menu (configured types only)
   and the edit-type menu (configured types plus the row's own type) show different sets by design.
+- **Undo step**: one change to the comments that undo and redo move through as a unit.
+- **Step merge**: two undo steps becoming one, so a single undo takes both back. A step merges only when it continues
+  the one before it: another change, or a move to a different comment, keeps the two apart.
 - **View action**: what a change to the comments asks the comment table to do beyond redrawing the rows: jump to a row
   with animation, jump to it without, jump to it without and open the editor, or nothing. Undo and redo also send one
-  on their own, to move the user to the row a step is about to change before it changes.
+  on their own, to move the user to the row an undo step is about to change before it changes.
 - **Selection state**: where the selection stands in the comment table: which row it is on, and whether that row is on
   screen. It is where a search carries on from, and what undo and redo check before they move the user.
 

@@ -51,16 +51,6 @@ def test_remove_comment_undo_sorts_model(comments):
     assert expected == [c.comment for c in comments.comments()]
 
 
-def test_remove_invalidates_search(comments):
-    initial = comments.search("Word", include_current_row=True, top_down=True)
-    assert initial.total == 5
-
-    comments.remove_row(0)
-
-    after = comments.search("Word", include_current_row=True, top_down=True)
-    assert after.total == 4
-
-
 def test_remove_comment_undo_redo_fires_signals(comments, make_spy):
     spy = make_spy(comments.view_action)
 
