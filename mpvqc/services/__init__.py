@@ -16,7 +16,6 @@ from .platform import PlatformService as PlatformService
 from .platform import WindowButtonPreference as WindowButtonPreference
 from .player import PlayerService as PlayerService
 from .quit import QuitService as QuitService
-from .resetter import ResetService as ResetService
 from .resource import ResourceService as ResourceService
 from .settings import SettingsService as SettingsService
 from .settings_file import SettingsFileService as SettingsFileService

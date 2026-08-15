@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .resetter import ResetService as ResetService
 from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
 from .roles import ROLE_NAMES as ROLE_NAMES
 from .roles import Role as Role

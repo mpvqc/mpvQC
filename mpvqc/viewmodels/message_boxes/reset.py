@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import QObject, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ResetService
+from mpvqc.comments.services import ResetService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

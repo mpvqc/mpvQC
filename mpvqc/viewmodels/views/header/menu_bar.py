@@ -9,11 +9,11 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.comments.services import ResetService
 from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
 from mpvqc.services import (
     DesktopService,
-    ResetService,
     SettingsService,
     StateService,
 )

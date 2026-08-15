@@ -10,7 +10,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.comments.services import CommentsService
+from mpvqc.comments.services import CommentsService, ResetService
 from mpvqc.importing.services import (
     ImportService,
     ImportSettingsService,
@@ -24,7 +24,7 @@ from mpvqc.importing.services import (
     VideoLoad,
     VideoSkip,
 )
-from mpvqc.services import PlayerService, ResetService, StateService
+from mpvqc.services import PlayerService, StateService
 from mpvqc.shared import Comment
 from test.importing.plans import (
     SUB_A,
