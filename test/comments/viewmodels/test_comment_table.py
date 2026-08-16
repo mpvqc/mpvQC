@@ -141,7 +141,7 @@ def test_add_row_reaches_quick_selection_and_edit(make_view_model, fake_player_s
     fake_player_service.update(time_pos=5.0)
     quick_spy = make_spy(vm.quickSelectionRequested)
     animated_spy = make_spy(vm.selectionRequested)
-    edit_spy = make_spy(vm.commentEditRequested)
+    edit_spy = make_spy(vm.editCommentRequested)
 
     vm.addRow("Translation")
 
@@ -161,7 +161,7 @@ def test_update_comment_type_reaches_quick_selection(make_view_model, make_spy):
     )
     quick_spy = make_spy(vm.quickSelectionRequested)
     animated_spy = make_spy(vm.selectionRequested)
-    edit_spy = make_spy(vm.commentEditRequested)
+    edit_spy = make_spy(vm.editCommentRequested)
 
     vm.updateCommentType(1, "Phrasing")
 
@@ -181,7 +181,7 @@ def test_update_time_reaches_animated_selection(make_view_model, comments_servic
     )
     quick_spy = make_spy(vm.quickSelectionRequested)
     animated_spy = make_spy(vm.selectionRequested)
-    edit_spy = make_spy(vm.commentEditRequested)
+    edit_spy = make_spy(vm.editCommentRequested)
 
     vm.updateTime(0, 3000)
 
@@ -197,7 +197,7 @@ def test_remove_row_reaches_no_view_action(make_view_model, comments_service, ma
     vm = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
     quick_spy = make_spy(vm.quickSelectionRequested)
     animated_spy = make_spy(vm.selectionRequested)
-    edit_spy = make_spy(vm.commentEditRequested)
+    edit_spy = make_spy(vm.editCommentRequested)
 
     vm.removeRow(0)
 

@@ -47,9 +47,9 @@ class MpvqcCommentTableViewModel(QObject):
     quickSelectionRequested = Signal(int)
     selectionRequested = Signal(int)
 
-    commentEditRequested = Signal(int)
+    editCommentRequested = Signal(int)
 
-    deleteCommentRequested = Signal(int, int, str, str)  # index, time, commentType, commentText
+    deleteConfirmationRequested = Signal(int, int, str, str)  # index, time, commentType, commentText
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -71,7 +71,7 @@ class MpvqcCommentTableViewModel(QObject):
                 self.quickSelectionRequested.emit(row)
             case QuickSelectionAndEdit(row=row):
                 self.quickSelectionRequested.emit(row)
-                self.commentEditRequested.emit(row)
+                self.editCommentRequested.emit(row)
             case NoViewAction():
                 pass
             case _ as unreachable:
@@ -97,7 +97,7 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:
         comment = self._comments.comment_at(index)
-        self.deleteCommentRequested.emit(index, comment.time, comment.comment_type, comment.comment)
+        self.deleteConfirmationRequested.emit(index, comment.time, comment.comment_type, comment.comment)
 
     @Slot(int)
     def jumpToTime(self, time: int) -> None:
