@@ -51,11 +51,11 @@ Item {
     Connections {
         target: root.viewModel
 
-        function onCommentEditRequested(index: int): void {
+        function onEditCommentRequested(index: int): void {
             root._openCommentEditor(index);
         }
 
-        function onDeleteCommentRequested(index: int, time: int, commentType: string, commentText: string): void {
+        function onDeleteConfirmationRequested(index: int, time: int, commentType: string, commentText: string): void {
             _deleteConfirmationLoader.requestDeletion(index, time, commentType, commentText);
         }
 
