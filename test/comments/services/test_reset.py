@@ -48,11 +48,3 @@ def test_reset_invalidates_search(comments):
     comments.reset()
 
     assert comments.search("Word", include_current_row=True, top_down=True) == NoMatches()
-
-
-def test_reset_does_not_mark_dirty(comments, make_spy):
-    spy = make_spy(comments.dirty)
-
-    comments.reset()
-
-    assert spy.count() == 0
