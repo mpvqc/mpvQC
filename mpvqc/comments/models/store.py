@@ -54,6 +54,9 @@ class TypeTally:
 
 
 class CommentStore(QAbstractListModel):
+    # Emitted before beginInsertRows and beginRemoveRows, so MpvqcCommentList can settle its
+    # highlight first. Qt's own rowsAboutToBeInserted and rowsAboutToBeRemoved go off from
+    # inside those calls, where a QML handler shares the signal with the view's own update.
     aboutToInsertRow = Signal(int)
     aboutToRemoveRow = Signal(int)
 
@@ -61,9 +64,6 @@ class CommentStore(QAbstractListModel):
         super().__init__()
         self._rows: list[StoreItem] = []
         self._types = TypeTally()
-
-    def distinct_comment_types(self) -> frozenset[str]:
-        return self._types.distinct()
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
@@ -73,9 +73,10 @@ class CommentStore(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        rows = self._rows
+        if not index.isValid() or index.row() >= len(rows):
             return None
-        comment = self._rows[index.row()].comment
+        comment = rows[index.row()].comment
         match role:
             case Role.TIME:
                 return comment.time
@@ -88,6 +89,9 @@ class CommentStore(QAbstractListModel):
     @override
     def roleNames(self) -> dict[int, QByteArray]:
         return ROLE_NAMES
+
+    def distinct_comment_types(self) -> frozenset[str]:
+        return self._types.distinct()
 
     def item(self, row: int) -> StoreItem:
         if not 0 <= row < len(self._rows):

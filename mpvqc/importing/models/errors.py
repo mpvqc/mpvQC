@@ -35,10 +35,11 @@ class ErrorsModel(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        documents = self._documents
+        if not index.isValid() or index.row() >= len(documents):
             return None
 
-        rejected = self._documents[index.row()]
+        rejected = documents[index.row()]
 
         match role:
             case self.FilenameRole:

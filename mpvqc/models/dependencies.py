@@ -49,10 +49,11 @@ class MpvqcDependencyModel(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        dependencies = self._all_dependencies
+        if not index.isValid() or index.row() >= len(dependencies):
             return None
 
-        dependency = self._all_dependencies[index.row()]
+        dependency = dependencies[index.row()]
 
         match role:
             case self.NameRole:

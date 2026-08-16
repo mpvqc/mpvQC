@@ -5,7 +5,7 @@
 import inject
 import pytest
 
-from mpvqc.models.languages import MpvqcLanguageModel, MpvqcLanguageModelBackend
+from mpvqc.models.languages import LanguageModelBackend, MpvqcLanguageModel
 from mpvqc.services import InternationalizationService
 
 
@@ -23,9 +23,7 @@ def configure_injections(common_bindings_with, service):
 
 
 def _identifiers(model: MpvqcLanguageModel) -> list[str]:
-    return [
-        model.data(model.index(row, 0), MpvqcLanguageModelBackend.IdentifierRole) for row in range(model.rowCount())
-    ]
+    return [model.data(model.index(row, 0), LanguageModelBackend.IdentifierRole) for row in range(model.rowCount())]
 
 
 def test_resorts_when_the_ui_language_changes(qt_app, service) -> None:

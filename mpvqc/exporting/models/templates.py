@@ -56,10 +56,11 @@ class MpvqcExportTemplateModel(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        items = self._items
+        if not index.isValid() or index.row() >= len(items):
             return None
 
-        item = self._items[index.row()]
+        item = items[index.row()]
 
         match role:
             case self.NameRole:

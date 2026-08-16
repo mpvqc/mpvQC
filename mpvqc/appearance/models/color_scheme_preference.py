@@ -90,32 +90,6 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
             case _:
                 assert_never(preference)
 
-    def _accent_preview_colors_of(self, appearance_preference: AppearancePreference) -> tuple[str, ...]:
-        return tuple(self._accent_preview_color_of(row.preference, appearance_preference) for row in self._rows)
-
-    def _accent_preview_color_of(
-        self,
-        color_scheme_preference: ColorSchemePreference,
-        appearance_preference: AppearancePreference,
-    ) -> str:
-        match color_scheme_preference:
-            case FollowSystem():
-                return "transparent"
-            case Light() | Dark():
-                family = self._catalog.palette_family_for(color_scheme_preference)
-                return family.palette_of(appearance_preference).row_selected
-            case _:
-                assert_never(color_scheme_preference)
-
-    @Slot(AppearancePreference)
-    def _fold_appearance_preference(self, appearance_preference: AppearancePreference) -> None:
-        new, old = self._accent_preview_colors_of(appearance_preference), self._accent_preview_colors
-        self._accent_preview_colors = new
-        for row, (new_accent_preview_color, old_accent_preview_color) in enumerate(zip(new, old, strict=True)):
-            if new_accent_preview_color != old_accent_preview_color:
-                index = self.index(row)
-                self.dataChanged.emit(index, index, [self.AccentPreviewColorRole])
-
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         if parent is not None and parent.isValid():
@@ -124,10 +98,11 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        rows = self._rows
+        if not index.isValid() or index.row() >= len(rows):
             return None
 
-        row = self._rows[index.row()]
+        row = rows[index.row()]
 
         match role:
             case self.PreferenceRole:
@@ -155,3 +130,29 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
             self.AccentPreviewColorRole: QByteArray(b"accentPreviewColor"),
             self.FollowsSystemRole: QByteArray(b"followsSystem"),
         }
+
+    @Slot(AppearancePreference)
+    def _fold_appearance_preference(self, appearance_preference: AppearancePreference) -> None:
+        new, old = self._accent_preview_colors_of(appearance_preference), self._accent_preview_colors
+        self._accent_preview_colors = new
+        for row, (new_accent_preview_color, old_accent_preview_color) in enumerate(zip(new, old, strict=True)):
+            if new_accent_preview_color != old_accent_preview_color:
+                index = self.index(row)
+                self.dataChanged.emit(index, index, [self.AccentPreviewColorRole])
+
+    def _accent_preview_colors_of(self, appearance_preference: AppearancePreference) -> tuple[str, ...]:
+        return tuple(self._accent_preview_color_of(row.preference, appearance_preference) for row in self._rows)
+
+    def _accent_preview_color_of(
+        self,
+        color_scheme_preference: ColorSchemePreference,
+        appearance_preference: AppearancePreference,
+    ) -> str:
+        match color_scheme_preference:
+            case FollowSystem():
+                return "transparent"
+            case Light() | Dark():
+                family = self._catalog.palette_family_for(color_scheme_preference)
+                return family.palette_of(appearance_preference).row_selected
+            case _:
+                assert_never(color_scheme_preference)

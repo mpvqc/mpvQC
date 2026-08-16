@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QAbstractListModel, QByteArray, Qt
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class _SubtitleEntry:
     path: Path
     checked: bool
@@ -31,6 +31,14 @@ class SubtitlesModel(QAbstractListModel):
         super().__init__()
         self._items: list[_SubtitleEntry] = [_SubtitleEntry(path=subtitle, checked=True) for subtitle in subtitles]
 
+    @property
+    def checked_paths(self) -> tuple[Path, ...]:
+        return tuple(item.path for item in self._items if item.checked)
+
+    @property
+    def checked_count(self) -> int:
+        return sum(1 for item in self._items if item.checked)
+
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         if parent is not None and parent.isValid():
@@ -39,10 +47,11 @@ class SubtitlesModel(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        items = self._items
+        if not index.isValid() or index.row() >= len(items):
             return None
 
-        item = self._items[index.row()]
+        item = items[index.row()]
 
         match role:
             case self.FilenameRole:
@@ -66,7 +75,8 @@ class SubtitlesModel(QAbstractListModel):
         if not 0 <= index < len(self._items):
             return
 
-        self._items[index].checked = not self._items[index].checked
+        item = self._items[index]
+        self._items[index] = replace(item, checked=not item.checked)
 
         model_index = self.index(index, 0)
         self.dataChanged.emit(model_index, model_index, [self.IsCheckedRole])
@@ -75,17 +85,8 @@ class SubtitlesModel(QAbstractListModel):
         if not self._items:
             return
 
-        for item in self._items:
-            item.checked = value
+        self._items = [replace(item, checked=value) for item in self._items]
 
         first_index = self.index(0, 0)
         last_index = self.index(len(self._items) - 1, 0)
         self.dataChanged.emit(first_index, last_index, [self.IsCheckedRole])
-
-    @property
-    def checked_paths(self) -> tuple[Path, ...]:
-        return tuple(item.path for item in self._items if item.checked)
-
-    @property
-    def checked_count(self) -> int:
-        return sum(1 for item in self._items if item.checked)
