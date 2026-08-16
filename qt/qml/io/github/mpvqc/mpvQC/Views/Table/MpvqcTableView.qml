@@ -36,12 +36,6 @@ Item {
 
         rowPopupOpen: _overlays.anyRowPopupOpen
         searchQuery: _overlays.searchQuery
-
-        onEditTimeRequested: (index, time, coordinates) => _overlays.openTimeEditor(index, time, coordinates)
-        onEditCommentTypeRequested: (index, commentType, coordinates) => _overlays.openCommentTypeEditor(index, commentType, coordinates)
-        onEditCommentRequested: index => _overlays.openCommentEditor(index)
-        onContextMenuRequested: (index, coordinates) => _overlays.openContextMenu(index, coordinates)
-        onSearchRequested: _overlays.openSearchBox()
     }
 
     MpvqcCommentListOverlays {
@@ -50,10 +44,7 @@ Item {
         anchors.fill: _commentList
 
         viewModel: root.viewModel
-        listView: _commentList
-
-        onFocusWanted: _commentList.forceActiveFocus()
-        onSelectRequested: index => _commentList.selectRow(index)
+        commentList: _commentList
     }
 
     MpvqcPlaceholderView {
