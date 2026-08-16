@@ -40,6 +40,7 @@
   has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
 - Load the `slice-imports` skill before creating or editing Python in a feature package or its test tree.
 - Load the `load-bearing-comments` skill before adding a comment or docstring, and when reviewing code.
+- Load the `writing-models` skill before creating, reviewing, or modifying a Qt list model.
 - Load the `writing-qml` skill before writing or editing a QML file.
 - Load the `writing-view-models` skill before writing or editing a view model that reads service state.
 
