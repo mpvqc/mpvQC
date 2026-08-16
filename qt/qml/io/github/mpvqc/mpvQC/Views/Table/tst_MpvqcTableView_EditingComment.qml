@@ -297,6 +297,24 @@ TestCase {
         _expect.isNotEditing(control);
     }
 
+    function test_importCommitsEdit(): void {
+        const editedValue = "edited";
+        _helpers.typeWord(editedValue);
+
+        _helpers.bridge.importComments([
+            {
+                "time": 99 * 1000,
+                "commentType": "Comment Type 1",
+                "comment": "Imported"
+            },
+        ]);
+
+        _wait.editControlClosed(control);
+        _expect.isNotEditing(control);
+        _expect.hasItemComment(control, 2, editedValue);
+        _expect.hasActiveFocus(control);
+    }
+
     function test_editorCanBeReopened(): void {
         keyPress(Qt.Key_Escape);
         _wait.editControlClosed(control);
