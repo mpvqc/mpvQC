@@ -28,7 +28,7 @@ QtObject {
         {
             name: "ffmpeg",
             version: ffmpegVersion,
-            licence: "GPL-2.0+",
+            licence: "GPL-3.0+",
             url: "https://ffmpeg.org/",
             icon: MpvqcIcons.deployedCode
         },

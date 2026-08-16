@@ -25,6 +25,7 @@ Run the formatter before committing.
 - [ ] NOTICE.txt verified:
   - [ ] All dependencies match `pyproject.toml`
   - [ ] License identifiers match each package's actual metadata, not the project's umbrella license
+  - [ ] The Windows and Flatpak build sources are still named correctly
   - [ ] `REUSE.toml` aggregate and `LICENSES/` texts are in sync: `uvx reuse lint`
 - [ ] New screenshots created (both light and dark color schemes) for Website and Flatpak
 - [ ] Release notes drafted
