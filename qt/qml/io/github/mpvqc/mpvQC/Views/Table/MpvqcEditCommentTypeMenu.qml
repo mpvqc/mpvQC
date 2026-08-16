@@ -8,27 +8,27 @@ import QtQuick
 import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Components
+import io.github.mpvqc.mpvQC.Python
 
 MpvqcPositionedMenu {
     id: root
     objectName: "editCommentTypeMenu"
 
+    required property MpvqcCommentTableViewModel viewModel
+
     required property string currentCommentType
     required property int currentListIndex
-    required property list<string> commentTypes
 
-    readonly property bool isCommentTypeUnknown: !commentTypes.includes(currentCommentType)
-
-    signal commentTypeEdited(index: int, newCommentType: string)
+    readonly property bool isCommentTypeUnknown: !root.viewModel.commentTypes.includes(root.currentCommentType)
 
     function _handleTriggered(newCommentType: string): void {
         if (root.currentCommentType !== newCommentType) {
-            root.commentTypeEdited(root.currentListIndex, newCommentType);
+            root.viewModel.updateCommentType(root.currentListIndex, newCommentType);
         }
     }
 
     Repeater {
-        model: root.commentTypes
+        model: root.viewModel.commentTypes
 
         delegate: MenuItem {
             required property string modelData

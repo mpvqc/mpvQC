@@ -4,9 +4,14 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Templates as T
+
+import io.github.mpvqc.mpvQC.Python
 
 Loader {
     id: root
+
+    required property MpvqcCommentTableViewModel viewModel
 
     readonly property url editCommentTypeMenu: Qt.resolvedUrl("MpvqcEditCommentTypeMenu.qml")
     readonly property url editCommentPopup: Qt.resolvedUrl("MpvqcEditCommentPopup.qml")
@@ -14,33 +19,27 @@ Loader {
 
     readonly property bool isEditingCommentType: active && source === editCommentTypeMenu
 
-    signal timeTemporaryChanged(time: int)
-    signal timeKept(oldTime: int)
-
-    signal timeEdited(index: int, newTime: int)
-    signal commentTypeEdited(index: int, newCommentType: string)
-    signal commentEdited(index: int, newComment: string)
     signal closed
 
-    function startEditingTime(index: int, time: int, coordinates: point, videoDuration: real): void {
+    function startEditingTime(index: int, time: int, coordinates: point): void {
         asynchronous = true;
         setSource(editTimePopup, {
+            viewModel: root.viewModel,
             currentTime: time,
             currentListIndex: index,
-            videoDuration: videoDuration,
             openedAt: coordinates
         });
         active = true;
     }
 
-    function startEditingCommentType(index: int, currentCommentType: string, coordinates: point, commentTypes: var): void {
+    function startEditingCommentType(index: int, currentCommentType: string, coordinates: point): void {
         // Sync on purpose: async creation hits a Qt race that mis-stacks
         // Repeater-built menu items under popupType Window (QTBUG-84125).
         asynchronous = false;
         setSource(editCommentTypeMenu, {
+            viewModel: root.viewModel,
             currentCommentType: currentCommentType,
             currentListIndex: index,
-            commentTypes: commentTypes,
             position: coordinates
         });
         active = true;
@@ -50,6 +49,7 @@ Loader {
         asynchronous = false;
         setSource(editCommentPopup, {
             parent: parentItem,
+            viewModel: root.viewModel,
             currentComment: currentComment,
             currentListIndex: index,
             leftPadding: parentItem.leftPadding / 2,
@@ -88,28 +88,9 @@ Loader {
     onLoaded: item.open() // qmllint disable
 
     Connections {
-        target: root.item
-        ignoreUnknownSignals: true
-
-        function onTimeTemporaryChanged(time: int): void {
-            root.timeTemporaryChanged(time);
-        }
-
-        function onTimeEdited(index: int, newTime: int): void {
-            root.timeEdited(index, newTime);
-        }
-
-        function onTimeKept(oldTime: int): void {
-            root.timeKept(oldTime);
-        }
-
-        function onCommentTypeEdited(index: int, newCommentType: string): void {
-            root.commentTypeEdited(index, newCommentType);
-        }
-
-        function onCommentEdited(index: int, newComment: string): void {
-            root.commentEdited(index, newComment);
-        }
+        // A style implements Popup and Menu as separate files over T.Popup and T.Menu, so
+        // casting a Menu to the styled Popup yields null. T.Popup is the only shared base.
+        target: root.item as T.Popup
 
         function onClosed(): void {
             // Focus loss fires onClosed() synchronously, before any click handler on the delegate runs.

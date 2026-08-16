@@ -28,11 +28,11 @@ Item {
         target: root.commentList
 
         function onEditTimeRequested(index: int, time: int, coordinates: point): void {
-            _editLoader.startEditingTime(index, time, coordinates, root.viewModel.videoDuration);
+            _editLoader.startEditingTime(index, time, coordinates);
         }
 
         function onEditCommentTypeRequested(index: int, commentType: string, coordinates: point): void {
-            _editLoader.startEditingCommentType(index, commentType, coordinates, root.viewModel.commentTypes);
+            _editLoader.startEditingCommentType(index, commentType, coordinates);
         }
 
         function onEditCommentRequested(index: int): void {
@@ -69,12 +69,7 @@ Item {
     MpvqcEditLoader {
         id: _editLoader
 
-        onTimeTemporaryChanged: time => root.viewModel.jumpToTime(time)
-        onTimeKept: oldTime => root.viewModel.jumpToTime(oldTime)
-
-        onTimeEdited: (index, newTime) => root.viewModel.updateTime(index, newTime)
-        onCommentTypeEdited: (index, newCommentType) => root.viewModel.updateCommentType(index, newCommentType)
-        onCommentEdited: (index, newComment) => root.viewModel.updateComment(index, newComment)
+        viewModel: root.viewModel
 
         onClosed: root.commentList.forceActiveFocus()
     }

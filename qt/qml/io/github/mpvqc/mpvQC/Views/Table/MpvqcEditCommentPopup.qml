@@ -5,18 +5,19 @@
 import QtQuick
 import QtQuick.Controls
 
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 Popup {
     id: root
     objectName: "editCommentPopup"
 
+    required property MpvqcCommentTableViewModel viewModel
+
     required property int currentListIndex
     required property string currentComment
 
     property bool acceptValue: true
-
-    signal commentEdited(index: int, newComment: string)
 
     width: root.parent.width
 
@@ -67,7 +68,7 @@ Popup {
         const sanitizedText = MpvqcTableUtility.sanitizeText(text);
 
         if (root.currentComment !== sanitizedText) {
-            root.commentEdited(root.currentListIndex, sanitizedText);
+            root.viewModel.updateComment(root.currentListIndex, sanitizedText);
         }
     }
 
