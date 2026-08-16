@@ -52,7 +52,7 @@ Docs go stale quietly, so check the ones your change reaches:
 | The release steps         | `docs/releasing.md`           |
 | The QC document format    | `docs/document-format/`       |
 
-Agent-facing rules live in `CLAUDE.md` and the skills beside this one. A rule that changed belongs there too.
+Agent-facing rules live in `AGENTS.md` and the skills beside this one. A rule that changed belongs there too.
 
 ## The message
 

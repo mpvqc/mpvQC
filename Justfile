@@ -44,6 +44,13 @@ init ARGS='--group dev':
       fi
       echo "just init: Linked .claude/skills to .agents/skills ..."
 
+      if [[ "{{ os() }}" == "windows" ]]; then
+        [[ -e CLAUDE.md ]] || cmd //c mklink "CLAUDE.md" "AGENTS.md" > /dev/null
+      else
+        ln -sfn AGENTS.md CLAUDE.md
+      fi
+      echo "just init: Linked CLAUDE.md to AGENTS.md ..."
+
       mkdir -p appdata/export-templates
       cp data/config/export-template.jinja appdata/export-templates/export-working.jinja
       echo '{{ '{{' }}' > appdata/export-templates/export-error.jinja

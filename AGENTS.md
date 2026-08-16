@@ -1,4 +1,4 @@
-# Claude Code
+# Agents
 
 ## Project structure
 
