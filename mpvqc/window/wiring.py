@@ -18,4 +18,4 @@ def bindings(binder: inject.Binder) -> None:
 
 
 def register_qml_types() -> None:
-    """The slice owns no QML-registered type yet; the window view models still sit in the layer packages."""
+    import mpvqc.window.viewmodels  # ruff: ignore[unused-import]

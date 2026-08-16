@@ -15,7 +15,7 @@ _WINDOW_RADIUS = 8
 
 
 @QmlElement
-class MpvqcWindowViewModel(QObject):
+class MpvqcWindowControlsViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
     _platform = inject.attr(PlatformService)
 

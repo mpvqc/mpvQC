@@ -9,8 +9,8 @@ import inject
 import pytest
 from PySide6.QtCore import QObject, Signal, SignalInstance
 
-from mpvqc.viewmodels import MpvqcWindowViewModel
 from mpvqc.window.services import MainWindowService
+from mpvqc.window.viewmodels import MpvqcWindowControlsViewModel
 
 
 class MainWindowServiceFake(QObject):
@@ -85,9 +85,9 @@ def configure_injections(common_bindings_with, main_window_service):
 
 
 @pytest.fixture
-def view_model() -> MpvqcWindowViewModel:
+def view_model() -> MpvqcWindowControlsViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcWindowViewModel()
+    return MpvqcWindowControlsViewModel()
 
 
 @pytest.mark.parametrize(
@@ -121,7 +121,7 @@ def test_fake_mirrors_service_member(main_window_service, member):
 class ForwardCase(NamedTuple):
     tag: str
     change: Callable[[MainWindowServiceFake], None]
-    read: Callable[[MpvqcWindowViewModel], object]
+    read: Callable[[MpvqcWindowControlsViewModel], object]
     expected: object
 
 
@@ -155,7 +155,7 @@ def test_property_mirrors_service(view_model, main_window_service, test_case: Fo
 class RelayCase(NamedTuple):
     tag: str
     change: Callable[[MainWindowServiceFake], None]
-    signal: Callable[[MpvqcWindowViewModel], SignalInstance]
+    signal: Callable[[MpvqcWindowControlsViewModel], SignalInstance]
     expected_arguments: tuple[object, ...]
 
 
@@ -223,7 +223,7 @@ class CommandCase(NamedTuple):
     tag: str
     is_fullscreen: bool
     is_maximized: bool
-    invoke: Callable[[MpvqcWindowViewModel], None]
+    invoke: Callable[[MpvqcWindowControlsViewModel], None]
     expected_commands: list[str]
 
 

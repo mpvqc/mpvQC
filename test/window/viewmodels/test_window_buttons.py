@@ -8,12 +8,6 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.viewmodels import MpvqcWindowButtonsViewModel
-from mpvqc.viewmodels.views.header.window_buttons import (
-    WindowButtonsInputs,
-    WindowButtonsProps,
-    derive_window_buttons_props,
-)
 from mpvqc.window.services import (
     NoEmbeddedPlayerTracker,
     NoSurfaceHandler,
@@ -23,6 +17,12 @@ from mpvqc.window.services import (
     PlatformService,
     QtWindowStateHandler,
     WindowButtonPreference,
+)
+from mpvqc.window.viewmodels import (
+    MpvqcWindowButtonsViewModel,
+    WindowButtonsInputs,
+    WindowButtonsProps,
+    derive_window_buttons_props,
 )
 
 ALL_BUTTONS = WindowButtonPreference(minimize=True, maximize=True, close=True)
