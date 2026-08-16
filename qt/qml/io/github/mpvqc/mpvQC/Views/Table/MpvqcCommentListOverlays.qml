@@ -12,42 +12,47 @@ Item {
     id: root
 
     required property MpvqcCommentTableViewModel viewModel
-    required property ListView listView
+    required property MpvqcCommentList commentList
 
     readonly property bool anyRowPopupOpen: _editLoader.active || _contextMenuLoader.active || _deleteConfirmationLoader.active
 
     readonly property string searchQuery: _searchBoxLoader.searchQuery
 
-    signal focusWanted
-    signal selectRequested(index: int)
-
-    function openTimeEditor(index: int, time: int, coordinates: point): void {
-        _editLoader.startEditingTime(index, time, coordinates, root.viewModel.videoDuration);
-    }
-
-    function openCommentTypeEditor(index: int, commentType: string, coordinates: point): void {
-        _editLoader.startEditingCommentType(index, commentType, coordinates, root.viewModel.commentTypes);
-    }
-
-    function openCommentEditor(index: int): void {
-        root.listView.positionViewAtIndex(index, ListView.Contain);
-        const item = root.listView.itemAtIndex(index) as MpvqcCommentListDelegate;
+    function _openCommentEditor(index: int): void {
+        root.commentList.positionViewAtIndex(index, ListView.Contain);
+        const item = root.commentList.itemAtIndex(index) as MpvqcCommentListDelegate;
         _editLoader.startEditingComment(index, item.comment, item.commentLabel);
     }
 
-    function openContextMenu(index: int, coordinates: point): void {
-        _contextMenuLoader.show(index, coordinates);
-    }
+    Connections {
+        target: root.commentList
 
-    function openSearchBox(): void {
-        _searchBoxLoader.show();
+        function onEditTimeRequested(index: int, time: int, coordinates: point): void {
+            _editLoader.startEditingTime(index, time, coordinates, root.viewModel.videoDuration);
+        }
+
+        function onEditCommentTypeRequested(index: int, commentType: string, coordinates: point): void {
+            _editLoader.startEditingCommentType(index, commentType, coordinates, root.viewModel.commentTypes);
+        }
+
+        function onEditCommentRequested(index: int): void {
+            root._openCommentEditor(index);
+        }
+
+        function onContextMenuRequested(index: int, coordinates: point): void {
+            _contextMenuLoader.show(index, coordinates);
+        }
+
+        function onSearchRequested(): void {
+            _searchBoxLoader.show();
+        }
     }
 
     Connections {
         target: root.viewModel
 
         function onCommentEditRequested(index: int): void {
-            root.openCommentEditor(index);
+            root._openCommentEditor(index);
         }
 
         function onDeleteCommentRequested(index: int, time: int, commentType: string, commentText: string): void {
@@ -71,30 +76,30 @@ Item {
         onCommentTypeEdited: (index, newCommentType) => root.viewModel.updateCommentType(index, newCommentType)
         onCommentEdited: (index, newComment) => root.viewModel.updateComment(index, newComment)
 
-        onClosed: root.focusWanted()
+        onClosed: root.commentList.forceActiveFocus()
     }
 
     MpvqcContextMenuLoader {
         id: _contextMenuLoader
 
-        onEditCommentRequested: index => root.openCommentEditor(index)
+        onEditCommentRequested: index => root._openCommentEditor(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
         onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
-        onDismissed: root.focusWanted()
+        onDismissed: root.commentList.forceActiveFocus()
     }
 
     MpvqcDeleteConfirmationLoader {
         id: _deleteConfirmationLoader
 
         onDeleteConfirmed: index => root.viewModel.removeRow(index)
-        onClosed: root.focusWanted()
+        onClosed: root.commentList.forceActiveFocus()
     }
 
     MpvqcSearchBoxLoader {
         id: _searchBoxLoader
 
-        onHighlightRequested: index => root.selectRequested(index)
-        onClosed: root.focusWanted()
+        onHighlightRequested: index => root.commentList.selectRow(index)
+        onClosed: root.commentList.forceActiveFocus()
     }
 
     MpvqcWindowsMenuClickGuard {
