@@ -35,6 +35,35 @@ class MpvqcAccentColorModel(QAbstractListModel):
         super().__init__(parent)
         self._preference: ColorSchemePreference = FollowSystem()
 
+    @override
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
+        if parent is not None and parent.isValid():
+            return 0
+        return len(self._palettes_of(self._preference))
+
+    @override
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
+        palettes = self._palettes_of(self._preference)
+        if not index.isValid() or index.row() >= len(palettes):
+            return None
+
+        palette = palettes[index.row()]
+
+        match role:
+            case self.AccentColorRole:
+                return palette.accent_color.identifier
+            case self.PreviewColorRole:
+                return palette.row_selected
+
+        return None
+
+    @override
+    def roleNames(self) -> dict[int, QByteArray]:
+        return {
+            self.AccentColorRole: QByteArray(b"accentColor"),
+            self.PreviewColorRole: QByteArray(b"previewColor"),
+        }
+
     def set_preference(self, preference: ColorSchemePreference) -> None:
         if preference == self._preference:
             return
@@ -67,32 +96,3 @@ class MpvqcAccentColorModel(QAbstractListModel):
                 return self._catalog.palette_family_for(preference).palettes
             case _:
                 assert_never(preference)
-
-    @override
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
-        if parent is not None and parent.isValid():
-            return 0
-        return len(self._palettes_of(self._preference))
-
-    @override
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        palettes = self._palettes_of(self._preference)
-        if not index.isValid() or index.row() >= len(palettes):
-            return None
-
-        palette = palettes[index.row()]
-
-        match role:
-            case self.AccentColorRole:
-                return palette.accent_color.identifier
-            case self.PreviewColorRole:
-                return palette.row_selected
-
-        return None
-
-    @override
-    def roleNames(self) -> dict[int, QByteArray]:
-        return {
-            self.AccentColorRole: QByteArray(b"accentColor"),
-            self.PreviewColorRole: QByteArray(b"previewColor"),
-        }

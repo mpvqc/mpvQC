@@ -7,11 +7,11 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.models.shortcuts import MpvqcShortcutsModel, MpvqcShortcutsModelBackend
+from mpvqc.models.shortcuts import MpvqcShortcutsModel, ShortcutsModelBackend
 
 
 def _labels(model: MpvqcShortcutsModel) -> list[str]:
-    return [model.data(model.index(row, 0), MpvqcShortcutsModelBackend.LabelRole) for row in range(model.rowCount())]
+    return [model.data(model.index(row, 0), ShortcutsModelBackend.LabelRole) for row in range(model.rowCount())]
 
 
 class FilterCase(NamedTuple):
@@ -95,14 +95,14 @@ def test_sequences_role_exposes_text_and_icon_keys(qt_app) -> None:
     model = MpvqcShortcutsModel()
     # pyrefly: ignore [bad-assignment]
     model.query = "delete comment"
-    sequences = model.data(model.index(0, 0), MpvqcShortcutsModelBackend.SequencesRole)
+    sequences = model.data(model.index(0, 0), ShortcutsModelBackend.SequencesRole)
     assert sequences == [[{"icon": "backspace"}], [{"text": "Delete"}]]
 
 
 def test_categories_form_contiguous_blocks(qt_app) -> None:
     model = MpvqcShortcutsModel()
     categories = [
-        model.data(model.index(row, 0), MpvqcShortcutsModelBackend.CategoryRole) for row in range(model.rowCount())
+        model.data(model.index(row, 0), ShortcutsModelBackend.CategoryRole) for row in range(model.rowCount())
     ]
     blocks = [category for category, _ in groupby(categories)]
     assert len(blocks) == len(set(blocks)), "non-contiguous category would render a duplicate section header"
@@ -112,8 +112,8 @@ def test_note_role_set_only_for_subtitle_seeking(qt_app) -> None:
     model = MpvqcShortcutsModel()
     # pyrefly: ignore [bad-assignment]
     model.query = "seek to previous subtitle"
-    assert "embedded subtitle tracks" in model.data(model.index(0, 0), MpvqcShortcutsModelBackend.NoteRole)
+    assert "embedded subtitle tracks" in model.data(model.index(0, 0), ShortcutsModelBackend.NoteRole)
 
     # pyrefly: ignore [bad-assignment]
     model.query = "toggle mute"
-    assert not model.data(model.index(0, 0), MpvqcShortcutsModelBackend.NoteRole)
+    assert not model.data(model.index(0, 0), ShortcutsModelBackend.NoteRole)

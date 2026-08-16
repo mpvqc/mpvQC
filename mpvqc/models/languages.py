@@ -31,7 +31,7 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-class MpvqcLanguageModelBackend(QAbstractListModel):
+class LanguageModelBackend(QAbstractListModel):
     LanguageRole = Qt.ItemDataRole.UserRole + 1
     IdentifierRole = Qt.ItemDataRole.UserRole + 2
     TranslatorsRole = Qt.ItemDataRole.UserRole + 3
@@ -44,7 +44,7 @@ class MpvqcLanguageModelBackend(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        if not index.isValid() or index.row() >= len(LANGUAGES):
             return None
 
         language = LANGUAGES[index.row()]
@@ -75,14 +75,9 @@ class MpvqcLanguageModel(QSortFilterProxyModel):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._collator = QCollator()
-        self.setSourceModel(MpvqcLanguageModelBackend(self))
+        self.setSourceModel(LanguageModelBackend(self))
         self.sort(0)
         self._i18n.retranslated.connect(self._resort)
-
-    @Slot()
-    def _resort(self) -> None:
-        self._collator = QCollator()
-        self.invalidate()
 
     @override
     def lessThan(
@@ -90,6 +85,11 @@ class MpvqcLanguageModel(QSortFilterProxyModel):
         source_left: QModelIndex | QPersistentModelIndex,
         source_right: QModelIndex | QPersistentModelIndex,
     ) -> bool:
-        left = QCoreApplication.translate("Languages", source_left.data(MpvqcLanguageModelBackend.LanguageRole))
-        right = QCoreApplication.translate("Languages", source_right.data(MpvqcLanguageModelBackend.LanguageRole))
+        left = QCoreApplication.translate("Languages", source_left.data(LanguageModelBackend.LanguageRole))
+        right = QCoreApplication.translate("Languages", source_right.data(LanguageModelBackend.LanguageRole))
         return self._collator.compare(left, right) < 0
+
+    @Slot()
+    def _resort(self) -> None:
+        self._collator = QCollator()
+        self.invalidate()

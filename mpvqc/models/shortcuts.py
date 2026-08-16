@@ -164,7 +164,7 @@ def build_shortcuts() -> tuple[Shortcut, ...]:
     )
 
 
-class MpvqcShortcutsModelBackend(QAbstractListModel):
+class ShortcutsModelBackend(QAbstractListModel):
     LabelRole = Qt.ItemDataRole.UserRole + 1
     CategoryRole = Qt.ItemDataRole.UserRole + 2
     SequencesRole = Qt.ItemDataRole.UserRole + 3
@@ -183,10 +183,11 @@ class MpvqcShortcutsModelBackend(QAbstractListModel):
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= self.rowCount():
+        shortcuts = self._shortcuts
+        if not index.isValid() or index.row() >= len(shortcuts):
             return None
 
-        shortcut = self._shortcuts[index.row()]
+        shortcut = shortcuts[index.row()]
 
         match role:
             case self.LabelRole:
@@ -208,6 +209,7 @@ class MpvqcShortcutsModelBackend(QAbstractListModel):
             self.LabelRole: QByteArray(b"label"),
             self.CategoryRole: QByteArray(b"category"),
             self.SequencesRole: QByteArray(b"sequences"),
+            self.SearchTextRole: QByteArray(b"searchText"),
             self.NoteRole: QByteArray(b"note"),
         }
 
@@ -220,7 +222,7 @@ class MpvqcShortcutsModel(QSortFilterProxyModel):
         super().__init__(parent)
         self._query = ""
         self._needle = ""
-        self.setSourceModel(MpvqcShortcutsModelBackend(self))
+        self.setSourceModel(ShortcutsModelBackend(self))
 
     @Property(str, notify=queryChanged)
     def query(self) -> str:
@@ -240,4 +242,4 @@ class MpvqcShortcutsModel(QSortFilterProxyModel):
         if not self._needle:
             return True
         index = self.sourceModel().index(source_row, 0, source_parent)
-        return self._needle in index.data(MpvqcShortcutsModelBackend.SearchTextRole)
+        return self._needle in index.data(ShortcutsModelBackend.SearchTextRole)
