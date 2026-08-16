@@ -9,10 +9,13 @@ import QtQuick.Controls
 import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.Components
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 Loader {
     id: root
+
+    required property MpvqcCommentTableViewModel viewModel
 
     property int currentListIndex: -1
     property point openedAt: Qt.point(0, 0)
@@ -20,8 +23,6 @@ Loader {
     property bool _actionTriggered: false
 
     signal editCommentRequested(index: int)
-    signal copyCommentRequested(index: int)
-    signal deleteCommentRequested(index: int)
     signal dismissed
 
     function show(index: int, coordinates: point): void {
@@ -81,7 +82,7 @@ Loader {
 
                 onTriggered: {
                     root._actionTriggered = true;
-                    _menu.deferToOnClose = () => root.copyCommentRequested(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.viewModel.copyToClipboard(root.currentListIndex);
                 }
             }
 
@@ -97,7 +98,7 @@ Loader {
                 onTriggered: {
                     root._actionTriggered = true;
                     _menu.exit = null;
-                    _menu.deferToOnClose = () => root.deleteCommentRequested(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.viewModel.askToDeleteRow(root.currentListIndex);
                 }
             }
         }

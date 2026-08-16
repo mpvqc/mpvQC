@@ -77,16 +77,17 @@ Item {
     MpvqcContextMenuLoader {
         id: _contextMenuLoader
 
+        viewModel: root.viewModel
+
         onEditCommentRequested: index => root._openCommentEditor(index)
-        onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
-        onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
         onDismissed: root.commentList.forceActiveFocus()
     }
 
     MpvqcDeleteConfirmationLoader {
         id: _deleteConfirmationLoader
 
-        onDeleteConfirmed: index => root.viewModel.removeRow(index)
+        viewModel: root.viewModel
+
         onClosed: root.commentList.forceActiveFocus()
     }
 

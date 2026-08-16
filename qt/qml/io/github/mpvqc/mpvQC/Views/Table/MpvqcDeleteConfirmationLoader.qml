@@ -9,17 +9,19 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 Loader {
     id: root
+
+    required property MpvqcCommentTableViewModel viewModel
 
     property int commentIndex: -1
     property int commentTime: 0
     property string commentType: ""
     property string commentText: ""
 
-    signal deleteConfirmed(index: int)
     signal closed
 
     function requestDeletion(index: int, time: int, commentType: string, commentText: string): void {
@@ -88,7 +90,7 @@ Loader {
             }
 
             onAccepted: {
-                root.deleteConfirmed(root.commentIndex);
+                root.viewModel.removeRow(root.commentIndex);
             }
 
             onClosed: {
