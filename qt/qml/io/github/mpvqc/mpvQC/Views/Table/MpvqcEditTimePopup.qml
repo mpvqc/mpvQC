@@ -7,15 +7,17 @@ import QtQuick.Controls
 import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.Components
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 Popup {
     id: root
     objectName: "editTimePopup"
 
+    required property MpvqcCommentTableViewModel viewModel
+
     required property int currentTime
     required property int currentListIndex
-    required property int videoDuration
     required property point openedAt
 
     readonly property bool isOpenedInBottomRegion: {
@@ -34,10 +36,6 @@ Popup {
 
     property bool acceptValue: true
 
-    signal timeEdited(index: int, newTime: int)
-    signal timeKept(oldTime: int)
-    signal timeTemporaryChanged(newTemporaryValue: int)
-
     // Workaround for QTBUG-145174: SpinBox.increase() and SpinBox.decrease()
     // throw "TypeError: … is not a function" in Qt 6.11. Manually clamp instead.
     function decrementValue(): void {
@@ -48,6 +46,10 @@ Popup {
     function incrementValue(): void {
         _spinBox.value = Math.min(_spinBox.to, _spinBox.value + _spinBox.stepSize);
         _spinBox.valueModified();
+    }
+
+    function _restorePlaybackPosition(): void {
+        root.viewModel.jumpToTime(root.currentTime);
     }
 
     x: mirrored ? openedAt.x - width : openedAt.x
@@ -67,7 +69,7 @@ Popup {
         value: root.currentTime
 
         from: 0
-        to: root.videoDuration > 0 ? root.videoDuration * 1000 : (24 * 60 * 60 - 1) * 1000
+        to: root.viewModel.videoDuration > 0 ? root.viewModel.videoDuration * 1000 : (24 * 60 * 60 - 1) * 1000
         stepSize: 1000
 
         textFromValue: value => MpvqcTableUtility.formatTime(value)
@@ -99,7 +101,7 @@ Popup {
 
         onValueModified: {
             if (root.acceptValue) {
-                root.timeTemporaryChanged(_spinBox.value);
+                root.viewModel.jumpToTime(_spinBox.value);
             }
         }
     }
@@ -110,9 +112,9 @@ Popup {
 
     onAboutToHide: {
         if (acceptValue && root.currentTime !== _spinBox.value) {
-            root.timeEdited(root.currentListIndex, _spinBox.value);
+            root.viewModel.updateTime(root.currentListIndex, _spinBox.value);
         } else {
-            root.timeKept(root.currentTime);
+            root._restorePlaybackPosition();
         }
     }
 

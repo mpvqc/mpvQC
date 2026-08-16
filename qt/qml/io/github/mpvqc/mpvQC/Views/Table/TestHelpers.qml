@@ -57,10 +57,12 @@ QtObject {
                 property int videoDuration: 10
                 property var commentTypes: ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4", "Comment Type 5"]
                 property int lastJumpToTime: -1
+                property int pauseCount: 0
                 function jumpToTime(time) {
                     lastJumpToTime = time;
                 }
                 function pauseVideo() {
+                    pauseCount += 1;
                 }
             }
 
@@ -352,6 +354,10 @@ QtObject {
 
         function hasLastJumpedToTime(control: MpvqcTableView, expected: int): void {
             root.testCase.compare(control.viewModel.lastJumpToTime, expected);
+        }
+
+        function hasPauseCount(control: MpvqcTableView, expected: int): void {
+            root.testCase.compare(control.viewModel.pauseCount, expected);
         }
 
         function describesRow(payload: string, control: MpvqcTableView, index: int): void {

@@ -188,6 +188,11 @@ TestCase {
         _expect.isNotInteractive(control);
     }
 
+    function test_openingPausesAndJumpsToRowTime(): void {
+        _expect.hasPauseCount(control, 1);
+        _expect.hasLastJumpedToTime(control, 3 * 1000);
+    }
+
     function test_playButtonDoesNotJumpToTime(): void {
         const timeBefore = control.viewModel.lastJumpToTime;
         const pt = _clickHelper.centerOfPlayButton(control, 2);

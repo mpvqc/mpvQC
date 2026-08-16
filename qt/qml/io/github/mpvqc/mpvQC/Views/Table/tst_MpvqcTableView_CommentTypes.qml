@@ -17,8 +17,6 @@ TestCase {
     name: "MpvqcTableView::CommentTypes"
 
     readonly property alias _clickHelper: _helpers.clickHelper
-    readonly property alias _expect: _helpers.expect
-    readonly property alias _find: _helpers.find
     readonly property alias _wait: _helpers.wait
 
     readonly property int timeout: 2000
@@ -35,13 +33,16 @@ TestCase {
 
         const pt = _clickHelper.centerOfCommentTypeLabel(control, 0);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        _helpers.wait.editControlOpened(control);
+        _wait.editControlOpened(control);
 
-        const menu = _find.editCommentTypeMenu(control);
-        verify(menu.commentTypes.length >= expected.length);
+        const offered = [];
+        for (const item of _helpers.getCommentTypeItems(control)) {
+            offered.push(item.commentType);
+        }
+        verify(offered.length >= expected.length);
 
         for (const commentType of expected) {
-            verify(menu.commentTypes.includes(commentType), `Missing comment type: ${commentType}. Menu has types: ${menu.commentTypes.join(", ")} includes`);
+            verify(offered.includes(commentType), `Missing comment type: ${commentType}. Menu offers: ${offered.join(", ")}`);
         }
     }
 
