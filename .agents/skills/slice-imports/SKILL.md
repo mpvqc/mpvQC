@@ -1,6 +1,6 @@
 ---
 name: slice-imports
-description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/importing/) or its test tree, when moving code between roles, and when adding a new feature slice.
+description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/importing/, mpvqc/window/) or its test tree, when moving code between roles, and when adding a new feature slice.
 ---
 
 # Slice imports
@@ -45,6 +45,9 @@ slice carries a `domain`, and none adds one.
 - **Role root**: each role's `__init__` is its public API. Import names from the role root (`mpvqc.services`,
   `mpvqc.<slice>.<role>`), in production and in tests alike. A name worth reaching for is worth exporting from the
   root.
+- **Platform packages**: a `linux` or `windows` package inside a role is a root of its own, so an import names
+  `mpvqc.<slice>.<role>.linux` and takes it from there. The role root above it cannot answer for them: it holds
+  unconditional re-exports, and re-exporting the Windows package would import Windows-only bindings everywhere else.
 - **Top level**: `mpvqc.shared` is the shared pure vocabulary. `mpvqc.jobs` is a helper for services and view models.
   Any other top-level module needs a row in the checker's tables before a slice uses it.
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and the composition roots

@@ -11,7 +11,6 @@ from PySide6.QtCore import Qt
 
 from mpvqc.services import (
     MainWindowService,
-    PlatformService,
     PlayerService,
     SettingsService,
     VideoResizeService,
@@ -22,6 +21,7 @@ from mpvqc.services.video_resize import (
     calculate_horizontal_layout_sizes,
     calculate_vertical_layout_sizes,
 )
+from mpvqc.window.services import PlatformService
 
 HEADER_HEIGHT = 40
 HANDLE_WIDTH = 6

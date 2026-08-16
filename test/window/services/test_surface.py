@@ -7,12 +7,13 @@ from typing import TYPE_CHECKING, NamedTuple
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.services.platform.linux import surface
-from mpvqc.services.platform.linux.surface import SurfaceController
-from mpvqc.services.platform.surface import NoSurfaceHandler
+from mpvqc.window.services import NoSurfaceHandler
+from mpvqc.window.services.linux import SurfaceController
 
 if TYPE_CHECKING:
-    from mpvqc.services.platform.surface import SurfaceHandler
+    from mpvqc.window.services import SurfaceHandler
+
+SURFACE = "mpvqc.window.services.linux.surface"
 
 NO_STATE = Qt.WindowState.WindowNoState
 MINIMIZED = Qt.WindowState.WindowMinimized
@@ -140,8 +141,8 @@ def test_drop_shadow_margin_pushes(case: PushTestCase, qt_app, make_recording_wi
 
 def test_screen_change_reapplies_content_margins(qt_app, make_recording_window, monkeypatch):
     applied: list[int] = []
-    monkeypatch.setattr(surface, "apply_wayland_content_margins", lambda _window, margin: applied.append(margin))
-    monkeypatch.setattr(surface.QGuiApplication, "platformName", staticmethod(lambda: "wayland"))
+    monkeypatch.setattr(f"{SURFACE}.apply_wayland_content_margins", lambda _window, margin: applied.append(margin))
+    monkeypatch.setattr(f"{SURFACE}.QGuiApplication.platformName", staticmethod(lambda: "wayland"))
 
     window = make_recording_window(NO_STATE)
     controller = SurfaceController(drop_shadow_margin=88)

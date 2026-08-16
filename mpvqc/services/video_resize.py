@@ -7,8 +7,9 @@ from dataclasses import dataclass, replace
 import inject
 from PySide6.QtCore import Qt
 
+from mpvqc.window.services import PlatformService
+
 from .main_window import MainWindowService
-from .platform import PlatformService
 from .player import PlayerService
 from .settings import SettingsService
 

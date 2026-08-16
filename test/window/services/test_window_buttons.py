@@ -10,13 +10,13 @@ import pytest
 if sys.platform != "linux":
     pytest.skip("Requires Linux", allow_module_level=True)
 
-from mpvqc.services import WindowButtonPreference
-from mpvqc.services.platform.linux.window_button_detector import WindowButtonDetector
+from mpvqc.window.services import WindowButtonPreference
+from mpvqc.window.services.linux import WindowButtonDetector
 
 
 @pytest.fixture
 def settings_portal_mock():
-    with patch("mpvqc.services.platform.linux.window_button_detector.SettingsPortal") as mock_class:
+    with patch("mpvqc.window.services.linux.window_button_detector.SettingsPortal") as mock_class:
         mock_instance = MagicMock()
         mock_class.return_value = mock_instance
         mock_instance.__enter__.return_value = mock_instance

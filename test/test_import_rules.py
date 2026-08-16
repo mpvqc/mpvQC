@@ -14,11 +14,14 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 
-SLICES = ("appearance", "comments", "exporting", "importing")
+SLICES = ("appearance", "comments", "exporting", "importing", "window")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
 HELPERS = ("jobs",)
 SHARED_ROLES = {"services": "services", "shared": "shared"}
 MIN_EDGES_PER_SLICE = 20
+
+# Roots a role holds instead of re-exporting: importing the Windows one off Windows fails.
+PLATFORM_ROOTS = ("linux", "windows")
 
 SAME_SLICE = {
     "enums": {"shared"},
@@ -87,7 +90,10 @@ def _classify(target: str) -> tuple[str, str | None, str | None]:
 
 def _role_root(target: str, kind: str) -> str:
     parts = target.split(".")
-    return ".".join(parts[:3] if kind == "slice" else parts[:2])
+    if kind == "slice":
+        depth = 4 if len(parts) > 3 and parts[3] in PLATFORM_ROOTS else 3
+        return ".".join(parts[:depth])
+    return ".".join(parts[:2])
 
 
 _EXPORT_CACHE: dict[str, set[str]] = {}

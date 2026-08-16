@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 
-from mpvqc.services.platform.window_state import WindowStateSnapshot
+from mpvqc.window.services.window_state import WindowStateSnapshot
 
 from .native import (
     get_window_placement,

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QObject, Signal
 
 from mpvqc.jobs import Err, Ok, SerialJobRunner
-from mpvqc.services.platform.window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
+from mpvqc.window.services.window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
 
 from .portals import SettingsPortal
 

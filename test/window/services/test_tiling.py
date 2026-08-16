@@ -6,7 +6,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.platform.linux.tiling import is_tiling_desktop
+from mpvqc.window.services.linux import is_tiling_desktop
 
 
 class TilingDesktopTestCase(NamedTuple):

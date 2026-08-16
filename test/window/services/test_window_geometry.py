@@ -9,7 +9,9 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.platform.linux import window_geometry
+from mpvqc.window.services.linux import apply_wayland_content_margins, high_dpi_factor
+
+WINDOW_GEOMETRY = "mpvqc.window.services.linux.window_geometry"
 
 
 class ScaledMarginTestCase(NamedTuple):
@@ -67,10 +69,10 @@ def test_content_margins_reach_native_call_in_native_units(
         margins = margins_ref._obj
         recorded.append((margins.left, margins.top, margins.right, margins.bottom))
 
-    monkeypatch.setattr(window_geometry, "_resolve_symbols", lambda: (fake_handle, fake_set_custom_margins))
-    monkeypatch.setattr(window_geometry, "high_dpi_factor", lambda _window: case.factor)
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: (fake_handle, fake_set_custom_margins))
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}.high_dpi_factor", lambda _window: case.factor)
 
-    window_geometry.apply_wayland_content_margins(make_recording_window(), case.margin)
+    apply_wayland_content_margins(make_recording_window(), case.margin)
 
     expected = (case.expected, case.expected, case.expected, case.expected)
     assert recorded == [expected]
@@ -78,13 +80,13 @@ def test_content_margins_reach_native_call_in_native_units(
 
 @pytest.mark.skipif(sys.platform == "win32", reason="reads the bundled Linux Qt libraries")
 def test_high_dpi_factor_reads_one_without_env_scale_factors(qt_app, make_recording_window):
-    assert window_geometry.high_dpi_factor(make_recording_window()) == pytest.approx(1.0)
+    assert high_dpi_factor(make_recording_window()) == pytest.approx(1.0)
 
 
 def test_high_dpi_factor_defaults_to_one_without_symbols(make_recording_window, monkeypatch):
-    monkeypatch.setattr(window_geometry, "_resolve_scale_and_origin", lambda: None)
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_scale_and_origin", lambda: None)
 
-    assert window_geometry.high_dpi_factor(make_recording_window()) == pytest.approx(1.0)
+    assert high_dpi_factor(make_recording_window()) == pytest.approx(1.0)
 
 
 def _read_factor_with_env_scale_factor(env_var, value, result):
@@ -92,7 +94,7 @@ def _read_factor_with_env_scale_factor(env_var, value, result):
     os.environ["QT_QPA_PLATFORM"] = "offscreen"
     from PySide6.QtGui import QGuiApplication, QWindow
 
-    from mpvqc.services.platform.linux.window_geometry import high_dpi_factor
+    from mpvqc.window.services.linux import high_dpi_factor
 
     QGuiApplication([])
     result.put(high_dpi_factor(QWindow()))
