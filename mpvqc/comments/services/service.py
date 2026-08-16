@@ -38,7 +38,6 @@ class CommentsService(QObject):
     _state = inject.attr(StateService)
 
     view_action = Signal(object)  # ViewAction union; Qt sigs can't carry type aliases
-    dirty = Signal()
     comments_changed = Signal()
     about_to_import = Signal()
 
@@ -48,7 +47,6 @@ class CommentsService(QObject):
         self._selection = SelectionCell(parent=self)
         self._history = History(self._store, self._selection)
         self._search = CommentSearchEngine(self._store, self._selection)
-        self.dirty.connect(self._state.record_change)
 
     @property
     def selection(self) -> SelectionCell:
@@ -127,7 +125,7 @@ class CommentsService(QObject):
 
     def _emit_applied(self, applied: Applied) -> None:
         self._search.invalidate()
-        self.dirty.emit()
+        self._state.record_change()
         self.comments_changed.emit()
         self._emit_view_action(applied.action)
 
