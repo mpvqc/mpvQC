@@ -21,7 +21,6 @@ from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    MainWindowService,
     PlayerService,
     SettingsFileService,
     VersionCheckerService,
@@ -31,6 +30,7 @@ from mpvqc.services.player.state import OBSERVED_PROPERTIES, make_observer
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.window.services import (
+    MainWindowService,
     NoEmbeddedPlayerTracker,
     NoSurfaceHandler,
     NoWindowConfigurator,

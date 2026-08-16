@@ -11,8 +11,9 @@ if TYPE_CHECKING:
 
 
 def bindings(binder: inject.Binder) -> None:
-    from mpvqc.window.services import PlatformService
+    from mpvqc.window.services import MainWindowService, PlatformService
 
+    binder.bind_to_constructor(MainWindowService, MainWindowService)
     binder.bind_to_constructor(PlatformService, PlatformService)
 
 

@@ -9,8 +9,8 @@ import inject
 import pytest
 from PySide6.QtCore import QObject, Signal, SignalInstance
 
-from mpvqc.services import MainWindowService
 from mpvqc.viewmodels import MpvqcWindowViewModel
+from mpvqc.window.services import MainWindowService
 
 
 class MainWindowServiceFake(QObject):

@@ -6,6 +6,7 @@
 
 from .backend import PlatformBackend as PlatformBackend
 from .embedded_player import NoEmbeddedPlayerTracker as NoEmbeddedPlayerTracker
+from .main_window import MainWindowService as MainWindowService
 from .platform import PlatformService as PlatformService
 from .surface import NoSurfaceHandler as NoSurfaceHandler
 from .surface import SurfaceHandler as SurfaceHandler

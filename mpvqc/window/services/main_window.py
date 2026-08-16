@@ -11,7 +11,7 @@ import inject
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QWindow
 
-from mpvqc.window.services import PlatformService
+from .platform import PlatformService
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -31,7 +31,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.InternationalizationService, s.InternationalizationService)
     binder.bind_to_constructor(s.KeyCommandGeneratorService, s.KeyCommandGeneratorService)
     binder.bind_to_constructor(s.LabelWidthCalculatorService, s.LabelWidthCalculatorService)
-    binder.bind_to_constructor(s.MainWindowService, s.MainWindowService)
     binder.bind_to_constructor(s.PlayerService, s.PlayerService)
     binder.bind_to_constructor(s.QuitService, s.QuitService)
     binder.bind_to_constructor(s.ResourceService, s.ResourceService)

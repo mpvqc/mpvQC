@@ -14,8 +14,8 @@ from PySide6.QtCore import QObject, Signal, Slot
 
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
-from mpvqc.services.main_window import MainWindowService
 from mpvqc.shared import map_path_to_str
+from mpvqc.window.services import MainWindowService
 
 from .coordinators import SubtitleLoadCoordinator
 from .events import EventMarshal
