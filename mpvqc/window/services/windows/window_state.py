@@ -25,7 +25,7 @@ from .native import (
     set_window_transitions_enabled,
     strip_maximize_style,
 )
-from .utils import (
+from .probes import (
     get_monitor_rect,
     get_resize_border_thickness,
     is_fullscreen,

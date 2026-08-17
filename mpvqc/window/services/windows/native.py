@@ -27,7 +27,6 @@ from ctypes import (
     WinDLL,  # pyrefly: ignore[missing-module-attribute]
     byref,
     c_int,
-    c_short,
     c_size_t,
     c_ssize_t,
     c_void_p,
@@ -37,12 +36,12 @@ from ctypes import (
 )
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
-from typing import TYPE_CHECKING, Literal, NamedTuple, SupportsInt
+from typing import TYPE_CHECKING, NamedTuple, SupportsInt
 
 if TYPE_CHECKING:
     from typing import Any
 
-type AppBarEdge = Literal["left", "top", "right", "bottom"]
+    from mpvqc.window.services.native_frame import AppBarEdge
 
 # Private handles: prototypes set on the shared ctypes.windll cache would be
 # visible to every other library in the process.
@@ -418,13 +417,6 @@ class WindowMessage(NamedTuple):
 def read_window_message(address: SupportsInt) -> WindowMessage:
     msg = MSG.from_address(int(address))
     return WindowMessage(msg.hWnd, msg.message, msg.wParam, msg.lParam)
-
-
-def read_hit_test_point(l_param: int) -> tuple[int, int]:
-    """The WM_NCHITTEST cursor position: two signed 16-bit screen coordinates."""
-    x = c_short(l_param & 0xFFFF).value
-    y = c_short((l_param >> 16) & 0xFFFF).value
-    return x, y
 
 
 class _WINDOWPOS(Structure):
