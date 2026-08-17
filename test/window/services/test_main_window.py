@@ -3,37 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from typing import NamedTuple
-from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import QObject, Signal
 from PySide6.QtGui import QWindow
 
 from mpvqc.window.services import MainWindowService, PlatformService, WindowStateSnapshot
-
-
-class PlatformServiceStub(QObject):
-    """Carries a real drop_shadow_margin_changed signal so tests can drive pushes;
-    everything else is a mock."""
-
-    drop_shadow_margin_changed = Signal(int)
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.read_state = MagicMock(return_value=WindowStateSnapshot(is_fullscreen=False, is_maximized=False))
-        self.drop_shadow_margin = MagicMock(return_value=0)
-        self.configure_window = MagicMock()
-        self.minimize = MagicMock()
-        self.maximize = MagicMock()
-        self.show_normal = MagicMock()
-        self.enter_fullscreen = MagicMock()
-        self.exit_fullscreen = MagicMock()
-
-
-@pytest.fixture
-def platform_service_stub():
-    return PlatformServiceStub()
 
 
 @pytest.fixture(autouse=True)
