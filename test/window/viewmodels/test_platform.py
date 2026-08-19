@@ -23,21 +23,34 @@ class FlagsCase(NamedTuple):
     name: str
     keeps_native_frame: bool
     draws_drop_shadow: bool
+    popups_need_separate_windows: bool
 
 
 @pytest.mark.parametrize(
     "case",
     [
-        FlagsCase(name="native frame without drop shadow", keeps_native_frame=True, draws_drop_shadow=False),
-        FlagsCase(name="drop shadow without native frame", keeps_native_frame=False, draws_drop_shadow=True),
+        FlagsCase(
+            name="native frame, popups as separate windows",
+            keeps_native_frame=True,
+            draws_drop_shadow=False,
+            popups_need_separate_windows=True,
+        ),
+        FlagsCase(
+            name="drop shadow, popups in-scene",
+            keeps_native_frame=False,
+            draws_drop_shadow=True,
+            popups_need_separate_windows=False,
+        ),
     ],
     ids=lambda case: case.name,
 )
 def test_platform_flags_forward(platform_service_stub, case: FlagsCase):
     platform_service_stub.keeps_native_frame = case.keeps_native_frame
     platform_service_stub.draws_drop_shadow = case.draws_drop_shadow
+    platform_service_stub.popups_need_separate_windows = case.popups_need_separate_windows
 
     view_model = MpvqcPlatformViewModel()
 
     assert view_model.keepsNativeFrame is case.keeps_native_frame
     assert view_model.drawsDropShadow is case.draws_drop_shadow
+    assert view_model.popupsNeedSeparateWindows is case.popups_need_separate_windows

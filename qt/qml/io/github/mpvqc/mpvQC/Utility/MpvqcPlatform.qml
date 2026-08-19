@@ -5,6 +5,7 @@
 pragma Singleton
 
 import QtQuick
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Python
 
@@ -15,4 +16,5 @@ QtObject {
 
     readonly property bool keepsNativeFrame: _viewModel.keepsNativeFrame
     readonly property bool drawsDropShadow: _viewModel.drawsDropShadow
+    readonly property int preferredPopupType: _viewModel.popupsNeedSeparateWindows ? Popup.Window : Popup.Item
 }

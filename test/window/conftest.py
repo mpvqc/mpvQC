@@ -19,6 +19,7 @@ class PlatformServiceStub(QObject):
         super().__init__()
         self.keeps_native_frame = False
         self.draws_drop_shadow = True
+        self.popups_need_separate_windows = False
         self.read_state = MagicMock(return_value=WindowStateSnapshot(is_fullscreen=False, is_maximized=False))
         self.drop_shadow_margin = MagicMock(return_value=0)
         self.configure_window = MagicMock()

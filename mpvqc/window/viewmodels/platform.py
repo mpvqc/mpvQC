@@ -21,6 +21,7 @@ class MpvqcPlatformViewModel(QObject):
         platform = self._platform
         self._keeps_native_frame = platform.keeps_native_frame
         self._draws_drop_shadow = platform.draws_drop_shadow
+        self._popups_need_separate_windows = platform.popups_need_separate_windows
 
     @Property(bool, constant=True)
     def keepsNativeFrame(self) -> bool:
@@ -29,3 +30,7 @@ class MpvqcPlatformViewModel(QObject):
     @Property(bool, constant=True)
     def drawsDropShadow(self) -> bool:
         return self._draws_drop_shadow
+
+    @Property(bool, constant=True)
+    def popupsNeedSeparateWindows(self) -> bool:
+        return self._popups_need_separate_windows

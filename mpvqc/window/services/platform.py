@@ -45,6 +45,10 @@ class PlatformService(QObject):
         return self._backend.capabilities.sizes_own_window
 
     @property
+    def popups_need_separate_windows(self) -> bool:
+        return self._backend.capabilities.popups_need_separate_windows
+
+    @property
     def window_button_preference(self) -> WindowButtonPreference:
         return self._backend.window_buttons.preference
 

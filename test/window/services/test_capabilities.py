@@ -16,6 +16,7 @@ def test_windows_capabilities():
         draws_drop_shadow=False,
         embeds_native_player=True,
         sizes_own_window=True,
+        popups_need_separate_windows=True,
     )
 
 
@@ -25,6 +26,7 @@ def test_linux_desktop_capabilities():
         draws_drop_shadow=True,
         embeds_native_player=False,
         sizes_own_window=True,
+        popups_need_separate_windows=False,
     )
 
 
@@ -34,4 +36,5 @@ def test_linux_tiling_capabilities():
         draws_drop_shadow=False,
         embeds_native_player=False,
         sizes_own_window=False,
+        popups_need_separate_windows=False,
     )
