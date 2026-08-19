@@ -5,7 +5,11 @@
 import textwrap
 
 import pytest
-from set_build_info import determine_channel, render_build_info  # type: ignore[missing-import]
+from set_build_info import (  # type: ignore[missing-import]
+    determine_channel,
+    determine_offers_update_check,
+    render_build_info,
+)
 
 TEMPLATE = textwrap.dedent("""\
     [application]
@@ -14,6 +18,7 @@ TEMPLATE = textwrap.dedent("""\
     commit = ">>>commit-id<<<"        # CI replaces this
     is_release = false                # CI replaces this
     channel = ""                      # CI replaces this. Empty means unofficial
+    offers_update_check = false       # CI replaces this
 """)
 
 
@@ -31,6 +36,7 @@ def test_replaces_tag_commit_and_is_release(is_release, expected_line):
         commit="abcd1234",
         is_release=is_release,
         channel="",
+        offers_update_check=False,
     )
 
     assert 'version = "0.9.0"\n' in actual
@@ -53,6 +59,27 @@ def test_stamps_channel_from_input(channel, expected_line):
         commit="abcd1234",
         is_release=True,
         channel=channel,
+        offers_update_check=False,
+    )
+
+    assert expected_line in actual
+
+
+@pytest.mark.parametrize(
+    ("offers_update_check", "expected_line"),
+    [
+        (True, "offers_update_check = true\n"),
+        (False, "offers_update_check = false\n"),
+    ],
+)
+def test_stamps_offers_update_check_from_input(offers_update_check, expected_line):
+    actual = render_build_info(
+        TEMPLATE.splitlines(keepends=True),
+        tag="0.9.0",
+        commit="abcd1234",
+        is_release=True,
+        channel="",
+        offers_update_check=offers_update_check,
     )
 
     assert expected_line in actual
@@ -71,6 +98,7 @@ def test_preserves_formatting_and_leaves_other_sections_untouched():
         commit = ">>>commit-id<<<"        # CI replaces this
         is_release = false                # CI replaces this
         channel = ""                      # CI replaces this. Empty means unofficial
+        offers_update_check = false       # CI replaces this
 
         [[dependency]]
         name = "inject"
@@ -84,6 +112,7 @@ def test_preserves_formatting_and_leaves_other_sections_untouched():
         commit="abcd1234",
         is_release=True,
         channel="mpvqc-github",
+        offers_update_check=True,
     )
 
     expected = textwrap.dedent("""\
@@ -98,6 +127,7 @@ def test_preserves_formatting_and_leaves_other_sections_untouched():
         commit = "abcd1234"
         is_release = true
         channel = "mpvqc-github"
+        offers_update_check = true
 
         [[dependency]]
         name = "inject"
@@ -110,9 +140,22 @@ def test_preserves_formatting_and_leaves_other_sections_untouched():
 @pytest.mark.parametrize(
     ("template", "missing"),
     [
-        ('name = "mpvQC"\nversion = ">>>tag<<<"\n', r"\[application\]"),
-        ('[application]\ncommit = ">>>commit-id<<<"\nis_release = false\nchannel = ""\n', "version"),
-        ('[application]\nversion = ">>>tag<<<"\ncommit = ">>>commit-id<<<"\nis_release = false\n', "channel"),
+        (
+            'name = "mpvQC"\nversion = ">>>tag<<<"\n',
+            r"\[application\]",
+        ),
+        (
+            '[application]\ncommit = ">>>commit-id<<<"\nis_release = false\nchannel = ""\noffers_update_check = false\n',
+            "version",
+        ),
+        (
+            '[application]\nversion = ">>>tag<<<"\ncommit = ">>>commit-id<<<"\nis_release = false\noffers_update_check = false\n',
+            "channel",
+        ),
+        (
+            '[application]\nversion = ">>>tag<<<"\ncommit = ">>>commit-id<<<"\nis_release = false\nchannel = ""\n',
+            "offers_update_check",
+        ),
     ],
 )
 def test_raises_on_incomplete_template(template, missing):
@@ -123,6 +166,7 @@ def test_raises_on_incomplete_template(template, missing):
             commit="abcd1234",
             is_release=True,
             channel="",
+            offers_update_check=False,
         )
 
 
@@ -137,6 +181,18 @@ def test_channel_comes_from_environment_and_defaults_to_empty(env, expected):
     assert determine_channel(env) == expected
 
 
+@pytest.mark.parametrize(
+    ("env", "expected"),
+    [
+        ({}, False),
+        ({"MPVQC_BUILD_OFFERS_UPDATE_CHECK": ""}, False),
+        ({"MPVQC_BUILD_OFFERS_UPDATE_CHECK": "true"}, True),
+    ],
+)
+def test_offers_update_check_comes_from_environment_and_defaults_to_false(env, expected):
+    assert determine_offers_update_check(env) is expected
+
+
 def test_version_has_no_flatpak_suffix():
     actual = render_build_info(
         TEMPLATE.splitlines(keepends=True),
@@ -144,6 +200,7 @@ def test_version_has_no_flatpak_suffix():
         commit="abcd1234",
         is_release=True,
         channel="",
+        offers_update_check=False,
     )
 
     assert 'version = "0.9.0"\n' in actual
