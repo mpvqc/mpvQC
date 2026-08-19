@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .backend import PlatformBackend as PlatformBackend
+from .capabilities import PlatformCapabilities as PlatformCapabilities
+from .capabilities import linux_desktop_capabilities as linux_desktop_capabilities
+from .capabilities import linux_tiling_capabilities as linux_tiling_capabilities
+from .capabilities import windows_capabilities as windows_capabilities
 from .embedded_player import NoEmbeddedPlayerTracker as NoEmbeddedPlayerTracker
 from .main_window import MainWindowService as MainWindowService
 from .native_frame import AppBarEdge as AppBarEdge

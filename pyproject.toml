@@ -285,6 +285,7 @@ files = [
     "mpvqc/window/__init__.py",
     "mpvqc/window/services/__init__.py",
     "mpvqc/window/services/backend.py",
+    "mpvqc/window/services/capabilities.py",
     "mpvqc/window/services/embedded_player.py",
     "mpvqc/window/services/linux/__init__.py",
     "mpvqc/window/services/linux/portals.py",

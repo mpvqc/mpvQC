@@ -17,6 +17,7 @@ from mpvqc.window.services import (
     PlatformService,
     QtWindowStateHandler,
     WindowButtonPreference,
+    linux_tiling_capabilities,
 )
 from mpvqc.window.viewmodels import (
     MpvqcWindowButtonsViewModel,
@@ -57,10 +58,7 @@ def window_button_source() -> FakeWindowButtons:
 @pytest.fixture
 def platform_service(qt_app, window_button_source) -> PlatformService:
     backend = PlatformBackend(
-        keeps_native_frame=False,
-        draws_drop_shadow=False,
-        embeds_native_player=False,
-        sizes_own_window=False,
+        capabilities=linux_tiling_capabilities(),
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),

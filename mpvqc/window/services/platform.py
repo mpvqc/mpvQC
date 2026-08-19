@@ -30,19 +30,19 @@ class PlatformService(QObject):
 
     @property
     def keeps_native_frame(self) -> bool:
-        return self._backend.keeps_native_frame
+        return self._backend.capabilities.keeps_native_frame
 
     @property
     def draws_drop_shadow(self) -> bool:
-        return self._backend.draws_drop_shadow
+        return self._backend.capabilities.draws_drop_shadow
 
     @property
     def embeds_native_player(self) -> bool:
-        return self._backend.embeds_native_player
+        return self._backend.capabilities.embeds_native_player
 
     @property
     def sizes_own_window(self) -> bool:
-        return self._backend.sizes_own_window
+        return self._backend.capabilities.sizes_own_window
 
     @property
     def window_button_preference(self) -> WindowButtonPreference:

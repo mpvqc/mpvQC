@@ -39,6 +39,7 @@ from mpvqc.window.services import (
     PlatformService,
     QtWindowStateHandler,
     StaticWindowButtons,
+    linux_tiling_capabilities,
 )
 
 if TYPE_CHECKING:
@@ -63,10 +64,7 @@ TEMP_SAVES_DIR.mkdir()
 
 def _headless_platform_backend() -> PlatformBackend:
     return PlatformBackend(
-        keeps_native_frame=False,
-        draws_drop_shadow=False,
-        embeds_native_player=False,
-        sizes_own_window=True,
+        capabilities=linux_tiling_capabilities(),
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
