@@ -92,8 +92,6 @@ class DerivationCase(NamedTuple):
                 is_maximized=False,
                 drop_shadow_margin=0,
                 is_main_window_focused=True,
-                keeps_native_frame=False,
-                draws_drop_shadow=True,
             ),
             expected=WindowControlsProps(
                 window_geometry_width=1280,
@@ -103,8 +101,6 @@ class DerivationCase(NamedTuple):
                 drop_shadow_margin=0,
                 radius=0,
                 is_main_window_focused=True,
-                keeps_native_frame=False,
-                draws_drop_shadow=True,
             ),
         ),
         DerivationCase(
@@ -116,8 +112,6 @@ class DerivationCase(NamedTuple):
                 is_maximized=False,
                 drop_shadow_margin=1,
                 is_main_window_focused=True,
-                keeps_native_frame=False,
-                draws_drop_shadow=True,
             ),
             expected=WindowControlsProps(
                 window_geometry_width=1280,
@@ -127,8 +121,6 @@ class DerivationCase(NamedTuple):
                 drop_shadow_margin=1,
                 radius=8,
                 is_main_window_focused=True,
-                keeps_native_frame=False,
-                draws_drop_shadow=True,
             ),
         ),
         DerivationCase(
@@ -140,8 +132,6 @@ class DerivationCase(NamedTuple):
                 is_maximized=False,
                 drop_shadow_margin=88,
                 is_main_window_focused=True,
-                keeps_native_frame=False,
-                draws_drop_shadow=True,
             ),
             expected=WindowControlsProps(
                 window_geometry_width=1104,
@@ -151,12 +141,10 @@ class DerivationCase(NamedTuple):
                 drop_shadow_margin=88,
                 radius=8,
                 is_main_window_focused=True,
-                keeps_native_frame=False,
-                draws_drop_shadow=True,
             ),
         ),
         DerivationCase(
-            name="window states and platform flags pass through",
+            name="window states pass through",
             inputs=WindowControlsInputs(
                 window_geometry_width=640,
                 window_geometry_height=480,
@@ -164,8 +152,6 @@ class DerivationCase(NamedTuple):
                 is_maximized=True,
                 drop_shadow_margin=0,
                 is_main_window_focused=False,
-                keeps_native_frame=True,
-                draws_drop_shadow=False,
             ),
             expected=WindowControlsProps(
                 window_geometry_width=640,
@@ -175,8 +161,6 @@ class DerivationCase(NamedTuple):
                 drop_shadow_margin=0,
                 radius=0,
                 is_main_window_focused=False,
-                keeps_native_frame=True,
-                draws_drop_shadow=False,
             ),
         ),
     ],
@@ -345,13 +329,6 @@ def test_props_swap_completes_before_the_first_emission(platform_service_stub, i
     platform_service_stub.drop_shadow_margin_changed.emit(88)
 
     assert observed == [(88, 8)]
-
-
-def test_platform_flags_forward(platform_service_stub, initialized_service, make_view_model):
-    view_model = make_view_model()
-
-    assert view_model.keepsNativeFrame is False
-    assert view_model.drawsDropShadow is True
 
 
 class CommandCase(NamedTuple):

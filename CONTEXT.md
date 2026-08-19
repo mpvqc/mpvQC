@@ -125,6 +125,7 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 ## Platform
 
 - **Platform capability**: a yes-or-no fact about the desktop the app runs on, settled once at startup.
+- **Arrangement**: a bundle of platform capabilities under one name, taken or left as a whole.
 - **Window manager**: on X11, a separate client that places and sizes windows. Wayland has no such separate process.
 - **Compositor**: the process that composites the screen. On Wayland it also places and sizes windows, so it absorbs
   the window manager role. On Windows, DWM composites but does not place or size.

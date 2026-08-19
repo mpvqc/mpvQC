@@ -12,7 +12,7 @@ import io.github.mpvqc.mpvQC.Utility
 ApplicationWindow {
     id: root
 
-    flags: MpvqcWindowUtility.keepsNativeFrame ? Qt.CustomizeWindowHint | Qt.Window : Qt.FramelessWindowHint | Qt.Window
+    flags: MpvqcPlatform.keepsNativeFrame ? Qt.CustomizeWindowHint | Qt.Window : Qt.FramelessWindowHint | Qt.Window
 
     width: 1280
     height: 720
@@ -22,7 +22,7 @@ ApplicationWindow {
     minimumHeight: 540 + 2 * MpvqcWindowUtility.dropShadowMargin
 
     visible: false
-    color: MpvqcWindowUtility.drawsDropShadow ? "transparent" : M.Material.background
+    color: MpvqcPlatform.drawsDropShadow ? "transparent" : M.Material.background
 
     font: MpvqcFonts.applicationFont
 

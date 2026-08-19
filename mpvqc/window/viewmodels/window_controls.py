@@ -8,7 +8,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.window.services import MainWindowService, PlatformService
+from mpvqc.window.services import MainWindowService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -24,8 +24,6 @@ class WindowControlsInputs:
     is_maximized: bool
     drop_shadow_margin: int
     is_main_window_focused: bool
-    keeps_native_frame: bool
-    draws_drop_shadow: bool
 
 
 @dataclass(frozen=True)
@@ -37,8 +35,6 @@ class WindowControlsProps:
     drop_shadow_margin: int
     radius: int
     is_main_window_focused: bool
-    keeps_native_frame: bool
-    draws_drop_shadow: bool
 
 
 def derive_window_controls_props(inputs: WindowControlsInputs) -> WindowControlsProps:
@@ -50,15 +46,12 @@ def derive_window_controls_props(inputs: WindowControlsInputs) -> WindowControls
         drop_shadow_margin=inputs.drop_shadow_margin,
         radius=_WINDOW_RADIUS if inputs.drop_shadow_margin > 0 else 0,
         is_main_window_focused=inputs.is_main_window_focused,
-        keeps_native_frame=inputs.keeps_native_frame,
-        draws_drop_shadow=inputs.draws_drop_shadow,
     )
 
 
 @QmlElement
 class MpvqcWindowControlsViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
-    _platform = inject.attr(PlatformService)
 
     windowGeometryWidthChanged = Signal(int)
     windowGeometryHeightChanged = Signal(int)
@@ -78,8 +71,6 @@ class MpvqcWindowControlsViewModel(QObject):
             is_maximized=main_window.is_maximized,
             drop_shadow_margin=main_window.drop_shadow_margin,
             is_main_window_focused=main_window.is_main_window_focused,
-            keeps_native_frame=self._platform.keeps_native_frame,
-            draws_drop_shadow=self._platform.draws_drop_shadow,
         )
         self._props = derive_window_controls_props(self._inputs)
 
@@ -162,14 +153,6 @@ class MpvqcWindowControlsViewModel(QObject):
     @Property(bool, notify=isMainWindowFocusedChanged)
     def isMainWindowFocused(self) -> bool:
         return self._props.is_main_window_focused
-
-    @Property(bool, constant=True)
-    def keepsNativeFrame(self) -> bool:
-        return self._props.keeps_native_frame
-
-    @Property(bool, constant=True)
-    def drawsDropShadow(self) -> bool:
-        return self._props.draws_drop_shadow
 
     @Slot()
     def minimize(self) -> None:
