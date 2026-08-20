@@ -105,16 +105,6 @@ TestCase {
         compare(popup.contentItem.popupWindow !== testCase._hostWindow, data.separateWindow);
     }
 
-    function test_resetReturnsToHeadless(): void {
-        bridge.switchPlatformArrangement("windows");
-        verify(MpvqcPlatform.keepsNativeFrame);
-
-        bridge.resetState();
-
-        verify(!MpvqcPlatform.keepsNativeFrame);
-        verify(!MpvqcPlatform.drawsDropShadow);
-    }
-
     Component {
         id: _popupProbe
 

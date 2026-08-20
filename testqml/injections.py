@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, override
@@ -266,7 +267,7 @@ def _import_settings_service_override() -> ImportSettingsServiceOverride:
 def configure_injections() -> None:
     MpvqcExportBackupTimerViewModel.MIN_INTERVAL_MS = 50
 
-    current_platform_arrangement.switch("headless")
+    current_platform_arrangement.switch("windows" if sys.platform == "win32" else "headless")
 
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)
