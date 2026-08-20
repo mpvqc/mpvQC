@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .backend import PlatformBackend as PlatformBackend
+from .backend import select_platform_backend as select_platform_backend
 from .capabilities import PlatformCapabilities as PlatformCapabilities
 from .capabilities import linux_desktop_capabilities as linux_desktop_capabilities
 from .capabilities import linux_tiling_capabilities as linux_tiling_capabilities
