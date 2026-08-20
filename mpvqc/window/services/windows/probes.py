@@ -13,6 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from mpvqc.window.services.fullscreen_session import ResizeBorders, classify_native_state
 from mpvqc.window.services.native_frame import (
     MonitorGeometry,
     MonitorRect,
@@ -29,30 +30,30 @@ from .native import (
     get_monitor_info_for_rect,
     get_monitor_info_for_window,
     get_resize_border_thickness_for_dpi,
+    get_window_placement,
     get_window_rect,
     is_app_bar_auto_hide,
     is_maximized,
+    is_minimized,
     read_nccalcsize_proposed_rect,
 )
 
 if TYPE_CHECKING:
+    from PySide6.QtGui import QWindow
+
+    from mpvqc.window.services.fullscreen_session import NativeWindowState
     from mpvqc.window.services.native_frame import AppBarEdge
+    from mpvqc.window.services.window_placement import WindowPlacement
 
 
-def is_fullscreen(hwnd: int) -> bool:
-    # A maximized window overhangs the work area on all edges, so it covers the
-    # whole monitor whenever the work area equals the monitor rect (auto-hide
-    # taskbar, taskbar-less monitor).
-    if is_maximized(hwnd):
+def overhangs_monitor(hwnd: int) -> bool:
+    rect = get_window_rect(hwnd)
+    if rect is None:
         return False
 
-    rect = get_window_rect(hwnd)
-    return rect is not None and _overhangs_monitor(WindowRect(rect))
-
-
-def _overhangs_monitor(rect: WindowRect) -> bool:
-    monitor_info = get_monitor_info_for_rect(rect)
-    return monitor_info is not None and overhangs(rect, MonitorRect(monitor_info.monitor_rect))
+    window_rect = WindowRect(rect)
+    monitor_info = get_monitor_info_for_rect(window_rect)
+    return monitor_info is not None and overhangs(window_rect, MonitorRect(monitor_info.monitor_rect))
 
 
 def get_monitor_rect(hwnd: int) -> MonitorRect | None:
@@ -66,7 +67,7 @@ def get_resize_border_thickness(hwnd: int, *, horizontal: bool = True) -> int:
     return get_resize_border_thickness_for_dpi(get_dpi_for_window(hwnd), horizontal=horizontal)
 
 
-# Both probes read on the call, never ahead. Hoisting a query into __init__ or
+# Every probe reads on the call, never ahead. Hoisting a query into __init__ or
 # caching one keeps every test green and puts cross-process taskbar calls on the
 # ordinary resize.
 @dataclass(frozen=True)
@@ -121,3 +122,40 @@ class WindowsCalcSizeProbe:
 
     def auto_hide_edge(self, monitor_rect: MonitorRect) -> AppBarEdge | None:
         return find_auto_hide_app_bar_edge(monitor_rect)
+
+
+@dataclass(frozen=True)
+class WindowsWindowStateProbe:
+    # The handle stays unbound until a question: winId() on a window without a
+    # native handle creates one, and the frame configuration would come too
+    # late to reclaim the caption strip.
+    window: QWindow
+
+    def native_state(self) -> NativeWindowState:
+        return classify_native_state(self)
+
+    def minimized(self) -> bool:
+        return is_minimized(self.window.winId())
+
+    def maximized(self) -> bool:
+        return is_maximized(self.window.winId())
+
+    def overhangs_monitor(self) -> bool:
+        return overhangs_monitor(self.window.winId())
+
+    def placement(self) -> WindowPlacement | None:
+        return get_window_placement(self.window.winId())
+
+    def restores_to_maximized(self) -> bool:
+        placement = get_window_placement(self.window.winId())
+        return placement is not None and placement.restores_to_maximized
+
+    def monitor_rect(self) -> MonitorRect | None:
+        return get_monitor_rect(self.window.winId())
+
+    def resize_borders(self) -> ResizeBorders:
+        hwnd = self.window.winId()
+        return ResizeBorders(
+            horizontal=get_resize_border_thickness(hwnd, horizontal=True),
+            vertical=get_resize_border_thickness(hwnd, horizontal=False),
+        )

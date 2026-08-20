@@ -8,12 +8,13 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""Everything that touches Win32 lives here: each API call as a ctypes binding
-with declared types, wrapped in a small function that takes and returns plain
-Python types.
+"""Every ctypes binding lives here: each API call with declared types, wrapped
+in a small function that takes and returns plain Python types.
 
 One block per API call: its constants, its structures, its raw binding and the
-wrappers the rest of the package uses.
+wrappers the rest of the package uses. The exception is WINDOWPLACEMENT, whose
+value type and two flag constants sit with the decisions that carry them, in
+mpvqc.window.services.window_placement.
 
 All calls are best-effort: queries report failure through their return value,
 setters fail silently. A broken decoration is not worth an exception."""
@@ -37,6 +38,8 @@ from ctypes import (
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
 from typing import TYPE_CHECKING, NamedTuple, SupportsInt
+
+from mpvqc.window.services.window_placement import SW_MAXIMIZE, WindowPlacement
 
 if TYPE_CHECKING:
     from typing import Any
@@ -94,25 +97,7 @@ def get_window_rect(hwnd: int) -> tuple[int, int, int, int] | None:
     return rect.left, rect.top, rect.right, rect.bottom
 
 
-_SW_MAXIMIZE = 3
 _SW_MINIMIZE = 6
-_WPF_RESTORETOMAXIMIZED = 0x0002
-
-
-class WindowPlacement(NamedTuple):
-    flags: int
-    show_cmd: int
-    min_position: tuple[int, int]
-    max_position: tuple[int, int]
-    normal_rect: tuple[int, int, int, int]
-
-    @property
-    def shows_maximized(self) -> bool:
-        return self.show_cmd == _SW_MAXIMIZE
-
-    @property
-    def restores_to_maximized(self) -> bool:
-        return bool(self.flags & _WPF_RESTORETOMAXIMIZED)
 
 
 class _WINDOWPLACEMENT(Structure):
@@ -174,7 +159,7 @@ _ShowWindow.restype = BOOL
 
 
 def maximize_window(hwnd: int) -> None:
-    _ShowWindow(hwnd, _SW_MAXIMIZE)
+    _ShowWindow(hwnd, SW_MAXIMIZE)
 
 
 def minimize_window(hwnd: int) -> None:

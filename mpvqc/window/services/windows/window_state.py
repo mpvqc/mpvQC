@@ -4,16 +4,32 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 
-from mpvqc.window.services.window_state import WindowStateSnapshot
+from mpvqc.window.services.fullscreen_session import (
+    EnterFromMaximized,
+    EnterFromNormal,
+    EnterUnavailable,
+    FullscreenSessionAbsent,
+    FullscreenSessionEntering,
+    FullscreenSessionRunning,
+    KeepSession,
+    NothingToLeave,
+    RestoreMaximized,
+    RestorePlacement,
+    RetireAndRepinSession,
+    RetireSession,
+    decide_session_verdict,
+    decide_window_state_read,
+    plan_fullscreen_entry,
+    plan_fullscreen_exit,
+)
 
 from .native import (
     get_window_placement,
-    is_maximized,
-    is_minimized,
     mark_fullscreen_window,
     maximize_window,
     minimize_window,
@@ -25,44 +41,33 @@ from .native import (
     set_window_transitions_enabled,
     strip_maximize_style,
 )
-from .probes import (
-    get_monitor_rect,
-    get_resize_border_thickness,
-    is_fullscreen,
-)
+from .probes import WindowsWindowStateProbe
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from PySide6.QtGui import QWindow
 
-    from .native import WindowPlacement
+    from mpvqc.window.services.fullscreen_session import (
+        FullscreenRect,
+        FullscreenSession,
+        SessionVerdict,
+    )
+    from mpvqc.window.services.native_frame import Rect
+    from mpvqc.window.services.window_placement import WindowPlacement
+    from mpvqc.window.services.window_state import WindowStateSnapshot
 
 
 class WindowsWindowStateHandler:
-    """Maximize and show-normal go through Qt. Minimize is native: Qt's
-    showMinimized() replaces the window states, and the Windows QPA reads the
-    dropped Maximized bit literally and clears WPF_RESTORETOMAXIMIZED, the flag
-    Windows uses to restore a minimized window to maximized. ShowWindow leaves
-    that flag alone and Qt only observes.
-
-    Fullscreen enters as one atomic move to the monitor rect. Qt instead swaps
-    window styles, restores, then re-maximizes, which flashes intermediate frames.
-
-    Windows fixes the geometry of a maximized window, so WS_MAXIMIZE is removed
-    from the style while fullscreen. Restoring the saved placement on exit brings
-    back the previous state, including the remembered normal geometry.
-
-    The fullscreen window extends past the screen by the frame border on the
-    left, right and bottom. Qt's frame arithmetic then yields a scene of exactly
-    the monitor rect, and the non-client area that remains keeps DWM animating.
-
-    Assumes a single top-level window: one saved placement at a time, always for
-    the same window."""
+    """Assumes a single top-level window: one fullscreen session at a time,
+    always for the same window."""
 
     def __init__(self) -> None:
-        self._saved_placement: WindowPlacement | None = None
-        self._entering = False
+        self._session: FullscreenSession = FullscreenSessionAbsent()
 
     def minimize(self, window: QWindow) -> None:
+        # Qt does not keep WPF_RESTORETOMAXIMIZED (flag to restore a minimized window to maximized)
+        # We need it, so we go native here.
         minimize_window(window.winId())
 
     def maximize(self, window: QWindow) -> None:
@@ -73,152 +78,109 @@ class WindowsWindowStateHandler:
 
     def enter_fullscreen(self, window: QWindow) -> None:
         hwnd = window.winId()
+        probe = WindowsWindowStateProbe(window)
 
-        monitor_rect = get_monitor_rect(hwnd)
-        if monitor_rect is None:
-            return
+        self._retire_if_abandoned(window, decide_session_verdict(self._session, probe))
 
-        self._entering = True
-        try:
-            # A saved placement while the window no longer covers the monitor
-            # means the OS already ended fullscreen on its own (e.g. Win+Up).
-            # Discard that old session so a later exit cannot restore its stale
-            # placement.
-            if self._saved_placement is not None and not is_fullscreen(hwnd):
-                self._retire_abandoned_session(hwnd)
-            if self._saved_placement is None:
-                self._saved_placement = get_window_placement(hwnd)
-
-            # The frame styles stay on, so Windows 11 would keep the rounded
-            # corners and accent border over the fullscreen surface.
-            set_window_corners_rounded(hwnd, rounded=False)
-            set_window_border_visible(hwnd, visible=False)
-
-            left, top, right, bottom = monitor_rect
-            border_x = get_resize_border_thickness(hwnd, horizontal=True)
-            border_y = get_resize_border_thickness(hwnd, horizontal=False)
-            fullscreen_rect = (left - border_x, top, right + border_x, bottom + border_y)
-
-            if is_maximized(hwnd):
-                # To DWM, removing WS_MAXIMIZE looks like a restore, so the move
-                # to fullscreen would animate. Disabling transitions keeps it as
-                # instant as entering from a normal window.
-                set_window_transitions_enabled(hwnd, enabled=False)
-                try:
-                    strip_maximize_style(hwnd)
-                    set_outer_window_rect(hwnd, fullscreen_rect)
-                finally:
-                    set_window_transitions_enabled(hwnd, enabled=True)
-            else:
-                set_outer_window_rect(hwnd, fullscreen_rect)
-
-            # The shell hides the taskbar only for windows that match the monitor
-            # rect exactly. Ours is larger by the frame border on purpose, so the
-            # shell must be told explicitly.
-            mark_fullscreen_window(hwnd, fullscreen=True)
-        finally:
-            self._entering = False
+        match plan_fullscreen_entry(self._session, probe):
+            case EnterUnavailable():
+                return
+            case EnterFromNormal(placement=placement, rect=rect):
+                self._enter_from_normal(hwnd, placement, rect)
+            case EnterFromMaximized(placement=placement, rect=rect):
+                self._enter_from_maximized(hwnd, placement, rect)
 
     def exit_fullscreen(self, window: QWindow) -> None:
-        placement = self._saved_placement
-        if placement is None:
-            return
-
-        self._saved_placement = None
-        hwnd = window.winId()
-
-        self._restore_frame_chrome(hwnd)
-
-        if placement.shows_maximized:
-            # A real maximize keeps DWM's state in sync, so the next restore still
-            # animates; suppressing transitions keeps this one instant.
-            set_window_transitions_enabled(hwnd, enabled=False)
-            try:
-                maximize_window(hwnd)
-            finally:
-                set_window_transitions_enabled(hwnd, enabled=True)
-
-            # Maximizing rebuilt the placement from the fullscreen monitor-rect
-            # geometry. Set the normal geometry back to the pre-fullscreen one.
-            self._repin_normal_geometry(hwnd, placement.normal_rect)
-        else:
-            set_window_placement(hwnd, placement)
-        refresh_window_frame(hwnd)
+        match plan_fullscreen_exit(self._session):
+            case NothingToLeave():
+                return
+            case RestoreMaximized(placement=placement):
+                self._leave_to_maximized(window.winId(), placement)
+            case RestorePlacement(placement=placement):
+                self._leave_to_placement(window.winId(), placement)
 
     def read_state(self, window: QWindow) -> WindowStateSnapshot:
-        # The fullscreen read must run first: it retires a fullscreen session
-        # the OS ended behind the app's back, and the maximized read answers
-        # from the saved placement as long as a session exists.
-        fullscreen = self._read_fullscreen(window)
-        maximized = self._read_maximized(window)
-        return WindowStateSnapshot(is_fullscreen=fullscreen, is_maximized=maximized)
+        snapshot, verdict = decide_window_state_read(
+            self._session,
+            window.windowStates(),
+            WindowsWindowStateProbe(window),
+        )
+        self._retire_if_abandoned(window, verdict)
+        return snapshot
 
-    def _read_fullscreen(self, window: QWindow) -> bool:
-        # enter_fullscreen() briefly puts the window into a state that looks
-        # like an abandoned session. A reentrant call must not clear the
-        # session that is being built.
-        if self._entering:
-            return self._saved_placement is not None
+    def _retire_if_abandoned(self, window: QWindow, verdict: SessionVerdict) -> None:
+        match verdict:
+            case KeepSession():
+                pass
+            case RetireSession():
+                self._retire(window.winId())
+            case RetireAndRepinSession(normal_rect=normal_rect):
+                hwnd = window.winId()
+                self._retire(hwnd)
+                _repin_normal_geometry(hwnd, normal_rect)
 
-        if self._saved_placement is None:
-            return False
+    def _retire(self, hwnd: int) -> None:
+        self._session = FullscreenSessionAbsent()
+        _restore_frame_chrome(hwnd)
 
-        # Windows moves a minimized window off-screen; that does not end the
-        # fullscreen session.
-        hwnd = window.winId()
-        if is_fullscreen(hwnd) or is_minimized(hwnd):
-            return True
+    def _enter_from_normal(self, hwnd: int, placement: WindowPlacement, rect: FullscreenRect) -> None:
+        with self._session_entering(placement):
+            _strip_frame_chrome(hwnd)
+            set_outer_window_rect(hwnd, rect)
+            mark_fullscreen_window(hwnd, fullscreen=True)
 
-        # Visible but not covering the monitor: the OS ended fullscreen on its
-        # own (Win+Up, snap, display change). This read clears the session on
-        # purpose: otherwise the saved placement would make this return True
-        # again after a later minimize.
-        self._retire_abandoned_session(hwnd)
-        return False
+    def _enter_from_maximized(self, hwnd: int, placement: WindowPlacement, rect: FullscreenRect) -> None:
+        with self._session_entering(placement):
+            _strip_frame_chrome(hwnd)
+            with _transitions_suspended(hwnd):
+                strip_maximize_style(hwnd)
+                set_outer_window_rect(hwnd, rect)
+            mark_fullscreen_window(hwnd, fullscreen=True)
 
-    def _read_maximized(self, window: QWindow) -> bool:
-        # While a fullscreen session is active, WS_MAXIMIZE is stripped from
-        # the style; the placement saved at enter remembers the true state.
-        if self._saved_placement is not None:
-            return self._saved_placement.shows_maximized
+    def _leave_to_maximized(self, hwnd: int, placement: WindowPlacement) -> None:
+        self._session = FullscreenSessionAbsent()
+        _restore_frame_chrome(hwnd)
+        with _transitions_suspended(hwnd):
+            maximize_window(hwnd)
+        _repin_normal_geometry(hwnd, placement.normal_rect)
+        refresh_window_frame(hwnd)
 
-        states = window.windowStates()
+    def _leave_to_placement(self, hwnd: int, placement: WindowPlacement) -> None:
+        self._session = FullscreenSessionAbsent()
+        _restore_frame_chrome(hwnd)
+        set_window_placement(hwnd, placement)
+        refresh_window_frame(hwnd)
 
-        # While minimized, Qt's bookkeeping can lose the Maximized bit; the
-        # restore flag remembers the restore target. A minimized window always
-        # exists natively, so winId() cannot create it here.
-        if states & Qt.WindowState.WindowMinimized:
-            placement = get_window_placement(window.winId())
-            return placement is not None and placement.restores_to_maximized
+    @contextmanager
+    def _session_entering(self, placement: WindowPlacement) -> Generator[None]:
+        self._session = FullscreenSessionEntering(placement=placement)
+        try:
+            yield
+        finally:
+            self._session = FullscreenSessionRunning(placement=placement)
 
-        # Answering from Qt keeps this read free of winId(): before the native
-        # window exists, winId() would create it, and the frame configuration
-        # would come too late to reclaim the caption strip.
-        return bool(states & Qt.WindowState.WindowMaximized)
 
-    def _retire_abandoned_session(self, hwnd: int) -> None:
-        placement = self._saved_placement
-        if placement is None:
-            return
+def _strip_frame_chrome(hwnd: int) -> None:
+    set_window_corners_rounded(hwnd, rounded=False)
+    set_window_border_visible(hwnd, visible=False)
 
-        self._saved_placement = None
-        self._restore_frame_chrome(hwnd)
 
-        # While fullscreen the window was in the restored style, so Windows tracked
-        # the monitor rect as its normal geometry. Point it back at the pre-fullscreen
-        # one, or a later restore-down yields a monitor-sized window. Only safe while
-        # maximized: applying a placement to a restored window would move it.
-        if is_maximized(hwnd):
-            self._repin_normal_geometry(hwnd, placement.normal_rect)
+def _restore_frame_chrome(hwnd: int) -> None:
+    mark_fullscreen_window(hwnd, fullscreen=False)
+    set_window_corners_rounded(hwnd, rounded=True)
+    set_window_border_visible(hwnd, visible=True)
 
-    @staticmethod
-    def _restore_frame_chrome(hwnd: int) -> None:
-        mark_fullscreen_window(hwnd, fullscreen=False)
-        set_window_corners_rounded(hwnd, rounded=True)
-        set_window_border_visible(hwnd, visible=True)
 
-    @staticmethod
-    def _repin_normal_geometry(hwnd: int, normal_rect: tuple[int, int, int, int]) -> None:
-        placement = get_window_placement(hwnd)
-        if placement is not None:
-            set_window_placement(hwnd, placement._replace(normal_rect=normal_rect))
+def _repin_normal_geometry(hwnd: int, normal_rect: Rect) -> None:
+    placement = get_window_placement(hwnd)
+    if placement is not None:
+        set_window_placement(hwnd, placement._replace(normal_rect=normal_rect))
+
+
+@contextmanager
+def _transitions_suspended(hwnd: int) -> Generator[None]:
+    set_window_transitions_enabled(hwnd, enabled=False)
+    try:
+        yield
+    finally:
+        set_window_transitions_enabled(hwnd, enabled=True)
