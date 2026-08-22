@@ -11,7 +11,10 @@ from .capabilities import linux_desktop_capabilities as linux_desktop_capabiliti
 from .capabilities import linux_tiling_capabilities as linux_tiling_capabilities
 from .capabilities import windows_capabilities as windows_capabilities
 from .embedded_player import NoEmbeddedPlayerTracker as NoEmbeddedPlayerTracker
+from .main_window import MainWindowInputs as MainWindowInputs
+from .main_window import MainWindowProps as MainWindowProps
 from .main_window import MainWindowService as MainWindowService
+from .main_window import derive_main_window_props as derive_main_window_props
 from .platform import PlatformService as PlatformService
 from .surface import NoSurfaceHandler as NoSurfaceHandler
 from .surface import SurfaceHandler as SurfaceHandler
