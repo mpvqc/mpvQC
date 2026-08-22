@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import ast
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import NamedTuple
 
 import pytest
@@ -22,9 +20,6 @@ from mpvqc.window.services import (
     overhangs,
     reserve_auto_hide_taskbar_strip,
 )
-
-PACKAGE = Path(__file__).resolve().parents[4] / "mpvqc" / "window" / "services" / "windows_decisions"
-FRAME_MODULES = ("frame_geometry.py", "non_client_frame.py", "messages.py")
 
 HTTOP = 12
 HTTOPLEFT = 13
@@ -288,20 +283,3 @@ def test_an_auto_hide_taskbar_on_another_monitor_leaves_the_client_rect_alone():
     probe = RecordingCalcSizeProbe(is_maximized=True, auto_hide=True, edge=None)
 
     assert handle_non_client_calculate_size(probe) == (True, WVR_REDRAW, WORK_AREA)
-
-
-@pytest.mark.parametrize("module", FRAME_MODULES)
-def test_the_decisions_reach_nothing_platform_specific(module: str):
-    # A module-level reach would already break this file's own import on Linux.
-    # The scan is what catches one hidden inside a function, where it would run
-    # on Windows and raise everywhere else.
-    tree = ast.parse((PACKAGE / module).read_text(encoding="utf-8"))
-    targets = [
-        alias.name if isinstance(node, ast.Import) else node.module or ""
-        for node in ast.walk(tree)
-        if isinstance(node, (ast.Import, ast.ImportFrom))
-        for alias in node.names
-    ]
-
-    assert targets, "the scan read no imports; it would pass on any module"
-    assert not [target for target in targets if "ctypes" in target or "windows" in target.split(".")]

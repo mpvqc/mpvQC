@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import ast
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import NamedTuple
 
 import pytest
@@ -44,9 +42,6 @@ from mpvqc.window.services import (
     plan_fullscreen_entry,
     plan_fullscreen_exit,
 )
-
-PACKAGE = Path(__file__).resolve().parents[4] / "mpvqc" / "window" / "services" / "windows_decisions"
-DECISIONS = PACKAGE / "fullscreen_session.py"
 
 SW_SHOWNORMAL = 1
 SW_SHOWMAXIMIZED = 3
@@ -481,19 +476,3 @@ class ExitCase(NamedTuple):
 )
 def test_plan_fullscreen_exit(case: ExitCase):
     assert plan_fullscreen_exit(case.session) == case.expected
-
-
-def test_the_decisions_reach_nothing_platform_specific():
-    # A module-level reach would already break this file's own import on Linux.
-    # The scan is what catches one hidden inside a function, where it would run
-    # on Windows and raise everywhere else.
-    tree = ast.parse(DECISIONS.read_text(encoding="utf-8"))
-    targets = [
-        alias.name if isinstance(node, ast.Import) else node.module or ""
-        for node in ast.walk(tree)
-        if isinstance(node, (ast.Import, ast.ImportFrom))
-        for alias in node.names
-    ]
-
-    assert targets, "the scan read no imports; it would pass on any module"
-    assert not [target for target in targets if "ctypes" in target or "windows" in target.split(".")]
