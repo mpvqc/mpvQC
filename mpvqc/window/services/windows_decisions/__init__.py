@@ -42,7 +42,14 @@ from .fullscreen_session import decide_session_verdict as decide_session_verdict
 from .fullscreen_session import decide_window_state_read as decide_window_state_read
 from .fullscreen_session import plan_fullscreen_entry as plan_fullscreen_entry
 from .fullscreen_session import plan_fullscreen_exit as plan_fullscreen_exit
+from .messages import PASS_THROUGH as PASS_THROUGH
+from .messages import CalculateFrameSize as CalculateFrameSize
+from .messages import HitTestFrame as HitTestFrame
+from .messages import MessageRoute as MessageRoute
+from .messages import PassThrough as PassThrough
+from .messages import PreventResize as PreventResize
 from .messages import read_hit_test_point as read_hit_test_point
+from .messages import route_window_message as route_window_message
 from .non_client_frame import AppBarEdge as AppBarEdge
 from .non_client_frame import handle_non_client_calculate_size as handle_non_client_calculate_size
 from .non_client_frame import handle_non_client_hit_test as handle_non_client_hit_test

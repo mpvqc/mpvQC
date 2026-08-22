@@ -8,15 +8,7 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""Every ctypes binding lives here: each API call with declared types, wrapped
-in a small function that takes and returns plain Python types.
-
-One block per API call: its constants, its structures, its raw binding and the
-wrappers the rest of the package uses. The exception is WINDOWPLACEMENT, whose
-value type and two flag constants sit with the decisions that carry them, in
-the window placement record.
-
-All calls are best-effort: queries report failure through their return value,
+"""All calls are best-effort: queries report failure through their return value,
 setters fail silently. A broken decoration is not worth an exception."""
 
 from __future__ import annotations
@@ -37,7 +29,7 @@ from ctypes import (
 )
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
-from typing import TYPE_CHECKING, NamedTuple, SupportsInt
+from typing import TYPE_CHECKING, NamedTuple
 
 from mpvqc.window.services.windows_decisions import SW_MAXIMIZE, WindowPlacement
 
@@ -70,7 +62,6 @@ def _set_window_pos(hwnd: int, x: int, y: int, width: int, height: int, flags: i
 
 
 def set_outer_window_rect(hwnd: int, rect: tuple[int, int, int, int]) -> None:
-    """Set the outer rect, frame included."""
     left, top, right, bottom = rect
     _set_window_pos(hwnd, left, top, right - left, bottom - top, _SWP_NOZORDER | _SWP_NOACTIVATE | _SWP_FRAMECHANGED)
 
@@ -80,7 +71,7 @@ def resize_window(hwnd: int, width: int, height: int) -> None:
 
 
 def refresh_window_frame(hwnd: int) -> None:
-    """Force a WM_NCCALCSIZE round trip without moving the window."""
+    """SWP_FRAMECHANGED is what forces the WM_NCCALCSIZE round trip."""
     flags = _SWP_FRAMECHANGED | _SWP_NOSIZE | _SWP_NOMOVE | _SWP_NOZORDER | _SWP_NOACTIVATE
     _set_window_pos(hwnd, 0, 0, 0, 0, flags)
 
@@ -392,16 +383,21 @@ def dwm_flush() -> None:
     _DwmFlush()
 
 
-class WindowMessage(NamedTuple):
-    hwnd: int | None
-    message: int
-    w_param: int
-    l_param: int
+class WindowsMessageProbe(MSG):
+    """The message number answers to `message_id`: `message` is the structure's
+    own field name, and a method of that name would shadow it."""
 
+    def hwnd(self) -> int | None:
+        return self.hWnd
 
-def read_window_message(address: SupportsInt) -> WindowMessage:
-    msg = MSG.from_address(int(address))
-    return WindowMessage(msg.hWnd, msg.message, msg.wParam, msg.lParam)
+    def message_id(self) -> int:
+        return self.message
+
+    def w_param(self) -> int:
+        return self.wParam
+
+    def l_param(self) -> int:
+        return self.lParam
 
 
 class _WINDOWPOS(Structure):

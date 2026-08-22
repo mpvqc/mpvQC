@@ -66,9 +66,6 @@ def get_resize_border_thickness(hwnd: int, *, horizontal: bool = True) -> int:
     return get_resize_border_thickness_for_dpi(get_dpi_for_window(hwnd), horizontal=horizontal)
 
 
-# Every probe reads on the call, never ahead. Hoisting a query into __init__ or
-# caching one keeps every test green and puts cross-process taskbar calls on the
-# ordinary resize.
 @dataclass(frozen=True)
 class WindowsHitTestProbe:
     hwnd: int

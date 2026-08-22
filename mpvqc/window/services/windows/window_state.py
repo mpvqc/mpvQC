@@ -66,8 +66,8 @@ class WindowsWindowStateHandler:
         self._session: FullscreenSession = FullscreenSessionAbsent()
 
     def minimize(self, window: QWindow) -> None:
-        # Qt does not keep WPF_RESTORETOMAXIMIZED (flag to restore a minimized window to maximized)
-        # We need it, so we go native here.
+        # Qt's own minimize drops WPF_RESTORETOMAXIMIZED, which the restore path
+        # needs.
         minimize_window(window.winId())
 
     def maximize(self, window: QWindow) -> None:

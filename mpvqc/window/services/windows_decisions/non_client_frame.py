@@ -88,8 +88,7 @@ def handle_non_client_calculate_size(probe: CalcSizeProbe) -> tuple[bool, int, C
 
     client_rect = ClientRect(destination_monitor.work_area if maximized else destination_monitor.monitor_rect)
 
-    # Finding the edge means asking the shell about each of the four in turn,
-    # every one a call into another process.
+    # Finding the edge is four calls into the shell process, one per edge.
     if probe.auto_hide_enabled():
         edge = probe.auto_hide_edge(destination_monitor.monitor_rect)
         client_rect = reserve_auto_hide_taskbar_strip(client_rect, edge)

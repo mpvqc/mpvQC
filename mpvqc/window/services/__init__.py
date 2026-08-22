@@ -21,7 +21,9 @@ from .window_configuration import NoWindowConfigurator as NoWindowConfigurator
 from .window_reveal import NoWindowRevealer as NoWindowRevealer
 from .window_state import QtWindowStateHandler as QtWindowStateHandler
 from .window_state import WindowStateSnapshot as WindowStateSnapshot
+from .windows_decisions import PASS_THROUGH as PASS_THROUGH
 from .windows_decisions import AppBarEdge as AppBarEdge
+from .windows_decisions import CalculateFrameSize as CalculateFrameSize
 from .windows_decisions import ClientRect as ClientRect
 from .windows_decisions import EnterFromMaximized as EnterFromMaximized
 from .windows_decisions import EnterFromNormal as EnterFromNormal
@@ -33,7 +35,9 @@ from .windows_decisions import FullscreenSession as FullscreenSession
 from .windows_decisions import FullscreenSessionAbsent as FullscreenSessionAbsent
 from .windows_decisions import FullscreenSessionEntering as FullscreenSessionEntering
 from .windows_decisions import FullscreenSessionRunning as FullscreenSessionRunning
+from .windows_decisions import HitTestFrame as HitTestFrame
 from .windows_decisions import KeepSession as KeepSession
+from .windows_decisions import MessageRoute as MessageRoute
 from .windows_decisions import MonitorGeometry as MonitorGeometry
 from .windows_decisions import MonitorRect as MonitorRect
 from .windows_decisions import NativeMaximized as NativeMaximized
@@ -43,6 +47,8 @@ from .windows_decisions import NativeOverhangsMonitor as NativeOverhangsMonitor
 from .windows_decisions import NativeStateProbe as NativeStateProbe
 from .windows_decisions import NativeWindowState as NativeWindowState
 from .windows_decisions import NothingToLeave as NothingToLeave
+from .windows_decisions import PassThrough as PassThrough
+from .windows_decisions import PreventResize as PreventResize
 from .windows_decisions import ProposedRect as ProposedRect
 from .windows_decisions import Rect as Rect
 from .windows_decisions import ResizeBorders as ResizeBorders
@@ -65,3 +71,4 @@ from .windows_decisions import plan_fullscreen_entry as plan_fullscreen_entry
 from .windows_decisions import plan_fullscreen_exit as plan_fullscreen_exit
 from .windows_decisions import read_hit_test_point as read_hit_test_point
 from .windows_decisions import reserve_auto_hide_taskbar_strip as reserve_auto_hide_taskbar_strip
+from .windows_decisions import route_window_message as route_window_message
