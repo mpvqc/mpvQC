@@ -45,7 +45,8 @@ from mpvqc.window.services import (
     plan_fullscreen_exit,
 )
 
-DECISIONS = Path(__file__).resolve().parents[3] / "mpvqc" / "window" / "services" / "fullscreen_session.py"
+PACKAGE = Path(__file__).resolve().parents[4] / "mpvqc" / "window" / "services" / "windows_decisions"
+DECISIONS = PACKAGE / "fullscreen_session.py"
 
 SW_SHOWNORMAL = 1
 SW_SHOWMAXIMIZED = 3

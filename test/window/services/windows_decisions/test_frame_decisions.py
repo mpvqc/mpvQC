@@ -20,11 +20,11 @@ from mpvqc.window.services import (
     handle_non_client_calculate_size,
     handle_non_client_hit_test,
     overhangs,
-    read_hit_test_point,
     reserve_auto_hide_taskbar_strip,
 )
 
-DECISIONS = Path(__file__).resolve().parents[3] / "mpvqc" / "window" / "services" / "native_frame.py"
+PACKAGE = Path(__file__).resolve().parents[4] / "mpvqc" / "window" / "services" / "windows_decisions"
+FRAME_MODULES = ("frame_geometry.py", "non_client_frame.py", "messages.py")
 
 HTTOP = 12
 HTTOPLEFT = 13
@@ -38,10 +38,6 @@ GEOMETRY = MonitorGeometry(monitor_rect=MONITOR, work_area=WORK_AREA)
 WINDOW = WindowRect((100, 100, 900, 700))
 FULL_MONITOR_PROPOSAL = ProposedRect((0, 0, 1920, 1080))
 BAND = 8
-
-
-def pack_point(x: int, y: int) -> int:
-    return ((y & 0xFFFF) << 16) | (x & 0xFFFF)
 
 
 @dataclass
@@ -110,29 +106,6 @@ class RecordingCalcSizeProbe:
     def auto_hide_edge(self, monitor_rect: MonitorRect) -> AppBarEdge | None:
         self.asked.append(("auto_hide_edge", monitor_rect))
         return self.edge
-
-
-class PointCase(NamedTuple):
-    name: str
-    l_param: int
-    expected: tuple[int, int]
-
-
-@pytest.mark.parametrize(
-    "case",
-    [
-        PointCase(name="origin", l_param=pack_point(0, 0), expected=(0, 0)),
-        PointCase(name="primary_monitor", l_param=pack_point(640, 480), expected=(640, 480)),
-        PointCase(name="monitor_left_of_primary", l_param=pack_point(-1280, 480), expected=(-1280, 480)),
-        PointCase(name="monitor_above_primary", l_param=pack_point(640, -1080), expected=(640, -1080)),
-        PointCase(name="monitor_left_of_and_above_primary", l_param=pack_point(-1, -1), expected=(-1, -1)),
-        PointCase(name="largest_positive_coordinates", l_param=pack_point(32767, 32767), expected=(32767, 32767)),
-        PointCase(name="smallest_negative_coordinates", l_param=pack_point(-32768, -32768), expected=(-32768, -32768)),
-    ],
-    ids=lambda case: case.name,
-)
-def test_cursor_point_unpacks_both_coordinates_signed(case: PointCase):
-    assert read_hit_test_point(case.l_param) == case.expected
 
 
 class OverhangCase(NamedTuple):
@@ -317,11 +290,12 @@ def test_an_auto_hide_taskbar_on_another_monitor_leaves_the_client_rect_alone():
     assert handle_non_client_calculate_size(probe) == (True, WVR_REDRAW, WORK_AREA)
 
 
-def test_the_decisions_reach_nothing_platform_specific():
+@pytest.mark.parametrize("module", FRAME_MODULES)
+def test_the_decisions_reach_nothing_platform_specific(module: str):
     # A module-level reach would already break this file's own import on Linux.
     # The scan is what catches one hidden inside a function, where it would run
     # on Windows and raise everywhere else.
-    tree = ast.parse(DECISIONS.read_text(encoding="utf-8"))
+    tree = ast.parse((PACKAGE / module).read_text(encoding="utf-8"))
     targets = [
         alias.name if isinstance(node, ast.Import) else node.module or ""
         for node in ast.walk(tree)

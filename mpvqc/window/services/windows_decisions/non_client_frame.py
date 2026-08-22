@@ -8,28 +8,16 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""Windows-only decisions, kept out of the Windows package so they touch no
-ctypes and run on any platform."""
-
 from __future__ import annotations
 
-from typing import Literal, NamedTuple, NewType, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
 
-type Rect = tuple[int, int, int, int]
-"""left, top, right, bottom, the order a Win32 RECT uses."""
+from .frame_geometry import ClientRect, overhangs
 
-WindowRect = NewType("WindowRect", Rect)
-ProposedRect = NewType("ProposedRect", Rect)
-MonitorRect = NewType("MonitorRect", Rect)
-WorkArea = NewType("WorkArea", Rect)
-ClientRect = NewType("ClientRect", Rect)
+if TYPE_CHECKING:
+    from .frame_geometry import MonitorGeometry, MonitorRect, ProposedRect, WindowRect
 
 type AppBarEdge = Literal["left", "top", "right", "bottom"]
-
-
-class MonitorGeometry(NamedTuple):
-    monitor_rect: MonitorRect
-    work_area: WorkArea
 
 
 class HitTestProbe(Protocol):
@@ -109,16 +97,6 @@ def handle_non_client_calculate_size(probe: CalcSizeProbe) -> tuple[bool, int, C
     return True, _WVR_REDRAW, client_rect
 
 
-def overhangs(rect: WindowRect | ProposedRect, monitor_rect: MonitorRect) -> bool:
-    return _covers(rect, monitor_rect) and rect != monitor_rect
-
-
-def _covers(rect: Rect, monitor_rect: MonitorRect) -> bool:
-    left, top, right, bottom = rect
-    m_left, m_top, m_right, m_bottom = monitor_rect
-    return left <= m_left and top <= m_top and right >= m_right and bottom >= m_bottom
-
-
 _AUTO_HIDE_TASKBAR_STRIP = 2
 
 
@@ -138,14 +116,3 @@ def reserve_auto_hide_taskbar_strip(client_rect: ClientRect, edge: AppBarEdge | 
             return ClientRect((left, top, right, bottom - strip))
         case _:
             return client_rect
-
-
-def read_hit_test_point(l_param: int) -> tuple[int, int]:
-    """The WM_NCHITTEST cursor position: two signed 16-bit screen coordinates.
-    Signed because a monitor left of or above the primary one has negative
-    coordinates."""
-    return _signed_16(l_param & 0xFFFF), _signed_16((l_param >> 16) & 0xFFFF)
-
-
-def _signed_16(value: int) -> int:
-    return value - 0x10000 if value & 0x8000 else value

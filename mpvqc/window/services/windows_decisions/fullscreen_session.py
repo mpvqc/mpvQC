@@ -9,11 +9,12 @@ from typing import TYPE_CHECKING, NamedTuple, NewType, Protocol
 
 from PySide6.QtCore import Qt
 
-from .native_frame import Rect
-from .window_state import WindowStateSnapshot
+from mpvqc.window.services.window_state import WindowStateSnapshot
+
+from .frame_geometry import Rect
 
 if TYPE_CHECKING:
-    from .native_frame import MonitorRect
+    from .frame_geometry import MonitorRect
     from .window_placement import WindowPlacement
 
 FullscreenRect = NewType("FullscreenRect", Rect)

@@ -14,7 +14,7 @@ in a small function that takes and returns plain Python types.
 One block per API call: its constants, its structures, its raw binding and the
 wrappers the rest of the package uses. The exception is WINDOWPLACEMENT, whose
 value type and two flag constants sit with the decisions that carry them, in
-mpvqc.window.services.window_placement.
+the window placement record.
 
 All calls are best-effort: queries report failure through their return value,
 setters fail silently. A broken decoration is not worth an exception."""
@@ -39,12 +39,12 @@ from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVO
 from functools import lru_cache
 from typing import TYPE_CHECKING, NamedTuple, SupportsInt
 
-from mpvqc.window.services.window_placement import SW_MAXIMIZE, WindowPlacement
+from mpvqc.window.services.windows_decisions import SW_MAXIMIZE, WindowPlacement
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from mpvqc.window.services.native_frame import AppBarEdge
+    from mpvqc.window.services.windows_decisions import AppBarEdge
 
 # Private handles: prototypes set on the shared ctypes.windll cache would be
 # visible to every other library in the process.

@@ -13,13 +13,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from mpvqc.window.services.fullscreen_session import ResizeBorders, classify_native_state
-from mpvqc.window.services.native_frame import (
+from mpvqc.window.services.windows_decisions import (
     MonitorGeometry,
     MonitorRect,
     ProposedRect,
+    ResizeBorders,
     WindowRect,
     WorkArea,
+    classify_native_state,
     overhangs,
     read_hit_test_point,
 )
@@ -41,9 +42,7 @@ from .native import (
 if TYPE_CHECKING:
     from PySide6.QtGui import QWindow
 
-    from mpvqc.window.services.fullscreen_session import NativeWindowState
-    from mpvqc.window.services.native_frame import AppBarEdge
-    from mpvqc.window.services.window_placement import WindowPlacement
+    from mpvqc.window.services.windows_decisions import AppBarEdge, NativeWindowState, WindowPlacement
 
 
 def overhangs_monitor(hwnd: int) -> bool:

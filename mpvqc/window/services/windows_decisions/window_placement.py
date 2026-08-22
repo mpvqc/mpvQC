@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, NamedTuple
 
 if TYPE_CHECKING:
-    from .native_frame import Rect
+    from .frame_geometry import Rect
 
 SW_MAXIMIZE = 3
 WPF_RESTORETOMAXIMIZED = 0x0002

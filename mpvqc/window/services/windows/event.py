@@ -14,7 +14,7 @@ from typing import override
 
 import PySide6.QtCore
 
-from mpvqc.window.services.native_frame import handle_non_client_calculate_size, handle_non_client_hit_test
+from mpvqc.window.services.windows_decisions import handle_non_client_calculate_size, handle_non_client_hit_test
 
 from .native import prevent_window_resize_for, read_window_message, write_nccalcsize_client_rect
 from .probes import WindowsCalcSizeProbe, WindowsHitTestProbe

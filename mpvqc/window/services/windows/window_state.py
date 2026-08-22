@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 
-from mpvqc.window.services.fullscreen_session import (
+from mpvqc.window.services.windows_decisions import (
     EnterFromMaximized,
     EnterFromNormal,
     EnterUnavailable,
@@ -48,14 +48,14 @@ if TYPE_CHECKING:
 
     from PySide6.QtGui import QWindow
 
-    from mpvqc.window.services.fullscreen_session import (
+    from mpvqc.window.services.window_state import WindowStateSnapshot
+    from mpvqc.window.services.windows_decisions import (
         FullscreenRect,
         FullscreenSession,
+        Rect,
         SessionVerdict,
+        WindowPlacement,
     )
-    from mpvqc.window.services.native_frame import Rect
-    from mpvqc.window.services.window_placement import WindowPlacement
-    from mpvqc.window.services.window_state import WindowStateSnapshot
 
 
 class WindowsWindowStateHandler:
