@@ -5,9 +5,10 @@ description: The snapshot pattern for dataflow view models. Use when writing, re
 
 # Writing view models
 
-A view model that reads service state and hands derived values to QML runs on the **snapshot pattern**. Written any
-other way the derivation smears across the file, every consumed signal grows a public setter, and tests push state in
-past the seam production uses.
+A view model that reads service state and hands derived values to QML runs on the **snapshot pattern**, and so does a
+service that consumes upstream signals and hands derived values to consumers. Written any other way the derivation
+smears across the file, every consumed signal grows a public setter, and tests push state in past the seam production
+uses.
 
 Out of scope: one-shot commands, and view models that only forward slot calls to services. They stay as they are.
 
