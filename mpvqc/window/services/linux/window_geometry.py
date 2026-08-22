@@ -112,6 +112,10 @@ def high_dpi_factor(window: QWindow) -> float:
     return scale_and_origin(c_void_p(qwindow_ptr), _QHighDpiPoint(0, 0, 0)).factor
 
 
+def native_margin(margin: int, factor: float) -> int:
+    return int(margin * factor + 0.5)
+
+
 def apply_wayland_content_margins(window: QWindow, margin: int) -> None:
     symbols = _resolve_symbols()
     if symbols is None:
@@ -125,7 +129,6 @@ def apply_wayland_content_margins(window: QWindow, margin: int) -> None:
         return
 
     wayland_window_ptr = platform_ptr - _QOBJECT_BASE_OFFSET
-    # int(x + 0.5) is qRound: Qt rounds halves up where round() rounds to even.
-    native_margin = int(margin * high_dpi_factor(window) + 0.5)
-    margins = _QMargins(native_margin, native_margin, native_margin, native_margin)
+    native = native_margin(margin, high_dpi_factor(window))
+    margins = _QMargins(native, native, native, native)
     set_custom_margins(c_void_p(wayland_window_ptr), byref(margins))

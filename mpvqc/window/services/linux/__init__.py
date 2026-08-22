@@ -12,3 +12,4 @@ from .tiling import is_tiling_desktop as is_tiling_desktop
 from .window_button_detector import WindowButtonDetector as WindowButtonDetector
 from .window_geometry import apply_wayland_content_margins as apply_wayland_content_margins
 from .window_geometry import high_dpi_factor as high_dpi_factor
+from .window_geometry import native_margin as native_margin
