@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MIT
 #
 # Regenerate the mangled Qt symbol names the Linux drop-shadow hack pins in
-# mpvqc/services/platform/linux/window_geometry.py
+# mpvqc/window/services/linux/window_geometry.py
 
 set -euo pipefail
 
@@ -21,18 +21,20 @@ for tool in nm c++filt; do
 done
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-target="$repo_root/mpvqc/services/platform/linux/window_geometry.py"
+target="$repo_root/mpvqc/window/services/linux/window_geometry.py"
 lib_dir="$(uv run python -c 'import PySide6, pathlib; print(pathlib.Path(PySide6.__file__).parent / "Qt" / "lib")')"
 
 declare -A library=(
     [_HANDLE_SYMBOL]="Qt6Gui"
     [_SCALE_AND_ORIGIN_SYMBOL]="Qt6Gui"
     [_SET_CUSTOM_MARGINS_SYMBOL]="Qt6WaylandClient"
+    [_WINDOW_STATES_SYMBOL]="Qt6WaylandClient"
 )
 declare -A signature=(
     [_HANDLE_SYMBOL]="QWindow::handle() const"
     [_SCALE_AND_ORIGIN_SYMBOL]="QHighDpiScaling::scaleAndOrigin(QWindow const*, QHighDpiScaling::Point)"
     [_SET_CUSTOM_MARGINS_SYMBOL]="QtWaylandClient::QWaylandWindow::setCustomMargins(QMargins const&)"
+    [_WINDOW_STATES_SYMBOL]="QtWaylandClient::QWaylandWindow::windowStates() const"
 )
 
 # Find the mangled symbol in a bundled library whose demangling exactly matches

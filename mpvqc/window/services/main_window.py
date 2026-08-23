@@ -111,8 +111,8 @@ class MainWindowService(QObject):
         )
 
         self._platform.surface_changed.connect(self._fold_surface)
-        window.widthChanged.connect(self._fold_surface_width)
-        window.heightChanged.connect(self._fold_surface_height)
+        window.widthChanged.connect(self._fold_surface_size)
+        window.heightChanged.connect(self._fold_surface_size)
         # Moving without resizing (keyboard move via the system menu) can also take
         # the window out of fullscreen without any window state event.
         window.xChanged.connect(self._fold_window_state)
@@ -203,27 +203,20 @@ class MainWindowService(QObject):
             raise RuntimeError(msg)
         return screen
 
-    @Slot(int)
-    def _fold_surface_width(self, width: int) -> None:
+    @Slot()
+    def _fold_surface_size(self) -> None:
         # The OS can take the window out of fullscreen through geometry alone
         # (snapping, display scale changes), without any window state event.
-        state = self._platform.read_state(self._active_window)
+        # The size comes off the window, not the signal: the Wayland inset swap
+        # nests a second resize inside the first, and the outer signal's
+        # argument is stale by the time it arrives.
+        window = self._active_window
+        state = self._platform.read_state(window)
         self._update(
             replace(
                 self._inputs,
-                surface_width=width,
-                is_fullscreen=state.is_fullscreen,
-                is_maximized=state.is_maximized,
-            )
-        )
-
-    @Slot(int)
-    def _fold_surface_height(self, height: int) -> None:
-        state = self._platform.read_state(self._active_window)
-        self._update(
-            replace(
-                self._inputs,
-                surface_height=height,
+                surface_width=window.width(),
+                surface_height=window.height(),
                 is_fullscreen=state.is_fullscreen,
                 is_maximized=state.is_maximized,
             )

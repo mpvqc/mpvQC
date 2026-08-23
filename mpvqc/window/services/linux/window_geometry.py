@@ -4,12 +4,15 @@
 
 """Wayland-only: declare the window geometry inside the surface, so the
 compositor aligns and snaps against what the user sees rather than against the
-drop shadow margin. QWaylandWindow::setCustomMargins takes the inset. It is
-private Qt API, reached through ctypes.
+drop shadow margin. QWaylandWindow::setCustomMargins takes the inset and
+QWaylandWindow::windowStates answers the states the compositor has applied
+(QWindow::windowStates lags behind it by one queued event). Both are private
+Qt API, reached through ctypes.
 
 DELETE WHEN: PySide6 exposes a public window-geometry inset (a real QWindow
-API) or ships the QtWaylandClient module. Then replace the body of
-apply_wayland_content_margins with the public call and drop the ctypes code.
+API) or ships the QtWaylandClient module. Then replace the bodies of
+apply_wayland_content_margins and wayland_window_states with the public calls
+and drop the ctypes code.
 
 The mangled symbol names below are regenerated from the bundled Qt by the
 dependency updater script (`just update-python-dependencies`); do not edit
@@ -24,10 +27,11 @@ import logging
 from ctypes import Structure, byref, c_double, c_int, c_void_p
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 import PySide6
 import shiboken6
+from PySide6.QtCore import Qt
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -40,6 +44,8 @@ logger = logging.getLogger(__name__)
 _HANDLE_SYMBOL = "_ZNK7QWindow6handleEv"
 # QtWaylandClient::QWaylandWindow::setCustomMargins(QMargins const&)
 _SET_CUSTOM_MARGINS_SYMBOL = "_ZN15QtWaylandClient14QWaylandWindow16setCustomMarginsERK8QMargins"
+# QtWaylandClient::QWaylandWindow::windowStates() const
+_WINDOW_STATES_SYMBOL = "_ZNK15QtWaylandClient14QWaylandWindow12windowStatesEv"
 # QHighDpiScaling::scaleAndOrigin(QWindow const*, QHighDpiScaling::Point)
 _SCALE_AND_ORIGIN_SYMBOL = "_ZN15QHighDpiScaling14scaleAndOriginEPK7QWindowNS_5PointE"
 
@@ -59,6 +65,12 @@ class _QScaleAndOrigin(Structure):
     _fields_ = (("factor", c_double), ("origin_x", c_int), ("origin_y", c_int))
 
 
+class _WaylandSymbols(NamedTuple):
+    handle: Callable[..., int | None]
+    set_custom_margins: Callable[..., None]
+    window_states: Callable[..., int]
+
+
 def _qt_lib(name: str) -> str:
     lib_dir = Path(PySide6.__file__).parent / "Qt" / "lib"
     matches = sorted(lib_dir.glob(f"lib{name}.so*"))
@@ -69,22 +81,28 @@ def _qt_lib(name: str) -> str:
 
 
 @lru_cache(maxsize=1)
-def _resolve_symbols() -> tuple[Callable[..., int | None], Callable[..., None]] | None:
+def _resolve_symbols() -> _WaylandSymbols | None:
     # Cached so a missing symbol warns once, not on every margin or visibility change.
     try:
         gui = ctypes.CDLL(_qt_lib("Qt6Gui"))
         wayland = ctypes.CDLL(_qt_lib("Qt6WaylandClient"))
         handle = gui[_HANDLE_SYMBOL]
         set_custom_margins = wayland[_SET_CUSTOM_MARGINS_SYMBOL]
+        window_states = wayland[_WINDOW_STATES_SYMBOL]
     except (OSError, AttributeError):
-        logger.warning("Wayland window-geometry symbols unavailable; content margins not applied")
+        logger.warning(
+            "Wayland window-geometry symbols unavailable; content margins not applied, window states read from QWindow"
+        )
         return None
 
     handle.argtypes = [c_void_p]
     handle.restype = c_void_p
     set_custom_margins.argtypes = [c_void_p, c_void_p]
     set_custom_margins.restype = None
-    return handle, set_custom_margins
+    # Qt::WindowStates is a QFlags<int>, which the ABI returns like a plain int.
+    window_states.argtypes = [c_void_p]
+    window_states.restype = c_int
+    return _WaylandSymbols(handle=handle, set_custom_margins=set_custom_margins, window_states=window_states)
 
 
 @lru_cache(maxsize=1)
@@ -99,6 +117,15 @@ def _resolve_scale_and_origin() -> Callable[..., _QScaleAndOrigin] | None:
     scale_and_origin.argtypes = [c_void_p, _QHighDpiPoint]
     scale_and_origin.restype = _QScaleAndOrigin
     return scale_and_origin
+
+
+def _wayland_window_ptr(window: QWindow, handle: Callable[..., int | None]) -> int | None:
+    qwindow_ptr = shiboken6.Shiboken.getCppPointer(window)[0]
+    platform_ptr = handle(c_void_p(qwindow_ptr))
+    if not platform_ptr:
+        # Platform window not created yet.
+        return None
+    return platform_ptr - _QOBJECT_BASE_OFFSET
 
 
 def high_dpi_factor(window: QWindow) -> float:
@@ -120,15 +147,27 @@ def apply_wayland_content_margins(window: QWindow, margin: int) -> None:
     symbols = _resolve_symbols()
     if symbols is None:
         return
-    handle, set_custom_margins = symbols
 
-    qwindow_ptr = shiboken6.Shiboken.getCppPointer(window)[0]
-    platform_ptr = handle(c_void_p(qwindow_ptr))
-    if not platform_ptr:
-        # Platform window not created yet, nothing to inset.
+    wayland_window_ptr = _wayland_window_ptr(window, symbols.handle)
+    if wayland_window_ptr is None:
         return
 
-    wayland_window_ptr = platform_ptr - _QOBJECT_BASE_OFFSET
     native = native_margin(margin, high_dpi_factor(window))
     margins = _QMargins(native, native, native, native)
-    set_custom_margins(c_void_p(wayland_window_ptr), byref(margins))
+    symbols.set_custom_margins(c_void_p(wayland_window_ptr), byref(margins))
+
+
+def wayland_window_states(window: QWindow) -> Qt.WindowState | None:
+    """The states the compositor has applied; None without a platform window
+    or the symbol to ask."""
+    symbols = _resolve_symbols()
+    if symbols is None:
+        return None
+
+    wayland_window_ptr = _wayland_window_ptr(window, symbols.handle)
+    if wayland_window_ptr is None:
+        return None
+
+    states = symbols.window_states(c_void_p(wayland_window_ptr))
+    # The platform tracks activation in the same flags; QWindow::windowStates never reports it.
+    return Qt.WindowState(states) & ~Qt.WindowState.WindowActive

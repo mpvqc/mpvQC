@@ -1,5 +1,9 @@
 # Place the Wayland window through Qt's private ABI
 
+Amended by [ADR 0021](0021-linux-swap-the-wayland-inset-on-the-compositors-resize.md): the same private ABI also
+answers the window states the compositor has applied, a fourth symbol beside the three below, and the inset swaps on
+the compositor's resize rather than on the window-state signal.
+
 On Wayland the app draws its own window frame: rounded corners, a drop shadow, a resize band along the content edge.
 The shadow needs transparent padding around the content, and the compositor treats that padded rectangle as the window.
 Uncorrected, the visible content cannot sit flush against a screen edge, and snapping and maximizing act on the padding

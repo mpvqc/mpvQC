@@ -394,6 +394,36 @@ def test_resize_re_reads_the_window_state_in_the_same_cycle(
     assert spies["is_fullscreen"].at(0, 0) is True
 
 
+def test_nested_resize_settles_on_the_window_size_not_the_outer_signal(service, window, spy_notifies):
+    # The Wayland inset swap resizes the window again from inside the first
+    # resize's widthChanged, so the outer heightChanged still carries the size
+    # from before the swap.
+    def swap_inset(width: int) -> None:
+        if width == 3020:
+            window.resize(2844, 1554)
+
+    window.widthChanged.connect(swap_inset)
+    service.initialize(window)
+    spies = spy_notifies(service)
+
+    window.resize(3020, 1730)
+
+    assert emissions(spies) == {
+        "draws_own_frame": 0,
+        "drop_shadow_margin": 0,
+        "window_geometry_width": 1,
+        "window_geometry_height": 1,
+        "is_fullscreen": 0,
+        "is_maximized": 0,
+        "is_main_window_focused": 0,
+        "display_zoom_factor": 0,
+    }
+    assert spies["window_geometry_width"].at(0, 0) == 2844
+    assert spies["window_geometry_height"].at(0, 0) == 1554
+    assert service.window_geometry_width == 2844
+    assert service.window_geometry_height == 1554
+
+
 def test_pushed_surface_emits_the_frame_the_margin_and_the_geometry(surface, initialized_service, spy_notifies):
     spies = spy_notifies(initialized_service)
 
