@@ -20,7 +20,13 @@ from mpvqc.services.video_resize import (
     calculate_horizontal_layout_sizes,
     calculate_vertical_layout_sizes,
 )
-from mpvqc.window.services import MainWindowService, PlatformService
+from mpvqc.window.services import (
+    MainWindowService,
+    PlatformCapabilities,
+    PlatformService,
+    linux_desktop_capabilities,
+    linux_tiling_capabilities,
+)
 
 HEADER_HEIGHT = 40
 HANDLE_WIDTH = 6
@@ -165,7 +171,7 @@ def main_window_service_mock() -> MagicMock:
 @pytest.fixture
 def platform_service_mock() -> MagicMock:
     mock = MagicMock(spec_set=PlatformService)
-    mock.sizes_own_window = True
+    mock.capabilities = linux_desktop_capabilities()
     return mock
 
 
@@ -264,22 +270,39 @@ def test_compute_resize_grows_window_by_drop_shadow_margin(service, main_window_
     )
 
 
+class ResizesOnVideoChangeCase(NamedTuple):
+    name: str
+    capabilities: PlatformCapabilities
+    resizes_on_video_change: bool
+
+
 @pytest.mark.parametrize(
-    "sizes_own_window",
-    [True, False],
-    ids=["desktop", "tiling desktop"],
+    "case",
+    [
+        ResizesOnVideoChangeCase(
+            name="desktop",
+            capabilities=linux_desktop_capabilities(),
+            resizes_on_video_change=True,
+        ),
+        ResizesOnVideoChangeCase(
+            name="tiling desktop",
+            capabilities=linux_tiling_capabilities(),
+            resizes_on_video_change=False,
+        ),
+    ],
+    ids=lambda case: case.name,
 )
 def test_resizes_on_video_change_follows_who_sizes_the_window(
     service,
     platform_service_mock,
-    sizes_own_window: bool,
+    case: ResizesOnVideoChangeCase,
 ):
-    platform_service_mock.sizes_own_window = sizes_own_window
-    assert service.resizes_on_video_change is sizes_own_window
+    platform_service_mock.capabilities = case.capabilities
+    assert service.resizes_on_video_change is case.resizes_on_video_change
 
 
 def test_compute_resize_ignores_who_sizes_the_window(service, platform_service_mock):
-    platform_service_mock.sizes_own_window = False
+    platform_service_mock.capabilities = linux_tiling_capabilities()
     assert service.compute_resize(VIEW_DIMS) == ResizeResult(
         window_width=854,
         window_height=726,

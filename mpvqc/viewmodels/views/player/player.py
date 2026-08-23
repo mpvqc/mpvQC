@@ -20,7 +20,7 @@ class MpvqcPlayerViewModel(QObject):
 
     @Property(bool, constant=True)
     def embedsNativePlayer(self) -> bool:
-        return self._platform.embeds_native_player
+        return self._platform.capabilities.embeds_native_player
 
     @Slot(int, int)
     def moveMouse(self, x: int, y: int) -> None:

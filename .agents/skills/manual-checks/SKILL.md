@@ -29,19 +29,19 @@ Diff the branch against its merge base with `main`. That is the blast radius, no
 
 Done when you have the full file list and have read every changed hunk that can reach running code.
 
-### 2. Read the arrangement catalogue
+### 2. Read the platform catalogue
 
-`select_platform_backend` picks one arrangement per run, and each branch is one arrangement the app supports. Read it,
-don't recall it. `CONTEXT.md` defines the platform terms the checks will use.
+`select_platform_backend` picks one platform per run, and each branch is one platform the app supports. Read it, don't
+recall it. `CONTEXT.md` defines the platform terms the checks will use.
 
-Done when you can name every arrangement, the branch that selects it, and what makes it different.
+Done when you can name every platform, the branch that selects it, and the platform capabilities that set it apart.
 
 ### 3. Fan out
 
 Spawn subagents to confirm the blast radius. Split the changed files into areas and give each subagent one. Ask each
 for:
 
-- The arrangements that reach this change, and the flags or branches that decide it.
+- The platforms this change reaches, and the platform capabilities or branches that decide it.
 - What a user sees in the app when it works, and what they see when it breaks.
 - The tests that already cover it, named.
 
@@ -52,21 +52,21 @@ cannot be seen in the app.
 
 ### 4. Build the section
 
-The fork call places every item: an item stays shared when one run on any arrangement vouches for every arrangement
-it reaches, and it forks when arrangements owe the user different behaviour, or when a pass on one machine says
-nothing about another because the failure is platform-flavoured: fonts, compositors, native modules.
+The fork call places every item: an item stays shared when one run on any platform vouches for every platform it
+reaches, and it forks when platforms owe the user different behaviour, or when a pass on one machine says nothing
+about another because the failure is platform-flavoured: fonts, compositors, native modules.
 
 - A shared item is written once, under the `### 🌐 Anywhere` heading: the user checks it on whichever machine they
-  sit at, and that one tick vouches for the rest. When its reach is narrower than every arrangement, the item names
-  it: `On Linux, …`.
-- A forked item is written once per arrangement it reaches, under that arrangement's heading, each copy stating what
-  its arrangement owes — never one shared line with parentheticals bolted on.
+  sit at, and that one tick vouches for the rest. When its reach is narrower than every platform, the item names it:
+  `On Linux, …`.
+- A forked item is written once per platform it reaches, under that platform's heading, each copy stating what its
+  platform owes — never one shared line with parentheticals bolted on.
 
-Group each heading by area, and skip an arrangement no subagent reached: a Linux-only branch gets no Windows heading.
+Group each heading by area, and skip a platform no subagent reached: a Linux-only branch gets no Windows heading.
 
 Lead every heading with its emoji, so the user finds their machine by shape before they read a word: 🌐 Anywhere,
-🪟 Windows, 🐧 Linux desktop, 🧱 Linux tiling. An arrangement the catalogue grows later picks up its own emoji and
-keeps it from then on.
+🪟 Windows, 🐧 Linux desktop, 🧱 Linux tiling. A platform the catalogue grows later picks up its own emoji and keeps
+it from then on.
 
 Name an area after the thing the user touches: `Window controls`, `Video resize`, `Overlays`. Not after the module.
 
@@ -95,7 +95,7 @@ Write each item as the state that should hold, present tense, one observable per
 ```
 
 The overlay is written once: its layout owes nothing to the platform, so one run on any machine vouches for all.
-Resize forks, written twice and differently, because the two arrangements owe different behaviour.
+Resize forks, written twice and differently, because the two platforms owe different behaviour.
 
 Every line under a heading is a checkbox. Setup a check needs rides inside the item. A quirk the branch knowingly
 leaves behind is still an item, marked `Known and accepted:`.
@@ -103,7 +103,7 @@ leaves behind is still an item, marked `Known and accepted:`.
 Boxes ship unchecked. The user ticks them.
 
 Done when every item passes the blast radius filter and sits where the fork call puts it: shared items once under
-🌐, forked items once per arrangement, and no behaviour written both shared and forked.
+🌐, forked items once per platform, and no behaviour written both shared and forked.
 
 ### 5. Place it
 

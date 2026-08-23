@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, override
@@ -36,9 +37,13 @@ from mpvqc.window.services import (
     NoWindowConfigurator,
     NoWindowRevealer,
     PlatformBackend,
+    PlatformCapabilities,
     PlatformService,
     QtWindowStateHandler,
     StaticWindowButtons,
+    linux_desktop_capabilities,
+    linux_tiling_capabilities,
+    windows_capabilities,
 )
 
 if TYPE_CHECKING:
@@ -61,12 +66,22 @@ TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
 
-def _headless_platform_backend() -> PlatformBackend:
+def _platform_capabilities(name: str) -> PlatformCapabilities:
+    match name:
+        case "windows":
+            return windows_capabilities()
+        case "linux-desktop":
+            return linux_desktop_capabilities()
+        case "linux-tiling" | "headless":
+            return linux_tiling_capabilities()
+        case _:
+            msg = f"Unknown platform: {name!r}"
+            raise ValueError(msg)
+
+
+def _headless_platform_backend(capabilities: PlatformCapabilities) -> PlatformBackend:
     return PlatformBackend(
-        keeps_native_frame=False,
-        draws_drop_shadow=False,
-        embeds_native_player=False,
-        sizes_own_window=True,
+        capabilities=capabilities,
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
@@ -76,9 +91,21 @@ def _headless_platform_backend() -> PlatformBackend:
     )
 
 
-class PlatformServiceOverride(PlatformService):
+class _CurrentPlatform:
     def __init__(self) -> None:
-        super().__init__(_headless_platform_backend())
+        self._service: PlatformService | None = None
+
+    def switch(self, name: str) -> None:
+        self._service = PlatformService(_headless_platform_backend(_platform_capabilities(name)))
+
+    def service(self) -> PlatformService:
+        if (service := self._service) is None:
+            msg = "No platform switched in yet: configure_injections() must run first"
+            raise RuntimeError(msg)
+        return service
+
+
+current_platform = _CurrentPlatform()
 
 
 class ApplicationPathsServiceOverride(ApplicationPathsService):
@@ -239,6 +266,8 @@ def _import_settings_service_override() -> ImportSettingsServiceOverride:
 def configure_injections() -> None:
     MpvqcExportBackupTimerViewModel.MIN_INTERVAL_MS = 50
 
+    current_platform.switch("windows" if sys.platform == "win32" else "headless")
+
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
@@ -246,7 +275,7 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
         binder.bind_to_constructor(ExportSettingsService, _export_settings_service_override)
         binder.bind_to_constructor(ImportSettingsService, _import_settings_service_override)
-        binder.bind_to_constructor(PlatformService, PlatformServiceOverride)
+        binder.bind_to_provider(PlatformService, current_platform.service)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
         binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)

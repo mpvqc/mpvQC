@@ -2,22 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
 from typing import NamedTuple
 
 import inject
 import pytest
 
-from mpvqc.window.services import (
-    NoEmbeddedPlayerTracker,
-    NoSurfaceHandler,
-    NoWindowConfigurator,
-    NoWindowRevealer,
-    PlatformBackend,
-    PlatformService,
-    QtWindowStateHandler,
-    WindowButtonPreference,
-)
+from mpvqc.window.services import PlatformService, WindowButtonPreference
 from mpvqc.window.viewmodels import (
     MpvqcWindowButtonsViewModel,
     WindowButtonsInputs,
@@ -31,44 +21,14 @@ NO_MAXIMIZE = WindowButtonPreference(minimize=True, maximize=False, close=True)
 CLOSE_ONLY = WindowButtonPreference(minimize=False, maximize=False, close=True)
 
 
-class FakeWindowButtons:
-    def __init__(self, preference: WindowButtonPreference) -> None:
-        self._preference = preference
-        self._callbacks: list[Callable[[WindowButtonPreference], None]] = []
-
-    @property
-    def preference(self) -> WindowButtonPreference:
-        return self._preference
-
-    def on_preference_changed(self, callback: Callable[[WindowButtonPreference], None]) -> None:
-        self._callbacks.append(callback)
-
-    def push(self, preference: WindowButtonPreference) -> None:
-        self._preference = preference
-        for callback in self._callbacks:
-            callback(preference)
+@pytest.fixture
+def window_button_source(make_window_buttons):
+    return make_window_buttons(ALL_BUTTONS)
 
 
 @pytest.fixture
-def window_button_source() -> FakeWindowButtons:
-    return FakeWindowButtons(ALL_BUTTONS)
-
-
-@pytest.fixture
-def platform_service(qt_app, window_button_source) -> PlatformService:
-    backend = PlatformBackend(
-        keeps_native_frame=False,
-        draws_drop_shadow=False,
-        embeds_native_player=False,
-        sizes_own_window=False,
-        window_state=QtWindowStateHandler(),
-        surface=NoSurfaceHandler(),
-        window_configuration=NoWindowConfigurator(),
-        window_reveal=NoWindowRevealer(),
-        embedded_player=NoEmbeddedPlayerTracker(),
-        window_buttons=window_button_source,
-    )
-    return PlatformService(backend)
+def platform_service(make_platform_service, window_button_source) -> PlatformService:
+    return make_platform_service(window_buttons=window_button_source)
 
 
 @pytest.fixture(autouse=True)

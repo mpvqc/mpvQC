@@ -9,6 +9,7 @@ import sys
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from .capabilities import linux_desktop_capabilities, linux_tiling_capabilities, windows_capabilities
 from .embedded_player import NoEmbeddedPlayerTracker
 from .surface import NoSurfaceHandler
 from .window_buttons import StaticWindowButtons
@@ -17,6 +18,7 @@ from .window_reveal import NoWindowRevealer
 from .window_state import QtWindowStateHandler
 
 if TYPE_CHECKING:
+    from .capabilities import PlatformCapabilities
     from .embedded_player import EmbeddedPlayerTracker
     from .linux import WindowButtonDetector
     from .surface import SurfaceHandler
@@ -30,18 +32,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True, kw_only=True)
 class PlatformBackend:
-    keeps_native_frame: bool
-    """If True, the app keeps the native frame and reclaims only the caption strip."""
-
-    draws_drop_shadow: bool
-    """If True, the app paints its own drop shadow into the drop shadow margin."""
-
-    embeds_native_player: bool
-    """If True, the player is embedded instead of rendered in-scene."""
-
-    sizes_own_window: bool
-    """If True, the app decides its window size."""
-
+    capabilities: PlatformCapabilities
     window_state: WindowStateHandler
     surface: SurfaceHandler
     window_configuration: WindowConfigurator
@@ -78,10 +69,7 @@ def _create_windows_backend() -> PlatformBackend:
     frame = WindowsFrameIntegration()
 
     return PlatformBackend(
-        keeps_native_frame=True,
-        draws_drop_shadow=False,
-        embeds_native_player=True,
-        sizes_own_window=True,
+        capabilities=windows_capabilities(),
         window_state=WindowsWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=frame,
@@ -99,10 +87,7 @@ def _create_linux_desktop_backend() -> PlatformBackend:
     surface = SurfaceController(drop_shadow_margin=88)
 
     return PlatformBackend(
-        keeps_native_frame=False,
-        draws_drop_shadow=True,
-        embeds_native_player=False,
-        sizes_own_window=True,
+        capabilities=linux_desktop_capabilities(),
         window_state=QtWindowStateHandler(),
         surface=surface,
         window_configuration=surface,
@@ -114,10 +99,7 @@ def _create_linux_desktop_backend() -> PlatformBackend:
 
 def _create_linux_tiling_backend() -> PlatformBackend:
     return PlatformBackend(
-        keeps_native_frame=False,
-        draws_drop_shadow=False,
-        embeds_native_player=False,
-        sizes_own_window=False,
+        capabilities=linux_tiling_capabilities(),
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
