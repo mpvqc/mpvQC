@@ -6,17 +6,18 @@ from collections.abc import Callable
 from typing import override
 
 import pytest
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QWindow
+from PySide6.QtCore import QRect, Qt
+from PySide6.QtGui import QBitmap, QPolygon, QRegion, QWindow
 
 
 class RecordingWindow(QWindow):
-    """Stores window states itself so requests never reach the OS."""
+    """Stores window states and masks itself so requests never reach the OS."""
 
     def __init__(self, states: Qt.WindowState) -> None:
         super().__init__()
         self._states = states
         self.requests: list[object] = []
+        self.masks: list[QBitmap | QPolygon | QRect | QRegion] = []
         self.win_id_calls = 0
 
     @override
@@ -32,6 +33,10 @@ class RecordingWindow(QWindow):
     @override
     def showMinimized(self) -> None:
         self.requests.append("showMinimized")
+
+    @override
+    def setMask(self, region: QBitmap | QPolygon | QRect | QRegion) -> None:
+        self.masks.append(region)
 
     @override
     def winId(self) -> int:

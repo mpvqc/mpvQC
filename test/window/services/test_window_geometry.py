@@ -5,13 +5,34 @@
 import multiprocessing
 import os
 import sys
+from collections.abc import Callable
 from typing import NamedTuple
 
 import pytest
+from PySide6.QtCore import Qt
 
-from mpvqc.window.services.linux import apply_wayland_content_margins, high_dpi_factor, native_margin
+from mpvqc.window.services.linux import (
+    apply_wayland_content_margins,
+    high_dpi_factor,
+    native_margin,
+    wayland_window_states,
+)
 
 WINDOW_GEOMETRY = "mpvqc.window.services.linux.window_geometry"
+
+PLATFORM_WINDOW_PTR = 4096
+
+WINDOW_ACTIVE = 0x8
+WINDOW_MAXIMIZED = 0x2
+WINDOW_FULLSCREEN = 0x4
+
+
+class FakeSymbols(NamedTuple):
+    """The resolved Wayland symbols, shaped like the resolver's own tuple."""
+
+    handle: Callable[..., int | None] = lambda _window_ptr: PLATFORM_WINDOW_PTR
+    set_custom_margins: Callable[..., None] = lambda _wayland_window_ptr, _margins_ref: None
+    window_states: Callable[..., int] = lambda _wayland_window_ptr: 0
 
 
 class NativeMarginTestCase(NamedTuple):
@@ -52,19 +73,71 @@ def test_native_margin_rounds_like_qround(case: NativeMarginTestCase):
 def test_content_margins_reach_native_call_scaled_on_all_four_sides(make_recording_window, monkeypatch):
     recorded: list[tuple[int, int, int, int]] = []
 
-    def fake_handle(_window_ptr):
-        return 4096
-
     def fake_set_custom_margins(_wayland_window_ptr, margins_ref):
         margins = margins_ref._obj
         recorded.append((margins.left, margins.top, margins.right, margins.bottom))
 
-    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: (fake_handle, fake_set_custom_margins))
+    symbols = FakeSymbols(set_custom_margins=fake_set_custom_margins)
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: symbols)
     monkeypatch.setattr(f"{WINDOW_GEOMETRY}.high_dpi_factor", lambda _window: 1.25)
 
     apply_wayland_content_margins(make_recording_window(), 88)
 
     assert recorded == [(110, 110, 110, 110)]
+
+
+class WindowStatesTestCase(NamedTuple):
+    name: str
+    raw: int
+    expected: Qt.WindowState
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        WindowStatesTestCase(
+            name="no_state",
+            raw=0,
+            expected=Qt.WindowState.WindowNoState,
+        ),
+        WindowStatesTestCase(
+            name="active_alone_reads_as_no_state",
+            raw=WINDOW_ACTIVE,
+            expected=Qt.WindowState.WindowNoState,
+        ),
+        WindowStatesTestCase(
+            name="active_is_masked_off_maximized",
+            raw=WINDOW_ACTIVE | WINDOW_MAXIMIZED,
+            expected=Qt.WindowState.WindowMaximized,
+        ),
+        WindowStatesTestCase(
+            name="combined_states_survive",
+            raw=WINDOW_MAXIMIZED | WINDOW_FULLSCREEN,
+            expected=Qt.WindowState.WindowMaximized | Qt.WindowState.WindowFullScreen,
+        ),
+    ],
+    ids=lambda case: case.name,
+)
+def test_window_states_reads_the_platform_flags_without_the_active_bit(
+    case: WindowStatesTestCase, make_recording_window, monkeypatch
+):
+    symbols = FakeSymbols(window_states=lambda _wayland_window_ptr: case.raw)
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: symbols)
+
+    assert wayland_window_states(make_recording_window()) == case.expected
+
+
+def test_window_states_is_none_without_a_platform_window(make_recording_window, monkeypatch):
+    symbols = FakeSymbols(handle=lambda _window_ptr: None)
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: symbols)
+
+    assert wayland_window_states(make_recording_window()) is None
+
+
+def test_window_states_is_none_without_symbols(make_recording_window, monkeypatch):
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: None)
+
+    assert wayland_window_states(make_recording_window()) is None
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="reads the bundled Linux Qt libraries")

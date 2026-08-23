@@ -12,7 +12,7 @@ from PySide6.QtGui import QGuiApplication, QRegion
 from mpvqc.window.services.surface import NO_OWN_FRAME, SurfaceSnapshot
 
 from .resize_filter import RESIZE_BAND_WIDTH, WindowResizeFilter
-from .window_geometry import apply_wayland_content_margins
+from .window_geometry import apply_wayland_content_margins, wayland_window_states
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -62,15 +62,15 @@ class SurfaceController(QObject):
         self._expose_filter = expose_filter = WindowExposeFilter(window, self._reassert_surface)
         window.installEventFilter(expose_filter)
         window.visibleChanged.connect(self._on_visible_changed)
-        window.widthChanged.connect(self._apply_input_mask)
-        window.heightChanged.connect(self._apply_input_mask)
+        window.widthChanged.connect(self._on_size_changed)
+        window.heightChanged.connect(self._on_size_changed)
         window.windowStateChanged.connect(self._sync_surface)
         window.screenChanged.connect(self._on_screen_changed)
 
         self._sync_surface()
 
     def read_surface(self, window: QWindow) -> SurfaceSnapshot:
-        states = window.windowStates()
+        states = _applied_window_states(window)
         collapsed = Qt.WindowState.WindowMaximized | Qt.WindowState.WindowFullScreen
         if states & collapsed:
             return NO_OWN_FRAME
@@ -93,6 +93,14 @@ class SurfaceController(QObject):
             self._event_filter.set_drop_shadow_margin(surface.drop_shadow_margin)
         self._reassert_surface()
         self.surface_changed.emit(surface)
+
+    @Slot()
+    def _on_size_changed(self) -> None:
+        # The resize is the trigger, the state signal only a backstop: the
+        # compositor's configure resizes first and reports the state one queued
+        # event later. ADR 0021 has the frame-by-frame.
+        self._sync_surface()
+        self._apply_input_mask()
 
     @Slot(bool)
     def _on_visible_changed(self, visible: bool) -> None:
@@ -130,3 +138,13 @@ class SurfaceController(QObject):
 
         inset = max(0, self._applied_surface.drop_shadow_margin - RESIZE_BAND_WIDTH)
         self._window.setMask(QRegion(inset, inset, width - 2 * inset, height - 2 * inset))
+
+
+def _applied_window_states(window: QWindow) -> Qt.WindowState:
+    # QWindow::windowStates still answers the old states during the compositor's
+    # resize; the platform window already holds the ones the configure applied.
+    if QGuiApplication.platformName() == "wayland":
+        states = wayland_window_states(window)
+        if states is not None:
+            return states
+    return window.windowStates()

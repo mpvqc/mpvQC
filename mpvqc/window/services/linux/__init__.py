@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .resize_filter import RESIZE_BAND_WIDTH as RESIZE_BAND_WIDTH
 from .resize_filter import WindowResizeFilter as WindowResizeFilter
 from .resize_filter import cursor_shape_for as cursor_shape_for
 from .resize_filter import resize_edges_at as resize_edges_at
@@ -13,3 +14,4 @@ from .window_button_detector import WindowButtonDetector as WindowButtonDetector
 from .window_geometry import apply_wayland_content_margins as apply_wayland_content_margins
 from .window_geometry import high_dpi_factor as high_dpi_factor
 from .window_geometry import native_margin as native_margin
+from .window_geometry import wayland_window_states as wayland_window_states
