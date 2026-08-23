@@ -18,9 +18,6 @@ class WindowStateSnapshot(NamedTuple):
 
 
 class WindowStateHandler(Protocol):
-    """Drives every window-state change and answers reads about it, so platform
-    quirks stay out of the shared services."""
-
     def minimize(self, window: QWindow) -> None: ...
 
     def maximize(self, window: QWindow) -> None: ...
@@ -35,13 +32,8 @@ class WindowStateHandler(Protocol):
 
 
 class QtWindowStateHandler:
-    """Requests window states through Qt for platforms whose window system
-    honors them directly."""
-
     def minimize(self, window: QWindow) -> None:
-        # Keep the other state bits: replacing the set would drop Maximized,
-        # and the window would restore to its normal geometry instead of
-        # maximized.
+        # Keep the other state bits deliberately
         states = window.windowStates() | Qt.WindowState.WindowMinimized
         window.setWindowStates(states)
 
@@ -52,8 +44,7 @@ class QtWindowStateHandler:
         window.setWindowStates(Qt.WindowState.WindowNoState)
 
     def enter_fullscreen(self, window: QWindow) -> None:
-        # Keep the maximized flag set while fullscreen so leaving fullscreen returns
-        # to maximized, instead of the compositor restoring the saved normal geometry.
+        # Keep the other state bits deliberately
         states = window.windowStates() | Qt.WindowState.WindowFullScreen
         window.setWindowStates(states)
 

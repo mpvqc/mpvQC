@@ -19,11 +19,10 @@ if TYPE_CHECKING:
 
 
 class _FirstFrameGate(QObject):
-    """Receives frameSwapped for a single show of a window. It has no parent on
-    purpose: the pending map holds the only reference, so dropping that entry
-    destroys the gate at once and Qt discards any queued frameSwapped call
-    still addressed to it. A late frame from an earlier show can therefore
-    never trigger the current reveal."""
+    """Has no parent on purpose: the pending map holds the only reference, so
+    dropping that entry destroys the gate at once and Qt discards any queued
+    frameSwapped call still addressed to it. A late frame from an earlier show
+    can therefore never trigger the current reveal."""
 
     def __init__(self, on_first_frame: Callable[[], None]) -> None:
         super().__init__()
@@ -35,9 +34,8 @@ class _FirstFrameGate(QObject):
 
 
 class _RevealOnFirstFrame:
-    """Cloaks a window on show and uncloaks it once the compositor has consumed
-    its first frame; Windows would otherwise fill the gap with an uninitialized
-    white surface."""
+    """Without the cloak, Windows fills the gap before the first frame with an
+    uninitialized white surface."""
 
     def __init__(self) -> None:
         self._pending: dict[QQuickWindow, tuple[int, _FirstFrameGate]] = {}
@@ -74,7 +72,6 @@ class _RevealOnFirstFrame:
         try:
             window.frameSwapped.disconnect(gate.notify)
         except RuntimeError:
-            # The window died before its first frame; nothing left to reveal.
             return
 
         # frameSwapped only means the frame is queued, so give the compositor
@@ -85,9 +82,6 @@ class _RevealOnFirstFrame:
 
 
 class _TransientConcealment(QObject):
-    """Cloaks a transient window again as soon as its content is removed or it
-    starts to hide."""
-
     def __init__(self, reveal: _RevealOnFirstFrame) -> None:
         super().__init__()
         self._reveal = reveal
@@ -160,10 +154,8 @@ class _TransientConcealment(QObject):
 
 
 class WindowRevealFilter(QObject):
-    """Installed on the whole application so it also sees the native windows Qt
-    creates for popups. The main window only gets the first-frame reveal and
-    keeps its native DWM hide animation; every other Quick window is treated as
-    a transient."""
+    """The main window keeps its native DWM hide animation; every other Quick
+    window is cloaked again on the way out."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -173,9 +165,9 @@ class WindowRevealFilter(QObject):
 
     def install(self, app: QGuiApplication, main_window: QWindow) -> None:
         self._main_hwnd = main_window.winId()
-        # An application-wide filter runs for every event of every object.
-        # Qt has no signal for "a window was created", so this is the only
-        # reliable way to catch each new window's first Show.
+        # Qt has no signal for "a window was created", so an application-wide
+        # filter, running for every event of every object, is the only reliable
+        # way to catch each new window's first Show.
         app.installEventFilter(self)
 
     @override
