@@ -16,20 +16,30 @@ Item {
 
     visible: root.drawsOwnFrame
 
+    // libadwaita's window.csd box-shadow, layer for layer; _focus interpolates
+    // between its focused and backdrop states.
     RectangularShadow {
         anchors.fill: parent
         radius: root.radius
-        blur: 44 + 20 * root._focus
-        offset: Qt.vector2d(0, 10 + 8 * root._focus)
-        color: Qt.rgba(0, 0, 0, 0.22 + 0.16 * root._focus)
+        blur: 14
+        spread: 5
+        color: Qt.rgba(0, 0, 0, 0.15 * root._focus)
     }
 
     RectangularShadow {
         anchors.fill: parent
         radius: root.radius
-        blur: 14 + 8 * root._focus
-        offset: Qt.vector2d(0, 4 + 4 * root._focus)
-        color: Qt.rgba(0, 0, 0, 0.28 + 0.16 * root._focus)
+        blur: 10 - 5 * root._focus
+        spread: 5 - 3 * root._focus
+        color: Qt.rgba(0, 0, 0, 0.08 + 0.02 * root._focus)
+    }
+
+    RectangularShadow {
+        anchors.fill: parent
+        radius: root.radius
+        blur: 0
+        spread: 1
+        color: Qt.rgba(0, 0, 0, 0.05)
     }
 
     Behavior on _focus {
