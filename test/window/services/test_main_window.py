@@ -15,9 +15,17 @@ from mpvqc.window.services import (
     MainWindowProps,
     MainWindowService,
     PlatformService,
+    SurfaceSnapshot,
     WindowStateSnapshot,
     derive_main_window_props,
 )
+from test.window.conftest import ReentrantWindowState
+
+NO_OWN_FRAME = SurfaceSnapshot(draws_own_frame=False, drop_shadow_margin=0)
+OWN_FRAME = SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=88)
+
+FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT = 1920, 1080
+RETIRED_WIDTH, RETIRED_HEIGHT = 1280, 720
 
 
 @pytest.fixture
@@ -59,6 +67,7 @@ def initialized_service(service, window) -> MainWindowService:
 def spy_notifies(make_spy):
     def _spy(service: MainWindowService) -> dict:
         return {
+            "draws_own_frame": make_spy(service.draws_own_frame_changed),
             "drop_shadow_margin": make_spy(service.drop_shadow_margin_changed),
             "window_geometry_width": make_spy(service.window_geometry_width_changed),
             "window_geometry_height": make_spy(service.window_geometry_height_changed),
@@ -85,17 +94,18 @@ class DerivationCase(NamedTuple):
     "case",
     [
         DerivationCase(
-            name="no margin leaves the geometry at the surface",
+            name="no own frame leaves the geometry at the surface",
             inputs=MainWindowInputs(
                 surface_width=1280,
                 surface_height=720,
-                drop_shadow_margin=0,
+                surface=NO_OWN_FRAME,
                 is_fullscreen=False,
                 is_maximized=False,
                 is_main_window_focused=True,
                 display_zoom_factor=1.0,
             ),
             expected=MainWindowProps(
+                draws_own_frame=False,
                 drop_shadow_margin=0,
                 window_geometry_width=1280,
                 window_geometry_height=720,
@@ -110,16 +120,39 @@ class DerivationCase(NamedTuple):
             inputs=MainWindowInputs(
                 surface_width=1280,
                 surface_height=720,
-                drop_shadow_margin=64,
+                surface=SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=64),
                 is_fullscreen=False,
                 is_maximized=False,
                 is_main_window_focused=True,
                 display_zoom_factor=1.0,
             ),
             expected=MainWindowProps(
+                draws_own_frame=True,
                 drop_shadow_margin=64,
                 window_geometry_width=1152,
                 window_geometry_height=592,
+                is_fullscreen=False,
+                is_maximized=False,
+                is_main_window_focused=True,
+                display_zoom_factor=1.0,
+            ),
+        ),
+        DerivationCase(
+            name="own frame without margin keeps the geometry at the surface",
+            inputs=MainWindowInputs(
+                surface_width=1280,
+                surface_height=720,
+                surface=SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=0),
+                is_fullscreen=False,
+                is_maximized=False,
+                is_main_window_focused=True,
+                display_zoom_factor=1.0,
+            ),
+            expected=MainWindowProps(
+                draws_own_frame=True,
+                drop_shadow_margin=0,
+                window_geometry_width=1280,
+                window_geometry_height=720,
                 is_fullscreen=False,
                 is_maximized=False,
                 is_main_window_focused=True,
@@ -131,13 +164,14 @@ class DerivationCase(NamedTuple):
             inputs=MainWindowInputs(
                 surface_width=0,
                 surface_height=0,
-                drop_shadow_margin=0,
+                surface=NO_OWN_FRAME,
                 is_fullscreen=False,
                 is_maximized=False,
                 is_main_window_focused=True,
                 display_zoom_factor=1.0,
             ),
             expected=MainWindowProps(
+                draws_own_frame=False,
                 drop_shadow_margin=0,
                 window_geometry_width=0,
                 window_geometry_height=0,
@@ -152,13 +186,14 @@ class DerivationCase(NamedTuple):
             inputs=MainWindowInputs(
                 surface_width=640,
                 surface_height=480,
-                drop_shadow_margin=0,
+                surface=NO_OWN_FRAME,
                 is_fullscreen=True,
                 is_maximized=True,
                 is_main_window_focused=False,
                 display_zoom_factor=1.0,
             ),
             expected=MainWindowProps(
+                draws_own_frame=False,
                 drop_shadow_margin=0,
                 window_geometry_width=640,
                 window_geometry_height=480,
@@ -173,13 +208,14 @@ class DerivationCase(NamedTuple):
             inputs=MainWindowInputs(
                 surface_width=1280,
                 surface_height=720,
-                drop_shadow_margin=88,
+                surface=OWN_FRAME,
                 is_fullscreen=False,
                 is_maximized=False,
                 is_main_window_focused=True,
                 display_zoom_factor=2.0,
             ),
             expected=MainWindowProps(
+                draws_own_frame=True,
                 drop_shadow_margin=88,
                 window_geometry_width=1104,
                 window_geometry_height=544,
@@ -197,9 +233,10 @@ def test_derivation(case: DerivationCase):
 
 
 def test_unbound_service_reports_the_zero_snapshot(service):
+    assert not service.draws_own_frame
+    assert service.drop_shadow_margin == 0
     assert service.window_geometry_width == 0
     assert service.window_geometry_height == 0
-    assert service.drop_shadow_margin == 0
     assert not service.is_fullscreen
     assert not service.is_maximized
     assert service.is_main_window_focused
@@ -208,8 +245,8 @@ def test_unbound_service_reports_the_zero_snapshot(service):
 
 class InitialBroadcastCase(NamedTuple):
     name: str
-    drop_shadow_margin: int
-    expected_margin_emissions: int
+    surface: SurfaceSnapshot
+    expected_surface_emissions: int
     expected_width: int
     expected_height: int
 
@@ -218,16 +255,16 @@ class InitialBroadcastCase(NamedTuple):
     "case",
     [
         InitialBroadcastCase(
-            name="with drop shadow margin",
-            drop_shadow_margin=88,
-            expected_margin_emissions=1,
+            name="with an own frame",
+            surface=OWN_FRAME,
+            expected_surface_emissions=1,
             expected_width=1280 - 2 * 88,
             expected_height=720 - 2 * 88,
         ),
         InitialBroadcastCase(
-            name="without drop shadow margin",
-            drop_shadow_margin=0,
-            expected_margin_emissions=0,
+            name="without an own frame",
+            surface=NO_OWN_FRAME,
+            expected_surface_emissions=0,
             expected_width=1280,
             expected_height=720,
         ),
@@ -235,7 +272,7 @@ class InitialBroadcastCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_initialize_broadcasts_what_the_first_read_changed(case, surface, service, window, spy_notifies):
-    surface.margin = case.drop_shadow_margin
+    surface.snapshot = case.surface
     spies = spy_notifies(service)
 
     service.initialize(window)
@@ -243,7 +280,8 @@ def test_initialize_broadcasts_what_the_first_read_changed(case, surface, servic
     assert surface.reads == [window]
     # No window holds focus offscreen, so the first read takes focus off the zero snapshot.
     assert emissions(spies) == {
-        "drop_shadow_margin": case.expected_margin_emissions,
+        "draws_own_frame": case.expected_surface_emissions,
+        "drop_shadow_margin": case.expected_surface_emissions,
         "window_geometry_width": 1,
         "window_geometry_height": 1,
         "is_fullscreen": 0,
@@ -254,13 +292,15 @@ def test_initialize_broadcasts_what_the_first_read_changed(case, surface, servic
     assert spies["window_geometry_width"].at(0, 0) == case.expected_width
     assert spies["window_geometry_height"].at(0, 0) == case.expected_height
     assert spies["is_main_window_focused"].at(0, 0) is False
-    assert service.drop_shadow_margin == case.drop_shadow_margin
+    assert service.draws_own_frame is case.surface.draws_own_frame
+    assert service.drop_shadow_margin == case.surface.drop_shadow_margin
 
 
 def test_initialize_emits_in_the_props_field_order(surface, window_state, service, window):
-    surface.margin = 88
+    surface.snapshot = OWN_FRAME
     window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
     order: list[str] = []
+    service.draws_own_frame_changed.connect(lambda _: order.append("draws_own_frame"))
     service.drop_shadow_margin_changed.connect(lambda _: order.append("drop_shadow_margin"))
     service.window_geometry_width_changed.connect(lambda _: order.append("window_geometry_width"))
     service.window_geometry_height_changed.connect(lambda _: order.append("window_geometry_height"))
@@ -273,6 +313,7 @@ def test_initialize_emits_in_the_props_field_order(surface, window_state, servic
 
     # Offscreen the device pixel ratio cannot leave 1.0, so the zoom notify has nothing to emit.
     assert order == [
+        "draws_own_frame",
         "drop_shadow_margin",
         "window_geometry_width",
         "window_geometry_height",
@@ -294,6 +335,7 @@ def test_resize_emits_the_geometry_alone(initialized_service, window, spy_notifi
     window.resize(1000, 500)
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 1,
         "window_geometry_height": 1,
@@ -340,6 +382,7 @@ def test_resize_re_reads_the_window_state_in_the_same_cycle(
     case.resize(window)
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": case.expected_width_emissions,
         "window_geometry_height": case.expected_height_emissions,
@@ -351,12 +394,13 @@ def test_resize_re_reads_the_window_state_in_the_same_cycle(
     assert spies["is_fullscreen"].at(0, 0) is True
 
 
-def test_pushed_margin_emits_margin_and_geometry(surface, initialized_service, spy_notifies):
+def test_pushed_surface_emits_the_frame_the_margin_and_the_geometry(surface, initialized_service, spy_notifies):
     spies = spy_notifies(initialized_service)
 
-    surface.push(88)
+    surface.push(OWN_FRAME)
 
     assert emissions(spies) == {
+        "draws_own_frame": 1,
         "drop_shadow_margin": 1,
         "window_geometry_width": 1,
         "window_geometry_height": 1,
@@ -365,18 +409,39 @@ def test_pushed_margin_emits_margin_and_geometry(surface, initialized_service, s
         "is_main_window_focused": 0,
         "display_zoom_factor": 0,
     }
+    assert spies["draws_own_frame"].at(0, 0) is True
     assert spies["drop_shadow_margin"].at(0, 0) == 88
     assert spies["window_geometry_width"].at(0, 0) == 1280 - 2 * 88
     assert spies["window_geometry_height"].at(0, 0) == 720 - 2 * 88
+    assert initialized_service.draws_own_frame
     assert initialized_service.drop_shadow_margin == 88
 
 
-def test_pushed_unchanged_margin_stays_silent(surface, initialized_service, spy_notifies):
+def test_pushed_surface_that_only_flips_the_frame_emits_the_frame_alone(surface, initialized_service, spy_notifies):
     spies = spy_notifies(initialized_service)
 
-    surface.push(0)
+    surface.push(SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=0))
 
     assert emissions(spies) == {
+        "draws_own_frame": 1,
+        "drop_shadow_margin": 0,
+        "window_geometry_width": 0,
+        "window_geometry_height": 0,
+        "is_fullscreen": 0,
+        "is_maximized": 0,
+        "is_main_window_focused": 0,
+        "display_zoom_factor": 0,
+    }
+    assert spies["draws_own_frame"].at(0, 0) is True
+
+
+def test_pushed_unchanged_surface_stays_silent(surface, initialized_service, spy_notifies):
+    spies = spy_notifies(initialized_service)
+
+    surface.push(NO_OWN_FRAME)
+
+    assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 0,
         "window_geometry_height": 0,
@@ -396,6 +461,7 @@ def test_window_state_signal_emits_the_states_the_platform_reads(
     window.windowStateChanged.emit(Qt.WindowState.WindowFullScreen)
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 0,
         "window_geometry_height": 0,
@@ -419,6 +485,7 @@ def test_position_signals_re_read_the_window_state(window_state, initialized_ser
     window.xChanged.emit(50)
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 0,
         "window_geometry_height": 0,
@@ -442,6 +509,7 @@ def test_move_with_unchanged_state_stays_silent_but_still_reads_the_state(
     window.yChanged.emit(20)
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 0,
         "window_geometry_height": 0,
@@ -453,12 +521,65 @@ def test_move_with_unchanged_state_stays_silent_but_still_reads_the_state(
     assert len(window_state.reads) == reads_before + 2
 
 
+class ReentryCase(NamedTuple):
+    name: str
+    fire: Callable[[QWindow], None]
+
+
+class TestReentrantStateRead:
+    """Pins the read-before-replace ordering every fold that reads window state
+    depends on: when a retire re-enters, hoisting the input read above the state
+    read would settle the props on the pre-retire geometry.
+    """
+
+    @pytest.fixture
+    def window_state(self) -> ReentrantWindowState:
+        return ReentrantWindowState(
+            state=WindowStateSnapshot(is_fullscreen=True, is_maximized=False),
+            retired_state=WindowStateSnapshot(is_fullscreen=False, is_maximized=False),
+            retired_size=(RETIRED_WIDTH, RETIRED_HEIGHT),
+        )
+
+    @pytest.fixture
+    def window(self, qt_app) -> QWindow:
+        window = QWindow()
+        window.resize(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)
+        return window
+
+    @pytest.mark.parametrize(
+        "case",
+        [
+            ReentryCase(name="window move", fire=lambda w: w.xChanged.emit(0)),
+            ReentryCase(name="width snap", fire=lambda w: w.widthChanged.emit(RETIRED_WIDTH)),
+            ReentryCase(name="height snap", fire=lambda w: w.heightChanged.emit(RETIRED_HEIGHT)),
+        ],
+        ids=lambda case: case.name,
+    )
+    def test_retire_mid_read_settles_on_the_nested_geometry(self, case, window_state, initialized_service, window):
+        service = initialized_service
+        assert service.is_fullscreen
+        assert service.window_geometry_width == FULLSCREEN_WIDTH
+        assert service.window_geometry_height == FULLSCREEN_HEIGHT
+
+        window_state.armed = True
+        reads_before = len(window_state.reads)
+        case.fire(window)
+
+        # The triggering fold's own read, plus the width and height folds the
+        # retire's resize fired back into the service: the read re-entered.
+        assert len(window_state.reads) - reads_before == 3
+        assert not service.is_fullscreen
+        assert service.window_geometry_width == RETIRED_WIDTH
+        assert service.window_geometry_height == RETIRED_HEIGHT
+
+
 def test_focus_window_signal_emits_the_focus_notify_alone(qt_app, initialized_service, window, spy_notifies):
     spies = spy_notifies(initialized_service)
 
     qt_app.focusWindowChanged.emit(window)
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 0,
         "window_geometry_height": 0,
@@ -538,6 +659,7 @@ def test_unchanged_device_pixel_ratio_stays_silent(initialized_service, window, 
     QGuiApplication.sendEvent(window, QEvent(QEvent.Type.DevicePixelRatioChange))
 
     assert emissions(spies) == {
+        "draws_own_frame": 0,
         "drop_shadow_margin": 0,
         "window_geometry_width": 0,
         "window_geometry_height": 0,
@@ -553,14 +675,15 @@ def test_props_swap_completes_before_the_first_emission(surface, initialized_ser
     service = initialized_service
     observed: list[tuple] = []
 
-    # drop_shadow_margin_changed is the first notify the margin cycle emits, so a
+    # draws_own_frame_changed is the first notify the surface cycle emits, so a
     # swap after it would slip past an observer of any later one.
-    service.drop_shadow_margin_changed.connect(
+    service.draws_own_frame_changed.connect(
         lambda _: observed.append(
             (
+                service.draws_own_frame,
+                service.drop_shadow_margin,
                 service.window_geometry_width,
                 service.window_geometry_height,
-                service.drop_shadow_margin,
                 service.is_fullscreen,
                 service.is_maximized,
                 service.is_main_window_focused,
@@ -569,9 +692,9 @@ def test_props_swap_completes_before_the_first_emission(surface, initialized_ser
         )
     )
 
-    surface.push(88)
+    surface.push(OWN_FRAME)
 
-    assert observed == [(1280 - 2 * 88, 720 - 2 * 88, 88, False, False, False, 1.0)]
+    assert observed == [(True, 88, 1280 - 2 * 88, 720 - 2 * 88, False, False, False, 1.0)]
 
 
 class CommandCase(NamedTuple):

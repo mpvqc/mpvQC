@@ -4,6 +4,7 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import override
 
 import pytest
 from PySide6.QtGui import QGuiApplication, QWindow
@@ -20,6 +21,7 @@ from mpvqc.window.services import (
     QtWindowStateHandler,
     StaticWindowButtons,
     SurfaceHandler,
+    SurfaceSnapshot,
     WindowButtonPreference,
     WindowButtonSource,
     WindowConfigurator,
@@ -30,6 +32,7 @@ from mpvqc.window.services import (
 )
 
 WINDOWED = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
+NO_OWN_FRAME = SurfaceSnapshot(draws_own_frame=False, drop_shadow_margin=0)
 
 
 @dataclass
@@ -58,23 +61,43 @@ class RecordingWindowState:
         return self.state
 
 
+@dataclass(kw_only=True)
+class ReentrantWindowState(RecordingWindowState):
+    """A read that resizes the window before it returns, re-entering the service
+    through the geometry signals — the Windows retire, faked for any platform.
+    """
+
+    retired_state: WindowStateSnapshot
+    retired_size: tuple[int, int]
+    armed: bool = False
+    _retired: bool = field(default=False, init=False)
+
+    @override
+    def read_state(self, window: QWindow) -> WindowStateSnapshot:
+        self.reads.append(window)
+        if self.armed and not self._retired:
+            self._retired = True
+            window.resize(*self.retired_size)
+        return self.retired_state if self._retired else self.state
+
+
 @dataclass
 class RecordingSurface:
-    margin: int = 0
+    snapshot: SurfaceSnapshot = NO_OWN_FRAME
     reads: list[QWindow] = field(default_factory=list)
-    callbacks: list[Callable[[int], None]] = field(default_factory=list)
+    callbacks: list[Callable[[SurfaceSnapshot], None]] = field(default_factory=list)
 
-    def drop_shadow_margin(self, window: QWindow) -> int:
+    def read_surface(self, window: QWindow) -> SurfaceSnapshot:
         self.reads.append(window)
-        return self.margin
+        return self.snapshot
 
-    def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None:
+    def on_surface_changed(self, callback: Callable[[SurfaceSnapshot], None]) -> None:
         self.callbacks.append(callback)
 
-    def push(self, margin: int) -> None:
-        self.margin = margin
+    def push(self, snapshot: SurfaceSnapshot) -> None:
+        self.snapshot = snapshot
         for callback in self.callbacks:
-            callback(margin)
+            callback(snapshot)
 
 
 @dataclass

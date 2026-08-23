@@ -41,7 +41,7 @@ ApplicationWindow {
 
     MpvqcWindowDropShadow {
         anchors.fill: _frame
-        margin: MpvqcWindowUtility.dropShadowMargin
+        drawsOwnFrame: MpvqcWindowUtility.drawsOwnFrame
         radius: _frame.radius
         windowActive: root.active
     }
@@ -54,9 +54,7 @@ ApplicationWindow {
         anchors.margins: MpvqcWindowUtility.dropShadowMargin
         radius: MpvqcWindowUtility.windowRadius
         color: M.Material.background
-
-        // Overflowing content must not paint into the drop shadow margin.
-        clip: MpvqcWindowUtility.dropShadowMargin > 0
+        clip: MpvqcWindowUtility.drawsOwnFrame
 
         MpvqcApplicationContent {
             id: _content

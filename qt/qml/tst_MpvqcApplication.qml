@@ -21,7 +21,8 @@ TestCase {
 
     property var _originalWindowViewModel: null
 
-    function makeWindow(margin: int): var {
+    function makeWindow(drawsOwnFrame: bool, margin: int): var {
+        windowViewModelMock.drawsOwnFrame = drawsOwnFrame;
         windowViewModelMock.dropShadowMargin = margin;
         MpvqcWindowUtility._viewModel = windowViewModelMock;
 
@@ -46,12 +47,14 @@ TestCase {
         return [
             {
                 tag: "no-margin",
+                drawsOwnFrame: false,
                 margin: 0,
                 expectedMinimumWidth: 960,
                 expectedMinimumHeight: 540
             },
             {
                 tag: "drop-shadow-margin",
+                drawsOwnFrame: true,
                 margin: 88,
                 expectedMinimumWidth: 1136,
                 expectedMinimumHeight: 716
@@ -60,18 +63,35 @@ TestCase {
     }
 
     function test_minimumSizeCoversDropShadowMargin(data): void {
-        const window = makeWindow(data.margin);
+        const window = makeWindow(data.drawsOwnFrame, data.margin);
 
         compare(window.minimumWidth, data.expectedMinimumWidth);
         compare(window.minimumHeight, data.expectedMinimumHeight);
     }
 
-    function test_frameClipsOverflowingContent(): void {
-        const window = makeWindow(88);
+    function test_frameClipsOverflowingContentOnlyWithOwnFrame_data(): var {
+        return [
+            {
+                tag: "own-frame",
+                drawsOwnFrame: true,
+                margin: 88,
+                expectedClip: true
+            },
+            {
+                tag: "no-own-frame",
+                drawsOwnFrame: false,
+                margin: 0,
+                expectedClip: false
+            }
+        ];
+    }
+
+    function test_frameClipsOverflowingContentOnlyWithOwnFrame(data): void {
+        const window = makeWindow(data.drawsOwnFrame, data.margin);
 
         const frame = findChild(window, "windowFrame");
         verify(frame, "windowFrame not found");
-        verify(frame.clip, "the frame must clip, otherwise content paints into the drop shadow margin");
+        compare(frame.clip, data.expectedClip, "with an own frame, overflowing content would paint into the drop shadow margin, so the frame must clip; without one it must not");
     }
 
     function test_platformDrivesFlagsAndColor_data(): var {
@@ -99,7 +119,7 @@ TestCase {
 
     function test_platformDrivesFlagsAndColor(data): void {
         bridge.switchPlatform(data.platform);
-        const window = makeWindow(0);
+        const window = makeWindow(false, 0);
 
         compare(Boolean(window.flags & Qt.FramelessWindowHint), data.frameless);
         compare(Boolean(window.flags & Qt.CustomizeWindowHint), !data.frameless);
@@ -113,9 +133,9 @@ TestCase {
         readonly property int windowGeometryHeight: 720
         readonly property bool isFullscreen: false
         readonly property bool isMaximized: false
-        readonly property int radius: 0
         readonly property bool isMainWindowFocused: true
 
+        property bool drawsOwnFrame: false
         property int dropShadowMargin: 0
     }
 }

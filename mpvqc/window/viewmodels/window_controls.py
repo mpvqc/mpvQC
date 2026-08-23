@@ -11,8 +11,6 @@ from mpvqc.window.services import MainWindowService
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-_WINDOW_RADIUS = 8
-
 
 @QmlElement
 class MpvqcWindowControlsViewModel(QObject):
@@ -22,19 +20,20 @@ class MpvqcWindowControlsViewModel(QObject):
     windowGeometryHeightChanged = Signal(int)
     isFullscreenChanged = Signal(bool)
     isMaximizedChanged = Signal(bool)
+    drawsOwnFrameChanged = Signal(bool)
     dropShadowMarginChanged = Signal(int)
-    radiusChanged = Signal()
     isMainWindowFocusedChanged = Signal(bool)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._main_window.window_geometry_width_changed.connect(self.windowGeometryWidthChanged)
-        self._main_window.window_geometry_height_changed.connect(self.windowGeometryHeightChanged)
-        self._main_window.is_fullscreen_changed.connect(self.isFullscreenChanged)
-        self._main_window.is_maximized_changed.connect(self.isMaximizedChanged)
-        self._main_window.drop_shadow_margin_changed.connect(self.dropShadowMarginChanged)
-        self._main_window.drop_shadow_margin_changed.connect(self.radiusChanged)
-        self._main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
+        main_window = self._main_window
+        main_window.window_geometry_width_changed.connect(self.windowGeometryWidthChanged)
+        main_window.window_geometry_height_changed.connect(self.windowGeometryHeightChanged)
+        main_window.is_fullscreen_changed.connect(self.isFullscreenChanged)
+        main_window.is_maximized_changed.connect(self.isMaximizedChanged)
+        main_window.draws_own_frame_changed.connect(self.drawsOwnFrameChanged)
+        main_window.drop_shadow_margin_changed.connect(self.dropShadowMarginChanged)
+        main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
 
     @Property(int, notify=windowGeometryWidthChanged)
     def windowGeometryWidth(self) -> int:
@@ -52,13 +51,13 @@ class MpvqcWindowControlsViewModel(QObject):
     def isMaximized(self) -> bool:
         return self._main_window.is_maximized
 
+    @Property(bool, notify=drawsOwnFrameChanged)
+    def drawsOwnFrame(self) -> bool:
+        return self._main_window.draws_own_frame
+
     @Property(int, notify=dropShadowMarginChanged)
     def dropShadowMargin(self) -> int:
         return self._main_window.drop_shadow_margin
-
-    @Property(int, notify=radiusChanged)
-    def radius(self) -> int:
-        return _WINDOW_RADIUS if self._main_window.drop_shadow_margin > 0 else 0
 
     @Property(bool, notify=isMainWindowFocusedChanged)
     def isMainWindowFocused(self) -> bool:

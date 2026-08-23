@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Signal
 
+from .surface import SurfaceSnapshot
 from .window_buttons import WindowButtonPreference
 
 if TYPE_CHECKING:
@@ -22,13 +23,13 @@ class PlatformService(QObject):
     """Facade that orchestrates platform functionality."""
 
     window_button_preference_changed = Signal(WindowButtonPreference)
-    drop_shadow_margin_changed = Signal(int)
+    surface_changed = Signal(SurfaceSnapshot)
 
     def __init__(self, backend: PlatformBackend) -> None:
         super().__init__()
         self._backend = backend
         self._backend.window_buttons.on_preference_changed(self.window_button_preference_changed.emit)
-        self._backend.surface.on_drop_shadow_margin_changed(self.drop_shadow_margin_changed.emit)
+        self._backend.surface.on_surface_changed(self.surface_changed.emit)
 
     @property
     def capabilities(self) -> PlatformCapabilities:
@@ -56,8 +57,8 @@ class PlatformService(QObject):
     def read_state(self, window: QWindow) -> WindowStateSnapshot:
         return self._backend.window_state.read_state(window)
 
-    def drop_shadow_margin(self, window: QWindow) -> int:
-        return self._backend.surface.drop_shadow_margin(window)
+    def read_surface(self, window: QWindow) -> SurfaceSnapshot:
+        return self._backend.surface.read_surface(window)
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.window_configuration.configure_window(app, window)
