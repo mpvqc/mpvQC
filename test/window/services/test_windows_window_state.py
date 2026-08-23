@@ -14,9 +14,9 @@ from PySide6.QtGui import QWindow
 if sys.platform != "win32":
     pytest.skip("Requires Windows", allow_module_level=True)
 
-from mpvqc.services.platform.win import window_state
-from mpvqc.services.platform.win.native import WindowPlacement
-from mpvqc.services.platform.win.window_state import WindowsWindowStateHandler
+from mpvqc.window.services.windows import WindowPlacement, WindowsWindowStateHandler
+
+WINDOW_STATE = "mpvqc.window.services.windows.window_state"
 
 NORMAL_RECT = (100, 100, 900, 700)
 MONITOR = (0, 0, 1920, 1080)
@@ -103,83 +103,67 @@ def fake(monkeypatch) -> FakeWin32Window:
         fake.maximized = False
 
     monkeypatch.setattr(
-        window_state,
-        "get_monitor_rect",
+        f"{WINDOW_STATE}.get_monitor_rect",
         lambda _hwnd: fake.monitor,
     )
     monkeypatch.setattr(
-        window_state,
-        "get_resize_border_thickness",
+        f"{WINDOW_STATE}.get_resize_border_thickness",
         lambda _hwnd, *, horizontal=True: BORDER,
     )
     monkeypatch.setattr(
-        window_state,
-        "is_maximized",
+        f"{WINDOW_STATE}.is_maximized",
         lambda _hwnd: fake.maximized,
     )
     monkeypatch.setattr(
-        window_state,
-        "is_minimized",
+        f"{WINDOW_STATE}.is_minimized",
         lambda _hwnd: fake.minimized,
     )
     monkeypatch.setattr(
-        window_state,
-        "is_fullscreen",
+        f"{WINDOW_STATE}.is_fullscreen",
         lambda _hwnd: not fake.maximized and fake.covers_monitor(),
     )
     monkeypatch.setattr(
-        window_state,
-        "strip_maximize_style",
+        f"{WINDOW_STATE}.strip_maximize_style",
         strip_maximize_style,
     )
     monkeypatch.setattr(
-        window_state,
-        "set_outer_window_rect",
+        f"{WINDOW_STATE}.set_outer_window_rect",
         lambda _hwnd, rect: fake.set_outer_window_rect(rect),
     )
     monkeypatch.setattr(
-        window_state,
-        "mark_fullscreen_window",
+        f"{WINDOW_STATE}.mark_fullscreen_window",
         lambda _hwnd, *, fullscreen: fake.calls.append(("marker", fullscreen)),
     )
     monkeypatch.setattr(
-        window_state,
-        "set_window_corners_rounded",
+        f"{WINDOW_STATE}.set_window_corners_rounded",
         lambda _hwnd, *, rounded: fake.calls.append(("corners", rounded)),
     )
     monkeypatch.setattr(
-        window_state,
-        "set_window_border_visible",
+        f"{WINDOW_STATE}.set_window_border_visible",
         lambda _hwnd, *, visible: fake.calls.append(("border", visible)),
     )
     monkeypatch.setattr(
-        window_state,
-        "set_window_transitions_enabled",
+        f"{WINDOW_STATE}.set_window_transitions_enabled",
         lambda _hwnd, *, enabled: fake.calls.append(("transitions", enabled)),
     )
     monkeypatch.setattr(
-        window_state,
-        "refresh_window_frame",
+        f"{WINDOW_STATE}.refresh_window_frame",
         lambda _hwnd: fake.calls.append(("refresh",)),
     )
     monkeypatch.setattr(
-        window_state,
-        "get_window_placement",
+        f"{WINDOW_STATE}.get_window_placement",
         lambda _hwnd: fake.get_window_placement(),
     )
     monkeypatch.setattr(
-        window_state,
-        "set_window_placement",
+        f"{WINDOW_STATE}.set_window_placement",
         lambda _hwnd, p: fake.set_window_placement(p),
     )
     monkeypatch.setattr(
-        window_state,
-        "maximize_window",
+        f"{WINDOW_STATE}.maximize_window",
         lambda _hwnd: fake.maximize(),
     )
     monkeypatch.setattr(
-        window_state,
-        "minimize_window",
+        f"{WINDOW_STATE}.minimize_window",
         lambda _hwnd: fake.minimize(),
     )
     return fake

@@ -13,7 +13,8 @@ from PySide6.QtGui import QGuiApplication, QNativeInterface, QOpenGLContext
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 
-from mpvqc.services import MainWindowService, PlayerService
+from mpvqc.services import PlayerService
+from mpvqc.window.services import MainWindowService
 
 if TYPE_CHECKING:
     from types import NoneType

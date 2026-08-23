@@ -11,9 +11,6 @@ from .formatter_time import TimeFormatterService as TimeFormatterService
 from .i18n import InternationalizationService as InternationalizationService
 from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
-from .main_window import MainWindowService as MainWindowService
-from .platform import PlatformService as PlatformService
-from .platform import WindowButtonPreference as WindowButtonPreference
 from .player import PlayerService as PlayerService
 from .quit import QuitService as QuitService
 from .resource import ResourceService as ResourceService

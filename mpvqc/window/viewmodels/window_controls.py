@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import MainWindowService, PlatformService
+from mpvqc.window.services import MainWindowService, PlatformService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,7 +15,7 @@ _WINDOW_RADIUS = 8
 
 
 @QmlElement
-class MpvqcWindowViewModel(QObject):
+class MpvqcWindowControlsViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
     _platform = inject.attr(PlatformService)
 

@@ -73,7 +73,7 @@ def select_platform_backend() -> PlatformBackend:
 
 
 def _create_windows_backend() -> PlatformBackend:
-    from .win import WindowRevealFilter, WindowsFrameIntegration, WindowsWindowStateHandler
+    from .windows import WindowRevealFilter, WindowsFrameIntegration, WindowsWindowStateHandler
 
     frame = WindowsFrameIntegration()
 

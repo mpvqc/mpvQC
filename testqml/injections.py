@@ -21,23 +21,25 @@ from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    MainWindowService,
-    PlatformService,
     PlayerService,
     SettingsFileService,
     VersionCheckerService,
     VideoResizeService,
 )
-from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.embedded_player import NoEmbeddedPlayerTracker
-from mpvqc.services.platform.surface import NoSurfaceHandler
-from mpvqc.services.platform.window_buttons import StaticWindowButtons
-from mpvqc.services.platform.window_configuration import NoWindowConfigurator
-from mpvqc.services.platform.window_reveal import NoWindowRevealer
-from mpvqc.services.platform.window_state import QtWindowStateHandler
 from mpvqc.services.player.state import OBSERVED_PROPERTIES, make_observer
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
+from mpvqc.window.services import (
+    MainWindowService,
+    NoEmbeddedPlayerTracker,
+    NoSurfaceHandler,
+    NoWindowConfigurator,
+    NoWindowRevealer,
+    PlatformBackend,
+    PlatformService,
+    QtWindowStateHandler,
+    StaticWindowButtons,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

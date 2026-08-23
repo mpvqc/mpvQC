@@ -8,7 +8,7 @@ import pytest
 from PySide6.QtCore import QEvent, QPointF, Qt
 from PySide6.QtGui import QMouseEvent, QWindow
 
-from mpvqc.services.platform.linux.resize_filter import (
+from mpvqc.window.services.linux import (
     WindowResizeFilter,
     cursor_shape_for,
     resize_edges_at,
