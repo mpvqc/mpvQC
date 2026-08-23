@@ -21,6 +21,7 @@ def test_build_info(build_info_service):
     assert build_info_service.version
     assert build_info_service.commit
     assert isinstance(build_info_service.is_release, bool)
+    assert build_info_service.offers_update_check is False
 
     dependency_names = {dep.package for dep in build_info_service.dependencies}
     assert "PySide6-Essentials" in dependency_names
@@ -38,7 +39,7 @@ def test_build_info(build_info_service):
         assert dep.platforms
 
 
-def make_build_info(*, is_release: bool, origin: str) -> BuildInfo:
+def make_build_info(*, is_release: bool, origin: str, offers_update_check: bool = False) -> BuildInfo:
     return BuildInfo(
         application=ApplicationInfo(
             name="mpvQC",
@@ -49,10 +50,23 @@ def make_build_info(*, is_release: bool, origin: str) -> BuildInfo:
             commit="abc12345",
             is_release=is_release,
             origin=origin,
+            offers_update_check=offers_update_check,
         ),
         dependencies=(),
         dev_dependencies=(),
     )
+
+
+@pytest.mark.parametrize("offers_update_check", [True, False])
+def test_offers_update_check(build_info_service: BuildInfoService, offers_update_check: bool):
+    # noinspection PyProtectedMember
+    build_info_service._build_info = make_build_info(
+        is_release=True,
+        origin="mpvqc-github",
+        offers_update_check=offers_update_check,
+    )
+
+    assert build_info_service.offers_update_check is offers_update_check
 
 
 @pytest.mark.parametrize(

@@ -193,3 +193,6 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Build origin**: whether this binary came from a project release pipeline: the declared channel name, or
   `unofficial` when no channel was declared. The pipeline declares it. Runtime never infers it. The Flatpak app ID can
   veto a declared channel but never grant one.
+- **Offers update check**: whether checking for new versions is the build's own job, because nothing that shipped the
+  build will update it. The pipeline that ships such a build declares it, the same way a channel is declared; false in
+  every unstamped build.

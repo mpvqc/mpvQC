@@ -11,12 +11,21 @@ from pathlib import Path
 BUILD_INFO_PATH = Path("data/build-info.toml")
 
 
-def render_build_info(existing_lines: list[str], *, tag: str, commit: str, is_release: bool, channel: str) -> list[str]:
+def render_build_info(
+    existing_lines: list[str],
+    *,
+    tag: str,
+    commit: str,
+    is_release: bool,
+    channel: str,
+    offers_update_check: bool,
+) -> list[str]:
     replacements = {
         "version": f'version = "{tag}"',
         "commit": f'commit = "{commit}"',
         "is_release": f"is_release = {'true' if is_release else 'false'}",
         "channel": f'channel = "{channel}"',
+        "offers_update_check": f"offers_update_check = {'true' if offers_update_check else 'false'}",
     }
 
     lines: list[str] = []
@@ -49,6 +58,10 @@ def determine_channel(env: Mapping[str, str]) -> str:
     return env.get("MPVQC_BUILD_CHANNEL", "")
 
 
+def determine_offers_update_check(env: Mapping[str, str]) -> bool:
+    return env.get("MPVQC_BUILD_OFFERS_UPDATE_CHECK", "") == "true"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Stamp version info into data/build-info.toml")
     parser.add_argument("--tag", required=True, help="Version to stamp")
@@ -65,6 +78,7 @@ def main() -> None:
             commit=args.commit,
             is_release=args.is_release == "true",
             channel=determine_channel(os.environ),
+            offers_update_check=determine_offers_update_check(os.environ),
         )
     except KeyError as e:
         print(e.args[0], file=sys.stderr)

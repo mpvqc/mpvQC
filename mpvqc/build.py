@@ -19,6 +19,7 @@ class ApplicationInfo:
     commit: str
     is_release: bool
     origin: str
+    offers_update_check: bool
 
 
 @dataclass(frozen=True)
@@ -69,6 +70,7 @@ def get_build_info() -> BuildInfo:
             app_id=app["app_id"],
             flatpak_id=os.environ.get("FLATPAK_ID"),
         ),
+        offers_update_check=app.get("offers_update_check", False),
     )
 
     dependencies = [

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-import sys
 
 import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
@@ -13,6 +12,7 @@ from mpvqc.comments.services import ResetService
 from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
 from mpvqc.services import (
+    BuildInfoService,
     DesktopService,
     SettingsService,
     StateService,
@@ -24,6 +24,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcMenuBarViewModel(QObject):
+    _build_info = inject.attr(BuildInfoService)
     _desktop = inject.attr(DesktopService)
     _exporter = inject.attr(ExportService)
     _resetter = inject.attr(ResetService)
@@ -53,7 +54,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Property(bool, constant=True, final=True)
     def isUpdateMenuVisible(self) -> bool:
-        return bool(os.environ.get("MPVQC_DEBUG")) or sys.platform == "win32"
+        return bool(os.environ.get("MPVQC_DEBUG")) or self._build_info.offers_update_check
 
     @Property(int, notify=windowTitleFormatChanged)
     def windowTitleFormat(self) -> int:
