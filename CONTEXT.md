@@ -148,6 +148,10 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   stays as the OS arranged it.
 - **Surface**: the whole rectangle the client paints into. When the client draws its own decorations, it extends past
   the visible window by the drop shadow margin. Otherwise, the two are the same rectangle.
+- **Draws own frame**: whether the app is painting its own decorations at this moment: on a floating Linux desktop
+  while the window is neither maximized nor fullscreen, and nowhere else. The platform capability says whether it may;
+  this says whether it is. The rounded corners, the drop shadow, the clipping of content to the border and the drop
+  shadow margin all follow this one answer.
 - **Drop shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding
   the resize band. Zero when maximized, fullscreen, on a tiling desktop, and on Windows. On Wayland the compositor draws
   no drop shadow for a frameless client, so an app that wants one has to paint it itself.

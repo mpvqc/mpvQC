@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, NamedTuple
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.window.services import NoSurfaceHandler
+from mpvqc.window.services import NoSurfaceHandler, SurfaceSnapshot
 from mpvqc.window.services.linux import SurfaceController
 
 if TYPE_CHECKING:
@@ -20,105 +20,108 @@ MINIMIZED = Qt.WindowState.WindowMinimized
 MAXIMIZED = Qt.WindowState.WindowMaximized
 FULLSCREEN = Qt.WindowState.WindowFullScreen
 
+NO_OWN_FRAME = SurfaceSnapshot(draws_own_frame=False, drop_shadow_margin=0)
+OWN_FRAME = SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=88)
 
-class DropShadowMarginTestCase(NamedTuple):
+
+class ReadSurfaceTestCase(NamedTuple):
     name: str
     drop_shadow_margin: int
     states: Qt.WindowState
-    expected: int
+    expected: SurfaceSnapshot
 
 
 @pytest.mark.parametrize(
     "case",
     [
-        DropShadowMarginTestCase(
-            "zero_margin_reads_zero",
+        ReadSurfaceTestCase(
+            name="zero_margin_still_draws_the_frame",
             drop_shadow_margin=0,
             states=NO_STATE,
-            expected=0,
+            expected=SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=0),
         ),
-        DropShadowMarginTestCase(
-            "normal_keeps_margin",
+        ReadSurfaceTestCase(
+            name="normal_draws_the_frame_with_the_margin",
             drop_shadow_margin=88,
             states=NO_STATE,
-            expected=88,
+            expected=OWN_FRAME,
         ),
-        DropShadowMarginTestCase(
-            "maximized_collapses_margin",
+        ReadSurfaceTestCase(
+            name="maximized_drops_the_frame_and_the_margin",
             drop_shadow_margin=88,
             states=MAXIMIZED,
-            expected=0,
+            expected=NO_OWN_FRAME,
         ),
-        DropShadowMarginTestCase(
-            "fullscreen_collapses_margin",
+        ReadSurfaceTestCase(
+            name="fullscreen_drops_the_frame_and_the_margin",
             drop_shadow_margin=88,
             states=FULLSCREEN,
-            expected=0,
+            expected=NO_OWN_FRAME,
         ),
-        DropShadowMarginTestCase(
-            "minimized_from_maximized_stays_collapsed",
+        ReadSurfaceTestCase(
+            name="minimized_from_maximized_stays_without_frame",
             drop_shadow_margin=88,
             states=MAXIMIZED | MINIMIZED,
-            expected=0,
+            expected=NO_OWN_FRAME,
         ),
-        DropShadowMarginTestCase(
-            "minimized_from_normal_keeps_margin",
+        ReadSurfaceTestCase(
+            name="minimized_from_normal_keeps_the_frame",
             drop_shadow_margin=88,
             states=MINIMIZED,
-            expected=88,
+            expected=OWN_FRAME,
         ),
     ],
     ids=lambda case: case.name,
 )
-def test_drop_shadow_margin(case: DropShadowMarginTestCase, make_recording_window):
+def test_read_surface(case: ReadSurfaceTestCase, make_recording_window):
     window = make_recording_window(case.states)
     handler: SurfaceHandler = SurfaceController(drop_shadow_margin=case.drop_shadow_margin)
 
-    assert handler.drop_shadow_margin(window) == case.expected
+    assert handler.read_surface(window) == case.expected
 
 
 class PushTestCase(NamedTuple):
     name: str
     initial_states: Qt.WindowState
     transitions: list[Qt.WindowState]
-    pushed: list[int]
+    pushed: list[SurfaceSnapshot]
 
 
 @pytest.mark.parametrize(
     "case",
     [
         PushTestCase(
-            "configure_normal_pushes_margin",
+            name="configure_normal_pushes_the_frame",
             initial_states=NO_STATE,
             transitions=[],
-            pushed=[88],
+            pushed=[OWN_FRAME],
         ),
         PushTestCase(
-            "configure_maximized_stays_silent",
+            name="configure_maximized_stays_silent",
             initial_states=MAXIMIZED,
             transitions=[],
             pushed=[],
         ),
         PushTestCase(
-            "maximize_collapses_and_restore_brings_back",
+            name="maximize_drops_the_frame_and_restore_brings_it_back",
             initial_states=NO_STATE,
             transitions=[MAXIMIZED, NO_STATE],
-            pushed=[88, 0, 88],
+            pushed=[OWN_FRAME, NO_OWN_FRAME, OWN_FRAME],
         ),
         PushTestCase(
-            "fullscreen_to_maximized_pushes_only_the_collapse",
+            name="fullscreen_to_maximized_pushes_only_the_drop",
             initial_states=NO_STATE,
             transitions=[FULLSCREEN, MAXIMIZED],
-            pushed=[88, 0],
+            pushed=[OWN_FRAME, NO_OWN_FRAME],
         ),
         PushTestCase(
-            "minimize_from_normal_stays_silent",
+            name="minimize_from_normal_stays_silent",
             initial_states=NO_STATE,
             transitions=[MINIMIZED, NO_STATE],
-            pushed=[88],
+            pushed=[OWN_FRAME],
         ),
         PushTestCase(
-            "minimize_from_maximized_stays_collapsed",
+            name="minimize_from_maximized_stays_without_frame",
             initial_states=MAXIMIZED,
             transitions=[MAXIMIZED | MINIMIZED, MAXIMIZED],
             pushed=[],
@@ -126,11 +129,11 @@ class PushTestCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_drop_shadow_margin_pushes(case: PushTestCase, qt_app, make_recording_window):
+def test_surface_pushes(case: PushTestCase, qt_app, make_recording_window):
     window = make_recording_window(case.initial_states)
     controller = SurfaceController(drop_shadow_margin=88)
-    pushed: list[int] = []
-    controller.on_drop_shadow_margin_changed(pushed.append)
+    pushed: list[SurfaceSnapshot] = []
+    controller.on_surface_changed(pushed.append)
 
     controller.configure_window(qt_app, window)
     for states in case.transitions:
@@ -154,14 +157,14 @@ def test_screen_change_reapplies_content_margins(qt_app, make_recording_window, 
     assert applied == [88, 88]
 
 
-def test_no_surface_handler_reads_zero_and_never_pushes(make_recording_window):
+def test_no_surface_handler_reads_no_own_frame_and_never_pushes(make_recording_window):
     handler: SurfaceHandler = NoSurfaceHandler()
-    pushed: list[int] = []
-    handler.on_drop_shadow_margin_changed(pushed.append)
+    pushed: list[SurfaceSnapshot] = []
+    handler.on_surface_changed(pushed.append)
 
     for states in (NO_STATE, MINIMIZED, MAXIMIZED, FULLSCREEN):
         window = make_recording_window(states)
-        assert handler.drop_shadow_margin(window) == 0
+        assert handler.read_surface(window) == NO_OWN_FRAME
         window.setWindowStates(states)
 
     assert pushed == []

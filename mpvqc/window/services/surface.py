@@ -4,27 +4,36 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from typing import Final
 
     from PySide6.QtGui import QWindow
 
 
+@dataclass(frozen=True)
+class SurfaceSnapshot:
+    draws_own_frame: bool
+    drop_shadow_margin: int
+
+
+NO_OWN_FRAME: Final = SurfaceSnapshot(draws_own_frame=False, drop_shadow_margin=0)
+
+
 class SurfaceHandler(Protocol):
-    """Owns the drop shadow margin."""
+    def read_surface(self, window: QWindow) -> SurfaceSnapshot: ...
 
-    def drop_shadow_margin(self, window: QWindow) -> int: ...
-
-    def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None: ...
+    def on_surface_changed(self, callback: Callable[[SurfaceSnapshot], None]) -> None: ...
 
 
 class NoSurfaceHandler:
-    """For platforms where the app draws no drop shadow."""
+    """For platforms where the app draws no frame of its own."""
 
-    def drop_shadow_margin(self, window: QWindow) -> int:  # ruff: ignore[unused-method-argument]
-        return 0
+    def read_surface(self, window: QWindow) -> SurfaceSnapshot:  # ruff: ignore[unused-method-argument]
+        return NO_OWN_FRAME
 
-    def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None:
-        """The margin is always zero here, so it never changes."""
+    def on_surface_changed(self, callback: Callable[[SurfaceSnapshot], None]) -> None:
+        """The surface never changes here."""

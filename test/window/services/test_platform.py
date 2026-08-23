@@ -5,10 +5,11 @@
 import pytest
 from PySide6.QtGui import QWindow
 
-from mpvqc.window.services import WindowButtonPreference, windows_capabilities
+from mpvqc.window.services import SurfaceSnapshot, WindowButtonPreference, windows_capabilities
 
 ALL_BUTTONS = WindowButtonPreference(minimize=True, maximize=True, close=True)
 CLOSE_ONLY = WindowButtonPreference(minimize=False, maximize=False, close=True)
+OWN_FRAME = SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=88)
 
 
 @pytest.fixture
@@ -53,11 +54,19 @@ def test_a_pushed_button_preference_arrives_as_a_signal(make_platform_service, m
     assert spy.at(0, 0) == CLOSE_ONLY
 
 
-def test_a_pushed_drop_shadow_margin_arrives_as_a_signal(make_platform_service, surface, make_spy):
+def test_read_surface_hands_out_the_handler_snapshot(make_platform_service, surface, window):
+    surface.snapshot = OWN_FRAME
     platform = make_platform_service(surface=surface)
-    spy = make_spy(platform.drop_shadow_margin_changed)
 
-    surface.push(88)
+    assert platform.read_surface(window) == OWN_FRAME
+    assert surface.reads == [window]
+
+
+def test_a_pushed_surface_arrives_as_a_signal(make_platform_service, surface, make_spy):
+    platform = make_platform_service(surface=surface)
+    spy = make_spy(platform.surface_changed)
+
+    surface.push(OWN_FRAME)
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == 88
+    assert spy.at(0, 0) == OWN_FRAME

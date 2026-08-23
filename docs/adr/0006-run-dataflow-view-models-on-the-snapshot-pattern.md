@@ -20,8 +20,8 @@ property that carries derived state. The cycle between the two is three motions:
 
 The pattern covers more than view models. A service that consumes upstream signals and hands derived values to its
 consumers runs on the same cycle, and the main window service is the one instance: it folds the window's surface size,
-the platform's drop shadow margin and state read, the application's focus window and the display zoom into the values
-the window controls, the player and the video resize service read. Being bound to a window changes two things. The
+the platform's surface and state reads, the application's focus window and the display zoom into the values the window
+controls, the player and the video resize service read. Being bound to a window changes two things. The
 read-once moment is the bind, not construction, because there is no window to read before it: binding reads every
 upstream once and runs a single update. And a fold may re-read through a port whose platform implementation acts on
 what it reads: the Windows state read retires an abandoned fullscreen session as it answers, and that retire can

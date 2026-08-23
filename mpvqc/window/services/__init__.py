@@ -17,6 +17,7 @@ from .main_window import derive_main_window_props as derive_main_window_props
 from .platform import PlatformService as PlatformService
 from .surface import NoSurfaceHandler as NoSurfaceHandler
 from .surface import SurfaceHandler as SurfaceHandler
+from .surface import SurfaceSnapshot as SurfaceSnapshot
 from .window_buttons import StaticWindowButtons as StaticWindowButtons
 from .window_buttons import WindowButtonPreference as WindowButtonPreference
 from .window_buttons import WindowButtonSource as WindowButtonSource

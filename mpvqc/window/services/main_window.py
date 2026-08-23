@@ -13,6 +13,7 @@ from PySide6.QtCore import QEvent, QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QWindow
 
 from .platform import PlatformService
+from .surface import NO_OWN_FRAME, SurfaceSnapshot
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -27,7 +28,7 @@ logger = logging.getLogger(__name__)
 class MainWindowInputs:
     surface_width: int
     surface_height: int
-    drop_shadow_margin: int
+    surface: SurfaceSnapshot
     is_fullscreen: bool
     is_maximized: bool
     is_main_window_focused: bool
@@ -36,6 +37,7 @@ class MainWindowInputs:
 
 @dataclass(frozen=True)
 class MainWindowProps:
+    draws_own_frame: bool
     drop_shadow_margin: int
     window_geometry_width: int
     window_geometry_height: int
@@ -46,10 +48,12 @@ class MainWindowProps:
 
 
 def derive_main_window_props(inputs: MainWindowInputs) -> MainWindowProps:
+    margin = inputs.surface.drop_shadow_margin
     return MainWindowProps(
-        drop_shadow_margin=inputs.drop_shadow_margin,
-        window_geometry_width=inputs.surface_width - 2 * inputs.drop_shadow_margin,
-        window_geometry_height=inputs.surface_height - 2 * inputs.drop_shadow_margin,
+        draws_own_frame=inputs.surface.draws_own_frame,
+        drop_shadow_margin=margin,
+        window_geometry_width=inputs.surface_width - 2 * margin,
+        window_geometry_height=inputs.surface_height - 2 * margin,
         is_fullscreen=inputs.is_fullscreen,
         is_maximized=inputs.is_maximized,
         is_main_window_focused=inputs.is_main_window_focused,
@@ -60,9 +64,10 @@ def derive_main_window_props(inputs: MainWindowInputs) -> MainWindowProps:
 class MainWindowService(QObject):
     _platform = inject.attr(PlatformService)
 
+    draws_own_frame_changed = Signal(bool)
+    drop_shadow_margin_changed = Signal(int)
     window_geometry_width_changed = Signal(int)
     window_geometry_height_changed = Signal(int)
-    drop_shadow_margin_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
     is_main_window_focused_changed = Signal(bool)
@@ -75,7 +80,7 @@ class MainWindowService(QObject):
         self._inputs = MainWindowInputs(
             surface_width=0,
             surface_height=0,
-            drop_shadow_margin=0,
+            surface=NO_OWN_FRAME,
             is_fullscreen=False,
             is_maximized=False,
             is_main_window_focused=True,
@@ -97,7 +102,7 @@ class MainWindowService(QObject):
             MainWindowInputs(
                 surface_width=window.width(),
                 surface_height=window.height(),
-                drop_shadow_margin=self._platform.drop_shadow_margin(window),
+                surface=self._platform.read_surface(window),
                 is_fullscreen=state.is_fullscreen,
                 is_maximized=state.is_maximized,
                 is_main_window_focused=_is_main_window_focused(window, app.focusWindow()),
@@ -105,7 +110,7 @@ class MainWindowService(QObject):
             )
         )
 
-        self._platform.drop_shadow_margin_changed.connect(self._fold_drop_shadow_margin)
+        self._platform.surface_changed.connect(self._fold_surface)
         window.widthChanged.connect(self._fold_surface_width)
         window.heightChanged.connect(self._fold_surface_height)
         # Moving without resizing (keyboard move via the system menu) can also take
@@ -157,6 +162,10 @@ class MainWindowService(QObject):
     @property
     def window_geometry_height(self) -> int:
         return self._props.window_geometry_height
+
+    @property
+    def draws_own_frame(self) -> bool:
+        return self._props.draws_own_frame
 
     @property
     def drop_shadow_margin(self) -> int:
@@ -232,9 +241,9 @@ class MainWindowService(QObject):
             return
         self._update(inputs)
 
-    @Slot(int)
-    def _fold_drop_shadow_margin(self, margin: int) -> None:
-        self._update(replace(self._inputs, drop_shadow_margin=margin))
+    @Slot(SurfaceSnapshot)
+    def _fold_surface(self, surface: SurfaceSnapshot) -> None:
+        self._update(replace(self._inputs, surface=surface))
 
     @Slot(QWindow)
     def _fold_focus_window(self, focused: QWindow | None) -> None:
@@ -250,6 +259,8 @@ class MainWindowService(QObject):
         if new == old:
             return
         self._props = new
+        if new.draws_own_frame != old.draws_own_frame:
+            self.draws_own_frame_changed.emit(new.draws_own_frame)
         if new.drop_shadow_margin != old.drop_shadow_margin:
             self.drop_shadow_margin_changed.emit(new.drop_shadow_margin)
         if new.window_geometry_width != old.window_geometry_width:

@@ -11,8 +11,39 @@ TestCase {
     id: testCase
     name: "MpvqcWindowUtility"
 
+    property var _originalViewModel: null
+
+    function init(): void {
+        if (!_originalViewModel) {
+            _originalViewModel = MpvqcWindowUtility._viewModel;
+        }
+    }
+
     function cleanup(): void {
+        MpvqcWindowUtility._viewModel = _originalViewModel;
         MpvqcWindowUtility.contentFrame = null;
+    }
+
+    function test_windowRadiusFollowsOwnFrame_data(): var {
+        return [
+            {
+                tag: "no_own_frame_has_square_corners",
+                drawsOwnFrame: false,
+                expectedRadius: 0
+            },
+            {
+                tag: "own_frame_has_rounded_corners",
+                drawsOwnFrame: true,
+                expectedRadius: 8
+            }
+        ];
+    }
+
+    function test_windowRadiusFollowsOwnFrame(data): void {
+        windowViewModelMock.drawsOwnFrame = data.drawsOwnFrame;
+        MpvqcWindowUtility._viewModel = windowViewModelMock;
+
+        compare(MpvqcWindowUtility.windowRadius, data.expectedRadius);
     }
 
     function test_getEdgeViolations_data(): var {
@@ -108,5 +139,18 @@ TestCase {
         id: frame
         width: 300
         height: 200
+    }
+
+    QtObject {
+        id: windowViewModelMock
+
+        readonly property int windowGeometryWidth: 1280
+        readonly property int windowGeometryHeight: 720
+        readonly property bool isFullscreen: false
+        readonly property bool isMaximized: false
+        readonly property int dropShadowMargin: 0
+        readonly property bool isMainWindowFocused: true
+
+        property bool drawsOwnFrame: false
     }
 }

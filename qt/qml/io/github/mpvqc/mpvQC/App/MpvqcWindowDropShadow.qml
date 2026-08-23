@@ -8,13 +8,13 @@ import QtQuick.Effects
 Item {
     id: root
 
-    required property int margin
+    required property bool drawsOwnFrame
     required property int radius
     required property bool windowActive
 
     property real _focus: root.windowActive ? 1 : 0
 
-    visible: root.margin > 0
+    visible: root.drawsOwnFrame
 
     RectangularShadow {
         anchors.fill: parent

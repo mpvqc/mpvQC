@@ -10,7 +10,10 @@ service that consumes upstream signals and hands derived values to consumers. Wr
 smears across the file, every consumed signal grows a public setter, and tests push state in past the seam production
 uses.
 
-Out of scope: one-shot commands, and view models that only forward slot calls to services. They stay as they are.
+Out of scope: one-shot commands, and view models that only forward to a service. They stay as they are. Forwarding
+covers slot calls, and it covers service values published unchanged under their QML names, each notify connected
+straight to the service's signal: nothing is derived there, so there is no snapshot to keep. The window controls view
+model is one.
 
 ADR 0006 carries the reasoning and the alternatives that were dropped.
 

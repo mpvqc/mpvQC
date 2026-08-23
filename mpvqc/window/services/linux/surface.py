@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, override
 from PySide6.QtCore import QEvent, QObject, Qt, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QRegion
 
+from mpvqc.window.services.surface import NO_OWN_FRAME, SurfaceSnapshot
+
 from .resize_filter import RESIZE_BAND_WIDTH, WindowResizeFilter
 from .window_geometry import apply_wayland_content_margins
 
@@ -36,18 +38,18 @@ class WindowExposeFilter(QObject):
 
 
 class SurfaceController(QObject):
-    """Keeps the drop shadow margin, the input mask and the resize band in step
-    with the window state."""
+    """Keeps the surface, the input mask and the resize band in step with the
+    window state."""
 
-    drop_shadow_margin_changed = Signal(int)
+    surface_changed = Signal(SurfaceSnapshot)
 
     def __init__(self, *, drop_shadow_margin: int) -> None:
         super().__init__()
-        self._normal_drop_shadow_margin = drop_shadow_margin
+        self._drop_shadow_margin = drop_shadow_margin
         self._window: QWindow | None = None
         self._event_filter: WindowResizeFilter | None = None
         self._expose_filter: WindowExposeFilter | None = None
-        self._applied_drop_shadow_margin = 0
+        self._applied_surface = NO_OWN_FRAME
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._window = window
@@ -62,35 +64,35 @@ class SurfaceController(QObject):
         window.visibleChanged.connect(self._on_visible_changed)
         window.widthChanged.connect(self._apply_input_mask)
         window.heightChanged.connect(self._apply_input_mask)
-        window.windowStateChanged.connect(self._sync_drop_shadow_margin)
+        window.windowStateChanged.connect(self._sync_surface)
         window.screenChanged.connect(self._on_screen_changed)
 
-        self._sync_drop_shadow_margin()
+        self._sync_surface()
 
-    def drop_shadow_margin(self, window: QWindow) -> int:
+    def read_surface(self, window: QWindow) -> SurfaceSnapshot:
         states = window.windowStates()
         collapsed = Qt.WindowState.WindowMaximized | Qt.WindowState.WindowFullScreen
         if states & collapsed:
-            return 0
-        return self._normal_drop_shadow_margin
+            return NO_OWN_FRAME
+        return SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=self._drop_shadow_margin)
 
-    def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None:
-        self.drop_shadow_margin_changed.connect(callback)
+    def on_surface_changed(self, callback: Callable[[SurfaceSnapshot], None]) -> None:
+        self.surface_changed.connect(callback)
 
     @Slot()
-    def _sync_drop_shadow_margin(self) -> None:
+    def _sync_surface(self) -> None:
         if self._window is None:
             return
 
-        margin = self.drop_shadow_margin(self._window)
-        if margin == self._applied_drop_shadow_margin:
+        surface = self.read_surface(self._window)
+        if surface == self._applied_surface:
             return
 
-        self._applied_drop_shadow_margin = margin
+        self._applied_surface = surface
         if self._event_filter is not None:
-            self._event_filter.set_drop_shadow_margin(margin)
+            self._event_filter.set_drop_shadow_margin(surface.drop_shadow_margin)
         self._reassert_surface()
-        self.drop_shadow_margin_changed.emit(margin)
+        self.surface_changed.emit(surface)
 
     @Slot(bool)
     def _on_visible_changed(self, visible: bool) -> None:
@@ -110,7 +112,7 @@ class SurfaceController(QObject):
             return
 
         if QGuiApplication.platformName() == "wayland":
-            apply_wayland_content_margins(self._window, self._applied_drop_shadow_margin)
+            apply_wayland_content_margins(self._window, self._applied_surface.drop_shadow_margin)
             return
 
         # Someone who cares would need to add X11 (platformName "xcb") support here
@@ -126,5 +128,5 @@ class SurfaceController(QObject):
         width = self._window.width()
         height = self._window.height()
 
-        inset = max(0, self._applied_drop_shadow_margin - RESIZE_BAND_WIDTH)
+        inset = max(0, self._applied_surface.drop_shadow_margin - RESIZE_BAND_WIDTH)
         self._window.setMask(QRegion(inset, inset, width - 2 * inset, height - 2 * inset))
