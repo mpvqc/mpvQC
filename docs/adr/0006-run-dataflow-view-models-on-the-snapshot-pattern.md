@@ -18,6 +18,16 @@ property that carries derived state. The cycle between the two is three motions:
   its value changed. The swap completing first means an observer of any notify sees consistent state, whatever the
   connection order.
 
+The pattern covers more than view models. A service that consumes upstream signals and hands derived values to its
+consumers runs on the same cycle, and the main window service is the one instance: it folds the window's surface size,
+the platform's drop shadow margin and state read, the application's focus window and the display zoom into the values
+the window controls, the player and the video resize service read. Being bound to a window changes two things. The
+read-once moment is the bind, not construction, because there is no window to read before it: binding reads every
+upstream once and runs a single update. And a fold may re-read through a port whose platform implementation acts on
+what it reads: the Windows state read retires an abandoned fullscreen session as it answers, and that retire can
+re-enter the fold. Such a fold reads before it replaces the inputs, so it folds onto whatever the re-entrant run left
+behind.
+
 Granularity follows the props' co-change structure. One field per property with its own notify is the default. Fields
 that always co-change belong in one composite field behind one notify, as long as the consumer dedupes at the sink.
 Per-field notifies exist so an unrelated update cannot wake an unrelated binding, and where every field moves together
