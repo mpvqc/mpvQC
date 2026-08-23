@@ -10,8 +10,7 @@ import pytest
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtGui import QWindow
 
-from mpvqc.services import MainWindowService, PlatformService
-from mpvqc.services.platform.window_state import WindowStateSnapshot
+from mpvqc.window.services import MainWindowService, PlatformService, WindowStateSnapshot
 
 
 class PlatformServiceStub(QObject):

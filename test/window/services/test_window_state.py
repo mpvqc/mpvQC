@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QWindow
 
-from mpvqc.services.platform.window_state import QtWindowStateHandler, WindowStateSnapshot
+from mpvqc.window.services import QtWindowStateHandler, WindowStateSnapshot
 
 NO_STATE = Qt.WindowState.WindowNoState
 MINIMIZED = Qt.WindowState.WindowMinimized

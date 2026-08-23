@@ -8,15 +8,18 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.services import PlatformService, WindowButtonPreference
-from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.embedded_player import NoEmbeddedPlayerTracker
-from mpvqc.services.platform.surface import NoSurfaceHandler
-from mpvqc.services.platform.window_configuration import NoWindowConfigurator
-from mpvqc.services.platform.window_reveal import NoWindowRevealer
-from mpvqc.services.platform.window_state import QtWindowStateHandler
-from mpvqc.viewmodels import MpvqcWindowButtonsViewModel
-from mpvqc.viewmodels.views.header.window_buttons import (
+from mpvqc.window.services import (
+    NoEmbeddedPlayerTracker,
+    NoSurfaceHandler,
+    NoWindowConfigurator,
+    NoWindowRevealer,
+    PlatformBackend,
+    PlatformService,
+    QtWindowStateHandler,
+    WindowButtonPreference,
+)
+from mpvqc.window.viewmodels import (
+    MpvqcWindowButtonsViewModel,
     WindowButtonsInputs,
     WindowButtonsProps,
     derive_window_buttons_props,

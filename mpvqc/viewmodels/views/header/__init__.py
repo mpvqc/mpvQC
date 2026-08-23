@@ -6,4 +6,3 @@
 from .header import MpvqcHeaderViewModel as MpvqcHeaderViewModel
 from .menu_bar import MpvqcMenuBarViewModel as MpvqcMenuBarViewModel
 from .toolbar import MpvqcToolBarViewModel as MpvqcToolBarViewModel
-from .window_buttons import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel

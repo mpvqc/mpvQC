@@ -14,7 +14,9 @@ from PySide6.QtQuick import QQuickItem, QQuickWindow
 if sys.platform != "win32":
     pytest.skip("Requires Windows", allow_module_level=True)
 
-from mpvqc.services.platform.win import reveal_filter
+from mpvqc.window.services.windows import WindowRevealFilter
+
+REVEAL_FILTER = "mpvqc.window.services.windows.reveal_filter"
 
 
 @pytest.fixture(autouse=True)
@@ -25,8 +27,8 @@ def configure_injections(common_bindings_with):
 @pytest.fixture
 def cloak_calls(monkeypatch):
     calls: list[bool] = []
-    monkeypatch.setattr(reveal_filter, "set_window_cloaked", lambda _hwnd, *, cloaked: calls.append(cloaked))
-    monkeypatch.setattr(reveal_filter, "dwm_flush", lambda: None)
+    monkeypatch.setattr(f"{REVEAL_FILTER}.set_window_cloaked", lambda _hwnd, *, cloaked: calls.append(cloaked))
+    monkeypatch.setattr(f"{REVEAL_FILTER}.dwm_flush", lambda: None)
     return calls
 
 
@@ -38,7 +40,7 @@ def make_reveal_setup(qt_app):
     created = []
 
     def _make():
-        window_filter = reveal_filter.WindowRevealFilter()
+        window_filter = WindowRevealFilter()
         window = QQuickWindow()
         # setParentItem only sets the visual parent, not the QObject parent, so
         # PySide keeps Python ownership: the list holds a reference, or the item

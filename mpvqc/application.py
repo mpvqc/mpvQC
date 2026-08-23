@@ -19,9 +19,9 @@ from mpvqc.services import (
     FileStartupService,
     FontLoaderService,
     InternationalizationService,
-    MainWindowService,
     SettingsService,
 )
+from mpvqc.window.services import MainWindowService
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

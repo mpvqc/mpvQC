@@ -1,6 +1,6 @@
 ---
 name: slice-imports
-description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/importing/) or its test tree, when moving code between roles, and when adding a new feature slice.
+description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/importing/, mpvqc/window/) or its test tree, when moving code between roles, and when adding a new feature slice.
 ---
 
 # Slice imports
@@ -45,6 +45,11 @@ slice carries a `domain`, and none adds one.
 - **Role root**: each role's `__init__` is its public API. Import names from the role root (`mpvqc.services`,
   `mpvqc.<slice>.<role>`), in production and in tests alike. A name worth reaching for is worth exporting from the
   root.
+- **Held roots**: a package inside a role that the role holds as a root of its own instead of re-exporting. An import
+  names `mpvqc.<slice>.<role>.<package>` and takes it from there, and the role root above it re-exports none of its
+  names. A package earns the status when re-exporting it would fail or would swamp the role: the `linux` and `windows`
+  platform packages, because the role root holds unconditional re-exports and re-exporting the Windows package would
+  import Win32 bindings everywhere else. A new held root joins by being listed in the checker's `HELD_ROOTS` table.
 - **Top level**: `mpvqc.shared` is the shared pure vocabulary. `mpvqc.jobs` is a helper for services and view models.
   Any other top-level module needs a row in the checker's tables before a slice uses it.
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and the composition roots

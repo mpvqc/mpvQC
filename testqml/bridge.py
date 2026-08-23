@@ -40,7 +40,7 @@ from mpvqc.services import (
     StateService,
 )
 from mpvqc.shared import Comment
-from mpvqc.viewmodels import MpvqcWindowViewModel
+from mpvqc.window.viewmodels import MpvqcWindowControlsViewModel
 from testqml import import_wizard_fixtures
 from testqml.injections import (
     FIXTURES_DIR,
@@ -127,7 +127,7 @@ _SWAPPED_VIEW_MODELS = (
         "io.github.mpvqc.mpvQC.Utility",
         "MpvqcWindowUtility",
         "_viewModel",
-        MpvqcWindowViewModel,
+        MpvqcWindowControlsViewModel,
     ),
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Utility",
