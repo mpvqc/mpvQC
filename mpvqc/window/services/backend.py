@@ -82,9 +82,9 @@ def _create_windows_backend() -> PlatformBackend:
 def _create_linux_desktop_backend() -> PlatformBackend:
     from .linux import SurfaceController
 
-    # The margin must exceed the widest shadow blur plus offset, otherwise the
+    # The margin must exceed the widest shadow blur plus spread, otherwise the
     # soft edge clips at the surface boundary.
-    surface = SurfaceController(drop_shadow_margin=88)
+    surface = SurfaceController(drop_shadow_margin=25)
 
     return PlatformBackend(
         capabilities=linux_desktop_capabilities(),
