@@ -40,6 +40,10 @@ class BuildInfoService:
         return self._build_info.application.is_release
 
     @property
+    def offers_update_check(self) -> bool:
+        return self._build_info.application.offers_update_check
+
+    @property
     def dependencies(self) -> tuple[Dependency, ...]:
         return self._build_info.dependencies
 

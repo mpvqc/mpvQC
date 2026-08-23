@@ -13,11 +13,17 @@ from mpvqc.comments.services import ResetService
 from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
 from mpvqc.services import (
+    BuildInfoService,
     DesktopService,
     SettingsService,
     StateService,
 )
 from mpvqc.viewmodels import MpvqcMenuBarViewModel
+
+
+@pytest.fixture
+def build_info_service_mock() -> MagicMock:
+    return MagicMock(spec_set=BuildInfoService)
 
 
 @pytest.fixture
@@ -44,6 +50,7 @@ def view_model() -> MpvqcMenuBarViewModel:
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
+    build_info_service_mock,
     reset_service_mock,
     state_service,
     settings_service,
@@ -51,6 +58,7 @@ def configure_inject(
     desktop_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
+        binder.bind(BuildInfoService, build_info_service_mock)
         binder.bind(DesktopService, desktop_service_mock)
         binder.bind(StateService, state_service)
         binder.bind(ResetService, reset_service_mock)
@@ -176,3 +184,29 @@ def test_open_app_data_folder(view_model, desktop_service_mock):
     view_model.openAppDataFolder()
 
     desktop_service_mock.open_app_data_folder.assert_called_once_with()
+
+
+@pytest.mark.parametrize(
+    ("debug_env", "offers_update_check", "expected"),
+    [
+        (None, False, False),
+        (None, True, True),
+        ("1", False, True),
+        ("1", True, True),
+    ],
+)
+def test_is_update_menu_visible(
+    view_model,
+    build_info_service_mock,
+    monkeypatch,
+    debug_env,
+    offers_update_check,
+    expected,
+):
+    if debug_env is None:
+        monkeypatch.delenv("MPVQC_DEBUG", raising=False)
+    else:
+        monkeypatch.setenv("MPVQC_DEBUG", debug_env)
+    build_info_service_mock.offers_update_check = offers_update_check
+
+    assert view_model.isUpdateMenuVisible is expected
