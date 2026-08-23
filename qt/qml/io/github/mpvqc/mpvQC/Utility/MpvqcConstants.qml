@@ -5,15 +5,8 @@
 pragma Singleton
 
 import QtQuick
-import QtQuick.Controls
 
 QtObject {
-
-    // On Windows the player is a native child window and paints over the scene,
-    // so popups have to be windows of their own to stay visible above it.
-    // Everywhere else the player renders in-scene, and in-scene popups stay the
-    // better choice while Qt's popup windows carry bugs like QTBUG-145585.
-    readonly property int preferredPopupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
 
     // Stacking order inside the window overlay, low to high.
     readonly property int zInlineEditor: 0

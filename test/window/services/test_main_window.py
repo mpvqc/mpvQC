@@ -4,11 +4,10 @@
 
 from collections.abc import Callable, Generator
 from typing import NamedTuple
-from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import QEvent, QObject, Qt, Signal
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QGuiApplication, QWindow
 
 from mpvqc.window.services import (
@@ -21,33 +20,19 @@ from mpvqc.window.services import (
 )
 
 
-class PlatformServiceStub(QObject):
-    """Carries a real drop_shadow_margin_changed signal so tests can drive pushes;
-    everything else is a mock."""
-
-    drop_shadow_margin_changed = Signal(int)
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.read_state = MagicMock(return_value=WindowStateSnapshot(is_fullscreen=False, is_maximized=False))
-        self.drop_shadow_margin = MagicMock(return_value=0)
-        self.configure_window = MagicMock()
-        self.minimize = MagicMock()
-        self.maximize = MagicMock()
-        self.show_normal = MagicMock()
-        self.enter_fullscreen = MagicMock()
-        self.exit_fullscreen = MagicMock()
-
-
 @pytest.fixture
-def platform_service_stub():
-    return PlatformServiceStub()
+def platform_service(make_platform_service, window_state, surface, window_configurator) -> PlatformService:
+    return make_platform_service(
+        window_state=window_state,
+        surface=surface,
+        window_configuration=window_configurator,
+    )
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with, platform_service_stub):
+def configure_injections(common_bindings_with, platform_service):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlatformService, platform_service_stub)
+        binder.bind(PlatformService, platform_service)
 
     common_bindings_with(custom_bindings)
 
@@ -249,12 +234,13 @@ class InitialBroadcastCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_initialize_broadcasts_what_the_first_read_changed(case, platform_service_stub, service, window, spy_notifies):
-    platform_service_stub.drop_shadow_margin.return_value = case.drop_shadow_margin
+def test_initialize_broadcasts_what_the_first_read_changed(case, surface, service, window, spy_notifies):
+    surface.margin = case.drop_shadow_margin
     spies = spy_notifies(service)
 
     service.initialize(window)
 
+    assert surface.reads == [window]
     # No window holds focus offscreen, so the first read takes focus off the zero snapshot.
     assert emissions(spies) == {
         "drop_shadow_margin": case.expected_margin_emissions,
@@ -271,9 +257,9 @@ def test_initialize_broadcasts_what_the_first_read_changed(case, platform_servic
     assert service.drop_shadow_margin == case.drop_shadow_margin
 
 
-def test_initialize_emits_in_the_props_field_order(platform_service_stub, service, window):
-    platform_service_stub.drop_shadow_margin.return_value = 88
-    platform_service_stub.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
+def test_initialize_emits_in_the_props_field_order(surface, window_state, service, window):
+    surface.margin = 88
+    window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
     order: list[str] = []
     service.drop_shadow_margin_changed.connect(lambda _: order.append("drop_shadow_margin"))
     service.window_geometry_width_changed.connect(lambda _: order.append("window_geometry_width"))
@@ -296,10 +282,10 @@ def test_initialize_emits_in_the_props_field_order(platform_service_stub, servic
     ]
 
 
-def test_initialize_configures_the_window_on_the_platform(platform_service_stub, qt_app, service, window):
+def test_initialize_configures_the_window_on_the_platform(window_configurator, qt_app, service, window):
     service.initialize(window)
 
-    platform_service_stub.configure_window.assert_called_once_with(qt_app, window)
+    assert window_configurator.configured == [(qt_app, window)]
 
 
 def test_resize_emits_the_geometry_alone(initialized_service, window, spy_notifies):
@@ -346,11 +332,11 @@ class ResizeCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_resize_re_reads_the_window_state_in_the_same_cycle(
-    case, platform_service_stub, initialized_service, window, spy_notifies
+    case, window_state, initialized_service, window, spy_notifies
 ):
     spies = spy_notifies(initialized_service)
 
-    platform_service_stub.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
+    window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     case.resize(window)
 
     assert emissions(spies) == {
@@ -365,10 +351,10 @@ def test_resize_re_reads_the_window_state_in_the_same_cycle(
     assert spies["is_fullscreen"].at(0, 0) is True
 
 
-def test_pushed_margin_emits_margin_and_geometry(platform_service_stub, initialized_service, spy_notifies):
+def test_pushed_margin_emits_margin_and_geometry(surface, initialized_service, spy_notifies):
     spies = spy_notifies(initialized_service)
 
-    platform_service_stub.drop_shadow_margin_changed.emit(88)
+    surface.push(88)
 
     assert emissions(spies) == {
         "drop_shadow_margin": 1,
@@ -385,10 +371,10 @@ def test_pushed_margin_emits_margin_and_geometry(platform_service_stub, initiali
     assert initialized_service.drop_shadow_margin == 88
 
 
-def test_pushed_unchanged_margin_stays_silent(platform_service_stub, initialized_service, spy_notifies):
+def test_pushed_unchanged_margin_stays_silent(surface, initialized_service, spy_notifies):
     spies = spy_notifies(initialized_service)
 
-    platform_service_stub.drop_shadow_margin_changed.emit(0)
+    surface.push(0)
 
     assert emissions(spies) == {
         "drop_shadow_margin": 0,
@@ -402,11 +388,11 @@ def test_pushed_unchanged_margin_stays_silent(platform_service_stub, initialized
 
 
 def test_window_state_signal_emits_the_states_the_platform_reads(
-    platform_service_stub, initialized_service, window, spy_notifies
+    window_state, initialized_service, window, spy_notifies
 ):
     spies = spy_notifies(initialized_service)
 
-    platform_service_stub.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
+    window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
     window.windowStateChanged.emit(Qt.WindowState.WindowFullScreen)
 
     assert emissions(spies) == {
@@ -424,12 +410,12 @@ def test_window_state_signal_emits_the_states_the_platform_reads(
     assert initialized_service.is_maximized
 
 
-def test_position_signals_re_read_the_window_state(platform_service_stub, initialized_service, window, spy_notifies):
+def test_position_signals_re_read_the_window_state(window_state, initialized_service, window, spy_notifies):
     spies = spy_notifies(initialized_service)
 
-    platform_service_stub.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
+    window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     window.yChanged.emit(10)
-    platform_service_stub.read_state.return_value = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
+    window_state.state = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
     window.xChanged.emit(50)
 
     assert emissions(spies) == {
@@ -447,10 +433,10 @@ def test_position_signals_re_read_the_window_state(platform_service_stub, initia
 
 
 def test_move_with_unchanged_state_stays_silent_but_still_reads_the_state(
-    platform_service_stub, initialized_service, window, spy_notifies
+    window_state, initialized_service, window, spy_notifies
 ):
     spies = spy_notifies(initialized_service)
-    reads_before = platform_service_stub.read_state.call_count
+    reads_before = len(window_state.reads)
 
     window.xChanged.emit(50)
     window.yChanged.emit(20)
@@ -464,7 +450,7 @@ def test_move_with_unchanged_state_stays_silent_but_still_reads_the_state(
         "is_main_window_focused": 0,
         "display_zoom_factor": 0,
     }
-    assert platform_service_stub.read_state.call_count == reads_before + 2
+    assert len(window_state.reads) == reads_before + 2
 
 
 def test_focus_window_signal_emits_the_focus_notify_alone(qt_app, initialized_service, window, spy_notifies):
@@ -563,7 +549,7 @@ def test_unchanged_device_pixel_ratio_stays_silent(initialized_service, window, 
     assert initialized_service.display_zoom_factor == pytest.approx(1.0)
 
 
-def test_props_swap_completes_before_the_first_emission(platform_service_stub, initialized_service):
+def test_props_swap_completes_before_the_first_emission(surface, initialized_service):
     service = initialized_service
     observed: list[tuple] = []
 
@@ -583,7 +569,7 @@ def test_props_swap_completes_before_the_first_emission(platform_service_stub, i
         )
     )
 
-    platform_service_stub.drop_shadow_margin_changed.emit(88)
+    surface.push(88)
 
     assert observed == [(1280 - 2 * 88, 720 - 2 * 88, 88, False, False, False, 1.0)]
 
@@ -605,26 +591,14 @@ class CommandCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_command_delegates_to_the_platform_with_the_bound_window(
-    case, platform_service_stub, initialized_service, window
-):
-    command_mocks = {
-        "minimize": platform_service_stub.minimize,
-        "maximize": platform_service_stub.maximize,
-        "show_normal": platform_service_stub.show_normal,
-        "enter_fullscreen": platform_service_stub.enter_fullscreen,
-        "exit_fullscreen": platform_service_stub.exit_fullscreen,
-    }
-
+def test_command_delegates_to_the_platform_with_the_bound_window(case, window_state, initialized_service, window):
     case.invoke(initialized_service)
 
-    expected = {name: (1 if name == case.platform_command else 0) for name in command_mocks}
-    assert {name: mock.call_count for name, mock in command_mocks.items()} == expected
-    command_mocks[case.platform_command].assert_called_once_with(window)
+    assert window_state.commands == [(case.platform_command, window)]
 
 
-def test_show_fullscreen_reports_the_state_the_platform_reads(platform_service_stub, initialized_service, make_spy):
-    platform_service_stub.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
+def test_show_fullscreen_reports_the_state_the_platform_reads(window_state, initialized_service, make_spy):
+    window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     fullscreen_spy = make_spy(initialized_service.is_fullscreen_changed)
     maximized_spy = make_spy(initialized_service.is_maximized_changed)
 
@@ -637,11 +611,11 @@ def test_show_fullscreen_reports_the_state_the_platform_reads(platform_service_s
     assert maximized_spy.count() == 0
 
 
-def test_exit_fullscreen_without_prior_enter_stays_silent(platform_service_stub, initialized_service, make_spy):
+def test_exit_fullscreen_without_prior_enter_stays_silent(window_state, initialized_service, window, make_spy):
     spy = make_spy(initialized_service.is_fullscreen_changed)
 
     initialized_service.exit_fullscreen()
 
-    platform_service_stub.exit_fullscreen.assert_called_once()
+    assert window_state.commands == [("exit_fullscreen", window)]
     assert not initialized_service.is_fullscreen
     assert spy.count() == 0

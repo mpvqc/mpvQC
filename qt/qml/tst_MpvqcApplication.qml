@@ -7,12 +7,15 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
     id: testCase
 
     name: "MpvqcApplication"
+
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
     property Component appComponent: Qt.createComponent("MpvqcApplication.qml")
 
@@ -36,6 +39,7 @@ TestCase {
     function cleanup(): void {
         MpvqcWindowUtility._viewModel = _originalWindowViewModel;
         MpvqcWindowUtility.contentFrame = null;
+        bridge.switchPlatform("headless");
     }
 
     function test_minimumSizeCoversDropShadowMargin_data(): var {
@@ -70,6 +74,38 @@ TestCase {
         verify(frame.clip, "the frame must clip, otherwise content paints into the drop shadow margin");
     }
 
+    function test_platformDrivesFlagsAndColor_data(): var {
+        return [
+            {
+                tag: "windows",
+                platform: "windows",
+                frameless: false,
+                transparent: false
+            },
+            {
+                tag: "linux-desktop",
+                platform: "linux-desktop",
+                frameless: true,
+                transparent: true
+            },
+            {
+                tag: "linux-tiling",
+                platform: "linux-tiling",
+                frameless: true,
+                transparent: false
+            }
+        ];
+    }
+
+    function test_platformDrivesFlagsAndColor(data): void {
+        bridge.switchPlatform(data.platform);
+        const window = makeWindow(0);
+
+        compare(Boolean(window.flags & Qt.FramelessWindowHint), data.frameless);
+        compare(Boolean(window.flags & Qt.CustomizeWindowHint), !data.frameless);
+        compare(window.color.a === 0, data.transparent);
+    }
+
     QtObject {
         id: windowViewModelMock
 
@@ -78,8 +114,6 @@ TestCase {
         readonly property bool isFullscreen: false
         readonly property bool isMaximized: false
         readonly property int radius: 0
-        readonly property bool keepsNativeFrame: false
-        readonly property bool drawsDropShadow: true
         readonly property bool isMainWindowFocused: true
 
         property int dropShadowMargin: 0

@@ -11,10 +11,13 @@ if TYPE_CHECKING:
 
 
 def bindings(binder: inject.Binder) -> None:
-    from mpvqc.window.services import MainWindowService, PlatformService
+    from mpvqc.window.services import MainWindowService, PlatformService, select_platform_backend
+
+    def platform_service() -> PlatformService:
+        return PlatformService(select_platform_backend())
 
     binder.bind_to_constructor(MainWindowService, MainWindowService)
-    binder.bind_to_constructor(PlatformService, PlatformService)
+    binder.bind_to_constructor(PlatformService, platform_service)
 
 
 def register_qml_types() -> None:

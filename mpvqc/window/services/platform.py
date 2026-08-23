@@ -8,41 +8,31 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Signal
 
-from .backend import select_platform_backend
 from .window_buttons import WindowButtonPreference
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
     from .backend import PlatformBackend
+    from .capabilities import PlatformCapabilities
     from .window_state import WindowStateSnapshot
 
 
 class PlatformService(QObject):
+    """Facade that orchestrates platform functionality."""
+
     window_button_preference_changed = Signal(WindowButtonPreference)
     drop_shadow_margin_changed = Signal(int)
 
-    def __init__(self, backend: PlatformBackend | None = None) -> None:
+    def __init__(self, backend: PlatformBackend) -> None:
         super().__init__()
-        self._backend = backend or select_platform_backend()
+        self._backend = backend
         self._backend.window_buttons.on_preference_changed(self.window_button_preference_changed.emit)
         self._backend.surface.on_drop_shadow_margin_changed(self.drop_shadow_margin_changed.emit)
 
     @property
-    def keeps_native_frame(self) -> bool:
-        return self._backend.keeps_native_frame
-
-    @property
-    def draws_drop_shadow(self) -> bool:
-        return self._backend.draws_drop_shadow
-
-    @property
-    def embeds_native_player(self) -> bool:
-        return self._backend.embeds_native_player
-
-    @property
-    def sizes_own_window(self) -> bool:
-        return self._backend.sizes_own_window
+    def capabilities(self) -> PlatformCapabilities:
+        return self._backend.capabilities
 
     @property
     def window_button_preference(self) -> WindowButtonPreference:

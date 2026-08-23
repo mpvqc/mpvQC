@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.window.services import MainWindowService, PlatformService
+from mpvqc.window.services import MainWindowService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,7 +17,6 @@ _WINDOW_RADIUS = 8
 @QmlElement
 class MpvqcWindowControlsViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
-    _platform = inject.attr(PlatformService)
 
     windowGeometryWidthChanged = Signal(int)
     windowGeometryHeightChanged = Signal(int)
@@ -64,14 +63,6 @@ class MpvqcWindowControlsViewModel(QObject):
     @Property(bool, notify=isMainWindowFocusedChanged)
     def isMainWindowFocused(self) -> bool:
         return self._main_window.is_main_window_focused
-
-    @Property(bool, constant=True)
-    def keepsNativeFrame(self) -> bool:
-        return self._platform.keeps_native_frame
-
-    @Property(bool, constant=True)
-    def drawsDropShadow(self) -> bool:
-        return self._platform.draws_drop_shadow
 
     @Slot()
     def minimize(self) -> None:

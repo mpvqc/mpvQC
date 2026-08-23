@@ -40,7 +40,7 @@ ToolButton {
 
     ToolTip {
         y: implicitHeight + 16
-        popupType: MpvqcConstants.preferredPopupType
+        popupType: MpvqcPlatform.preferredPopupType
 
         text: root.toolTipText
         visible: root.hovered && !root.pressedDuringHover

@@ -40,7 +40,7 @@ from mpvqc.services import (
     StateService,
 )
 from mpvqc.shared import Comment
-from mpvqc.window.viewmodels import MpvqcWindowControlsViewModel
+from mpvqc.window.viewmodels import MpvqcPlatformViewModel, MpvqcWindowControlsViewModel
 from testqml import import_wizard_fixtures
 from testqml.injections import (
     FIXTURES_DIR,
@@ -48,6 +48,7 @@ from testqml.injections import (
     TEMP_SAVES_DIR,
     PlayerServiceOverride,
     configure_injections,
+    current_platform,
     rebind_main_window,
 )
 
@@ -120,9 +121,18 @@ class _SwappedViewModel(NamedTuple):
     view_model_class: type[QObject]
 
 
-# Singleton-held view models subscribe to service signals when constructed, so
-# resetState() swaps in fresh instances wired to the freshly configured services.
+_PLATFORM_VIEW_MODEL = _SwappedViewModel(
+    "io.github.mpvqc.mpvQC.Utility",
+    "MpvqcPlatform",
+    "_viewModel",
+    MpvqcPlatformViewModel,
+)
+
+# Singleton-held view models subscribe to service signals or snapshot service
+# state when constructed, so resetState() swaps in fresh instances wired to the
+# freshly configured services.
 _SWAPPED_VIEW_MODELS = (
+    _PLATFORM_VIEW_MODEL,
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Utility",
         "MpvqcWindowUtility",
@@ -161,12 +171,17 @@ class MpvqcTestBridge(QObject):
         self._wizard_outcome = {"outcome": "none"}
         configure_injections()
         rebind_main_window()
-        self._recreate_and_replace_singleton_view_models()
+        self._recreate_and_replace_singleton_view_models(_SWAPPED_VIEW_MODELS)
 
-    def _recreate_and_replace_singleton_view_models(self) -> None:
+    @Slot(str)
+    def switchPlatform(self, name: str) -> None:
+        current_platform.switch(name)
+        self._recreate_and_replace_singleton_view_models((_PLATFORM_VIEW_MODEL,))
+
+    def _recreate_and_replace_singleton_view_models(self, entries: tuple[_SwappedViewModel, ...]) -> None:
         context = QQmlEngine.contextForObject(self)
         engine = context.engine()
-        for entry in _SWAPPED_VIEW_MODELS:
+        for entry in entries:
             singleton = engine.singletonInstance(entry.module_uri, entry.singleton_name)
             if not isinstance(singleton, QObject):
                 msg = f"Cannot resolve singleton {entry.singleton_name}"
