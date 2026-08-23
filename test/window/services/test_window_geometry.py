@@ -9,57 +9,47 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.window.services.linux import apply_wayland_content_margins, high_dpi_factor
+from mpvqc.window.services.linux import apply_wayland_content_margins, high_dpi_factor, native_margin
 
 WINDOW_GEOMETRY = "mpvqc.window.services.linux.window_geometry"
 
 
-class ScaledMarginTestCase(NamedTuple):
+class NativeMarginTestCase(NamedTuple):
     name: str
-    factor: float
     margin: int
+    factor: float
     expected: int
 
 
 @pytest.mark.parametrize(
     "case",
     [
-        ScaledMarginTestCase(
-            name="factor_one_passes_margin_through",
-            factor=1.0,
-            margin=88,
-            expected=88,
-        ),
-        ScaledMarginTestCase(
-            name="fractional_factor_scales_margin",
+        NativeMarginTestCase(
+            name="below_half_rounds_down",
+            margin=9,
             factor=1.25,
-            margin=88,
-            expected=110,
+            expected=11,
         ),
-        ScaledMarginTestCase(
-            name="fractional_result_rounds_to_nearest",
-            factor=1.1,
-            margin=88,
-            expected=97,
-        ),
-        ScaledMarginTestCase(
-            name="half_rounds_up_like_qround",
+        NativeMarginTestCase(
+            name="above_half_rounds_up",
+            margin=11,
             factor=1.25,
+            expected=14,
+        ),
+        NativeMarginTestCase(
+            name="half_rounds_up_not_to_even",
             margin=10,
-            expected=13,
-        ),
-        ScaledMarginTestCase(
-            name="zero_margin_stays_zero",
             factor=1.25,
-            margin=0,
-            expected=0,
+            expected=13,
         ),
     ],
     ids=lambda case: case.name,
 )
-def test_content_margins_reach_native_call_in_native_units(
-    case: ScaledMarginTestCase, make_recording_window, monkeypatch
-):
+def test_native_margin_rounds_like_qround(case: NativeMarginTestCase):
+    assert native_margin(case.margin, case.factor) == case.expected
+
+
+def test_content_margins_reach_native_call_scaled_on_all_four_sides(make_recording_window, monkeypatch):
     recorded: list[tuple[int, int, int, int]] = []
 
     def fake_handle(_window_ptr):
@@ -70,12 +60,11 @@ def test_content_margins_reach_native_call_in_native_units(
         recorded.append((margins.left, margins.top, margins.right, margins.bottom))
 
     monkeypatch.setattr(f"{WINDOW_GEOMETRY}._resolve_symbols", lambda: (fake_handle, fake_set_custom_margins))
-    monkeypatch.setattr(f"{WINDOW_GEOMETRY}.high_dpi_factor", lambda _window: case.factor)
+    monkeypatch.setattr(f"{WINDOW_GEOMETRY}.high_dpi_factor", lambda _window: 1.25)
 
-    apply_wayland_content_margins(make_recording_window(), case.margin)
+    apply_wayland_content_margins(make_recording_window(), 88)
 
-    expected = (case.expected, case.expected, case.expected, case.expected)
-    assert recorded == [expected]
+    assert recorded == [(110, 110, 110, 110)]
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="reads the bundled Linux Qt libraries")
