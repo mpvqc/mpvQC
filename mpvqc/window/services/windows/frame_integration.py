@@ -22,11 +22,6 @@ if TYPE_CHECKING:
 
 
 class WindowsFrameIntegration:
-    """Keeps the native frame and reclaims only the caption strip for the QML
-    title bar, through Qt's "_q_windowsCustomMargins".
-
-    Also owns and installs the package's native event filter."""
-
     def __init__(self) -> None:
         self._event_filter = WindowsEventFilter()
 
@@ -36,11 +31,11 @@ class WindowsFrameIntegration:
         window.setFlags(Qt.WindowType.Window)
         window.setProperty("_q_windowsCustomMargins", QMargins(0, -_caption_inset(), 0, 0))
 
-        hwnd_top_lvl = window.winId()
-        self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
+        hwnd_top_level = window.winId()
+        self._event_filter.set_top_level_hwnd(hwnd_top_level)
         app.installNativeEventFilter(self._event_filter)
 
-        _sync_qt_frame_bookkeeping(hwnd_top_lvl)
+        _sync_qt_frame_bookkeeping(hwnd_top_level)
 
     def track(self, win_id: int) -> None:
         self._event_filter.set_embedded_player_hwnd(win_id)

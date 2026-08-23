@@ -1,21 +1,8 @@
-# SPDX-FileCopyrightText: zhiyiYo
-# SPDX-FileCopyrightText: Virace
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# Inspired and based on:
-#  - https://github.com/zhiyiYo/PyQt-Frameless-Window
-#  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
-
-"""Everything that touches Win32 lives here: each API call as a ctypes binding
-with declared types, wrapped in a small function that takes and returns plain
-Python types.
-
-One block per API call: its constants, its structures, its raw binding and the
-wrappers the rest of the package uses.
-
-All calls are best-effort: queries report failure through their return value,
+"""All calls are best-effort: queries report failure through their return value,
 setters fail silently. A broken decoration is not worth an exception."""
 
 from __future__ import annotations
@@ -27,7 +14,6 @@ from ctypes import (
     WinDLL,  # pyrefly: ignore[missing-module-attribute]
     byref,
     c_int,
-    c_short,
     c_size_t,
     c_ssize_t,
     c_void_p,
@@ -37,12 +23,14 @@ from ctypes import (
 )
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
-from typing import TYPE_CHECKING, Literal, NamedTuple, SupportsInt
+from typing import TYPE_CHECKING, NamedTuple
+
+from mpvqc.window.services.windows_decisions import SW_MAXIMIZE, WindowPlacement
 
 if TYPE_CHECKING:
     from typing import Any
 
-type AppBarEdge = Literal["left", "top", "right", "bottom"]
+    from mpvqc.window.services.windows_decisions import AppBarEdge
 
 # Private handles: prototypes set on the shared ctypes.windll cache would be
 # visible to every other library in the process.
@@ -68,7 +56,6 @@ def _set_window_pos(hwnd: int, x: int, y: int, width: int, height: int, flags: i
 
 
 def set_outer_window_rect(hwnd: int, rect: tuple[int, int, int, int]) -> None:
-    """Set the outer rect, frame included."""
     left, top, right, bottom = rect
     _set_window_pos(hwnd, left, top, right - left, bottom - top, _SWP_NOZORDER | _SWP_NOACTIVATE | _SWP_FRAMECHANGED)
 
@@ -78,7 +65,7 @@ def resize_window(hwnd: int, width: int, height: int) -> None:
 
 
 def refresh_window_frame(hwnd: int) -> None:
-    """Force a WM_NCCALCSIZE round trip without moving the window."""
+    """SWP_FRAMECHANGED is what forces the WM_NCCALCSIZE round trip."""
     flags = _SWP_FRAMECHANGED | _SWP_NOSIZE | _SWP_NOMOVE | _SWP_NOZORDER | _SWP_NOACTIVATE
     _set_window_pos(hwnd, 0, 0, 0, 0, flags)
 
@@ -95,25 +82,7 @@ def get_window_rect(hwnd: int) -> tuple[int, int, int, int] | None:
     return rect.left, rect.top, rect.right, rect.bottom
 
 
-_SW_MAXIMIZE = 3
 _SW_MINIMIZE = 6
-_WPF_RESTORETOMAXIMIZED = 0x0002
-
-
-class WindowPlacement(NamedTuple):
-    flags: int
-    show_cmd: int
-    min_position: tuple[int, int]
-    max_position: tuple[int, int]
-    normal_rect: tuple[int, int, int, int]
-
-    @property
-    def shows_maximized(self) -> bool:
-        return self.show_cmd == _SW_MAXIMIZE
-
-    @property
-    def restores_to_maximized(self) -> bool:
-        return bool(self.flags & _WPF_RESTORETOMAXIMIZED)
 
 
 class _WINDOWPLACEMENT(Structure):
@@ -175,7 +144,7 @@ _ShowWindow.restype = BOOL
 
 
 def maximize_window(hwnd: int) -> None:
-    _ShowWindow(hwnd, _SW_MAXIMIZE)
+    _ShowWindow(hwnd, SW_MAXIMIZE)
 
 
 def minimize_window(hwnd: int) -> None:
@@ -408,23 +377,21 @@ def dwm_flush() -> None:
     _DwmFlush()
 
 
-class WindowMessage(NamedTuple):
-    hwnd: int | None
-    message: int
-    w_param: int
-    l_param: int
+class WindowsMessageProbe(MSG):
+    """The message number answers to `message_id`: `message` is the structure's
+    own field name, and a method of that name would shadow it."""
 
+    def hwnd(self) -> int | None:
+        return self.hWnd
 
-def read_window_message(address: SupportsInt) -> WindowMessage:
-    msg = MSG.from_address(int(address))
-    return WindowMessage(msg.hWnd, msg.message, msg.wParam, msg.lParam)
+    def message_id(self) -> int:
+        return self.message
 
+    def w_param(self) -> int:
+        return self.wParam
 
-def read_hit_test_point(l_param: int) -> tuple[int, int]:
-    """The WM_NCHITTEST cursor position: two signed 16-bit screen coordinates."""
-    x = c_short(l_param & 0xFFFF).value
-    y = c_short((l_param >> 16) & 0xFFFF).value
-    return x, y
+    def l_param(self) -> int:
+        return self.lParam
 
 
 class _WINDOWPOS(Structure):

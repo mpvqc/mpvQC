@@ -20,7 +20,7 @@ HELPERS = ("jobs",)
 SHARED_ROLES = {"services": "services", "shared": "shared"}
 MIN_EDGES_PER_SLICE = 20
 
-HELD_ROOTS = ("linux", "windows")
+HELD_ROOTS = ("linux", "windows", "windows_decisions")
 
 SAME_SLICE = {
     "enums": {"shared"},

@@ -1,148 +1,64 @@
-# SPDX-FileCopyrightText: zhiyiYo
-# SPDX-FileCopyrightText: Virace
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# Inspired and based on:
-#  - https://github.com/zhiyiYo/PyQt-Frameless-Window
-#  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
-
 from __future__ import annotations
 
-from typing import override
+from typing import SupportsInt, override
 
 import PySide6.QtCore
 
-from .native import (
-    get_monitor_info_for_rect,
-    get_window_rect,
-    is_maximized,
-    prevent_window_resize_for,
-    read_hit_test_point,
-    read_nccalcsize_proposed_rect,
-    read_window_message,
-    write_nccalcsize_client_rect,
-)
-from .utils import (
-    get_resize_border_thickness,
-    overhangs,
-    overhangs_monitor,
-    reserve_auto_hide_taskbar_strip,
+from mpvqc.window.services.windows_decisions import (
+    ANSWERED_MESSAGE_IDS,
+    CalculateFrameSize,
+    HitTestFrame,
+    PassThrough,
+    PreventResize,
+    handle_non_client_calculate_size,
+    handle_non_client_hit_test,
+    route_window_message,
 )
 
-_WM_STYLECHANGING = 0x007C
-_WM_STYLECHANGED = 0x007D
-_WM_NCCALCSIZE = 0x0083
-_WM_NCHITTEST = 0x0084
-
-_HTTOP = 12
-_HTTOPLEFT = 13
-_HTTOPRIGHT = 14
-
-_WVR_REDRAW = 0x0300
-
-
-def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
-    # Only the top edge needs help: the client covers the caption strip. Left,
-    # right and bottom keep real non-client bands, hit-tested natively.
-    if is_maximized(hwnd):
-        return False, 0
-
-    rect = get_window_rect(hwnd)
-    if rect is None:
-        return False, 0
-
-    fullscreen = overhangs_monitor(rect)
-    if fullscreen:
-        return False, 0
-
-    left, top, right, _ = rect
-    cursor_x, cursor_y = read_hit_test_point(l_param)
-    x_pos = cursor_x - left
-    y_pos = cursor_y - top
-
-    band = get_resize_border_thickness(hwnd, horizontal=False)
-    if y_pos >= band:
-        return False, 0
-
-    width = right - left
-    corner = 2 * band
-    if x_pos < corner:
-        return True, _HTTOPLEFT
-    if x_pos > width - corner:
-        return True, _HTTOPRIGHT
-    return True, _HTTOP
-
-
-def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
-    destination = read_nccalcsize_proposed_rect(l_param)
-
-    destination_monitor = get_monitor_info_for_rect(destination)
-    if destination_monitor is None:
-        return False, 0
-
-    # Qt's frame plus the negative caption margin is wrong in only two cases:
-    # maximized, where the correction overshoots the work area, and fullscreen.
-    maximized = is_maximized(hwnd)
-    fullscreen = not maximized and overhangs(destination, destination_monitor.monitor_rect)
-    if not (maximized or fullscreen):
-        return False, 0
-
-    # A fullscreen window stays larger than its client rect on purpose: DWM
-    # permanently stops animating maximize and restore once a client rect fills
-    # the whole window.
-    client_rect = destination_monitor.work_area if maximized else destination_monitor.monitor_rect
-
-    client_rect = reserve_auto_hide_taskbar_strip(client_rect, destination_monitor.monitor_rect)
-
-    write_nccalcsize_client_rect(l_param, client_rect)
-    return True, _WVR_REDRAW
+from .native import WindowsMessageProbe, prevent_window_resize_for, write_nccalcsize_client_rect
+from .probes import WindowsCalcSizeProbe, WindowsHitTestProbe
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     def __init__(self) -> None:
         super().__init__()
-        self._top_lvl_hwnd: int | None = None
+        self._top_level_hwnd: int | None = None
         self._embedded_player_hwnd: int | None = None
 
-    def set_top_lvl_hwnd(self, hwnd: int) -> None:
-        self._top_lvl_hwnd = hwnd
+    def set_top_level_hwnd(self, hwnd: int) -> None:
+        self._top_level_hwnd = hwnd
 
     def set_embedded_player_hwnd(self, hwnd: int) -> None:
         self._embedded_player_hwnd = hwnd
 
     @override
     def nativeEventFilter(
-        self, _: PySide6.QtCore.QByteArray | bytes | bytearray | memoryview, message: int
+        self, _: PySide6.QtCore.QByteArray | bytes | bytearray | memoryview, message: SupportsInt
     ) -> tuple[bool, int]:
-        msg = read_window_message(message)
+        probe = WindowsMessageProbe.from_address(int(message))
+        if probe.message_id() not in ANSWERED_MESSAGE_IDS:
+            return False, 0
 
-        hwnd = msg.hwnd
+        route = route_window_message(
+            probe,
+            top_level_hwnd=self._top_level_hwnd,
+            embedded_player_hwnd=self._embedded_player_hwnd,
+        )
 
-        match hwnd:
-            case None:
+        match route:
+            case PassThrough():
                 return False, 0
-            case self._embedded_player_hwnd:
+            case PreventResize(hwnd=hwnd):
+                prevent_window_resize_for(hwnd)
                 return False, 0
-            case self._top_lvl_hwnd:
-                pass
-            case _:
-                # Every other window is a popup, and popups must not be
-                # resizable. The style is checked per message because Windows
-                # reuses handle values and Qt can add the frame back at any
-                # time.
-                #
-                # The style messages are skipped: SetWindowLong sends them back
-                # into this filter synchronously, so handling them would call
-                # SetWindowLong again, recursing until win32k's nested-message
-                # limit.
-                if msg.message not in {_WM_STYLECHANGING, _WM_STYLECHANGED}:
-                    prevent_window_resize_for(hwnd)
-                return False, 0
-
-        if msg.message == _WM_NCHITTEST:
-            return handle_non_client_hit_test(hwnd, msg.l_param)
-        if msg.message == _WM_NCCALCSIZE and msg.w_param:
-            return handle_non_client_calculate_size(hwnd, msg.l_param)
-        return False, 0
+            case HitTestFrame(hwnd=hwnd, l_param=l_param):
+                return handle_non_client_hit_test(WindowsHitTestProbe(hwnd, l_param))
+            case CalculateFrameSize(hwnd=hwnd, l_param=l_param):
+                handled, result, client_rect = handle_non_client_calculate_size(WindowsCalcSizeProbe(hwnd, l_param))
+                if client_rect is not None:
+                    write_nccalcsize_client_rect(l_param, client_rect)
+                return handled, result
