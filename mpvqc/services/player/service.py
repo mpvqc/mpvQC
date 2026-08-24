@@ -15,7 +15,6 @@ from PySide6.QtCore import QObject, Signal, Slot
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
 from mpvqc.shared import map_path_to_str
-from mpvqc.window.services import MainWindowService
 
 from .coordinators import SubtitleLoadCoordinator
 from .events import EventMarshal
@@ -34,7 +33,6 @@ logger = logging.getLogger(__name__)
 
 class PlayerService(QObject):
     _build_info = inject.attr(BuildInfoService)
-    _main_window = inject.attr(MainWindowService)
     _paths = inject.attr(ApplicationPathsService)
 
     video_loaded_changed = Signal(bool)
@@ -226,9 +224,6 @@ class PlayerService(QObject):
         if self._mpv is None:
             logger.debug("Ignoring mouse move; player not yet initialized")
             return
-        zoom_factor = self._main_window.display_zoom_factor
-        x = int(x * zoom_factor)
-        y = int(y * zoom_factor)
         self._mpv_player.command_async("mouse", x, y)
 
     @staticmethod

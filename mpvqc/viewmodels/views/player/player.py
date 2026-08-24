@@ -7,7 +7,7 @@ from PySide6.QtCore import Property, QObject, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import PlayerService
-from mpvqc.window.services import PlatformService
+from mpvqc.window.services import MainWindowService, PlatformService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,6 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcPlayerViewModel(QObject):
+    _main_window = inject.attr(MainWindowService)
     _player = inject.attr(PlayerService)
     _platform = inject.attr(PlatformService)
 
@@ -24,7 +25,8 @@ class MpvqcPlayerViewModel(QObject):
 
     @Slot(int, int)
     def moveMouse(self, x: int, y: int) -> None:
-        self._player.move_mouse(x, y)
+        zoom_factor = self._main_window.display_zoom_factor
+        self._player.move_mouse(int(x * zoom_factor), int(y * zoom_factor))
 
     @Slot()
     def scrollUp(self) -> None:

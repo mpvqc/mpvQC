@@ -9,21 +9,16 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.services import (
-    PlayerService,
-    SettingsService,
-    VideoResizeService,
-)
-from mpvqc.services.video_resize import (
-    ResizeResult,
-    ViewDimensions,
-    calculate_horizontal_layout_sizes,
-    calculate_vertical_layout_sizes,
-)
+from mpvqc.services import PlayerService, SettingsService
 from mpvqc.window.services import (
     MainWindowService,
     PlatformCapabilities,
     PlatformService,
+    ResizeResult,
+    VideoResizeService,
+    ViewDimensions,
+    calculate_horizontal_layout_sizes,
+    calculate_vertical_layout_sizes,
     linux_desktop_capabilities,
     linux_tiling_capabilities,
 )

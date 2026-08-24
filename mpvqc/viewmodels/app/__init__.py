@@ -3,4 +3,3 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .app import MpvqcAppViewModel as MpvqcAppViewModel
-from .resize import MpvqcResizeViewModel as MpvqcResizeViewModel
