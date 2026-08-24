@@ -16,5 +16,6 @@ QtObject {
 
     readonly property bool keepsNativeFrame: _viewModel.keepsNativeFrame
     readonly property bool canDrawOwnFrame: _viewModel.canDrawOwnFrame
+    readonly property bool embedsNativePlayer: _viewModel.embedsNativePlayer
     readonly property int preferredPopupType: _viewModel.popupsNeedSeparateWindows ? Popup.Window : Popup.Item
 }

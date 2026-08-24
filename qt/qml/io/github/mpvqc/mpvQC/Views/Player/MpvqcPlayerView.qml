@@ -5,6 +5,7 @@
 import QtQuick
 
 import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
 
 Loader {
     id: root
@@ -20,14 +21,12 @@ Loader {
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
 
-    source: isTestMode ? stubPlayer : viewModel.embedsNativePlayer ? embeddedPlayer : inScenePlayer
+    source: isTestMode ? stubPlayer : MpvqcPlatform.embedsNativePlayer ? embeddedPlayer : inScenePlayer
     asynchronous: true
 
     MpvqcPlayerInputArea {
         objectName: "playerInputArea"
         anchors.fill: parent
-
-        embedsNativePlayer: root.viewModel.embedsNativePlayer
 
         onAddNewCommentMenuRequested: root.addNewCommentMenuRequested()
         onToggleFullScreenRequested: root.toggleFullScreenRequested()

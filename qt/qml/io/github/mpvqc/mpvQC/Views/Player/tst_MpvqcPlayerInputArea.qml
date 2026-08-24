@@ -5,6 +5,9 @@
 import QtQuick
 import QtTest
 
+import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
+
 TestCase {
     id: testCase
 
@@ -13,6 +16,8 @@ TestCase {
     visible: true
     when: windowShown
     name: "MpvqcPlayerInputArea"
+
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
     function makeControl(initProperties = {}) {
         const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
@@ -27,6 +32,19 @@ TestCase {
         });
         verify(spy);
         return spy;
+    }
+
+    function usePlatform(embedsNativePlayer: bool): void {
+        bridge.switchPlatform(embedsNativePlayer ? "windows" : "linux-desktop");
+        compare(MpvqcPlatform.embedsNativePlayer, embedsNativePlayer);
+    }
+
+    function init(): void {
+        bridge.switchPlatform("headless");
+    }
+
+    function cleanup(): void {
+        bridge.switchPlatform("headless");
     }
 
     function test_leftClickEmitsPressedAndReleased() {
@@ -148,8 +166,9 @@ TestCase {
     }
 
     function test_pressRequestsWindowActivation(data) {
+        usePlatform(data.embedsNativePlayer);
+
         const control = makeControl({
-            embedsNativePlayer: data.embedsNativePlayer,
             isWindowActive: data.isWindowActive
         });
         const spy = makeSpy(control, "windowActivationRequested");
@@ -195,8 +214,6 @@ TestCase {
         MpvqcPlayerInputArea {
             width: 200
             height: 200
-
-            embedsNativePlayer: false
         }
     }
 
