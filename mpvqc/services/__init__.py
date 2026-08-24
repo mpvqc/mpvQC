@@ -18,5 +18,3 @@ from .settings import SettingsService as SettingsService
 from .settings_file import SettingsFileService as SettingsFileService
 from .state import StateService as StateService
 from .version_checker import VersionCheckerService as VersionCheckerService
-from .video_resize import VideoResizeService as VideoResizeService
-from .video_resize import ViewDimensions as ViewDimensions

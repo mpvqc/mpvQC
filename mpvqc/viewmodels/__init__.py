@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .app import MpvqcAppViewModel as MpvqcAppViewModel
-from .app import MpvqcResizeViewModel as MpvqcResizeViewModel
 from .message_boxes import MpvqcMessageBoxRequestRelayViewModel as MpvqcMessageBoxRequestRelayViewModel
 from .message_boxes import MpvqcQuitMessageBoxViewModel as MpvqcQuitMessageBoxViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel as MpvqcResetMessageBoxViewModel

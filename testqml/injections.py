@@ -25,11 +25,9 @@ from mpvqc.services import (
     PlayerService,
     SettingsFileService,
     VersionCheckerService,
-    VideoResizeService,
 )
 from mpvqc.services.player.state import OBSERVED_PROPERTIES, make_observer
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
-from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.window.services import (
     MainWindowService,
     NoEmbeddedPlayerTracker,
@@ -40,7 +38,10 @@ from mpvqc.window.services import (
     PlatformCapabilities,
     PlatformService,
     QtWindowStateHandler,
+    ResizeResult,
     StaticWindowButtons,
+    VideoResizeService,
+    ViewDimensions,
     linux_desktop_capabilities,
     linux_tiling_capabilities,
     windows_capabilities,

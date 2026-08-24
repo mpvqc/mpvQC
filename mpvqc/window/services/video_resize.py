@@ -7,10 +7,10 @@ from dataclasses import dataclass, replace
 import inject
 from PySide6.QtCore import Qt
 
-from mpvqc.window.services import MainWindowService, PlatformService
+from mpvqc.services import PlayerService, SettingsService
 
-from .player import PlayerService
-from .settings import SettingsService
+from .main_window import MainWindowService
+from .platform import PlatformService
 
 
 @dataclass(frozen=True)

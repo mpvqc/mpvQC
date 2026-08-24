@@ -18,6 +18,11 @@ from .platform import PlatformService as PlatformService
 from .surface import NoSurfaceHandler as NoSurfaceHandler
 from .surface import SurfaceHandler as SurfaceHandler
 from .surface import SurfaceSnapshot as SurfaceSnapshot
+from .video_resize import ResizeResult as ResizeResult
+from .video_resize import VideoResizeService as VideoResizeService
+from .video_resize import ViewDimensions as ViewDimensions
+from .video_resize import calculate_horizontal_layout_sizes as calculate_horizontal_layout_sizes
+from .video_resize import calculate_vertical_layout_sizes as calculate_vertical_layout_sizes
 from .window_buttons import StaticWindowButtons as StaticWindowButtons
 from .window_buttons import WindowButtonPreference as WindowButtonPreference
 from .window_buttons import WindowButtonSource as WindowButtonSource
