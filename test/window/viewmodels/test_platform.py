@@ -34,6 +34,7 @@ class PlatformCase(NamedTuple):
     capabilities: PlatformCapabilities
     keeps_native_frame: bool
     can_draw_own_frame: bool
+    embeds_native_player: bool
     popups_need_separate_windows: bool
 
 
@@ -45,6 +46,7 @@ class PlatformCase(NamedTuple):
             capabilities=windows_capabilities(),
             keeps_native_frame=True,
             can_draw_own_frame=False,
+            embeds_native_player=True,
             popups_need_separate_windows=True,
         ),
         PlatformCase(
@@ -52,6 +54,7 @@ class PlatformCase(NamedTuple):
             capabilities=linux_desktop_capabilities(),
             keeps_native_frame=False,
             can_draw_own_frame=True,
+            embeds_native_player=False,
             popups_need_separate_windows=False,
         ),
     ],
@@ -64,4 +67,5 @@ def test_platform_flags_forward(bind_platform, case: PlatformCase):
 
     assert view_model.keepsNativeFrame is case.keeps_native_frame
     assert view_model.canDrawOwnFrame is case.can_draw_own_frame
+    assert view_model.embedsNativePlayer is case.embeds_native_player
     assert view_model.popupsNeedSeparateWindows is case.popups_need_separate_windows

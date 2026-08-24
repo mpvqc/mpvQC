@@ -29,5 +29,9 @@ class MpvqcPlatformViewModel(QObject):
         return self._capabilities.can_draw_own_frame
 
     @Property(bool, constant=True)
+    def embedsNativePlayer(self) -> bool:
+        return self._capabilities.embeds_native_player
+
+    @Property(bool, constant=True)
     def popupsNeedSeparateWindows(self) -> bool:
         return self._capabilities.popups_need_separate_windows

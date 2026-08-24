@@ -45,6 +45,7 @@ TestCase {
                 platform: "windows",
                 keepsNativeFrame: true,
                 canDrawOwnFrame: false,
+                embedsNativePlayer: true,
                 preferredPopupType: Popup.Window
             },
             {
@@ -52,6 +53,7 @@ TestCase {
                 platform: "linux-desktop",
                 keepsNativeFrame: false,
                 canDrawOwnFrame: true,
+                embedsNativePlayer: false,
                 preferredPopupType: Popup.Item
             },
             {
@@ -59,6 +61,7 @@ TestCase {
                 platform: "linux-tiling",
                 keepsNativeFrame: false,
                 canDrawOwnFrame: false,
+                embedsNativePlayer: false,
                 preferredPopupType: Popup.Item
             },
             {
@@ -66,6 +69,7 @@ TestCase {
                 platform: "headless",
                 keepsNativeFrame: false,
                 canDrawOwnFrame: false,
+                embedsNativePlayer: false,
                 preferredPopupType: Popup.Item
             }
         ];
@@ -76,6 +80,7 @@ TestCase {
 
         compare(MpvqcPlatform.keepsNativeFrame, data.keepsNativeFrame);
         compare(MpvqcPlatform.canDrawOwnFrame, data.canDrawOwnFrame);
+        compare(MpvqcPlatform.embedsNativePlayer, data.embedsNativePlayer);
         compare(MpvqcPlatform.preferredPopupType, data.preferredPopupType);
     }
 
