@@ -30,9 +30,12 @@ a slice. Every role also imports freely within its own directory.
 | `enums`      | shared                         | shared                              |
 | `models`     | `enums`, `services`, shared    | `enums`, shared                     |
 | `services`   | `services`, shared             | `services`, shared                  |
-| `viewmodels` | everything                     | `services`, `enums`, shared         |
+| `viewmodels` | `models`, `services`, `enums`, shared | `services`, `enums`, shared  |
+| `views`      | `models`, `services`, `enums`, shared | `services`, `enums`, shared  |
 
-A foreign slice's `viewmodels` and `models` stay off-limits to everyone.
+A foreign slice's `viewmodels`, `views` and `models` stay off-limits to everyone. The `views` role holds a class a
+slice writes in Python and QML instantiates as part of the scene; the video output mpv draws into is the case that
+asks for it.
 
 ## Transition
 

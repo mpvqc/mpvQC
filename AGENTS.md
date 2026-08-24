@@ -28,8 +28,10 @@
   - Use closures instead of `functools.partial`
   - Don't use getattr
 - A feature package under `mpvqc/<feature>/` bundles everything one area needs: role directories (`services/`,
-  `models/`, `viewmodels/`, `enums/`) for what the area owns. Its root exports `bindings` and `register_qml_types`
-  from its `wiring.py`, and the roots call them.
+  `models/`, `viewmodels/`, `views/`, `enums/`) for what the area owns. Its root exports `bindings` and
+  `register_qml_types` from its `wiring.py`, and the roots call them.
+- A `views/` role holds a class the slice writes in Python and QML instantiates as part of the scene, such as a video
+  output. The QML files themselves stay under `qt/qml/`.
 - QML-registered enums live in the feature's `enums/`.
 - There is no domain role (ADR 0019). A slice's logic lives in its services role: container-bound classes where
   there's state or Qt lifecycle, plain module-level functions over frozen dataclasses where it's pure. Shared pure

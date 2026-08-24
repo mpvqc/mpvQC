@@ -10,11 +10,11 @@ modules and ran seven QML registrations as a side effect. The lattice says a dom
 and nothing else, so the edge sat outside the rule, and the import linter that rule exists to support would have
 flagged it on day one.
 
-A feature package owns the QML enums its area means. They get a role directory beside its services, its models and its
-view models, and what no feature has claimed stays in the shared enum package, the same way the layer packages hold
-every class no feature has claimed. The domain names no QML-registered type. It keeps the plain vocabulary, and the
-role directory holds the registration, so a domain stays free of the toolkit and the linter gets a rule it can check:
-a domain imports no Qt.
+A feature package owns the QML enums its area means. They get a role directory beside its services, its models, its view
+models and its views, and what no feature has claimed stays in the shared enum package, the same way the layer packages
+hold every class no feature has claimed. The domain names no QML-registered type. It keeps the plain vocabulary, and the
+role directory holds the registration, so a domain stays free of the toolkit and the linter gets a rule it can check: a
+domain imports no Qt.
 
 ## Why the vocabulary appears twice
 

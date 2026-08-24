@@ -59,8 +59,9 @@ paths, URLs, and strings, lives in `mpvqc/shared`. Every role in every slice and
 ### Feature packages: `mpvqc/<feature>/`
 
 Some areas are grouped by what they are about instead of by layer. A feature package holds the services, models, view
-models, and QML enums its area owns, each in its own role directory. The layer packages hold everything no feature
-package has claimed.
+models, views, and QML enums its area owns, each in its own role directory. Its views role is Python, not QML: the
+classes QML instantiates as part of the scene, such as the video output mpv draws into. The QML files themselves stay
+under `qt/qml/`. The layer packages hold everything no feature package has claimed.
 
 ### Bootstrap
 
