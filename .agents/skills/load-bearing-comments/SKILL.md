@@ -44,6 +44,7 @@ Site it at the trap. The comment sits on the line someone is about to change, no
 - It narrates the branch the code right below it already takes.
 - It copies a glossary entry or a sentence from an ADR.
 - It says what a comment at the consumer already says. Two copies in two languages drift apart.
+- It labels a section the file's own structure already marks: a `# region` or `// ---` banner.
 - It is a docstring on a marker type whose name is the whole meaning.
 
 A docstring that was the entire class body leaves `pass` behind. No pydocstyle rules run here, so that is fine.

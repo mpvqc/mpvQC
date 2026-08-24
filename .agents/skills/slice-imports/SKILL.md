@@ -38,13 +38,13 @@ Another slice, and the shared layer (`mpvqc/services/`):
 A foreign slice's `viewmodels`, `views` and `models` are off-limits to everyone: presentation never crosses a slice.
 
 `views` holds a class a slice writes in Python and QML instantiates as part of the scene, the video output mpv draws
-into being the case that asks for the role.
+into being the case that asks for the role. `enums` holds the QML-registered enums the slice's area means, and what no
+slice has claimed stays in the shared enum package (ADR 0013).
 
 ## No domain role
 
-There is no domain role (ADR 0019): a slice's logic lives in its services role, as container-bound classes where
-there is state or Qt lifecycle and as plain module-level functions over frozen dataclasses where it is pure. No
-slice carries a `domain`, and none adds one.
+The lattice has no `domain` row: no slice carries one, and none adds one. A slice's logic lives in its services role,
+and `writing-services` decides the shape it takes there (ADR 0019).
 
 ## Beyond the tables
 
@@ -61,8 +61,8 @@ slice carries a `domain`, and none adds one.
 - **Top level**: `mpvqc.jobs` is a helper for services and view models. Any other top-level module needs a row in the
   checker's tables before a slice uses it.
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and in production the
-  composition roots (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. A test harness composes
-  the same way it does, so `test/conftest.py` and `testqml/` stand outside these rules.
+  composition roots (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. `test/conftest.py` and
+  `testqml/` are composition roots too, so they import slice roots and the checker leaves them alone.
 
 ## Adding a slice
 
