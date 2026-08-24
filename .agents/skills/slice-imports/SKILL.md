@@ -5,9 +5,10 @@ description: The import rules of the feature slices. Use when creating or editin
 
 # Slice imports
 
-A feature slice imports by the lattice below. `test/test_import_rules.py` enforces every rule on this page: its
-failure message names the rule broken and the fix, and a new slice joins the rules by being listed in its `SLICES`
-table.
+A feature slice imports by the lattice below. `test/test_import_rules.py` checks it over `mpvqc/<slice>/`, and its
+failure message names the rule broken and the fix. Production files owe the whole lattice; a slice's tests under
+`test/<slice>/` owe the role-root rule alone, so a test may reach any role as long as it goes through that role's
+root.
 
 ## The lattice
 
@@ -21,7 +22,8 @@ Same slice:
 | `enums`       | `shared`                                    |
 | `models`      | `enums`, `services`, `shared`               |
 | `services`    | `services`, `shared`                        |
-| `viewmodels`  | everything                                  |
+| `viewmodels`  | `models`, `services`, `enums`, `shared`     |
+| `views`       | `models`, `services`, `enums`, `shared`     |
 
 Another slice, and the shared layer (`mpvqc/services/`):
 
@@ -31,8 +33,12 @@ Another slice, and the shared layer (`mpvqc/services/`):
 | `models`      | `enums`, `shared`                           |
 | `services`    | `services`, `shared`                        |
 | `viewmodels`  | `services`, `enums`, `shared`               |
+| `views`       | `services`, `enums`, `shared`               |
 
-A foreign slice's `viewmodels` and `models` are off-limits to everyone: presentation never crosses a slice.
+A foreign slice's `viewmodels`, `views` and `models` are off-limits to everyone: presentation never crosses a slice.
+
+`views` holds a class a slice writes in Python and QML instantiates as part of the scene, the video output mpv draws
+into being the case that asks for the role.
 
 ## No domain role
 
@@ -52,13 +58,21 @@ slice carries a `domain`, and none adds one.
   import Win32 bindings everywhere else; the window slice's `windows_decisions` package, because its Win32
   message-routing and frame-geometry vocabulary outnumbers the rest of the role and only the Windows package reads it.
   A new held root joins by being listed in the checker's `HELD_ROOTS` table.
-- **Top level**: `mpvqc.shared` is the shared pure vocabulary. `mpvqc.jobs` is a helper for services and view models.
-  Any other top-level module needs a row in the checker's tables before a slice uses it.
-- **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and the composition roots
-  (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. `testqml/` stands outside all of these
-  rules.
+- **Top level**: `mpvqc.jobs` is a helper for services and view models. Any other top-level module needs a row in the
+  checker's tables before a slice uses it.
+- **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and in production the
+  composition roots (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. A test harness composes
+  the same way it does, so `test/conftest.py` and `testqml/` stand outside these rules.
+
+## Adding a slice
+
+A slice joins the rules by being listed in the checker's `SLICES` table, and listing it arms the scans against the
+whole roster at once. Build the directories first: a `wiring.py`, which the wiring check reads without asking whether
+it exists; a role `__init__` that imports something; and at least `MIN_EDGES_PER_SLICE` imports under each of
+`mpvqc/<slice>/` and `test/<slice>/`.
 
 ## Done when
 
 `just test-python test/test_import_rules.py` passes. A red here is a design signal, not an obstacle: the missing
-concept belongs in one slice's public service, or in the shared layer (ADR 0012). Follow the message's fix.
+concept belongs in one slice's public service (ADR 0012), or in the shared vocabulary (ADR 0019). Follow the
+message's fix.

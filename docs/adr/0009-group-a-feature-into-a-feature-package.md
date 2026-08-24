@@ -10,9 +10,9 @@ across all of them, held together only by a naming convention. Reading the area 
 its files out; changing it means touching every layer for one idea. Appearance was spread across four.
 
 An area that has grown that far gets a feature package. Its domain sits at the package root with the types and the pure
-rules, and a directory per role it claims holds what it owns: its services, its models, its view models. Tests mirror
-the shape. The layer packages keep everything no feature package has claimed, and no re-export shim stays behind, so
-call sites name the new home.
+rules, and a directory per role it claims holds what it owns: its services, its models, its view models, its views.
+Tests mirror the shape. The layer packages keep everything no feature package has claimed, and no re-export shim stays
+behind, so call sites name the new home.
 
 Role directories exist because one concept recurs across roles. The same idea is often a domain type, a service and a
 model at once, and without the directory each would grow a role suffix to stay distinct. The directory carries the

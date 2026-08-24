@@ -22,11 +22,15 @@ MIN_EDGES_PER_SLICE = 20
 
 HELD_ROOTS = ("linux", "windows", "windows_decisions")
 
+ROLES = ("enums", "models", "services", "viewmodels", "views")
+CLOSED_ROLES = ("models", "viewmodels", "views")
+
 SAME_SLICE = {
     "enums": {"shared"},
     "models": {"enums", "services", "shared"},
     "services": {"services", "shared"},
     "viewmodels": {"viewmodels", "models", "services", "enums", "shared"},
+    "views": {"models", "services", "enums", "shared"},
 }
 
 OTHER_SLICE = {
@@ -34,6 +38,7 @@ OTHER_SLICE = {
     "models": {"enums", "shared"},
     "services": {"services", "shared"},
     "viewmodels": {"services", "enums", "shared"},
+    "views": {"services", "enums", "shared"},
 }
 
 
@@ -280,6 +285,20 @@ def test_role_roots_re_export_no_held_root():
 
 def test_wiring_imports_no_mpvqc_and_no_qt_at_module_level():
     _fail_on(check_wiring())
+
+
+def test_both_lattice_tables_hold_a_row_for_every_role():
+    assert set(SAME_SLICE) == set(ROLES)
+    assert set(OTHER_SLICE) == set(ROLES)
+
+
+@pytest.mark.parametrize("closed", CLOSED_ROLES)
+@pytest.mark.parametrize("role", ROLES)
+def test_no_role_imports_another_slices_closed_role(role: str, closed: str):
+    where = "mpvqc/comments/x.py:1"
+    violation = _lattice_violation(where, "comments", role, f"mpvqc.window.{closed}", ["Anything"])
+    assert violation is not None
+    assert f"may not import from the {closed}" in violation
 
 
 @pytest.mark.parametrize("slice_", SLICES)
