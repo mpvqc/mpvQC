@@ -7,7 +7,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.player.state import PlayerState
+from mpvqc.player.services import PlayerState
 
 
 def test_every_state_field_has_a_notifier(player_service):

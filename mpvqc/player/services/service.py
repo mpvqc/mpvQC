@@ -12,13 +12,12 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import QObject, Signal, Slot
 
-from mpvqc.services.application_paths import ApplicationPathsService
-from mpvqc.services.build_info import BuildInfoService
+from mpvqc.services import ApplicationPathsService, BuildInfoService
 from mpvqc.shared import map_path_to_str
 
-from .coordinators import SubtitleLoadCoordinator
-from .events import EventMarshal
+from .event_marshal import EventMarshal
 from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
+from .subtitle_load import SubtitleLoadCoordinator
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable

@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 from mpvqc.window.services import VideoResizeService
 from mpvqc.window.viewmodels import MpvqcResizeViewModel
 

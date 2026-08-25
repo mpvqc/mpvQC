@@ -9,7 +9,8 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.services import PlayerService, SettingsService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import SettingsService
 from mpvqc.window.services import (
     MainWindowService,
     PlatformCapabilities,

@@ -9,7 +9,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.player.state import (
+from mpvqc.player.services import (
     OBSERVED_PROPERTIES,
     ObservedProperty,
     PlayerState,

@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 
 
 def test_reads_unrounded_time_from_mpv(player_service, mpv_mock):

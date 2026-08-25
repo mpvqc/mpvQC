@@ -9,7 +9,8 @@ from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import BuildInfoService, DesktopService, PlayerService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import BuildInfoService, DesktopService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

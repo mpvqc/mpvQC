@@ -6,4 +6,4 @@ import QtQuick
 
 import io.github.mpvqc.mpvQC.Python // qmllint disable unused-imports
 
-MpvqcMpvFrameBufferObjectPyObject {} // qmllint disable import
+MpvqcInScenePlayer {} // qmllint disable import

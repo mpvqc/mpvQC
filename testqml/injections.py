@@ -19,14 +19,13 @@ from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
+from mpvqc.player.services import OBSERVED_PROPERTIES, PlayerService, make_observer
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    PlayerService,
     SettingsFileService,
     VersionCheckerService,
 )
-from mpvqc.services.player.state import OBSERVED_PROPERTIES, make_observer
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.window.services import (
     MainWindowService,

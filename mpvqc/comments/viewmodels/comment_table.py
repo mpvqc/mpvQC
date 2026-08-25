@@ -20,7 +20,8 @@ from mpvqc.comments.services import (
     ViewAction,
     translate_comment_type,
 )
-from mpvqc.services import PlayerService, TimeFormatterService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import TimeFormatterService
 from mpvqc.shared import MILLISECONDS_PER_SECOND
 
 from .selection import MpvqcCommentSelectionViewModel

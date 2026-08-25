@@ -8,11 +8,8 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.services import (
-    KeyCommandGeneratorService,
-    PlayerService,
-    SettingsService,
-)
+from mpvqc.player.services import KeyCommandGeneratorService, PlayerService
+from mpvqc.services import SettingsService
 from mpvqc.viewmodels import MpvqcAppViewModel
 
 

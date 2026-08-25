@@ -10,9 +10,9 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.enums import TimeDisplayMode
+from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     LabelWidthCalculatorService,
-    PlayerService,
     SettingsService,
     TimeFormatterService,
 )

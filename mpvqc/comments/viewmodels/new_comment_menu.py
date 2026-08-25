@@ -8,7 +8,7 @@ from PySide6.QtGui import QCursor
 from PySide6.QtQml import QmlElement
 
 from mpvqc.comments.services import CommentsSettingsService
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

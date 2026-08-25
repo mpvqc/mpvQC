@@ -7,7 +7,8 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import ApplicationPathsService, PlayerService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import ApplicationPathsService
 
 
 @pytest.fixture

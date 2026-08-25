@@ -5,13 +5,11 @@
 import inject
 from PySide6.QtCore import QCoreApplication, QObject, QTimer, Signal
 
-from .player import PlayerService
 from .state import StateService
 
 
 class QuitService(QObject):
     _state = inject.attr(StateService)
-    _player = inject.attr(PlayerService)
 
     confirmQuit = Signal()
 
@@ -30,5 +28,8 @@ class QuitService(QObject):
         self._quit_despite_unsaved_changes = True
 
     def shutdown(self) -> None:
-        self._player.terminate()
+        # Deferred: the player slice reads this layer back, so naming it up here cycles the two packages.
+        from mpvqc.player.services import PlayerService
+
+        inject.instance(PlayerService).terminate()
         QTimer.singleShot(0, QCoreApplication.quit)

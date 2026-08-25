@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 from mpvqc.window.services import VideoResizeService, ViewDimensions
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"

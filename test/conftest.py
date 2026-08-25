@@ -18,17 +18,16 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
+from mpvqc.player.services import OBSERVED_PROPERTIES, PlayerService, RawPropertyValue, make_observer
 from mpvqc.services import (
     BuildInfoService,
     InternationalizationService,
-    PlayerService,
     ResourceService,
     SettingsFileService,
     SettingsService,
     StateService,
     TimeFormatterService,
 )
-from mpvqc.services.player.state import OBSERVED_PROPERTIES, RawPropertyValue, make_observer
 from mpvqc.shared import map_path_to_str
 
 

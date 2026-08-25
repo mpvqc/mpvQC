@@ -32,10 +32,10 @@ from mpvqc.importing.services import (
     VideoLoad,
 )
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
+from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    PlayerService,
     SettingsService,
     StateService,
 )

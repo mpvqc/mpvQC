@@ -11,5 +11,4 @@ from .utility import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .views import MpvqcFooterViewModel as MpvqcFooterViewModel
 from .views import MpvqcHeaderViewModel as MpvqcHeaderViewModel
 from .views import MpvqcMenuBarViewModel as MpvqcMenuBarViewModel
-from .views import MpvqcPlayerViewModel as MpvqcPlayerViewModel
 from .views import MpvqcToolBarViewModel as MpvqcToolBarViewModel
