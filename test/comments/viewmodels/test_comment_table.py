@@ -10,7 +10,8 @@ from PySide6.QtGui import QGuiApplication
 
 from mpvqc.comments.services import CommentsService, CommentsSettingsService
 from mpvqc.comments.viewmodels import MpvqcCommentTableViewModel
-from mpvqc.services import PlayerService, StateService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import StateService
 from mpvqc.shared import Comment
 
 

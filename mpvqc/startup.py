@@ -87,13 +87,13 @@ def register_qml_types() -> None:
     import mpvqc.enums  # ruff: ignore[unused-import]
     import mpvqc.models  # ruff: ignore[unused-import]
     import mpvqc.viewmodels  # ruff: ignore[unused-import]
-    import mpvqc.views  # ruff: ignore[unused-import]
-    from mpvqc import appearance, comments, exporting, importing, window
+    from mpvqc import appearance, comments, exporting, importing, player, window
 
     appearance.register_qml_types()
     comments.register_qml_types()
     exporting.register_qml_types()
     importing.register_qml_types()
+    player.register_qml_types()
     window.register_qml_types()
 
 

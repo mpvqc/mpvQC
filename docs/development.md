@@ -50,7 +50,7 @@ bundle. Configure your IDE to run it before launching the app. For tests, `just 
 
 | Path         | Contents                                                                                                                                                               |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mpvqc/`     | Python: feature packages like `appearance/`, the layer packages (`services/`, `viewmodels/`, `models/`, `views/`, `dialogs/`, `enums/`), and the application bootstrap |
+| `mpvqc/`     | Python: feature packages like `appearance/`, the layer packages (`services/`, `viewmodels/`, `models/`, `dialogs/`, `enums/`), and the application bootstrap |
 | `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources                                                                                |
 | `test/`      | Python tests (pytest): services and view models in isolation                                                                                                           |
 | `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides                                                                                          |

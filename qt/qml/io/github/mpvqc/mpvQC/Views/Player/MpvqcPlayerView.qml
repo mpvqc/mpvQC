@@ -14,8 +14,8 @@ Loader {
 
     readonly property bool isTestMode: typeof mpvqcTestMode !== "undefined"
 
-    readonly property url embeddedPlayer: Qt.resolvedUrl("MpvqcPlayerEmbedded.qml")
-    readonly property url inScenePlayer: Qt.resolvedUrl("MpvqcPlayerInScene.qml")
+    readonly property url embeddedPlayer: Qt.resolvedUrl("MpvqcEmbeddedPlayerWrapper.qml")
+    readonly property url inScenePlayer: Qt.resolvedUrl("MpvqcInScenePlayerWrapper.qml")
     readonly property url stubPlayer: Qt.resolvedUrl("MpvqcPlayerStub.qml")
 
     signal addNewCommentMenuRequested

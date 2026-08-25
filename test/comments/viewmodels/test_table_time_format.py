@@ -7,7 +7,7 @@ import pytest
 
 from mpvqc.comments.services import TimeFormatPolicyService
 from mpvqc.comments.viewmodels import MpvqcCommentTableTimeFormatViewModel
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 
 
 @pytest.fixture(autouse=True)

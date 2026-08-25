@@ -10,7 +10,8 @@ import inject
 import pytest
 
 from mpvqc.enums import MpvqcWindowTitleFormat
-from mpvqc.services import InternationalizationService, PlayerService, SettingsService, StateService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import InternationalizationService, SettingsService, StateService
 from mpvqc.viewmodels import MpvqcHeaderViewModel
 from mpvqc.viewmodels.views.header.header import HeaderInputs, HeaderProps, derive_header_props
 

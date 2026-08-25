@@ -6,7 +6,7 @@
 def test_log_handler_set_when_mpvqc_debug_is_set(monkeypatch):
     monkeypatch.setenv("MPVQC_DEBUG", "1")
 
-    from mpvqc.services.player import PlayerService
+    from mpvqc.player.services import PlayerService
 
     service = PlayerService()
 
@@ -16,7 +16,7 @@ def test_log_handler_set_when_mpvqc_debug_is_set(monkeypatch):
 def test_log_handler_set_when_mpvqc_player_log_is_set(monkeypatch):
     monkeypatch.setenv("MPVQC_PLAYER_LOG", "1")
 
-    from mpvqc.services.player import PlayerService
+    from mpvqc.player.services import PlayerService
 
     service = PlayerService()
 
@@ -27,7 +27,7 @@ def test_log_handler_not_set_when_no_env_vars(monkeypatch):
     monkeypatch.delenv("MPVQC_DEBUG", raising=False)
     monkeypatch.delenv("MPVQC_PLAYER_LOG", raising=False)
 
-    from mpvqc.services.player import PlayerService
+    from mpvqc.player.services import PlayerService
 
     service = PlayerService()
 

@@ -13,7 +13,7 @@ from PySide6.QtGui import QGuiApplication, QNativeInterface, QOpenGLContext
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 from mpvqc.window.services import MainWindowService
 
 if TYPE_CHECKING:
@@ -54,7 +54,7 @@ def get_display_params() -> dict[str, int]:
 
 
 @QmlElement
-class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
+class MpvqcInScenePlayer(QQuickFramebufferObject):
     _player = inject.attr(PlayerService)
 
     update_requested = Signal()
@@ -84,7 +84,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     _main_window = inject.attr(MainWindowService)
     _player = inject.attr(PlayerService)
 
-    def __init__(self, parent: MpvqcMpvFrameBufferObjectPyObject) -> None:
+    def __init__(self, parent: MpvqcInScenePlayer) -> None:
         super().__init__()
         self._parent = parent
         self._ctx: MpvRenderContext | None = None

@@ -12,7 +12,8 @@ from PySide6.QtCore import QObject, Signal
 
 from mpvqc.comments.services import CommentsService, ResetService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
-from mpvqc.services import PlayerService, StateService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import StateService
 
 from .concerns import SessionMerge, SessionReplace, SubtitlesLoad, SubtitlesSkip, VideoLoad, VideoSkip
 from .pending import PendingImport

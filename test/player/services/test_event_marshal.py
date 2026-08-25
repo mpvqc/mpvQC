@@ -6,7 +6,7 @@ import threading
 
 from PySide6.QtCore import QThread
 
-from mpvqc.services.player.events import EventMarshal
+from mpvqc.player.services import EventMarshal
 
 
 def test_posts_defer_until_the_event_loop_runs(qt_app):

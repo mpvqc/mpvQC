@@ -6,7 +6,7 @@ import inject
 import pytest
 
 from mpvqc.comments.services import CommentsService, TimeFormatPolicyService
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 from mpvqc.shared import Comment
 
 ONE_HOUR_MS = 3_600_000

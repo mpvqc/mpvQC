@@ -9,7 +9,8 @@ import inject
 import pytest
 
 from mpvqc.enums import MpvqcTimeDisplayMode
-from mpvqc.services import FontLoaderService, LabelWidthCalculatorService, PlayerService, SettingsService
+from mpvqc.player.services import PlayerService
+from mpvqc.services import FontLoaderService, LabelWidthCalculatorService, SettingsService
 from mpvqc.viewmodels import MpvqcFooterViewModel
 from mpvqc.viewmodels.views.footer import FooterInputs, FooterProps, derive_footer_props
 

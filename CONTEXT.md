@@ -122,6 +122,13 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   palette family has one; so does every accent color in it.
 - **Color role**: one named entry in the palette: background, hint, row base. The Qt term.
 
+## Player
+
+- **Embedded player**: the player as a native child window of the app's own window, painted by the OS above the scene
+  instead of into it. Only Windows does this.
+- **In-scene player**: the player as an item of the scene, the app painting the video into the scene itself rather than
+  the OS painting it above. Everywhere but Windows.
+
 ## Platform
 
 - **Platform capability**: a yes-or-no fact about the desktop the app runs on, settled once at startup.
@@ -130,8 +137,6 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   the window manager role. On Windows, DWM composites but does not place or size.
 - **Tiling desktop**: a session where the compositor or window manager places and sizes windows for the user, so app
   size requests might be ignored. The name says neither compositor nor window manager because both kinds tile.
-- **Embedded player**: the player as a native child window of the app's own window, painted by the OS above the scene
-  instead of into it. Only Windows does this. Everywhere else the player renders in-scene.
 - **Window geometry**: the visible bounds of the window, what the compositor aligns, snaps and constrains against. Drop
   shadows sit outside it.
 - **Decorations**: the border, title bar, drop shadow and resize band around the app content. The OS draws them, or the

@@ -7,7 +7,7 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 from mpvqc.viewmodels import MpvqcToolBarViewModel
 from mpvqc.viewmodels.views.header.toolbar import ToolbarInputs, ToolbarProps, derive_toolbar_props
 

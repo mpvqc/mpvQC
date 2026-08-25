@@ -8,6 +8,6 @@ MpvqcNewCommentMenu MpvqcNewCommentMenu.qml
 MpvqcNewCommentMenuClickGuard MpvqcNewCommentMenuClickGuard.qml
 MpvqcPlayerView MpvqcPlayerView.qml
 
-internal MpvqcPlayerEmbedded MpvqcPlayerEmbedded.qml
+internal MpvqcEmbeddedPlayerWrapper MpvqcEmbeddedPlayerWrapper.qml
+internal MpvqcInScenePlayerWrapper MpvqcInScenePlayerWrapper.qml
 internal MpvqcPlayerInputArea MpvqcPlayerInputArea.qml
-internal MpvqcPlayerInScene MpvqcPlayerInScene.qml

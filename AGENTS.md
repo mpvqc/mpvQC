@@ -20,9 +20,10 @@
 ## Coding
 
 - Prefer code the type checker can verify: closures over `functools.partial`, named attributes over `getattr`.
-- A class QML can name keeps one name in Python and QML: `Mpvqc`, the area, what it is, its role. An unregistered
-  class wears no prefix and names itself for its package. When a module gains its first registered class, read ADR
-  0015: no two modules holding a registered class share a file name.
+- A class QML can name keeps one name in Python and QML: `Mpvqc`, the area, what it is, its role. A registered view is
+  the exception: it is named for the thing it is instead of its role. An unregistered class wears no prefix and names
+  itself for its package. When a module gains its first registered class, read ADR 0015: no two modules holding a
+  registered class share a file name.
 
 ## Writing
 

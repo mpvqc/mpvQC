@@ -4,7 +4,7 @@
 
 from pathlib import Path
 
-from mpvqc.services.player.coordinators import SubtitleLoadCoordinator
+from mpvqc.player.services import SubtitleLoadCoordinator
 
 S1 = Path.home() / "one.srt"
 S2 = Path.home() / "two.srt"

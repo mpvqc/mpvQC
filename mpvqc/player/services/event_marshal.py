@@ -37,8 +37,6 @@ class EventMarshal(QObject):
         event.dispatch()
 
     def channel[**P](self, handler: Handler[P]) -> Handler[P]:
-        """Returns a callable that runs the handler on the GUI thread, in post order."""
-
         def post(*args: P.args, **kwargs: P.kwargs) -> None:
             self._posted.emit(Event(handler, args, kwargs))
 

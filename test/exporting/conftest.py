@@ -12,10 +12,10 @@ import pytest
 
 from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
+from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
-    PlayerService,
     SettingsService,
     StateService,
 )

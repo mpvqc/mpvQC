@@ -6,7 +6,7 @@ import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QKeyEvent
 
-from mpvqc.services import KeyCommandGeneratorService
+from mpvqc.player.services import KeyCommandGeneratorService
 
 Modifiers = Qt.KeyboardModifier
 Keys = Qt.Key

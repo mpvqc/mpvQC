@@ -4,7 +4,7 @@
 
 from pathlib import Path
 
-from mpvqc.services import PlayerService
+from mpvqc.player.services import PlayerService
 
 VIDEO = Path.home() / "video.mp4"
 SUBTITLE = Path.home() / "subtitle"

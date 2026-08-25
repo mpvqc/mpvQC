@@ -17,7 +17,7 @@ WindowContainer {
         }
     }
 
-    window: MpvWindowPyObject {} // qmllint disable import
+    window: MpvqcEmbeddedPlayer {} // qmllint disable import
 
     // Workaround: on Windows, when the top-level transitions through
     // minimize → maximize, the embedded child HWND ends up offset by a few

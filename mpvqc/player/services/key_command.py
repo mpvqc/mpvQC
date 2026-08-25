@@ -17,7 +17,6 @@ class KeyMapping:
     is_char: bool = False
 
 
-# Mappings Qt -> MPV
 _KEY_MAPPINGS: dict[Qt.Key, KeyMapping] = {
     Qt.Key.Key_PageUp: KeyMapping("PGUP"),
     Qt.Key.Key_PageDown: KeyMapping("PGDWN"),
