@@ -19,6 +19,11 @@ def configure_inject(common_bindings_with, fake_player_service):
     common_bindings_with(custom_bindings)
 
 
+@pytest.fixture(autouse=True)
+def qt_app_must_be_running(qt_app):
+    pass
+
+
 @pytest.fixture
 def view_model() -> MpvqcCommentTableTimeFormatViewModel:
     # noinspection PyCallingNonCallable

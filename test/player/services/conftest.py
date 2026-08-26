@@ -7,8 +7,9 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.player.services import PlayerService
+from mpvqc.player.services import PlayerService, RawPropertyValue
 from mpvqc.services import ApplicationPathsService
+from test.player.recording import RecordingPlayerHandle
 
 
 @pytest.fixture
@@ -17,8 +18,8 @@ def application_paths_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def mpv_mock() -> MagicMock:
-    return MagicMock()
+def player_handle() -> RecordingPlayerHandle:
+    return RecordingPlayerHandle()
 
 
 @pytest.fixture(autouse=True)
@@ -33,7 +34,25 @@ def configure_injections(
 
 
 @pytest.fixture
-def player_service(mpv_mock) -> PlayerService:
-    service = PlayerService()
-    service._mpv = mpv_mock
+def player_service(configure_injections, player_handle) -> PlayerService:
+    service = PlayerService(player_handle)
+    service.init()
     return service
+
+
+@pytest.fixture
+def push_property(qt_app, player_handle):
+    def _push(name: str, raw: RawPropertyValue) -> None:
+        player_handle.push_property(name, raw)
+        qt_app.processEvents()
+
+    return _push
+
+
+@pytest.fixture
+def push_file_loaded(qt_app, player_handle):
+    def _push() -> None:
+        player_handle.push_file_loaded()
+        qt_app.processEvents()
+
+    return _push

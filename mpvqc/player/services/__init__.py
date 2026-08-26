@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .event_marshal import EventMarshal as EventMarshal
+from .handle import MpvPlayerHandle as MpvPlayerHandle
+from .handle import PlayerHandle as PlayerHandle
+from .handle import RenderContext as RenderContext
 from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
 from .service import PlayerService as PlayerService
 from .state import OBSERVED_PROPERTIES as OBSERVED_PROPERTIES

@@ -19,8 +19,9 @@ from mpvqc.window.services import MainWindowService
 if TYPE_CHECKING:
     from types import NoneType
 
-    from mpv import MpvRenderContext
     from PySide6.QtOpenGL import QOpenGLFramebufferObject
+
+    from mpvqc.player.services import RenderContext
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -87,7 +88,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     def __init__(self, parent: MpvqcInScenePlayer) -> None:
         super().__init__()
         self._parent = parent
-        self._ctx: MpvRenderContext | None = None
+        self._ctx: RenderContext | None = None
         self._lock = Lock()
         self._main_window.display_zoom_factor_changed.connect(self._on_zoom_factor_changed)
 
@@ -101,8 +102,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
             self._ctx = self._player.create_render_context(
                 get_proc_address=get_process_address,
                 display_params=get_display_params(),
+                on_update=self._parent.update_requested.emit,
             )
-            self._ctx.update_cb = self._parent.update_requested.emit
 
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
 

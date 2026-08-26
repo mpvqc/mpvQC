@@ -19,7 +19,7 @@ from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
-from mpvqc.player.services import OBSERVED_PROPERTIES, PlayerService, make_observer
+from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
@@ -45,6 +45,7 @@ from mpvqc.window.services import (
     linux_tiling_capabilities,
     windows_capabilities,
 )
+from test.player.recording import RecordingPlayerHandle
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -130,10 +131,11 @@ class ImportSettingsServiceOverride(ImportSettingsService):
 
 class PlayerServiceOverride(PlayerService):
     def __init__(self) -> None:
-        super().__init__()
+        recorder = RecordingPlayerHandle()
+        super().__init__(recorder)
+        self._recorder = recorder
         self.opened_video: Path | None = None
         self.opened_subtitles: tuple[Path, ...] = ()
-        self._observers = {spec.name: make_observer(spec, self._apply_property_update) for spec in OBSERVED_PROPERTIES}
 
     def load_video(
         self,
@@ -151,7 +153,7 @@ class PlayerServiceOverride(PlayerService):
             ("time-remaining", time_remaining),
             ("percent-pos", percent_pos),
         ):
-            self._observers[name](name, raw)
+            self._recorder.push_property(name, raw)
 
     @override
     def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:

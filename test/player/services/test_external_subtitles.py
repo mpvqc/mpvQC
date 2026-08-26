@@ -137,8 +137,8 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
     ],
     ids=lambda tc: tc.description,
 )
-def test_external_subtitles(player_service, test_case):
-    player_service._apply_property_update("track-list", test_case.track_list_data)
+def test_external_subtitles(player_service, push_property, test_case):
+    push_property("track-list", test_case.track_list_data)
 
     result = player_service.external_subtitles
 
