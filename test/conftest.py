@@ -18,7 +18,7 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
-from mpvqc.player.services import OBSERVED_PROPERTIES, PlayerService, RawPropertyValue, make_observer
+from mpvqc.player.services import PlayerService, RawPropertyValue
 from mpvqc.services import (
     BuildInfoService,
     InternationalizationService,
@@ -29,6 +29,7 @@ from mpvqc.services import (
     TimeFormatterService,
 )
 from mpvqc.shared import map_path_to_str
+from test.player.recording import RecordingPlayerHandle
 
 
 class FakePlayerService(PlayerService):
@@ -36,23 +37,16 @@ class FakePlayerService(PlayerService):
     so coercion, dedupe, and signal emission match the real service."""
 
     def __init__(self) -> None:
-        super().__init__()
-        self._raw_time_pos: float | None = None
-        self._observers = {spec.name: make_observer(spec, self._apply_property_update) for spec in OBSERVED_PROPERTIES}
-
-    @property
-    @override
-    def exact_time_pos(self) -> float:
-        if self._raw_time_pos is not None:
-            return self._raw_time_pos
-        return super().exact_time_pos
+        recorder = RecordingPlayerHandle()
+        super().__init__(recorder)
+        self._recorder = recorder
 
     def load_video(self, path: str) -> None:
         self._observe("path", path)
         self._observe("filename", Path(path).name)
 
     def unload_video(self) -> None:
-        self._raw_time_pos = None
+        self._recorder.properties.pop("time-pos", None)
         self._observe("path", None)
 
     def update(
@@ -72,7 +66,7 @@ class FakePlayerService(PlayerService):
         if percent_pos is not None:
             self._observe("percent-pos", percent_pos)
         if time_pos is not None:
-            self._raw_time_pos = time_pos
+            self._recorder.properties["time-pos"] = time_pos
             self._observe("time-pos", time_pos)
         if time_remaining is not None:
             self._observe("time-remaining", time_remaining)
@@ -84,7 +78,9 @@ class FakePlayerService(PlayerService):
             self._observe("track-list", track_list)
 
     def _observe(self, name: str, raw: RawPropertyValue) -> None:
-        self._observers[name](name, raw)
+        self._recorder.push_property(name, raw)
+        # the marshal hands updates to the event loop, and a test asserts right after the call
+        QCoreApplication.processEvents()
 
 
 @pytest.fixture

@@ -124,6 +124,9 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 
 ## Player
 
+- **Player handle**: the live connection to a running player, opened once the video output is ready and held until the
+  app quits. Commands travel out through it and playback facts come back through it. Named for what it connects to,
+  not for the library behind it: the library is one implementation detail inside the player.
 - **Embedded player**: the player as a native child window of the app's own window, painted by the OS above the scene
   instead of into it. Only Windows does this.
 - **In-scene player**: the player as an item of the scene, the app painting the video into the scene itself rather than

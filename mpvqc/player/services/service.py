@@ -22,9 +22,9 @@ from .subtitle_load import SubtitleLoadCoordinator
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
 
-    from mpv import MPV, MpvRenderContext
     from PySide6.QtCore import SignalInstance
 
+    from .handle import PlayerHandle, RenderContext
     from .state import RawPropertyValue
 
 logger = logging.getLogger(__name__)
@@ -52,10 +52,11 @@ class PlayerService(QObject):
 
     file_loaded = Signal()
 
-    def __init__(self) -> None:
+    def __init__(self, handle: PlayerHandle) -> None:
         super().__init__()
 
-        self._mpv: MPV | None = None
+        self._handle = handle
+        self._opened = False
         self._shutdown_hook: Callable[[], None] | None = None
 
         self._state = PlayerState()
@@ -82,20 +83,15 @@ class PlayerService(QObject):
 
         self.file_loaded.connect(self._on_file_loaded)
 
+        for spec in OBSERVED_PROPERTIES:
+            handle.observe_property(spec.name, make_observer(spec, self._post_property_update))
+
+        handle.on_file_loaded(self._post_file_loaded)
+
     def init(self, win_id: int | None = None) -> None:
         args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
-        merged_args = self._build_init_args() | args
-
-        from mpv import MPV
-
-        mpv = MPV(**merged_args)
-
-        for spec in OBSERVED_PROPERTIES:
-            mpv.observe_property(spec.name, make_observer(spec, self._post_property_update))
-
-        mpv.event_callback("file-loaded")(lambda _event: self._post_file_loaded())
-
-        self._mpv = mpv
+        self._handle.open(self._build_init_args() | args)
+        self._opened = True
 
     def _build_init_args(self) -> dict:
         args: dict = {
@@ -140,30 +136,21 @@ class PlayerService(QObject):
         if new.has_dimensions and not old.has_dimensions:
             self.video_dimensions_changed.emit(new.width, new.height)
 
-    @property
-    def _mpv_player(self) -> MPV:
-        if self._mpv is None:
-            msg = "MPV player has not been initialized"
-            raise RuntimeError(msg)
-        return self._mpv
-
-    def create_render_context(self, get_proc_address: Callable, display_params: dict[str, int]) -> MpvRenderContext:
-        from mpv import MpvGlGetProcAddressFn, MpvRenderContext
-
-        return MpvRenderContext(
-            mpv=self._mpv_player,
-            api_type="opengl",
-            opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_proc_address)},
-            **display_params,
-        )
+    def create_render_context(
+        self,
+        get_proc_address: Callable,
+        display_params: dict[str, int],
+        on_update: Callable[[], None],
+    ) -> RenderContext:
+        return self._handle.create_render_context(get_proc_address, display_params, on_update)
 
     @property
     def mpv_version(self) -> str:
-        return str(self._mpv.mpv_version or "") if self._mpv is not None else ""
+        return str(self._handle.get_property("mpv-version") or "")
 
     @property
     def ffmpeg_version(self) -> str:
-        return str(self._mpv.ffmpeg_version or "") if self._mpv is not None else ""
+        return str(self._handle.get_property("ffmpeg-version") or "")
 
     @property
     def path(self) -> str:
@@ -183,9 +170,11 @@ class PlayerService(QObject):
 
     @property
     def exact_time_pos(self) -> float:
-        if self._mpv is not None and (raw := self._mpv.time_pos) is not None:
-            return raw
-        return float(self._state.time_pos)
+        match self._handle.get_property("time-pos"):
+            case float() | int() as raw:
+                return float(raw)
+            case _:
+                return float(self._state.time_pos)
 
     @property
     def time_remaining(self) -> int:
@@ -220,10 +209,10 @@ class PlayerService(QObject):
         return self._state.subtitle_track_count
 
     def move_mouse(self, x: int, y: int) -> None:
-        if self._mpv is None:
+        if not self._opened:
             logger.debug("Ignoring mouse move; player not yet initialized")
             return
-        self._mpv_player.command_async("mouse", x, y)
+        self._handle.command_async("mouse", x, y)
 
     @staticmethod
     def is_video_path_loaded(loaded_path: str, videos: Iterable[Path]) -> bool:
@@ -242,7 +231,7 @@ class PlayerService(QObject):
 
         self._subtitle_coordinator.queue_for_next_load(subtitles)
         path = map_path_to_str(video)
-        self._mpv_player.command("loadfile", path, "replace")
+        self._handle.command("loadfile", path, "replace")
         self.play()
 
     @Slot()
@@ -252,59 +241,59 @@ class PlayerService(QObject):
     def _load_subtitles_now(self, subtitles: tuple[Path, ...]) -> None:
         for subtitle in dict.fromkeys(subtitles):
             path = map_path_to_str(subtitle)
-            self._mpv_player.command("sub-add", path, "select")
+            self._handle.command("sub-add", path, "select")
 
     def play(self) -> None:
-        self._mpv_player.pause = False
+        self._handle.set_property("pause", False)
 
     def pause(self) -> None:
-        self._mpv_player.pause = True
+        self._handle.set_property("pause", True)
 
     def press_key(self, command: str) -> None:
-        self._mpv_player.command_async("keypress", command)
+        self._handle.command_async("keypress", command)
 
     def jump_to(self, seconds: float) -> None:
-        self._mpv_player.command_async("seek", seconds, "absolute+exact")
+        self._handle.command_async("seek", seconds, "absolute+exact")
 
     def press_mouse_left(self) -> None:
-        self._mpv_player.command_async("keydown", "MOUSE_BTN0")
+        self._handle.command_async("keydown", "MOUSE_BTN0")
 
     def release_mouse_left(self) -> None:
-        self._mpv_player.command_async("keyup", "MOUSE_BTN0")
+        self._handle.command_async("keyup", "MOUSE_BTN0")
 
     def press_mouse_middle(self) -> None:
-        self._mpv_player.command_async("keypress", "MOUSE_BTN1")
+        self._handle.command_async("keypress", "MOUSE_BTN1")
 
     def press_mouse_back(self) -> None:
-        self._mpv_player.command_async("keypress", "MOUSE_BTN5")
+        self._handle.command_async("keypress", "MOUSE_BTN5")
 
     def press_mouse_forward(self) -> None:
-        self._mpv_player.command_async("keypress", "MOUSE_BTN6")
+        self._handle.command_async("keypress", "MOUSE_BTN6")
 
     def scroll_up(self) -> None:
-        self._mpv_player.command_async("keypress", "MOUSE_BTN3")
+        self._handle.command_async("keypress", "MOUSE_BTN3")
 
     def scroll_down(self) -> None:
-        self._mpv_player.command_async("keypress", "MOUSE_BTN4")
+        self._handle.command_async("keypress", "MOUSE_BTN4")
 
     def frame_step_forward(self) -> None:
-        self._mpv_player.command_async("frame-step")
+        self._handle.command_async("frame-step")
 
     def frame_step_backward(self) -> None:
-        self._mpv_player.command_async("frame-back-step")
+        self._handle.command_async("frame-back-step")
 
     def cycle_subtitle_track(self) -> None:
-        self._mpv_player.command_async("osd-msg", "cycle", "sub")
+        self._handle.command_async("osd-msg", "cycle", "sub")
 
     def cycle_audio_track(self) -> None:
-        self._mpv_player.command_async("osd-msg", "cycle", "audio")
+        self._handle.command_async("osd-msg", "cycle", "audio")
 
     def set_shutdown_hook(self, hook: Callable[[], None] | None) -> None:
         self._shutdown_hook = hook
 
     def terminate(self) -> None:
-        if self._mpv is None:
+        if not self._opened:
             return
         if self._shutdown_hook is not None:
             self._shutdown_hook()
-        self._mpv_player.terminate()
+        self._handle.close()

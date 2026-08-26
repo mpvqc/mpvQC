@@ -2,23 +2,26 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 from mpvqc.player.services import PlayerService
 
 
-def test_terminate_is_a_noop_when_mpv_not_initialized():
-    service = PlayerService()
+def test_terminate_is_a_noop_before_the_player_opens(player_handle):
+    service = PlayerService(player_handle)
+    hook = MagicMock()
+    service.set_shutdown_hook(hook)
 
     service.terminate()
 
-    assert service._mpv is None
+    assert not player_handle.closed
+    hook.assert_not_called()
 
 
-def test_terminate_terminates_mpv(player_service, mpv_mock):
+def test_terminate_closes_the_handle(player_service, player_handle):
     player_service.terminate()
 
-    mpv_mock.terminate.assert_called_once_with()
+    assert player_handle.closed
 
 
 def test_terminate_invokes_the_shutdown_hook(player_service):
@@ -30,17 +33,11 @@ def test_terminate_invokes_the_shutdown_hook(player_service):
     hook.assert_called_once_with()
 
 
-def test_terminate_invokes_the_shutdown_hook_before_terminating_mpv(player_service, mpv_mock):
-    hook = MagicMock()
-    player_service.set_shutdown_hook(hook)
-
-    parent = MagicMock()
-    parent.attach_mock(hook, "hook")
-    parent.attach_mock(mpv_mock, "mpv")
+def test_terminate_invokes_the_shutdown_hook_before_closing_the_handle(player_service, player_handle):
+    closed_while_hook_ran: list[bool] = []
+    player_service.set_shutdown_hook(lambda: closed_while_hook_ran.append(player_handle.closed))
 
     player_service.terminate()
 
-    assert parent.mock_calls == [
-        call.hook(),
-        call.mpv.terminate(),
-    ]
+    assert closed_while_hook_ran == [False]
+    assert player_handle.closed

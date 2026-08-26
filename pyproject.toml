@@ -239,6 +239,7 @@ files = [
     "mpvqc/player/__init__.py",
     "mpvqc/player/services/__init__.py",
     "mpvqc/player/services/event_marshal.py",
+    "mpvqc/player/services/handle.py",
     "mpvqc/player/services/key_command.py",
     "mpvqc/player/services/service.py",
     "mpvqc/player/services/state.py",
