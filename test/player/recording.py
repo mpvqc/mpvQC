@@ -4,7 +4,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -70,3 +73,44 @@ class RecordingPlayerHandle:
             msg = "Nothing observes the file-loaded event"
             raise RuntimeError(msg)
         self._file_loaded()
+
+    def load_video(self, path: str) -> None:
+        self._push_and_pump("path", path)
+        self._push_and_pump("filename", Path(path).name)
+
+    def unload_video(self) -> None:
+        self.properties.pop("time-pos", None)
+        self._push_and_pump("path", None)
+
+    def update(
+        self,
+        *,
+        duration: float | None = None,
+        percent_pos: float | None = None,
+        time_pos: float | None = None,
+        time_remaining: float | None = None,
+        height: int | None = None,
+        width: int | None = None,
+        track_list: list[dict] | None = None,
+    ) -> None:
+        if duration is not None:
+            # the reducer matches float instances, an int literal would be dropped
+            self._push_and_pump("duration", duration + 0.0)
+        if percent_pos is not None:
+            self._push_and_pump("percent-pos", percent_pos)
+        if time_pos is not None:
+            self.properties["time-pos"] = time_pos
+            self._push_and_pump("time-pos", time_pos)
+        if time_remaining is not None:
+            self._push_and_pump("time-remaining", time_remaining)
+        if height is not None:
+            self._push_and_pump("height", height)
+        if width is not None:
+            self._push_and_pump("width", width)
+        if track_list is not None:
+            self._push_and_pump("track-list", track_list)
+
+    def _push_and_pump(self, name: str, raw: RawPropertyValue) -> None:
+        self.push_property(name, raw)
+        # the marshal hands updates to the event loop, and a test asserts right after the call
+        QCoreApplication.processEvents()

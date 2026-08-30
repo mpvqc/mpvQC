@@ -24,11 +24,11 @@ def state_service_mock():
 def configure_inject(
     common_bindings_with,
     comments_settings_service,
-    fake_player_service,
+    player_service,
     state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, fake_player_service)
+        binder.bind(PlayerService, player_service)
         binder.bind(StateService, state_service_mock)
         binder.bind(CommentsSettingsService, comments_settings_service)
 
@@ -67,8 +67,8 @@ def test_state_changes_on_mutation(make_view_model, state_service_mock):
     assert state_service_mock.record_change.call_count == 2
 
 
-def test_add_row_captures_exact_player_time(make_view_model, comments_service, fake_player_service):
-    fake_player_service.update(time_pos=12.3454)
+def test_add_row_captures_exact_player_time(make_view_model, comments_service, player_handle):
+    player_handle.update(time_pos=12.3454)
     vm = make_view_model(comments=[])
 
     vm.addRow("Translation")
@@ -115,13 +115,13 @@ def test_settings_change_reaches_comment_types(make_view_model, comments_setting
     assert settled == [["Only One"]]
 
 
-def test_player_change_reaches_video_duration(make_view_model, fake_player_service, make_spy):
+def test_player_change_reaches_video_duration(make_view_model, player_handle, make_spy):
     vm = make_view_model(comments=[])
     spy = make_spy(vm.videoDurationChanged)
     settled: list[float] = []
     vm.videoDurationChanged.connect(lambda _: settled.append(vm.videoDuration))
 
-    fake_player_service.update(duration=42.5)
+    player_handle.update(duration=42.5)
 
     assert spy.count() == 1
     assert spy.at(invocation=0, argument=0) == pytest.approx(42.5)
@@ -137,9 +137,9 @@ def test_import_reaches_comments_about_to_be_imported(make_view_model, comments_
     assert spy.count() == 1
 
 
-def test_add_row_reaches_quick_selection_and_edit(make_view_model, fake_player_service, make_spy):
+def test_add_row_reaches_quick_selection_and_edit(make_view_model, player_handle, make_spy):
     vm = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
-    fake_player_service.update(time_pos=5.0)
+    player_handle.update(time_pos=5.0)
     quick_spy = make_spy(vm.quickSelectionRequested)
     animated_spy = make_spy(vm.selectionRequested)
     edit_spy = make_spy(vm.editCommentRequested)

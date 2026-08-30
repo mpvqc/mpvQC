@@ -20,10 +20,10 @@ from mpvqc.services import FontLoaderService, InternationalizationService, Label
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, comments_settings_service, fake_player_service):
+def configure_inject(common_bindings_with, comments_settings_service, player_service):
     def custom_bindings(binder: inject.Binder):
         binder.bind(CommentsSettingsService, comments_settings_service)
-        binder.bind(PlayerService, fake_player_service)
+        binder.bind(PlayerService, player_service)
         binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
         binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
@@ -168,19 +168,19 @@ def test_comment_types_width_of_same_value_does_not_emit(view_model, comments_se
     assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 0}
 
 
-def test_time_width_flips_with_format(view_model, fake_player_service, spy_notifies):
+def test_time_width_flips_with_format(view_model, player_handle, spy_notifies):
     spies = spy_notifies(view_model)
     short_width = view_model.timeLabelWidth
     assert short_width > 0
 
-    fake_player_service.update(duration=3600.0)
+    player_handle.update(duration=3600.0)
 
     long_width = view_model.timeLabelWidth
     assert long_width > short_width
     assert spies["timeLabelWidth"].count() == 1
     assert spies["timeLabelWidth"].at(invocation=0, argument=0) == long_width
 
-    fake_player_service.update(duration=3599.0)
+    player_handle.update(duration=3599.0)
 
     assert view_model.timeLabelWidth == short_width
     assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 2}
@@ -202,7 +202,7 @@ def test_props_swap_completes_before_the_comment_types_emission(view_model, comm
     assert settled[0] > narrow_width
 
 
-def test_props_swap_completes_before_the_time_emission(view_model, fake_player_service):
+def test_props_swap_completes_before_the_time_emission(view_model, player_handle):
     short_width = view_model.timeLabelWidth
     observed: list[tuple[int, int]] = []
 
@@ -210,7 +210,7 @@ def test_props_swap_completes_before_the_time_emission(view_model, fake_player_s
         lambda _: observed.append((view_model.commentTypesLabelWidth, view_model.timeLabelWidth))
     )
 
-    fake_player_service.update(duration=3600.0)
+    player_handle.update(duration=3600.0)
 
     settled = (view_model.commentTypesLabelWidth, view_model.timeLabelWidth)
     assert observed == [settled]
