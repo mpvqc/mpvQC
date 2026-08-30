@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Protocol
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from mpv import MPV
+    from mpv import MPV, MpvEvent
 
     from .state import RawPropertyValue
 
@@ -39,6 +39,8 @@ class PlayerHandle(Protocol):
 
     def on_file_loaded(self, callback: Callable[[], None]) -> None: ...
 
+    def on_file_load_failed(self, callback: Callable[[], None]) -> None: ...
+
     def create_render_context(
         self,
         get_proc_address: Callable,
@@ -54,6 +56,7 @@ class MpvPlayerHandle:
         self._mpv: MPV | None = None
         self._observers: list[tuple[str, Callable[[str, RawPropertyValue], None]]] = []
         self._file_loaded: Callable[[], None] | None = None
+        self._file_load_failed: Callable[[], None] | None = None
 
     def open(self, args: dict) -> None:
         from mpv import MPV
@@ -63,8 +66,11 @@ class MpvPlayerHandle:
         for name, observer in self._observers:
             mpv.observe_property(name, observer)
 
-        if (callback := self._file_loaded) is not None:
-            mpv.event_callback("file-loaded")(lambda _event: callback())
+        if (on_loaded := self._file_loaded) is not None:
+            mpv.event_callback("file-loaded")(lambda _event: on_loaded())
+
+        if (on_failed := self._file_load_failed) is not None:
+            mpv.event_callback("end-file")(_only_on_error(on_failed))
 
         self._mpv = mpv
 
@@ -91,6 +97,9 @@ class MpvPlayerHandle:
     def on_file_loaded(self, callback: Callable[[], None]) -> None:
         self._file_loaded = callback
 
+    def on_file_load_failed(self, callback: Callable[[], None]) -> None:
+        self._file_load_failed = callback
+
     def create_render_context(
         self,
         get_proc_address: Callable,
@@ -114,6 +123,16 @@ class MpvPlayerHandle:
             msg = "The player handle has not been opened"
             raise RuntimeError(msg)
         return mpv
+
+
+def _only_on_error(callback: Callable[[], None]) -> Callable[[MpvEvent], None]:
+    from mpv import MpvEventEndFile
+
+    def on_end_file(event: MpvEvent) -> None:
+        if event.data.reason == MpvEventEndFile.ERROR:
+            callback()
+
+    return on_end_file
 
 
 def _as_attribute(name: str) -> str:

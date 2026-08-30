@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 class RecordingPlayerHandle:
     """Stands in for mpv: records what the service asked of it, and pushes raw property values
-    and the file-loaded event back through the observers the service registered.
+    and the load events back through the observers the service registered.
 
     The two property paths stay apart, so a test can drive either alone: `properties` is what
     `get_property` answers, and a push reaches the observers without writing it.
@@ -31,6 +31,7 @@ class RecordingPlayerHandle:
         self.properties: dict[str, RawPropertyValue] = {}
         self._observers: dict[str, Callable[[str, RawPropertyValue], None]] = {}
         self._file_loaded: Callable[[], None] | None = None
+        self._file_load_failed: Callable[[], None] | None = None
 
     def open(self, args: dict) -> None:
         self.opened_with = args
@@ -59,6 +60,9 @@ class RecordingPlayerHandle:
     def on_file_loaded(self, callback: Callable[[], None]) -> None:
         self._file_loaded = callback
 
+    def on_file_load_failed(self, callback: Callable[[], None]) -> None:
+        self._file_load_failed = callback
+
     def create_render_context(
         self,
         get_proc_address: Callable,
@@ -79,6 +83,12 @@ class RecordingPlayerHandle:
             msg = "Nothing observes the file-loaded event"
             raise RuntimeError(msg)
         self._file_loaded()
+
+    def push_file_load_failed(self) -> None:
+        if self._file_load_failed is None:
+            msg = "Nothing observes the failed load; register a callback with on_file_load_failed first"
+            raise RuntimeError(msg)
+        self._file_load_failed()
 
     def load_video(self, path: str) -> None:
         self._push_and_pump("path", path)
