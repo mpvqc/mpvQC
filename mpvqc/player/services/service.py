@@ -9,15 +9,24 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtCore import QObject, Signal
 
 from mpvqc.services import ApplicationPathsService, BuildInfoService
 from mpvqc.shared import map_path_to_str
 
 from .event_marshal import EventMarshal
 from .init_args import make_embedded_init_args, make_in_scene_init_args
+from .media_load import (
+    IDLE,
+    AttachSubtitles,
+    DoNothing,
+    LoadVideo,
+    MediaRequested,
+    VideoLoadFailed,
+    VideoLoadSucceeded,
+    reduce_media_load,
+)
 from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
-from .subtitle_load import SubtitleLoadCoordinator
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -25,6 +34,7 @@ if TYPE_CHECKING:
     from PySide6.QtCore import SignalInstance
 
     from .handle import PlayerHandle, RenderContext
+    from .media_load import MediaEvent
     from .state import RawPropertyValue
 
 logger = logging.getLogger(__name__)
@@ -50,8 +60,6 @@ class PlayerService(QObject):
     subtitle_track_count_changed = Signal(int)
     external_subtitles_changed = Signal(list)
 
-    file_loaded = Signal()
-
     def __init__(self, handle: PlayerHandle) -> None:
         super().__init__()
 
@@ -60,11 +68,12 @@ class PlayerService(QObject):
         self._shutdown_hook: Callable[[], None] | None = None
 
         self._state = PlayerState()
-        self._subtitle_coordinator = SubtitleLoadCoordinator(on_add=self._load_subtitles_now)
+        self._media = IDLE
 
         self._marshal = EventMarshal()
         self._post_property_update = self._marshal.channel(self._apply_property_update)
-        self._post_file_loaded = self._marshal.channel(self.file_loaded.emit)
+        self._post_file_loaded = self._marshal.channel(self._on_file_loaded)
+        self._post_file_load_failed = self._marshal.channel(self._on_file_load_failed)
 
         self._notifiers: dict[str, SignalInstance] = {
             "duration": self.duration_changed,
@@ -81,12 +90,11 @@ class PlayerService(QObject):
             "external_subtitles": self.external_subtitles_changed,
         }
 
-        self.file_loaded.connect(self._on_file_loaded)
-
         for spec in OBSERVED_PROPERTIES:
             handle.observe_property(spec.name, make_observer(spec, self._post_property_update))
 
         handle.on_file_loaded(self._post_file_loaded)
+        handle.on_file_load_failed(self._post_file_load_failed)
 
     def open_embedded(self, win_id: int) -> None:
         mpv_init_args = make_embedded_init_args(
@@ -214,23 +222,25 @@ class PlayerService(QObject):
         return self.is_video_path_loaded(self.path, videos)
 
     def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
-        if video is None:
-            self._subtitle_coordinator.attach_or_queue(subtitles, video_loaded=self.video_loaded)
-            return
+        self._apply_media_event(MediaRequested(video=video, subtitles=subtitles, video_loaded=self.video_loaded))
 
-        self._subtitle_coordinator.queue_for_next_load(subtitles)
-        path = map_path_to_str(video)
-        self._handle.command("loadfile", path, "replace")
-        self.play()
-
-    @Slot()
     def _on_file_loaded(self) -> None:
-        self._subtitle_coordinator.flush()
+        self._apply_media_event(VideoLoadSucceeded())
 
-    def _load_subtitles_now(self, subtitles: tuple[Path, ...]) -> None:
-        for subtitle in dict.fromkeys(subtitles):
-            path = map_path_to_str(subtitle)
-            self._handle.command("sub-add", path, "select")
+    def _on_file_load_failed(self) -> None:
+        self._apply_media_event(VideoLoadFailed())
+
+    def _apply_media_event(self, event: MediaEvent) -> None:
+        self._media, command = reduce_media_load(self._media, event)
+        match command:
+            case DoNothing():
+                pass
+            case LoadVideo(path=video):
+                self._handle.command("loadfile", map_path_to_str(video), "replace")
+                self.play()
+            case AttachSubtitles(subtitles=subtitles):
+                for subtitle in subtitles:
+                    self._handle.command("sub-add", map_path_to_str(subtitle), "select")
 
     def play(self) -> None:
         self._handle.set_property("pause", False)

@@ -43,3 +43,12 @@ def push_file_loaded(qt_app, player_handle):
         qt_app.processEvents()
 
     return _push
+
+
+@pytest.fixture
+def push_file_load_failed(qt_app, player_handle):
+    def _push() -> None:
+        player_handle.push_file_load_failed()
+        qt_app.processEvents()
+
+    return _push
