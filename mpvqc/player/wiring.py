@@ -11,12 +11,11 @@ if TYPE_CHECKING:
 
 
 def bindings(binder: inject.Binder) -> None:
-    from mpvqc.player.services import KeyCommandGeneratorService, MpvPlayerHandle, PlayerService
+    from mpvqc.player.services import MpvPlayerHandle, PlayerService
 
     def player_service() -> PlayerService:
         return PlayerService(MpvPlayerHandle())
 
-    binder.bind_to_constructor(KeyCommandGeneratorService, KeyCommandGeneratorService)
     binder.bind_to_constructor(PlayerService, player_service)
 
 
