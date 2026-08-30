@@ -110,8 +110,9 @@ TestCase {
         it.expect.openedSubtitles(["track1.ass"]);
     }
 
-    function test_singleSubtitleDrop_loadsWithoutWizard(): void {
+    function test_singleSubtitleDrop_ontoPlayingVideo_loadsWithoutWizard(): void {
         const control = it.makeControl();
+        it.player.playVideo();
 
         it.imports.dropFiles(control, [it.bridge.importArtifact("subtitle_basic.ass")]);
 
@@ -120,6 +121,22 @@ TestCase {
 
         it.expect.openedSubtitleCount(1);
         it.expect.noOpenedVideo();
+    }
+
+    function test_singleSubtitleDrop_withoutVideo_loadsWithTheNextVideo(): void {
+        const control = it.makeControl();
+
+        it.imports.dropFiles(control, [it.bridge.importArtifact("subtitle_basic.ass")]);
+
+        it.expect.openedSubtitleCount(0);
+
+        it.menu.trigger(control, "videoMenu", "openVideoMenuItem");
+        const dialog = it.find.openedDialog(control, "importVideoFileDialog");
+        dialog.selectedFile = it.bridge.importArtifact("video_basic.mp4");
+        it.dialog.accept(dialog);
+
+        it.expect.openedVideo("video_basic.mp4");
+        it.expect.openedSubtitleCount(1);
     }
 
     function test_explicitSubtitle_getsASubtitlesStepWhenTheVideoIsUnresolved(): void {
@@ -140,8 +157,9 @@ TestCase {
         it.expect.openedSubtitleCount(1);
     }
 
-    function test_explicitSubtitle_loadsEvenWhenTheVideoIsSkipped(): void {
+    function test_explicitSubtitle_ontoPlayingVideo_loadsEvenWhenTheFoundVideoIsSkipped(): void {
         const control = it.makeControl();
+        it.player.playVideo();
 
         it.imports.dropFiles(control, [it.bridge.importVideoOnlyDocument(), it.bridge.importArtifact("subtitle_basic.ass")]);
 

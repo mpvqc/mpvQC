@@ -111,8 +111,9 @@ to cover model-binding paths that mocks can't fake. Run together with the integr
 
 These drive the application content end-to-end against real, injected services. They click menu items, accept dialogs,
 and assert against application state through a Python test bridge. The harness lives entirely under `testqml/`: a Python
-entry point that boots a stripped-down application with the player swapped for a stub, bridges that expose inject state
-to QML, service overrides that keep tests off the real OS, and shared fixtures.
+entry point that boots a stripped-down application with the player's view swapped for a stub and its handle for a
+recorder, bridges that expose inject state to QML, service overrides that keep tests off the real OS, and shared
+fixtures.
 
 `TestHelpers.qml` files keep test code short by exposing the shared interactions (opening menus, finding dialogs,
 asserting state) as nested namespaces. They sit alongside the QML they help test. Each file's tests use the namespace

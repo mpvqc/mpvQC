@@ -41,6 +41,9 @@ class RecordingPlayerHandle:
     def command(self, name: str, *args: object) -> None:
         self.commands.append((name, *args))
 
+    def commands_named(self, name: str) -> list[tuple]:
+        return [command for command in self.commands if command[0] == name]
+
     def command_async(self, name: str, *args: object) -> None:
         self.async_commands.append((name, *args))
 
@@ -66,7 +69,10 @@ class RecordingPlayerHandle:
         raise NotImplementedError(msg)
 
     def push_property(self, name: str, raw: RawPropertyValue) -> None:
-        self._observers[name](name, raw)
+        if (observer := self._observers.get(name)) is None:
+            msg = f"Nothing observes {name!r}; the player service registers the observers when it is built"
+            raise RuntimeError(msg)
+        observer(name, raw)
 
     def push_file_loaded(self) -> None:
         if self._file_loaded is None:

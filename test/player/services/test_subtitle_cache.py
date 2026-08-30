@@ -9,16 +9,12 @@ SUBTITLE = Path.home() / "subtitle"
 SUBTITLES = (SUBTITLE,)
 
 
-def _commands(player_handle, name: str) -> list[tuple]:
-    return [command for command in player_handle.commands if command[0] == name]
-
-
 def test_subs_only_with_video_loaded_attach_directly(player_handle, player_service, push_property):
     push_property("path", "video")
 
     player_service.open_media(video=None, subtitles=SUBTITLES)
 
-    assert len(_commands(player_handle, "sub-add")) == 1
+    assert len(player_handle.commands_named("sub-add")) == 1
 
 
 def test_subs_only_with_no_video_do_not_issue_command(player_handle, player_service):
@@ -31,8 +27,8 @@ def test_video_with_subs_flushes_after_file_loaded(player_handle, player_service
     player_service.open_media(video=VIDEO, subtitles=SUBTITLES)
     push_file_loaded()
 
-    loadfile_calls = _commands(player_handle, "loadfile")
-    sub_add_calls = _commands(player_handle, "sub-add")
+    loadfile_calls = player_handle.commands_named("loadfile")
+    sub_add_calls = player_handle.commands_named("sub-add")
     assert len(loadfile_calls) == 1
     assert Path(loadfile_calls[0][1]) == VIDEO
     assert len(sub_add_calls) == 1
@@ -45,5 +41,5 @@ def test_same_video_reloads_and_flushes_subs(player_handle, player_service, push
     player_service.open_media(video=VIDEO, subtitles=SUBTITLES)
     push_file_loaded()
 
-    assert len(_commands(player_handle, "loadfile")) == 1
-    assert len(_commands(player_handle, "sub-add")) == 1
+    assert len(player_handle.commands_named("loadfile")) == 1
+    assert len(player_handle.commands_named("sub-add")) == 1
