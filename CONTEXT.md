@@ -131,6 +131,12 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   instead of into it. Only Windows does this.
 - **In-scene player**: the player as an item of the scene, the app painting the video into the scene itself rather than
   the OS painting it above. Everywhere but Windows.
+- **Load in flight**: a video load the app asked the player for and the player has not yet answered. It ends when the
+  player reports the video loaded or the load failed, or when the app asks for another video before either answer.
+- **Subtitles of a load in flight**: the subtitles opened together with the video a load in flight is for. They are
+  tied to that load: when it fails or is replaced, they are dropped with it.
+- **Subtitles for the next load**: subtitles waiting for whichever video loads next, tied to no load: opened before any
+  video was on screen, or opened on their own while a load was in flight.
 
 ## Platform
 
