@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.player.services import KeyCommandGeneratorService, PlayerService
+from mpvqc.player.services import PlayerService, key_command
 from mpvqc.services import SettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -17,7 +17,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcAppViewModel(QObject):
     _settings = inject.attr(SettingsService)
     _player = inject.attr(PlayerService)
-    _command_generator = inject.attr(KeyCommandGeneratorService)
 
     layoutOrientationChanged = Signal(int)
 
@@ -31,5 +30,5 @@ class MpvqcAppViewModel(QObject):
 
     @Slot(Qt.Key, Qt.KeyboardModifier)
     def forwardKeyToPlayer(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
-        if command := self._command_generator.generate_command(key, modifiers):
+        if command := key_command(key, modifiers):
             self._player.press_key(command)

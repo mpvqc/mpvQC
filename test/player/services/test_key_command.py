@@ -6,15 +6,10 @@ import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QKeyEvent
 
-from mpvqc.player.services import KeyCommandGeneratorService
+from mpvqc.player.services import key_command
 
 Modifiers = Qt.KeyboardModifier
 Keys = Qt.Key
-
-
-@pytest.fixture(scope="module")
-def service() -> KeyCommandGeneratorService:
-    return KeyCommandGeneratorService()
 
 
 @pytest.mark.parametrize(
@@ -38,15 +33,17 @@ def service() -> KeyCommandGeneratorService:
         ("shift+RIGHT", Keys.Key_Right, Modifiers.ShiftModifier),
         ("ctrl+LEFT", Keys.Key_Left, Modifiers.ControlModifier),
         ("ctrl+RIGHT", Keys.Key_Right, Modifiers.ControlModifier),
-        (None, Keys.Key_Up, Modifiers.NoModifier),
+        ("UP", Keys.Key_Up, Modifiers.NoModifier),
         ("shift+UP", Keys.Key_Up, Modifiers.ShiftModifier),
-        (None, Keys.Key_Down, Modifiers.NoModifier),
+        ("DOWN", Keys.Key_Down, Modifiers.NoModifier),
         ("ctrl+DOWN", Keys.Key_Down, Modifiers.ControlModifier),
-        (None, Keys.Key_Backspace, Modifiers.NoModifier),
-        ("alt+BACKSPACE", Keys.Key_Backspace, Modifiers.AltModifier),
-        (None, Keys.Key_Return, Modifiers.NoModifier),
+        ("BS", Keys.Key_Backspace, Modifiers.NoModifier),
+        ("alt+BS", Keys.Key_Backspace, Modifiers.AltModifier),
+        ("ENTER", Keys.Key_Return, Modifiers.NoModifier),
         ("ctrl+ENTER", Keys.Key_Return, Modifiers.ControlModifier),
-        (None, Keys.Key_Enter, Modifiers.NoModifier),
+        ("ENTER", Keys.Key_Enter, Modifiers.NoModifier),
+        (None, Keys.Key_F1, Modifiers.NoModifier),
+        (None, Keys.Key_F1, Modifiers.ControlModifier),
         ("u", Keys.Key_U, Modifiers.NoModifier),
         ("U", Keys.Key_U, Modifiers.ShiftModifier),
         ("alt+u", Keys.Key_U, Modifiers.AltModifier),
@@ -64,6 +61,14 @@ def service() -> KeyCommandGeneratorService:
         ("m", Keys.Key_M, Modifiers.NoModifier),
         ("j", Keys.Key_J, Modifiers.NoModifier),
         ("J", Keys.Key_J, Modifiers.ShiftModifier),
+        ("ä", Keys.Key_Adiaeresis, Modifiers.NoModifier),
+        ("Ä", Keys.Key_Adiaeresis, Modifiers.ShiftModifier),
+        ("å", Keys.Key_Aring, Modifiers.NoModifier),
+        ("Å", Keys.Key_Aring, Modifiers.ShiftModifier),
+        ("ø", Keys.Key_Ooblique, Modifiers.NoModifier),
+        ("ctrl+ø", Keys.Key_Ooblique, Modifiers.ControlModifier),
+        ("ß", Keys.Key_ssharp, Modifiers.NoModifier),
+        ("ß", Keys.Key_ssharp, Modifiers.ShiftModifier),
         ("SHARP", Keys.Key_NumberSign, Modifiers.NoModifier),
         ("SHARP", Keys.Key_NumberSign, Modifiers.ShiftModifier),
         ("l", Keys.Key_L, Modifiers.NoModifier),
@@ -73,12 +78,6 @@ def service() -> KeyCommandGeneratorService:
         ("i", Keys.Key_I, Modifiers.NoModifier),
     ],
 )
-def test_key_command(
-    expected: str,
-    key: Keys,
-    modifiers: Modifiers,
-    service: KeyCommandGeneratorService,
-) -> None:
+def test_key_command(expected: str | None, key: Keys | None, modifiers: Modifiers) -> None:
     event = QKeyEvent(QEvent.Type.KeyPress, key.value if key else 0, modifiers)
-    command = service.generate_command(Keys(event.key()), event.modifiers())
-    assert command == expected
+    assert key_command(Keys(event.key()), event.modifiers()) == expected

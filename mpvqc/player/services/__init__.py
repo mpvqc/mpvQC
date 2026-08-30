@@ -8,7 +8,7 @@ from .handle import PlayerHandle as PlayerHandle
 from .handle import RenderContext as RenderContext
 from .init_args import make_embedded_init_args as make_embedded_init_args
 from .init_args import make_in_scene_init_args as make_in_scene_init_args
-from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
+from .key_command import key_command as key_command
 from .media_load import IDLE as IDLE
 from .media_load import AttachSubtitles as AttachSubtitles
 from .media_load import DoNothing as DoNothing
