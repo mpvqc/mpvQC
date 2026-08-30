@@ -9,17 +9,11 @@ import pytest
 
 from mpvqc.player.services import PlayerService, RawPropertyValue
 from mpvqc.services import ApplicationPathsService
-from test.player.recording import RecordingPlayerHandle
 
 
 @pytest.fixture
 def application_paths_service_mock() -> MagicMock:
     return MagicMock(spec_set=ApplicationPathsService)
-
-
-@pytest.fixture
-def player_handle() -> RecordingPlayerHandle:
-    return RecordingPlayerHandle()
 
 
 @pytest.fixture(autouse=True)
@@ -34,10 +28,9 @@ def configure_injections(
 
 
 @pytest.fixture
-def player_service(configure_injections, player_handle) -> PlayerService:
-    service = PlayerService(player_handle)
-    service.init()
-    return service
+def player_service(configure_injections, player_service) -> PlayerService:
+    player_service.init()
+    return player_service
 
 
 @pytest.fixture

@@ -18,7 +18,7 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
-from mpvqc.player.services import PlayerService, RawPropertyValue
+from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     BuildInfoService,
     InternationalizationService,
@@ -32,60 +32,14 @@ from mpvqc.shared import map_path_to_str
 from test.player.recording import RecordingPlayerHandle
 
 
-class FakePlayerService(PlayerService):
-    """Stands in for mpv: raw values pass through the production observers,
-    so coercion, dedupe, and signal emission match the real service."""
-
-    def __init__(self) -> None:
-        recorder = RecordingPlayerHandle()
-        super().__init__(recorder)
-        self._recorder = recorder
-
-    def load_video(self, path: str) -> None:
-        self._observe("path", path)
-        self._observe("filename", Path(path).name)
-
-    def unload_video(self) -> None:
-        self._recorder.properties.pop("time-pos", None)
-        self._observe("path", None)
-
-    def update(
-        self,
-        *,
-        duration: float | None = None,
-        percent_pos: float | None = None,
-        time_pos: float | None = None,
-        time_remaining: float | None = None,
-        height: int | None = None,
-        width: int | None = None,
-        track_list: list[dict] | None = None,
-    ) -> None:
-        if duration is not None:
-            # the reducer matches float instances, an int literal would be dropped
-            self._observe("duration", duration + 0.0)
-        if percent_pos is not None:
-            self._observe("percent-pos", percent_pos)
-        if time_pos is not None:
-            self._recorder.properties["time-pos"] = time_pos
-            self._observe("time-pos", time_pos)
-        if time_remaining is not None:
-            self._observe("time-remaining", time_remaining)
-        if height is not None:
-            self._observe("height", height)
-        if width is not None:
-            self._observe("width", width)
-        if track_list is not None:
-            self._observe("track-list", track_list)
-
-    def _observe(self, name: str, raw: RawPropertyValue) -> None:
-        self._recorder.push_property(name, raw)
-        # the marshal hands updates to the event loop, and a test asserts right after the call
-        QCoreApplication.processEvents()
+@pytest.fixture
+def player_handle(qt_app) -> RecordingPlayerHandle:
+    return RecordingPlayerHandle()
 
 
 @pytest.fixture
-def fake_player_service() -> FakePlayerService:
-    return FakePlayerService()
+def player_service(player_handle) -> PlayerService:
+    return PlayerService(player_handle)
 
 
 class MySpy:

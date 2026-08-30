@@ -15,9 +15,9 @@ BOTH_TRACKS = [{"type": "audio"}, {"type": "sub"}]
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, fake_player_service):
+def configure_inject(common_bindings_with, player_service):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, fake_player_service)
+        binder.bind(PlayerService, player_service)
 
     common_bindings_with(custom_bindings)
 
@@ -93,9 +93,9 @@ def test_derivation(case: DerivationCase):
     assert derive_toolbar_props(case.inputs) == case.expected
 
 
-def test_initial_snapshot_reads_player_at_construction(make_view_model, fake_player_service):
-    fake_player_service.load_video("/videos/movie.mkv")
-    fake_player_service.update(track_list=BOTH_TRACKS)
+def test_initial_snapshot_reads_player_at_construction(make_view_model, player_handle):
+    player_handle.load_video("/videos/movie.mkv")
+    player_handle.update(track_list=BOTH_TRACKS)
 
     view_model = make_view_model()
 
@@ -104,12 +104,12 @@ def test_initial_snapshot_reads_player_at_construction(make_view_model, fake_pla
     assert view_model.audioActive
 
 
-def test_folds_inside_one_window_settle_to_one_emission_batch(make_view_model, fake_player_service, spy_notifies):
+def test_folds_inside_one_window_settle_to_one_emission_batch(make_view_model, player_handle, spy_notifies):
     view_model = make_view_model()
     spies = spy_notifies(view_model)
 
-    fake_player_service.load_video("/videos/movie.mkv")
-    fake_player_service.update(track_list=BOTH_TRACKS)
+    player_handle.load_video("/videos/movie.mkv")
+    player_handle.update(track_list=BOTH_TRACKS)
 
     assert emissions(spies) == {}
     assert not view_model.frameStepActive
@@ -121,28 +121,28 @@ def test_folds_inside_one_window_settle_to_one_emission_batch(make_view_model, f
     assert spies["audioActive"].at(0, 0) is True
 
 
-def test_video_switch_emits_only_settled_deltas(make_view_model, fake_player_service, spy_notifies):
-    fake_player_service.load_video("/videos/a.mkv")
-    fake_player_service.update(track_list=BOTH_TRACKS)
+def test_video_switch_emits_only_settled_deltas(make_view_model, player_handle, spy_notifies):
+    player_handle.load_video("/videos/a.mkv")
+    player_handle.update(track_list=BOTH_TRACKS)
     view_model = make_view_model()
     spies = spy_notifies(view_model)
 
-    fake_player_service.unload_video()
-    fake_player_service.load_video("/videos/b.mkv")
-    fake_player_service.update(track_list=[{"type": "audio"}])
+    player_handle.unload_video()
+    player_handle.load_video("/videos/b.mkv")
+    player_handle.update(track_list=[{"type": "audio"}])
 
     assert spies["subtitleActive"].wait(5000)
     assert emissions(spies) == {"subtitleActive": 1}
     assert spies["subtitleActive"].at(0, 0) is False
 
 
-def test_failed_load_retracts_all_three_buttons(make_view_model, fake_player_service, spy_notifies):
-    fake_player_service.load_video("/videos/movie.mkv")
-    fake_player_service.update(track_list=BOTH_TRACKS)
+def test_failed_load_retracts_all_three_buttons(make_view_model, player_handle, spy_notifies):
+    player_handle.load_video("/videos/movie.mkv")
+    player_handle.update(track_list=BOTH_TRACKS)
     view_model = make_view_model()
     spies = spy_notifies(view_model)
 
-    fake_player_service.unload_video()
+    player_handle.unload_video()
 
     assert spies["frameStepActive"].wait(5000)
     assert emissions(spies) == {"frameStepActive": 1, "subtitleActive": 1, "audioActive": 1}

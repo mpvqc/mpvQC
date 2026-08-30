@@ -28,12 +28,12 @@ def view_model() -> MpvqcHeaderViewModel:
 def configure_inject(
     common_bindings_with,
     state_service,
-    fake_player_service,
+    player_service,
     settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(StateService, state_service)
-        binder.bind(PlayerService, fake_player_service)
+        binder.bind(PlayerService, player_service)
         binder.bind(SettingsService, settings_service)
 
     common_bindings_with(custom_bindings)
@@ -124,13 +124,13 @@ def test_derivation(case: DerivationCase):
 def test_window_title_changed(
     view_model,
     configure_state,
-    fake_player_service,
+    player_handle,
     settings_service,
     make_spy,
 ):
     file = Path.home() / "test_video.mp4"
     configure_state(saved=False)
-    fake_player_service.load_video(f"{file.resolve()}")
+    player_handle.load_video(f"{file.resolve()}")
 
     spy = make_spy(view_model.windowTitleChanged)
 
@@ -140,11 +140,11 @@ def test_window_title_changed(
 
 def test_initial_snapshot_reads_services_at_construction(
     configure_state,
-    fake_player_service,
+    player_handle,
     settings_service,
 ):
     configure_state(saved=False, document=Path("doc.qc"))
-    fake_player_service.load_video("/videos/test_video.mp4")
+    player_handle.load_video("/videos/test_video.mp4")
     settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
 
     # noinspection PyCallingNonCallable

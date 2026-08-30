@@ -18,9 +18,9 @@ TimeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, fake_player_service, settings_service):
+def configure_inject(common_bindings_with, player_service, settings_service):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, fake_player_service)
+        binder.bind(PlayerService, player_service)
         binder.bind(SettingsService, settings_service)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
         binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())
@@ -210,72 +210,72 @@ def test_derivation(case: DerivationCase):
     assert derive_footer_props(case.inputs, measure_stub) == case.expected
 
 
-def test_video_loaded_fold(make_view_model, fake_player_service, spy_notifies):
+def test_video_loaded_fold(make_view_model, player_handle, spy_notifies):
     view_model = make_view_model()
     spies = spy_notifies(view_model)
 
-    fake_player_service.load_video("/videos/movie.mkv")
+    player_handle.load_video("/videos/movie.mkv")
 
     assert emissions(spies) == {"isPercentVisible": 1, "isTimeVisible": 1, "timeText": 1, "timeWidth": 1}
     assert spies["timeText"].at(0, 0) == "00:00/00:00"
     assert view_model.timeWidth > 0
 
 
-def test_percent_pos_fold(make_view_model, fake_player_service, spy_notifies):
+def test_percent_pos_fold(make_view_model, player_handle, spy_notifies):
     view_model = make_view_model()
     spies = spy_notifies(view_model)
 
-    fake_player_service.update(percent_pos=42.0)
+    player_handle.update(percent_pos=42.0)
 
     assert emissions(spies) == {"percentText": 1}
     assert spies["percentText"].at(0, 0) == "42%"
 
 
-def test_time_pos_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
-    fake_player_service.load_video("/videos/movie.mkv")
-    fake_player_service.update(time_pos=1.0)
+def test_time_pos_fold(make_view_model, player_handle, settings_service, spy_notifies):
+    player_handle.load_video("/videos/movie.mkv")
+    player_handle.update(time_pos=1.0)
     settings_service.time_display_mode = TimeDisplayMode.CURRENT_TIME.value
     view_model = make_view_model()
     assert view_model.timeText == "00:01"
     spies = spy_notifies(view_model)
 
     # 1 -> 10 permutes the same glyphs, so the width stays put on every font engine
-    fake_player_service.update(time_pos=10.0)
+    player_handle.update(time_pos=10.0)
 
     assert emissions(spies) == {"timeText": 1}
     assert spies["timeText"].at(0, 0) == "00:10"
 
 
-def test_time_remaining_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
-    fake_player_service.load_video("/videos/movie.mkv")
-    fake_player_service.update(time_remaining=1.0)
+def test_time_remaining_fold(make_view_model, player_handle, settings_service, spy_notifies):
+    player_handle.load_video("/videos/movie.mkv")
+    player_handle.update(time_remaining=1.0)
     settings_service.time_display_mode = TimeDisplayMode.REMAINING_TIME.value
     view_model = make_view_model()
     assert view_model.timeText == "-00:01"
     spies = spy_notifies(view_model)
 
     # 1 -> 10 permutes the same glyphs, so the width stays put on every font engine
-    fake_player_service.update(time_remaining=10.0)
+    player_handle.update(time_remaining=10.0)
 
     assert emissions(spies) == {"timeText": 1}
     assert spies["timeText"].at(0, 0) == "-00:10"
 
 
-def test_duration_fold(make_view_model, fake_player_service, spy_notifies):
-    fake_player_service.load_video("/videos/movie.mkv")
+def test_duration_fold(make_view_model, player_handle, spy_notifies):
+    player_handle.load_video("/videos/movie.mkv")
     view_model = make_view_model()
     assert view_model.timeText == "00:00/00:00"
     spies = spy_notifies(view_model)
 
-    fake_player_service.update(duration=3600.0)
+    player_handle.update(duration=3600.0)
 
     assert emissions(spies) == {"timeText": 1, "timeWidth": 1}
     assert spies["timeText"].at(0, 0) == "00:00:00/01:00:00"
     assert spies["timeWidth"].at(0, 0) == view_model.timeWidth
 
 
-def test_statusbar_percentage_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
-    fake_player_service.load_video("/videos/movie.mkv")
+def test_statusbar_percentage_fold(make_view_model, player_handle, settings_service, spy_notifies):
+    player_handle.load_video("/videos/movie.mkv")
     view_model = make_view_model()
     assert view_model.isPercentVisible
     spies = spy_notifies(view_model)
@@ -286,9 +286,9 @@ def test_statusbar_percentage_fold(make_view_model, fake_player_service, setting
     assert spies["isPercentVisible"].at(0, 0) is False
 
 
-def test_time_display_mode_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
-    fake_player_service.load_video("/videos/movie.mkv")
-    fake_player_service.update(duration=125.0, time_pos=65.0, time_remaining=60.0)
+def test_time_display_mode_fold(make_view_model, player_handle, settings_service, spy_notifies):
+    player_handle.load_video("/videos/movie.mkv")
+    player_handle.update(duration=125.0, time_pos=65.0, time_remaining=60.0)
     view_model = make_view_model()
     assert view_model.timeText == "01:05/02:05"
     spies = spy_notifies(view_model)
