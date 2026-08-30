@@ -9,7 +9,7 @@ import shutil
 import sys
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, override
+from typing import Literal, NamedTuple, override
 
 import inject
 from PySide6.QtCore import QSettings, QUrl
@@ -46,9 +46,6 @@ from mpvqc.window.services import (
     windows_capabilities,
 )
 from test.player.recording import RecordingPlayerHandle
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
 
 
 def _temp_root() -> Path:
@@ -129,85 +126,23 @@ class ImportSettingsServiceOverride(ImportSettingsService):
         self.last_directory_documents = QUrl.fromLocalFile(str(FIXTURES_DIR))
 
 
-class PlayerServiceOverride(PlayerService):
-    def __init__(self) -> None:
-        recorder = RecordingPlayerHandle()
-        super().__init__(recorder)
-        self._recorder = recorder
-        self.opened_video: Path | None = None
-        self.opened_subtitles: tuple[Path, ...] = ()
-
-    def load_video(
-        self,
-        path: str,
-        *,
-        duration: float,
-        time_pos: float,
-        time_remaining: float,
-        percent_pos: float,
-    ) -> None:
-        for name, raw in (
-            ("path", path),
-            ("duration", duration),
-            ("time-pos", time_pos),
-            ("time-remaining", time_remaining),
-            ("percent-pos", percent_pos),
-        ):
-            self._recorder.push_property(name, raw)
-
+class InstantLoadPlayerHandle(RecordingPlayerHandle):
     @override
-    def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
-        if self.opened_video is None:
-            return False
-        current = self.opened_video.resolve()
-        return any(current == video.resolve() for video in videos)
+    def command(self, name: str, *args: object) -> None:
+        super().command(name, *args)
+        if name == "loadfile":
+            path = str(args[0])
+            self.push_property("path", path)
+            self.push_property("filename", Path(path).name)
+            self.push_file_loaded()
 
-    @override
-    def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
-        if video is not None:
-            self.opened_video = video
-        if subtitles:
-            self.opened_subtitles = subtitles
 
-    @override
-    def pause(self) -> None:
-        pass
+class RecordedPlayer(NamedTuple):
+    """The service and the handle it is built over, as one: a push through the handle reaches
+    nothing until the service has registered its observers."""
 
-    @override
-    def move_mouse(self, x: int, y: int) -> None:
-        pass
-
-    @override
-    def press_key(self, command: str) -> None:
-        pass
-
-    @override
-    def press_mouse_left(self) -> None:
-        pass
-
-    @override
-    def release_mouse_left(self) -> None:
-        pass
-
-    @override
-    def press_mouse_middle(self) -> None:
-        pass
-
-    @override
-    def press_mouse_back(self) -> None:
-        pass
-
-    @override
-    def press_mouse_forward(self) -> None:
-        pass
-
-    @override
-    def scroll_up(self) -> None:
-        pass
-
-    @override
-    def scroll_down(self) -> None:
-        pass
+    handle: InstantLoadPlayerHandle
+    service: PlayerService
 
 
 class ExportServiceOverride(ExportService):
@@ -265,6 +200,15 @@ def _import_settings_service_override() -> ImportSettingsServiceOverride:
     return ImportSettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
 
 
+def _recorded_player() -> RecordedPlayer:
+    handle = InstantLoadPlayerHandle()
+    return RecordedPlayer(handle=handle, service=PlayerService(handle))
+
+
+def _player_service() -> PlayerService:
+    return inject.instance(RecordedPlayer).service
+
+
 def configure_injections() -> None:
     MpvqcExportBackupTimerViewModel.MIN_INTERVAL_MS = 50
 
@@ -278,7 +222,8 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ExportSettingsService, _export_settings_service_override)
         binder.bind_to_constructor(ImportSettingsService, _import_settings_service_override)
         binder.bind_to_provider(PlatformService, current_platform.service)
-        binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
+        binder.bind_to_constructor(RecordedPlayer, _recorded_player)
+        binder.bind_to_constructor(PlayerService, _player_service)
         binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)
 

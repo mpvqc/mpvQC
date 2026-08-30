@@ -215,6 +215,13 @@ QtObject {
         }
     }
 
+    readonly property var player: QtObject {
+        // The player holds a subtitle back until a video plays; drop subtitles after this.
+        function playVideo(): void {
+            root.bridge.loadVideo({});
+        }
+    }
+
     readonly property var imports: QtObject {
         function dropFiles(control: Item, urls: list<var>): void {
             const dropArea = root.testCase.findChild(control, "fileDropArea");

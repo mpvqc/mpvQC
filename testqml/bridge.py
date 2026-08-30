@@ -9,7 +9,7 @@ from typing import NamedTuple, assert_never
 from zipfile import ZipFile
 
 import inject
-from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
 from mpvqc.appearance.services import (
@@ -32,7 +32,6 @@ from mpvqc.importing.services import (
     VideoLoad,
 )
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
-from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
@@ -46,7 +45,7 @@ from testqml.injections import (
     FIXTURES_DIR,
     TEMP_ROOT,
     TEMP_SAVES_DIR,
-    PlayerServiceOverride,
+    RecordedPlayer,
     configure_injections,
     current_platform,
     rebind_main_window,
@@ -250,6 +249,8 @@ class MpvqcTestBridge(QObject):
     @Slot()
     def waitForBackgroundJobs(self) -> None:
         QThreadPool.globalInstance().waitForDone()
+        # a job's result hops back to the GUI thread as one queued event, so one pass delivers it
+        QCoreApplication.processEvents()
 
     @Slot(result=QUrl)
     def importComplexDocument(self) -> QUrl:
@@ -265,12 +266,9 @@ class MpvqcTestBridge(QObject):
 
     @Slot(dict)
     def loadVideo(self, values: dict) -> None:
-        player = inject.instance(PlayerService)
-        if not isinstance(player, PlayerServiceOverride):
-            msg = "loadVideo needs the player service override binding"
-            raise TypeError(msg)
-        player.load_video(
-            values.get("path", "/videos/movie.mkv"),
+        handle = inject.instance(RecordedPlayer).handle
+        handle.load_video(values.get("path", "/videos/movie.mkv"))
+        handle.update(
             duration=float(values.get("duration", 0.0)),
             time_pos=float(values.get("timePos", 0.0)),
             time_remaining=float(values.get("timeRemaining", 0.0)),
@@ -279,17 +277,17 @@ class MpvqcTestBridge(QObject):
 
     @Slot(result=str)
     def openedVideoName(self) -> str:
-        opened = getattr(inject.instance(PlayerService), "opened_video", None)
-        return opened.name if opened else ""
+        loaded = inject.instance(RecordedPlayer).handle.commands_named("loadfile")
+        return Path(str(loaded[-1][1])).name if loaded else ""
 
     @Slot(result=int)
     def openedSubtitleCount(self) -> int:
-        return len(getattr(inject.instance(PlayerService), "opened_subtitles", ()))
+        return len(self.openedSubtitleNames())
 
     @Slot(result=list)
     def openedSubtitleNames(self) -> list[str]:
-        subtitles = getattr(inject.instance(PlayerService), "opened_subtitles", ())
-        return [s.name for s in subtitles]
+        added = inject.instance(RecordedPlayer).handle.commands_named("sub-add")
+        return [Path(str(command[1])).name for command in added]
 
     @Slot(result=list)
     def openedDesktopUrls(self) -> list[str]:

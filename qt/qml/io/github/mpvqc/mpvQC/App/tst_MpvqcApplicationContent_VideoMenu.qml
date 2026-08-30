@@ -33,8 +33,9 @@ TestCase {
         tryVerify(() => it.bridge.openedVideoName() === "video_basic.mp4");
     }
 
-    function test_openSubtitles_loadsSubtitleIntoPlayer(): void {
+    function test_openSubtitles_whileVideoPlays_loadsSubtitleIntoPlayer(): void {
         const control = it.makeControl();
+        it.player.playVideo();
 
         it.menu.trigger(control, "videoMenu", "openSubtitlesMenuItem");
 
