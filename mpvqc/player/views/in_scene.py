@@ -98,7 +98,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     @override
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
-            self._player.init()
+            self._player.open_in_scene()
             self._ctx = self._player.create_render_context(
                 get_proc_address=get_process_address,
                 display_params=get_display_params(),

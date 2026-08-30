@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.player.services import PlayerService, RawPropertyValue
+from mpvqc.player.services import RawPropertyValue
 from mpvqc.services import ApplicationPathsService
 
 
@@ -25,12 +25,6 @@ def configure_injections(
         binder.bind(ApplicationPathsService, application_paths_service_mock)
 
     common_bindings_with(custom_bindings)
-
-
-@pytest.fixture
-def player_service(configure_injections, player_service) -> PlayerService:
-    player_service.init()
-    return player_service
 
 
 @pytest.fixture

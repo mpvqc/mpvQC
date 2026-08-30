@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import logging
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -16,6 +15,7 @@ from mpvqc.services import ApplicationPathsService, BuildInfoService
 from mpvqc.shared import map_path_to_str
 
 from .event_marshal import EventMarshal
+from .init_args import make_embedded_init_args, make_in_scene_init_args
 from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
 from .subtitle_load import SubtitleLoadCoordinator
 
@@ -88,35 +88,24 @@ class PlayerService(QObject):
 
         handle.on_file_loaded(self._post_file_loaded)
 
-    def init(self, win_id: int | None = None) -> None:
-        args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
-        self._handle.open(self._build_init_args() | args)
+    def open_embedded(self, win_id: int) -> None:
+        mpv_init_args = make_embedded_init_args(
+            win_id=win_id,
+            config_dir=self._paths.dir_config,
+            screenshot_directory=self._paths.dir_screenshots,
+            audio_client_name=self._build_info.name,
+        )
+        self._handle.open(mpv_init_args)
         self._opened = True
 
-    def _build_init_args(self) -> dict:
-        args: dict = {
-            "keep_open": "yes",
-            "idle": "yes",
-            "osc": "yes",
-            "cursor_autohide": "no",
-            "input_cursor": "no",
-            "input_default_bindings": "no",
-            "config": "yes",
-            "config_dir": map_path_to_str(self._paths.dir_config),
-            "screenshot_directory": map_path_to_str(self._paths.dir_screenshots),
-            "audio_client_name": self._build_info.name,
-            "ytdl": "yes",
-        }
-
-        if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
-            mpv_log_level = 25
-
-            def player_logger(level: str, context: str, message: str) -> None:
-                logger.log(mpv_log_level, message.rstrip(), extra={"mpv_level": level, "mpv_context": context})
-
-            args["log_handler"] = player_logger
-
-        return args
+    def open_in_scene(self) -> None:
+        mpv_init_args = make_in_scene_init_args(
+            config_dir=self._paths.dir_config,
+            screenshot_directory=self._paths.dir_screenshots,
+            audio_client_name=self._build_info.name,
+        )
+        self._handle.open(mpv_init_args)
+        self._opened = True
 
     def _apply_property_update(self, name: str, raw: RawPropertyValue) -> None:
         old = self._state
