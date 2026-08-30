@@ -23,5 +23,5 @@ class MpvqcEmbeddedPlayer(QWindow):
         super().__init__()
         self.setFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowTransparentForInput)
         win_id = self.winId()
-        self._player.init(win_id=win_id)
+        self._player.open_embedded(win_id=win_id)
         self._platform.track_embedded_player(win_id)

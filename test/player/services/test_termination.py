@@ -19,12 +19,15 @@ def test_terminate_is_a_noop_before_the_player_opens(player_handle):
 
 
 def test_terminate_closes_the_handle(player_service, player_handle):
+    player_service.open_in_scene()
+
     player_service.terminate()
 
     assert player_handle.closed
 
 
 def test_terminate_invokes_the_shutdown_hook(player_service):
+    player_service.open_in_scene()
     hook = MagicMock()
     player_service.set_shutdown_hook(hook)
 
@@ -34,6 +37,7 @@ def test_terminate_invokes_the_shutdown_hook(player_service):
 
 
 def test_terminate_invokes_the_shutdown_hook_before_closing_the_handle(player_service, player_handle):
+    player_service.open_in_scene()
     closed_while_hook_ran: list[bool] = []
     player_service.set_shutdown_hook(lambda: closed_while_hook_ran.append(player_handle.closed))
 
