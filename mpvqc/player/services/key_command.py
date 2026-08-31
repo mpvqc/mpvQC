@@ -37,7 +37,6 @@ _CHAR_NAMES = {"#": "SHARP"}
 
 
 def key_command(key: Qt.Key, modifiers: Qt.KeyboardModifier) -> str | None:
-    """The mpv key name for a key press, or None when there is none to send."""
     if not key:
         return None
 

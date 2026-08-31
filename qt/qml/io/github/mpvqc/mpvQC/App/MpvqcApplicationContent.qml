@@ -17,6 +17,7 @@ Item {
     required property real windowWidth
 
     readonly property MpvqcAppViewModel _viewModel: MpvqcAppViewModel {}
+    readonly property MpvqcPlayerViewModel _playerViewModel: MpvqcPlayerViewModel {}
 
     property bool _initialFocusDone: false
 
@@ -115,6 +116,6 @@ Item {
 
         onOpenCommentMenuRequested: _commentMenu.popup()
         onToggleFullScreenRequested: root.toggleFullScreenRequested()
-        onForwardKeyToPlayerRequested: (key, modifiers) => root._viewModel.forwardKeyToPlayer(key, modifiers)
+        onForwardKeyToPlayerRequested: (key, modifiers) => root._playerViewModel.forwardKey(key, modifiers)
     }
 }
