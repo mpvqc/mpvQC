@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import QObject, Slot
+from PySide6.QtCore import QObject, Qt, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.player.services import PlayerService
@@ -17,6 +17,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcPlayerViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
     _player = inject.attr(PlayerService)
+
+    @Slot(Qt.Key, Qt.KeyboardModifier)
+    def forwardKey(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
+        self._player.forward_key(key, modifiers)
 
     @Slot(int, int)
     def moveMouse(self, x: int, y: int) -> None:

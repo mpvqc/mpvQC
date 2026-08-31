@@ -9,13 +9,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Qt, Signal
 
 from mpvqc.services import ApplicationPathsService, BuildInfoService
 from mpvqc.shared import map_path_to_str
 
 from .event_marshal import EventMarshal
 from .init_args import make_embedded_init_args, make_in_scene_init_args
+from .key_command import key_command
 from .media_load import (
     IDLE,
     AttachSubtitles,
@@ -248,8 +249,9 @@ class PlayerService(QObject):
     def pause(self) -> None:
         self._handle.set_property("pause", True)
 
-    def press_key(self, command: str) -> None:
-        self._handle.command_async("keypress", command)
+    def forward_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
+        if command := key_command(key, modifiers):
+            self._handle.command_async("keypress", command)
 
     def jump_to(self, seconds: float) -> None:
         self._handle.command_async("seek", seconds, "absolute+exact")
