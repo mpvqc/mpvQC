@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+from functools import cached_property
 from typing import TYPE_CHECKING
 
 import inject
@@ -27,6 +28,7 @@ from .media_load import (
     reduce_media_load,
 )
 from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
+from .versions import PlayerVersions, clean_versions
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -142,13 +144,12 @@ class PlayerService(QObject):
     ) -> RenderContext:
         return self._handle.create_render_context(get_proc_address, display_params, on_update)
 
-    @property
-    def mpv_version(self) -> str:
-        return str(self._handle.get_property("mpv-version") or "")
-
-    @property
-    def ffmpeg_version(self) -> str:
-        return str(self._handle.get_property("ffmpeg-version") or "")
+    @cached_property
+    def versions(self) -> PlayerVersions:
+        return clean_versions(
+            mpv=self._handle.get_property("mpv-version"),
+            ffmpeg=self._handle.get_property("ffmpeg-version"),
+        )
 
     @property
     def path(self) -> str:
