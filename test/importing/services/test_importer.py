@@ -23,6 +23,7 @@ from mpvqc.importing.services import (
     SubtitlesSkip,
     VideoLoad,
     VideoSkip,
+    any_video_loaded,
 )
 from mpvqc.player.services import PlayerService
 from mpvqc.services import StateService
@@ -34,7 +35,10 @@ from test.importing.plans import (
     SUB_B_FROM_DOCUMENT,
     UNRESOLVED_VIDEO,
     VIDEO_A,
+    VIDEO_A_EXPLICIT,
     VIDEO_A_FROM_DOCUMENT,
+    VIDEO_B,
+    VIDEO_B_FROM_DOCUMENT,
     plan_with,
 )
 
@@ -118,7 +122,7 @@ def scan_with(
 EMPTY_SCAN = scan_with()
 
 # Under the fixture's ASK_EVERY_TIME setting every found-media concern stays unresolved,
-# so these scans announce a pending import.
+# so these scans announce a pending import while no video is loaded.
 VIDEO_CHOICE_SCAN = scan_with(videos=(VIDEO_A_FROM_DOCUMENT,))
 MEDIA_CHOICE_SCAN = scan_with(
     videos=(VIDEO_A_FROM_DOCUMENT,),
@@ -203,17 +207,31 @@ RECORD_IMPORT_CASES = [
     ),
     RecordImportCase(
         name="re-import of current video, no comments: skips (preserves document)",
-        scanned=VIDEO_CHOICE_SCAN,
-        resolve_video=VideoLoad(path=VIDEO_A),
+        scanned=scan_with(videos=(VIDEO_A_EXPLICIT,)),
+        resolve_video=None,
         player_already_has_video=True,
         expected_record=False,
     ),
     RecordImportCase(
         name="re-import of current video with comments: records",
-        scanned=scan_with(videos=(VIDEO_A_FROM_DOCUMENT,), comments=COMMENTS),
-        resolve_video=VideoLoad(path=VIDEO_A),
+        scanned=scan_with(videos=(VIDEO_A_EXPLICIT,), comments=COMMENTS),
+        resolve_video=None,
         player_already_has_video=True,
         expected_record=True,
+    ),
+    RecordImportCase(
+        name="document references the current video: skips without the wizard",
+        scanned=VIDEO_CHOICE_SCAN,
+        resolve_video=None,
+        player_already_has_video=True,
+        expected_record=False,
+    ),
+    RecordImportCase(
+        name="wizard re-picks the current video, no comments: skips",
+        scanned=scan_with(videos=(VIDEO_A_FROM_DOCUMENT, VIDEO_B_FROM_DOCUMENT)),
+        resolve_video=VideoLoad(path=VIDEO_A),
+        player_already_has_video=True,
+        expected_record=False,
     ),
     RecordImportCase(
         name="no video, has comments: records",
@@ -242,7 +260,7 @@ def test_open_gates_state_record_import(
     state_service_mock: MagicMock,
     case: RecordImportCase,
 ) -> None:
-    player_service_mock.is_any_video_loaded.return_value = case.player_already_has_video
+    player_service_mock.path = str(VIDEO_A) if case.player_already_has_video else ""
 
     service = make_importer(case.scanned)
     spy = make_spy(service.pending_import_ready)
@@ -476,3 +494,49 @@ def test_open_recovers_when_the_scan_raises(
     manual_executor.drain()
 
     assert spy.count() == 1
+
+
+class AnyVideoLoadedCase(NamedTuple):
+    name: str
+    loaded_path: str
+    videos: tuple[Path, ...]
+    expected: bool
+
+
+ANY_VIDEO_LOADED_CASES = [
+    AnyVideoLoadedCase(
+        name="nothing loaded",
+        loaded_path="",
+        videos=(VIDEO_A,),
+        expected=False,
+    ),
+    AnyVideoLoadedCase(
+        name="no candidates",
+        loaded_path=str(VIDEO_A),
+        videos=(),
+        expected=False,
+    ),
+    AnyVideoLoadedCase(
+        name="loaded video among the candidates",
+        loaded_path=str(VIDEO_A),
+        videos=(VIDEO_B, VIDEO_A),
+        expected=True,
+    ),
+    AnyVideoLoadedCase(
+        name="a different video loaded",
+        loaded_path=str(VIDEO_B),
+        videos=(VIDEO_A,),
+        expected=False,
+    ),
+    AnyVideoLoadedCase(
+        name="unnormalized loaded path still matches",
+        loaded_path=str(VIDEO_A.parent / ".." / VIDEO_A.parent.name / VIDEO_A.name),
+        videos=(VIDEO_A,),
+        expected=True,
+    ),
+]
+
+
+@pytest.mark.parametrize("case", ANY_VIDEO_LOADED_CASES, ids=lambda c: c.name)
+def test_any_video_loaded(case: AnyVideoLoadedCase) -> None:
+    assert any_video_loaded(case.loaded_path, case.videos) == case.expected

@@ -34,6 +34,8 @@ SUB_B = Path("/work/b.en.srt")
 COMMENT = Comment(time=0, comment_type="", comment="")
 
 VIDEO_A_FROM_DOCUMENT = VideoSource(path=VIDEO_A, found_in_document=True)
+VIDEO_B_FROM_DOCUMENT = VideoSource(path=VIDEO_B, found_in_document=True)
+VIDEO_A_EXPLICIT = VideoSource(path=VIDEO_A, explicitly_provided=True)
 SUB_A_FROM_DOCUMENT = SubtitleSource(path=SUB_A, found_in_document=True)
 SUB_B_FROM_DOCUMENT = SubtitleSource(path=SUB_B, found_in_document=True)
 

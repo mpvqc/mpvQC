@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
@@ -30,7 +29,8 @@ from .media_load import (
 from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Callable
+    from pathlib import Path
 
     from PySide6.QtCore import SignalInstance
 
@@ -211,16 +211,6 @@ class PlayerService(QObject):
             logger.debug("Ignoring mouse move; player not yet initialized")
             return
         self._handle.command_async("mouse", x, y)
-
-    @staticmethod
-    def is_video_path_loaded(loaded_path: str, videos: Iterable[Path]) -> bool:
-        if not loaded_path:
-            return False
-        current = Path(loaded_path).resolve()
-        return any(current == video.resolve() for video in videos)
-
-    def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
-        return self.is_video_path_loaded(self.path, videos)
 
     def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
         self._apply_media_event(MediaRequested(video=video, subtitles=subtitles, video_loaded=self.video_loaded))
