@@ -29,6 +29,7 @@ from .file_kind import SUBTITLE_EXTENSIONS as SUBTITLE_EXTENSIONS
 from .file_kind import ClassifiedPaths as ClassifiedPaths
 from .file_kind import classify_paths as classify_paths
 from .importer import ImportService as ImportService
+from .importer import any_video_loaded as any_video_loaded
 from .pending import PendingImport as PendingImport
 from .plan import FinishedPlan as FinishedPlan
 from .plan import NotAsked as NotAsked

@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Protocol
 
 import inject
@@ -22,7 +23,7 @@ from .scan import scan
 from .settings import ImportSettingsService
 
 if TYPE_CHECKING:
-    from pathlib import Path
+    from collections.abc import Iterable
 
     from mpvqc.jobs import JobExecutor, Result
 
@@ -78,9 +79,7 @@ class ImportService(QObject):
                 scan_result,
                 found_video_setting=found_video_setting,
                 has_existing_comments=has_existing_comments,
-                any_candidate_loaded=PlayerService.is_video_path_loaded(
-                    current_video, (v.path for v in scan_result.videos)
-                ),
+                any_candidate_loaded=any_video_loaded(current_video, (v.path for v in scan_result.videos)),
             )
 
         def on_result(result: Result[FinishedPlan | UnfinishedPlan]) -> None:
@@ -103,7 +102,7 @@ class ImportService(QObject):
     def _execute(self, plan: FinishedPlan) -> None:
         self._busy = False
 
-        is_new_video = isinstance(plan.video, VideoLoad) and not self._player.is_any_video_loaded([plan.video.path])
+        is_new_video = isinstance(plan.video, VideoLoad) and not any_video_loaded(self._player.path, [plan.video.path])
 
         match plan.session:
             case SessionReplace():
@@ -129,3 +128,10 @@ class ImportService(QObject):
     def _notify_state(self, plan: FinishedPlan, *, is_new_video: bool) -> None:
         if plan.comments or is_new_video:
             self._state.record_import()
+
+
+def any_video_loaded(loaded_path: str, videos: Iterable[Path]) -> bool:
+    if not loaded_path:
+        return False
+    current = Path(loaded_path).resolve()
+    return any(current == video.resolve() for video in videos)
