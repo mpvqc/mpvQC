@@ -29,3 +29,5 @@ from .state import PlayerState as PlayerState
 from .state import RawPropertyValue as RawPropertyValue
 from .state import make_observer as make_observer
 from .state import reduce_update as reduce_update
+from .versions import PlayerVersions as PlayerVersions
+from .versions import clean_versions as clean_versions

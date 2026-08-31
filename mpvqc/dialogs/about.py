@@ -36,11 +36,11 @@ class MpvqcAboutDialogViewModel(QObject):
 
     @Property(str, constant=True, final=True)
     def mpvVersion(self) -> str:
-        return self._player.mpv_version.replace("mpv ", "")
+        return self._player.versions.mpv
 
     @Property(str, constant=True, final=True)
     def ffmpegVersion(self) -> str:
-        return self._player.ffmpeg_version.replace("ffmpeg ", "")
+        return self._player.versions.ffmpeg
 
     @Slot(QUrl)
     def openLink(self, link: QUrl) -> None:
