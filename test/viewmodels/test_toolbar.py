@@ -6,12 +6,16 @@ from typing import NamedTuple
 
 import inject
 import pytest
+from PySide6.QtCore import QTimer
 
 from mpvqc.player.services import PlayerService
 from mpvqc.viewmodels import MpvqcToolBarViewModel
 from mpvqc.viewmodels.views.header.toolbar import ToolbarInputs, ToolbarProps, derive_toolbar_props
 
 BOTH_TRACKS = [{"type": "audio"}, {"type": "sub"}]
+
+# the tests fire the settle themselves; the window only has to outlast the test, a short one races the pushes
+BURST_WINDOW_MS = 60_000
 
 
 @pytest.fixture(autouse=True)
@@ -31,9 +35,16 @@ def qt_app_must_be_running(qt_app):
 def make_view_model():
     def _make() -> MpvqcToolBarViewModel:
         # noinspection PyCallingNonCallable
-        return MpvqcToolBarViewModel(burst_window_ms=20)
+        return MpvqcToolBarViewModel(burst_window_ms=BURST_WINDOW_MS)
 
     return _make
+
+
+def settle(view_model: MpvqcToolBarViewModel) -> None:
+    timer = view_model.findChild(QTimer)
+    assert timer is not None
+    assert timer.isActive(), "no fold armed the settle timer, production would never emit"
+    timer.timeout.emit()
 
 
 @pytest.fixture
@@ -114,7 +125,8 @@ def test_folds_inside_one_window_settle_to_one_emission_batch(make_view_model, p
     assert emissions(spies) == {}
     assert not view_model.frameStepActive
 
-    assert spies["frameStepActive"].wait(5000)
+    settle(view_model)
+
     assert emissions(spies) == {"frameStepActive": 1, "subtitleActive": 1, "audioActive": 1}
     assert spies["frameStepActive"].at(0, 0) is True
     assert spies["subtitleActive"].at(0, 0) is True
@@ -131,7 +143,10 @@ def test_video_switch_emits_only_settled_deltas(make_view_model, player_handle, 
     player_handle.load_video("/videos/b.mkv")
     player_handle.update(track_list=[{"type": "audio"}])
 
-    assert spies["subtitleActive"].wait(5000)
+    assert emissions(spies) == {}
+
+    settle(view_model)
+
     assert emissions(spies) == {"subtitleActive": 1}
     assert spies["subtitleActive"].at(0, 0) is False
 
@@ -144,7 +159,8 @@ def test_failed_load_retracts_all_three_buttons(make_view_model, player_handle, 
 
     player_handle.unload_video()
 
-    assert spies["frameStepActive"].wait(5000)
+    settle(view_model)
+
     assert emissions(spies) == {"frameStepActive": 1, "subtitleActive": 1, "audioActive": 1}
     assert spies["frameStepActive"].at(0, 0) is False
     assert spies["subtitleActive"].at(0, 0) is False
