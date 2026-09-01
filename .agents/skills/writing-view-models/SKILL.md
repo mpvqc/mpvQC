@@ -92,7 +92,9 @@ refire an unchanged payload.
 **Burst coalescing** — a trailing debounce between fold and cycle, for a consumer that needs one settled emission per
 upstream burst. Folds still apply every payload immediately; the timer defers derive-and-emit alone, so the cycle runs
 once against settled inputs and emits only the deltas that survive the burst. The fold side is `_apply`, the timer side
-`_derive_and_emit`, and the window is a keyword-only constructor argument so tests can shrink it.
+`_derive_and_emit`, and the window is a keyword-only constructor argument. Tests set it far beyond their own run time,
+then fire the timer's `timeout` themselves through `findChild(QTimer)`, asserting `isActive()` first. A short window
+races the test's own event-loop pumps, and an unarmed timer fired by hand would hide a fold that never starts it.
 
 **Trigger fold** — the fold for a payload-free signal, and how ambient state enters the snapshot. The handler re-reads
 exactly the values the signal announces, nothing else, into dedicated inputs fields, so the derivation stays pure over
