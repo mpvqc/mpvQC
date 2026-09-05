@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Pin or translate, ADR 0013."""
-
 from enum import IntEnum
 from typing import NamedTuple
 

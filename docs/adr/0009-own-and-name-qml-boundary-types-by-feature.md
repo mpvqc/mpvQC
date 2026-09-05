@@ -1,4 +1,21 @@
-# Name QML-registered types for the flat namespace
+# Own and name QML boundary types by feature
+
+A feature slice owns the QML enums its area means. They live in an `enums` role beside its services, models, view
+models, and views. Plain vocabulary names no QML-registered type, so importing logic never loads the toolkit or runs
+registration as a side effect.
+
+## Restate the boundary
+
+The type-info generator parses decorated class bodies instead of importing them. Handing it an enum built elsewhere
+registers at runtime but produces type info with no members, so QML linting cannot check the names. The registered enum
+therefore restates the vocabulary as a wire schema.
+
+When the vocabulary is an enum, each QML member takes its value from the Python member and a test pins every name and
+number. Generated type info carries names only, so it cannot catch a transposed value. When the vocabulary is a tagged
+union, the boundary translates both ways with exhaustive matches. The two shapes follow the vocabulary and should not
+be made uniform.
+
+## Name for the flat namespace
 
 Two flat spaces sit behind every QML-registered class, and neither shows at the call site. Every registered type in
 the app lands in one QML module, so the namespace QML sees is flat no matter how the Python side is packaged. And the
@@ -21,6 +38,8 @@ itself for its package, and package, role directory, and module carry the contex
 
 ## Consequences
 
+- Every QML enum has a feature slice. Presentation-only members stay at the boundary rather than entering the plain
+  vocabulary.
 - A registered view model reads long inside its own package. The wizard's session step view model repeats what its
   package and module already say, and that length is the price of a name that must stand alone in the flat namespace.
 - Whether a name may drop its area words is decidable at a glance: registered, never; unregistered, free.

@@ -18,11 +18,11 @@ container binds keeps its model name, `CommentStore` being the one.
 `mpvqc/services/` holds what no feature package has claimed. A helper that belongs to no slice and to no container
 sits at the top level of `mpvqc/`, as `mpvqc/jobs.py` does.
 
-No service is QML-registered, so none wears the `Mpvqc` prefix that ADR 0015 governs.
+No service is QML-registered, so none wears the `Mpvqc` prefix that ADR 0009 governs.
 
 ## Class or function
 
-Logic takes one of two shapes, and picking between them is the whole decision (ADR 0019):
+Logic takes one of two shapes, and picking between them is the whole decision (ADR 0012):
 
 - **A container-bound class** where there is state, Qt lifecycle, or a substitution seam worth re-binding: a
   `QObject` with signals, `inject.attr` collaborators, mutable state it owns.

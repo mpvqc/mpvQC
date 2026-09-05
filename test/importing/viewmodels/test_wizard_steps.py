@@ -48,7 +48,7 @@ def test_defaults_to_merge(session_step):
     assert session_step.property("mode") == SessionMode.MERGE.value
 
 
-def test_setting_mode_from_qml_resolves_to_the_domain_variant(session_step, make_spy):
+def test_setting_mode_from_qml_updates_resolved(session_step, make_spy):
     spy = make_spy(session_step.modeChanged)
 
     session_step.setProperty("mode", SessionMode.REPLACE.value)
@@ -58,7 +58,7 @@ def test_setting_mode_from_qml_resolves_to_the_domain_variant(session_step, make
     assert spy.at(0, 0) == SessionMode.REPLACE.value
 
 
-def test_setting_the_domain_variant_updates_the_qml_mode(session_step, make_spy):
+def test_setting_resolved_updates_the_qml_mode(session_step, make_spy):
     spy = make_spy(session_step.modeChanged)
 
     session_step.resolved = SessionReplace()

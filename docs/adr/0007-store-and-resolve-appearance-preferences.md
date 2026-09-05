@@ -1,4 +1,4 @@
-# Store accent colors per color scheme
+# Store and resolve appearance preferences independently of the old theme
 
 An accent color is chosen against a palette. The user picks it while looking at light surfaces or dark ones, and it is
 that pairing they are approving. One stored accent for the whole app breaks the pairing the moment the color scheme
@@ -13,10 +13,27 @@ together. Its consumers read across those fields rather than one at a time, sinc
 belonging to whichever scheme renders, and the dialog paints every scheme's row with the accent that scheme would show.
 A signal per key would make each of them rebuild a set settings already holds whole.
 
+## Store the new model under fresh keys
+
+The old model stored a theme identifier and one global accent under `Theme/`. The appearance model stores a color
+scheme preference and one accent per color scheme under `Appearance/`. The two models do not line up: System has no old
+theme equivalent and is the new default. No code reads, writes, deletes, or migrates the old keys.
+
+Configs outlive the release that wrote them, and users roll releases back. Reusing keys would let an old build read a
+new value under the old meaning and overwrite it on the next change. Fresh keys keep both models independent. Existing
+users reset to System once, while a rollback finds its old settings unchanged. This one visible reset costs less than
+permanent, lossy migration code.
+
+## Resolve an unknown system color scheme to light
+
+Following the system still needs an answer when the system reports no preference. Unknown resolves to light. GNOME
+uses no preference for its light state because `prefer-light` remains reserved, while Windows and KDE answer light or
+dark directly. A session without a settings portal therefore starts and stays light.
+
 ## Consequences
 
-- The old global accent color key is not migrated: it is abandoned in place, and existing users see the declared
-  default accent colors once. Accent colors chosen from then on no longer bleed across color schemes.
+- The old theme keys remain inert in the config. Existing users see System and the declared accent defaults once;
+  rollback remains safe.
 - A palette family may ship any accent colors, in any number. A stored accent color the family does not offer resolves
   to that family's default, so shrinking or replacing a family's accent set costs nothing.
 - Following the system names no single color scheme to key an accent color preference to, so the appearance dialog
@@ -38,3 +55,5 @@ A signal per key would make each of them rebuild a set settings already holds wh
   product-level change and its own project.
 - **A signal per stored key** instead of one payload: every consumer reads across the keys, so each has to hold the
   other keys' last values and reassemble the set the payload already is.
+- **Migrate the old theme**: the mapping is lossy, deletion breaks rollback, and keeping both groups lets them drift.
+- **Keep historic dark for an unknown system answer**: this ignores the light answer GNOME actually reports.

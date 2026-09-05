@@ -38,13 +38,8 @@ Another slice, and the shared layer (`mpvqc/services/`):
 A foreign slice's `viewmodels`, `views` and `models` are off-limits to everyone: presentation never crosses a slice.
 
 `views` holds a class a slice writes in Python and QML instantiates as part of the scene, the video output mpv draws
-into being the case that asks for the role. `enums` holds the QML-registered enums the slice's area means (ADR 0013);
+into being the case that asks for the role. `enums` holds the QML-registered enums the slice's area means (ADR 0009);
 the shared enum package is gone, so every QML enum has a slice.
-
-## No domain role
-
-The lattice has no `domain` row: no slice carries one, and none adds one. A slice's logic lives in its services role,
-and `writing-services` decides the shape it takes there (ADR 0019).
 
 ## Beyond the tables
 
@@ -65,6 +60,8 @@ and `writing-services` decides the shape it takes there (ADR 0019).
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and in production the
   composition roots (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. `test/conftest.py` and
   `testqml/` are composition roots too, so they import slice roots and the checker leaves them alone.
+- **Logic**: a slice's logic lives in its services role, and `writing-services` decides the shape it takes there
+  (ADR 0012).
 
 ## Adding a slice
 
@@ -76,5 +73,5 @@ no imports under the slice, so an empty or misplaced tree is a red, not a pass.
 ## Done when
 
 `just test-python test/test_import_rules.py` passes. A red here is a design signal, not an obstacle: the missing
-concept belongs in one slice's public service (ADR 0012), or in the shared vocabulary (ADR 0019). Follow the
+concept belongs in one slice's public service (ADR 0008), or in the shared vocabulary (ADR 0012). Follow the
 message's fix.

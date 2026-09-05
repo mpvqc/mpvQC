@@ -236,7 +236,7 @@ def _entry_rect(monitor_rect: MonitorRect, probe: WindowStateProbe) -> Fullscree
 
 def _fullscreen_rect(monitor_rect: MonitorRect, borders: ResizeBorders) -> FullscreenRect:
     # Qt subtracts the frame border again, so an overhang this size yields a
-    # scene of exactly the monitor rect. ADR 0004 has why the overhang is kept.
+    # scene of exactly the monitor rect.
     left, top, right, bottom = monitor_rect
     return FullscreenRect((left - borders.horizontal, top, right + borders.horizontal, bottom + borders.vertical))
 

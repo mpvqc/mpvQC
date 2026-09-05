@@ -1,8 +1,5 @@
 # Communicate across slices with calls, not events
 
-Amended by [ADR 0019](0019-dissolve-the-domain-role-into-the-services-role.md): the lattice below predates the
-dissolution of the domain role, and the current table lives there. The reasoning on this page stands.
-
 Feature packages have to talk to each other, and the mainstream shape for that in a modular monolith is domain events
 between modules. We decided against it. A slice commands a more central slice by calling its public service API through
 injection, and the rest of the app learns what happened from the state the called slice already publishes. There is no
@@ -19,26 +16,13 @@ tests need exists either way: the inject container re-binds a service as easily 
 
 ## The lattice
 
-Which role may import what from another slice:
-
-| From         | May import from another slice                             |
-| ------------ | --------------------------------------------------------- |
-| `domain/`    | `domain/` only                                            |
-| `enums/`     | `domain/` only                                            |
-| `models/`    | `domain/`, `enums/`                                       |
-| `services/`  | `services/`, `domain/`                                    |
-| `viewmodels/`| `services/`, `domain/`, `enums/`. Never `viewmodels/` or `models/` |
-
-A domain also has a floor the table cannot state, since most of what it must not import is not another slice at all: a
-domain imports no Qt and no injection. That is what ruled out naming a QML-registered enum, and ADR 0013 records the
-role that holds those instead.
-
-Nobody imports another slice's internals. Cross-slice use cases live in view models, which may command several slices'
-services: services never know their coordinators. Presentation never crosses slices in Python; views compose views in
-QML. A signal that crosses a slice boundary lives on the slice's public service and carries primitives or shared domain
-types, never internal objects. Signal payloads are checked by Qt at runtime only, in every style, since the PySide6
-stubs type a slot as `object`; the surface the type checker verifies is the methods, and that is where the domain types
-travel.
+Which role may import what from another slice is the table in
+[ADR 0012](0012-organize-python-as-feature-slices.md), and the import checker enforces it. Nobody imports
+another slice's internals. Cross-slice use cases live in view models, which may command several slices' services:
+services never know their coordinators. Presentation never crosses slices in Python; views compose views in QML. A
+signal that crosses a slice boundary lives on the slice's public service and carries primitives or shared domain types,
+never internal objects. Signal payloads are checked by Qt at runtime only, in every style, since the PySide6 stubs type
+a slot as `object`; the surface the type checker verifies is the methods, and that is where the domain types travel.
 
 ## Ports stay the exception
 
@@ -68,6 +52,5 @@ calls today closes no door.
 
 - The service graph between slices stays acyclic and points at the more stable slice. Two slices' services wanting each
   other is evidence of a missing concept that one of them should own, never a reason for a bus.
-- Every foreign edge of a slice is greppable in one role directory, and the lattice is mechanical enough for an import
-  linter to enforce. Wiring that up is follow-up work.
+- Every foreign edge of a slice is greppable in one role directory, and the import checker enforces the lattice.
 - A future edge that earns a port pays for that one edge when it happens. Nothing is prepaid.
