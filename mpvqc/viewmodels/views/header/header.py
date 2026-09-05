@@ -9,8 +9,9 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.enums import WindowTitleFormat
+from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import InternationalizationService, SettingsService, StateService
+from mpvqc.services import SettingsService, StateService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

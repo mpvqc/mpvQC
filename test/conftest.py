@@ -19,9 +19,9 @@ from mpvqc.build import BuildInfo
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
+from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
 from mpvqc.player.services import PlayerService
 from mpvqc.services import (
-    InternationalizationService,
     ResourceService,
     SettingsFileService,
     SettingsService,
@@ -234,12 +234,16 @@ def check_generated_resources():
         raise FileNotFoundError(message)
 
 
-@pytest.fixture(scope="session")
-def common_bindings_with():
+@pytest.fixture
+def common_bindings_with(settings_file):
+    def i18n_settings_service() -> I18nSettingsService:
+        return I18nSettingsService(settings_file.qsettings)
+
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
             comments_bindings(binder)
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
+            binder.bind_to_constructor(I18nSettingsService, i18n_settings_service)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)

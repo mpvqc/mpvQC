@@ -15,8 +15,9 @@ from mpvqc.comments.viewmodels import (
     MpvqcCommentLabelWidthCalculatorViewModel,
     derive_comment_label_width_calculator_props,
 )
+from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import FontLoaderService, InternationalizationService, LabelWidthCalculatorService
+from mpvqc.services import FontLoaderService, LabelWidthCalculatorService
 
 
 @pytest.fixture(autouse=True)
