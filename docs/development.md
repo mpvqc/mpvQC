@@ -1,73 +1,63 @@
 # Development
 
-How to set the project up, run it locally, and contribute changes. For how the codebase fits together, see
-[architecture.md](architecture.md).
+This guide covers local setup and the normal development loop. See [architecture.md](architecture.md) for the codebase
+shape.
 
 ## Prerequisites
 
-- [Python 3.13](https://www.python.org/downloads/)
+- The Python version required by `pyproject.toml`
 - [uv](https://github.com/astral-sh/uv)
 - [just](https://github.com/casey/just)
 - libmpv
-  - **Linux:** install via your package manager
-  - **Windows:** download [libmpv (mpv-dev-x86_64)](https://github.com/shinchiro/mpv-winbuild-cmake/releases), extract
-    it, and place the `libmpv-*.dll` in the repository root
-- **Windows only:** [Git Bash](https://git-scm.com/downloads) (the `just` recipes assume a POSIX shell)
+  - **Linux:** install libmpv through your package manager
+  - **Windows:** download [libmpv](https://github.com/shinchiro/mpv-winbuild-cmake/releases) and place its DLL in the
+    repository root
+- **Windows only:** [Git Bash](https://git-scm.com/downloads), because the recipes use a POSIX shell
 
-## First-time setup
+Linux development and testing target Wayland.
 
-Clone the repository, then from the repo root:
+## Setup
+
+From the repository root:
 
 ```shell
-just init           # install dependencies and configure dev tooling
-just build-develop  # regenerate project.rcc from QML, data, and translations
-uv run main.py      # launch the application
+just init
+just build-develop
+uv run main.py
 ```
 
-Whenever you change files in `data/`, `i18n/`, or `qt/qml/`, re-run `just build-develop` to regenerate the resource
-bundle. Configure your IDE to run it before launching the app. For tests, `just prepare-tests` stages that bundle,
-`just test-python` and `just test-qml` do not, and they pass against a stale bundle without warning.
+The default setup enables portable mode, so local application state stays inside the repository. Running `just init`
+again refreshes generated development configuration and seed files.
 
-## Daily commands
+`just build-develop` regenerates the PySide project file list, Python QML type metadata, translations, and the resource
+bundle. Run it after changing runtime assets or QML-facing Python types, and after adding or removing files included in
+the PySide project. Never edit the generated file table in `pyproject.toml` by hand.
 
-| Recipe                              | What it does                                                                                                          |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `just test`                         | Run Python tests and QML tests (recompiles resources first)                                                           |
-| `just prepare-tests`                | Recompile resources for testing (runs `build-develop` then stages it)                                                 |
-| `just test-python [ARGS]`           | Run pytest (does **not** recompile). `ARGS` replaces the default paths `build-aux test`                               |
-| `just test-qml [JOBS]`              | Run QML tests only (does **not** recompile), one process per file                                                     |
-| `just test-qml-debug TARGET`        | Run a single QML test file matched by name (useful for iteration)                                                     |
-| `just fmt`                          | Format and lint Python, QML, JSON, TOML, YAML, Markdown; also type-checks (pyrefly) and lints license headers (reuse) |
-| `just lint-qml`                     | Run pyside6-qmllint (recompiles resources first)                                                                      |
-| `just build-develop`                | Regenerate `project.rcc` from `qt/qml/`, `data/`, and `i18n/`                                                         |
-| `just clean`                        | Remove all generated files                                                                                            |
-| `just update-python-dependencies`   | Upgrade Python dependencies and refresh the versions recorded in `data/build-info.toml`                               |
-| `just update-git-hook-dependencies` | Upgrade the pinned git hook revisions                                                                                 |
-| `just add-translation LOCALE`       | Start a new translation (see [internationalization.md](internationalization.md))                                      |
-| `just update-translations`          | Refresh existing `.ts` files from current source strings                                                              |
+## Development loop
 
-## Project layout
+Run `just` to see the current recipes and their descriptions.
 
-| Path         | Contents                                                                                                                                                               |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mpvqc/`     | Python: feature packages like `appearance/`, the layer packages (`services/`, `viewmodels/`, `models/`, `dialogs/`, `enums/`), and the application bootstrap |
-| `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources                                                                                |
-| `test/`      | Python tests (pytest): services and view models in isolation                                                                                                           |
-| `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides                                                                                          |
-| `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, the palette catalog, `build-info.toml`                                                                                |
-| `i18n/`      | Translations as `.ts` source files. The `.qm` binaries are generated                                                                                                   |
-| `build-aux/` | Generator and build-helper scripts, plus a `Justfile` of their own                                                                                                     |
+- `just test` rebuilds resources and runs the full Python and QML test suites.
+- `just test-python` and `just test-qml` run one side without rebuilding resources.
+- `just prepare-tests` rebuilds and stages resources before targeted test runs.
+- `just fmt` formats the repository and runs Python, type, and license checks.
+- `just lint-qml` rebuilds resources and runs semantic QML checks.
+
+Direct test commands can pass against a stale resource bundle. Run `just prepare-tests` first after changing QML,
+translations, or bundled data.
+
+Maintenance recipes live beside the part of the repository they maintain. Run `just` there to discover them instead
+of copying their names into this guide.
 
 ## Conventions
 
-- Prefer code the tooling can verify. Example: use a closure instead of `functools.partial`
-- Two Python files holding `@QmlElement` classes must not share a file name. The build writes one `.qmltypes` per
-  source file into one flat directory, named after the file, so same-named files overwrite each other and the QML
-  linter silently loses the types of whichever lost the race.
+- Prefer code the tooling can verify. Use a closure instead of `functools.partial`.
+- Two Python files holding `@QmlElement` classes must not share a file name. Generated QML type metadata is flat, so
+  one file would overwrite the other and hide types from the QML linter.
 
 ## See also
 
-- [architecture.md](architecture.md): high-level overview of how Python, QML, and the test harness fit together
-- [configuration.md](configuration.md): runtime environment variables
-- [internationalization.md](internationalization.md): adding and updating translations
-- [releasing.md](releasing.md): release checklist
+- [Architecture](architecture.md)
+- [Configuration](configuration.md)
+- [Internationalization](internationalization.md)
+- [Releasing](releasing.md)

@@ -1,49 +1,96 @@
 # Internationalization
 
-Translations live as `.ts` files under `i18n/` (Qt's translation source format). The build pipeline compiles them to
-`.qm` binaries that ship with the application. Editing happens in Qt Linguist. Everything else is a `just` recipe.
+Application translations live as `.ts` source catalogs under `i18n/`. Builds compile them to `.qm` files and include
+them in the resource bundle. Commit the `.ts` sources, not generated translation or resource files.
 
 For setup, see [development.md](development.md).
 
-## Adding a language
+## Writing translatable text
 
-1. Create the translation file:
+QML uses an explicit context:
 
-   ```shell
-   just add-translation <locale>  # e.g. just add-translation fr-FR
-   ```
+```qml
+qsTranslate("Context", "Text")
+qsTranslate("Context", "%Ln files", "", count)
+```
 
-   A `<locale>.ts` file appears under `i18n/`.
+Use `//:` immediately before a string when translators need context. Keep translation calls in bindings so changing
+the language reevaluates them.
 
-2. Translate the strings using Qt Linguist:
+Python uses `QCoreApplication.translate` for runtime text and `QT_TRANSLATE_NOOP` for strings stored as constants.
+Long-lived Python state that contains translated text must rebuild when the application publishes its retranslation
+signal.
 
-   ```shell
-   pyside6-linguist i18n/<locale>.ts
-   ```
+Keep contexts stable and preserve placeholders such as `%1` and `%Ln` in every translation.
 
-3. Add the new language to the `LANGUAGES` list in `mpvqc/languages.py` so it appears in the application's language
-   menu. List the translator(s) on the same entry to credit them in the About dialog.
+## Updating translations
 
-4. Recompile resources and test:
-
-   ```shell
-   just build-develop
-   ```
-
-   Start the application, switch to the new locale through the application's settings, and verify the strings render
-   correctly.
-
-## Updating existing translations
-
-When translatable strings in the source code change, refresh every `.ts` file from current sources:
+Extract current Python and QML strings into the application catalogs:
 
 ```shell
 just update-translations
 ```
 
-This scans Python and QML for translatable strings and merges new entries into the existing `.ts` files.
+Catalogs whose names end in `-qt-overrides.ts` are excluded from extraction and maintained by hand. They replace Qt
+strings that the application needs to phrase differently.
+
+Open a catalog with Qt Linguist:
+
+```shell
+uv run pyside6-linguist i18n/<locale>.ts
+```
+
+Review new, obsolete, and unfinished entries before committing the changed `.ts` files.
+
+## Adding a language
+
+1. Create the application catalog:
+
+   ```shell
+   just add-translation <locale>
+   ```
+
+2. Add a `Language` entry to `LANGUAGES` in `mpvqc/i18n/services/languages.py`:
+
+   ```python
+   Language(
+       language=str(QT_TRANSLATE_NOOP("Languages", "<English language name>")),
+       identifier="<locale>",
+       translators=("<translator name>",),
+   ),
+   ```
+
+   Omit `translators` when nobody needs credit. The locale passed to the recipe, the catalog basename, and the
+   registry identifier must match exactly.
+
+3. When Qt provides a matching base catalog, add it to the Windows release bundle. Use the Qt locale selected by the
+   runtime when it differs from the application locale.
+
+4. Extract strings again after changing the registry:
+
+   ```shell
+   just update-translations
+   ```
+
+5. Complete the catalog in Qt Linguist.
+
+6. Rebuild resources and run all tests:
+
+   ```shell
+   just test
+   ```
+
+7. Start the application and select the language. Check application text, Qt-provided text, translator credits,
+   plurals, and right-to-left layout where applicable.
+
+Add a Qt override catalog only when the application needs to replace a Qt-provided translation.
+
+## Release checks
+
+Catalog freshness is a manual check. Run string extraction, inspect the resulting catalog changes, and follow the
+translation steps in [releasing.md](releasing.md).
 
 ## See also
 
-- [development.md](development.md): setup and tooling
-- [releasing.md](releasing.md): translation checks in the release flow
+- [Development](development.md)
+- [Releasing](releasing.md)
