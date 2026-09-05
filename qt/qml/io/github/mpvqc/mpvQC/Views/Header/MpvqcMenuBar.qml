@@ -150,11 +150,11 @@ MenuBar {
         }
 
         MpvqcRadioMenu {
-            objectName: "applicationLayoutMenu"
+            objectName: "layoutOrientationMenu"
             title: qsTranslate("MainWindow", "Application Layout")
             icon.source: MpvqcIcons.verticalSplit
 
-            currentValue: root.viewModel.applicationLayout
+            currentValue: root.viewModel.layoutOrientation
             model: [
                 {
                     "identifier": "vertical",
@@ -168,7 +168,7 @@ MenuBar {
                 },
             ]
 
-            onOptionSelected: value => root.viewModel.configureApplicationLayout(value)
+            onOptionSelected: value => root.viewModel.configureLayoutOrientation(value)
         }
 
         MenuSeparator {}

@@ -207,7 +207,7 @@ TestCase {
         tryVerify(() => it.settings.windowTitleFormat() === data.expected);
     }
 
-    function test_applicationLayoutRadio_data() {
+    function test_layoutOrientationRadio_data() {
         return [
             {
                 tag: "horizontal",
@@ -222,9 +222,9 @@ TestCase {
         ];
     }
 
-    function test_applicationLayoutRadio(data): void {
+    function test_layoutOrientationRadio(data): void {
         const control = it.makeControl();
-        it.menu.triggerSubItem(control, "optionsMenu", "applicationLayoutMenu", `applicationLayoutMenuRadioItem_${data.identifier}`);
+        it.menu.triggerSubItem(control, "optionsMenu", "layoutOrientationMenu", `layoutOrientationMenuRadioItem_${data.identifier}`);
         tryVerify(() => it.settings.layoutOrientation() === data.expected);
 
         const splitView = findChild(control, "applicationSplitView");

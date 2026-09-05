@@ -36,10 +36,10 @@ from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    SettingsService,
     StateService,
 )
 from mpvqc.shared import Comment
+from mpvqc.shell.services import ShellSettingsService
 from mpvqc.window.viewmodels import MpvqcPlatformViewModel, MpvqcWindowControlsViewModel
 from testqml import import_wizard_fixtures
 from testqml.injections import (
@@ -413,11 +413,11 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=int)
     def windowTitleFormat(self) -> int:
-        return inject.instance(SettingsService).window_title_format
+        return inject.instance(ShellSettingsService).window_title_format.value
 
     @Slot(result=int)
     def layoutOrientation(self) -> int:
-        return inject.instance(SettingsService).layout_orientation
+        return inject.instance(ShellSettingsService).layout_orientation
 
     @Slot(result=str)
     def language(self) -> str:

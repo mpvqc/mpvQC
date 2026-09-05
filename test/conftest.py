@@ -24,11 +24,11 @@ from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ResourceService,
     SettingsFileService,
-    SettingsService,
     StateService,
     TimeFormatterService,
 )
 from mpvqc.shared import map_path_to_str
+from mpvqc.shell.services import ShellSettingsService
 from test.player.recording import RecordingPlayerHandle
 
 
@@ -155,11 +155,6 @@ def settings_file(tmp_path) -> SettingsFileService:
     return SettingsFileService(ini_file=map_path_to_str(file))
 
 
-@pytest.fixture
-def settings_service(settings_file) -> SettingsService:
-    return SettingsService(settings_file.qsettings)
-
-
 class QSettingsIniParser(RawConfigParser):
     """Reads an ini the way QSettings wrote it: raw, because the interpolating parser rejects the percent
     signs QSettings leaves in values, and case-sensitive, because it writes its keys in camel case."""
@@ -200,6 +195,11 @@ def comments_settings_service(settings_file) -> CommentsSettingsService:
 @pytest.fixture
 def export_settings_service(settings_file) -> ExportSettingsService:
     return ExportSettingsService(settings_file.qsettings)
+
+
+@pytest.fixture
+def shell_settings_service(settings_file) -> ShellSettingsService:
+    return ShellSettingsService(settings_file.qsettings)
 
 
 @pytest.fixture(autouse=True)

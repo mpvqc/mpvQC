@@ -8,10 +8,10 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import WindowTitleFormat
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import SettingsService, StateService
+from mpvqc.services import StateService
+from mpvqc.shell.services import ShellSettingsService, WindowTitleFormat
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -52,7 +52,7 @@ def derive_header_props(inputs: HeaderInputs) -> HeaderProps:
 @QmlElement
 class MpvqcHeaderViewModel(QObject):
     _player = inject.attr(PlayerService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ShellSettingsService)
     _state = inject.attr(StateService)
     _i18n = inject.attr(InternationalizationService)
 

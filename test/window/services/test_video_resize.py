@@ -10,7 +10,7 @@ import pytest
 from PySide6.QtCore import Qt
 
 from mpvqc.player.services import PlayerService
-from mpvqc.services import SettingsService
+from mpvqc.shell.services import ShellSettingsService
 from mpvqc.window.services import (
     MainWindowService,
     PlatformCapabilities,
@@ -147,7 +147,7 @@ def player_mock() -> MagicMock:
 
 @pytest.fixture
 def settings_mock() -> MagicMock:
-    mock = MagicMock(spec_set=SettingsService)
+    mock = MagicMock(spec_set=ShellSettingsService)
     mock.layout_orientation = Qt.Orientation.Vertical.value
     return mock
 
@@ -181,7 +181,7 @@ def configure_injections(
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_mock)
-        binder.bind(SettingsService, settings_mock)
+        binder.bind(ShellSettingsService, settings_mock)
         binder.bind(MainWindowService, main_window_service_mock)
         binder.bind(PlatformService, platform_service_mock)
 

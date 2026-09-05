@@ -9,14 +9,10 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import TimeDisplayMode
 from mpvqc.player.services import PlayerService
-from mpvqc.services import (
-    LabelWidthCalculatorService,
-    SettingsService,
-    TimeFormatterService,
-)
+from mpvqc.services import LabelWidthCalculatorService, TimeFormatterService
 from mpvqc.shared import needs_long_format
+from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -78,7 +74,7 @@ def _derive_time_text(inputs: FooterInputs) -> str:
 @QmlElement
 class MpvqcFooterViewModel(QObject):
     _player = inject.attr(PlayerService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ShellSettingsService)
     _label_calculator = inject.attr(LabelWidthCalculatorService)
 
     statusbarPercentageChanged = Signal(bool)
@@ -98,12 +94,12 @@ class MpvqcFooterViewModel(QObject):
             time_pos=self._player.time_pos,
             time_remaining=self._player.time_remaining,
             duration=self._player.duration,
-            statusbar_percentage=self._settings.statusbar_percentage,
+            statusbar_percentage=self._settings.show_percentage,
             time_display_mode=self._settings.time_display_mode,
         )
         self._props = self._derive()
 
-        self._settings.statusbar_percentage_changed.connect(self._fold_statusbar_percentage)
+        self._settings.show_percentage_changed.connect(self._fold_statusbar_percentage)
         self._settings.time_display_mode_changed.connect(self._fold_time_display_mode)
         self._player.video_loaded_changed.connect(self._fold_video_loaded)
         self._player.percent_pos_changed.connect(self._fold_percent_pos)
@@ -176,7 +172,7 @@ class MpvqcFooterViewModel(QObject):
 
     @timeDisplayMode.setter
     def timeDisplayMode(self, value: int) -> None:
-        self._settings.time_display_mode = value
+        self._settings.time_display_mode = TimeDisplayMode(value)
 
     @Property(bool, notify=isPercentVisibleChanged)
     def isPercentVisible(self) -> bool:
@@ -200,4 +196,4 @@ class MpvqcFooterViewModel(QObject):
 
     @Slot()
     def toggleStatusbarPercentage(self) -> None:
-        self._settings.statusbar_percentage = not self._props.statusbar_percentage
+        self._settings.show_percentage = not self._props.statusbar_percentage

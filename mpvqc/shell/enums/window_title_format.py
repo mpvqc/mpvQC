@@ -12,13 +12,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcTimeDisplayMode(QObject):
+class MpvqcWindowTitleFormat(QObject):
     @QEnum
-    class TimeDisplayMode(IntEnum):
-        NONE = 0
-        CURRENT_TIME = 1
-        REMAINING_TIME = 2
-        CURRENT_TOTAL_TIME = 3
-
-
-TimeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode
+    class WindowTitleFormat(IntEnum):
+        DEFAULT = 0
+        FILE_NAME = 1
+        FILE_PATH = 2

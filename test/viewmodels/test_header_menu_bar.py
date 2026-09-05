@@ -7,16 +7,13 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import QUrl
+from PySide6.QtCore import Qt, QUrl
 
 from mpvqc.comments.services import ResetService
-from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
-from mpvqc.services import (
-    DesktopService,
-    SettingsService,
-    StateService,
-)
+from mpvqc.services import DesktopService, StateService
+from mpvqc.shell.enums import DialogKind, FileDialogKind, MessageBoxKind
+from mpvqc.shell.services import ShellSettingsService
 from mpvqc.viewmodels import MpvqcMenuBarViewModel
 
 MODULE = "mpvqc.viewmodels.views.header.menu_bar"
@@ -48,7 +45,7 @@ def configure_inject(
     common_bindings_with,
     reset_service_mock,
     state_service,
-    settings_service,
+    shell_settings_service,
     export_service_mock,
     desktop_service_mock,
 ):
@@ -56,7 +53,7 @@ def configure_inject(
         binder.bind(DesktopService, desktop_service_mock)
         binder.bind(StateService, state_service)
         binder.bind(ResetService, reset_service_mock)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(ShellSettingsService, shell_settings_service)
         binder.bind(ExportService, export_service_mock)
 
     common_bindings_with(custom_bindings)
@@ -178,6 +175,18 @@ def test_open_app_data_folder(view_model, desktop_service_mock):
     view_model.openAppDataFolder()
 
     desktop_service_mock.open_app_data_folder.assert_called_once_with()
+
+
+def test_configure_layout_orientation(view_model, shell_settings_service, make_spy):
+    spy = make_spy(view_model.layoutOrientationChanged)
+    horizontal = Qt.Orientation.Horizontal.value
+
+    view_model.configureLayoutOrientation(horizontal)
+
+    assert shell_settings_service.layout_orientation == horizontal
+    assert view_model.layoutOrientation == horizontal
+    assert spy.count() == 1
+    assert spy.at(0, 0) == horizontal
 
 
 @pytest.mark.parametrize(

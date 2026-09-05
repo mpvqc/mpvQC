@@ -9,6 +9,4 @@ from .file_dialog_kind import MpvqcFileDialogKind as MpvqcFileDialogKind
 from .message_box_kind import MessageBoxKind as MessageBoxKind
 from .message_box_kind import MpvqcMessageBoxKind as MpvqcMessageBoxKind
 from .time_display_mode import MpvqcTimeDisplayMode as MpvqcTimeDisplayMode
-from .time_display_mode import TimeDisplayMode as TimeDisplayMode
 from .window_title_format import MpvqcWindowTitleFormat as MpvqcWindowTitleFormat
-from .window_title_format import WindowTitleFormat as WindowTitleFormat

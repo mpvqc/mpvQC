@@ -102,7 +102,7 @@ def test_groups_modules_claiming_the_same_type_info_file(tmp_path):
 
 def test_scan_finds_the_modules_registered_today(registered_modules):
     """A scan that finds nothing would let the uniqueness test pass silently."""
-    assert {"app", "bridge", "footer", "palette", "wizard"} <= registered_modules.keys()
+    assert {"bridge", "footer", "palette", "wizard"} <= registered_modules.keys()
 
 
 def test_registered_modules_claim_distinct_type_info_files(registered_modules):
