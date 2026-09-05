@@ -75,6 +75,10 @@ class SerialJobRunner(QObject):
         self._current: _Job[Any] | None = None
         self._completed.connect(self._finish)
 
+    @property
+    def is_idle(self) -> bool:
+        return self._current is None and not self._queue
+
     def run[T](
         self,
         work: Callable[[], T],

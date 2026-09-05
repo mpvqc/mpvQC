@@ -54,6 +54,10 @@ class ExportService(QObject):
         super().__init__()
         self._jobs = SerialJobRunner(executor)
 
+    @property
+    def is_idle(self) -> bool:
+        return self._jobs.is_idle
+
     def _capture(self) -> ExportSnapshot:
         return ExportSnapshot(
             captured_at=datetime.now(UTC).astimezone(),

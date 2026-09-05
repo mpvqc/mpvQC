@@ -9,7 +9,7 @@ from typing import NamedTuple, assert_never
 from zipfile import ZipFile
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, QThreadPool, QUrl, Slot
+from PySide6.QtCore import Property, QCoreApplication, QDeadlineTimer, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
 from mpvqc.appearance.services import (
@@ -55,6 +55,7 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 _DELAY_MS = int(os.environ.get("MPVQC_TEST_DELAY_MS", "100"))
+_BACKGROUND_JOBS_TIMEOUT_MS = 10_000
 
 
 def _create_complex_qc_document() -> Path:
@@ -248,9 +249,16 @@ class MpvqcTestBridge(QObject):
 
     @Slot()
     def waitForBackgroundJobs(self) -> None:
-        QThreadPool.globalInstance().waitForDone()
-        # a job's result hops back to the GUI thread as one queued event, so one pass delivers it
-        QCoreApplication.processEvents()
+        exporter = inject.instance(ExportService)
+        deadline = QDeadlineTimer(_BACKGROUND_JOBS_TIMEOUT_MS)
+        while True:
+            QThreadPool.globalInstance().waitForDone(deadline.remainingTime())
+            QCoreApplication.processEvents()
+            if exporter.is_idle:
+                return
+            if deadline.hasExpired():
+                msg = f"Background jobs still pending after {_BACKGROUND_JOBS_TIMEOUT_MS} ms"
+                raise TimeoutError(msg)
 
     @Slot(result=QUrl)
     def importComplexDocument(self) -> QUrl:

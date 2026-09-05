@@ -42,6 +42,27 @@ def test_gives_the_executor_one_job_at_a_time(
     assert events == ["work-1", "done-1", "work-2", "done-2", "work-3", "done-3"]
 
 
+def test_is_idle_once_the_last_result_is_delivered(
+    runner: SerialJobRunner,
+    manual_executor: ManualJobExecutor,
+) -> None:
+    observed: list[bool] = []
+
+    assert runner.is_idle
+
+    runner.run(work=lambda: observed.append(runner.is_idle), on_result=lambda _r: observed.append(runner.is_idle))
+    runner.run(work=lambda: None)
+
+    assert not runner.is_idle
+
+    manual_executor.run_next()
+    assert not runner.is_idle
+
+    manual_executor.run_next()
+    assert runner.is_idle
+    assert observed == [False, False]
+
+
 def test_on_result_receives_ok(runner: SerialJobRunner, manual_executor: ManualJobExecutor) -> None:
     received: list[Result[int]] = []
 
@@ -174,3 +195,18 @@ def test_threadpool_executor_calls_on_result_on_the_gui_thread(qt_app) -> None:
     assert work_threads[0] is not gui_thread
     assert [type(result) for result, _thread in deliveries] == [Ok, Err]
     assert all(thread is gui_thread for _result, thread in deliveries)
+
+
+def test_threadpool_executor_takes_one_wait_and_deliver_pass_per_job(qt_app) -> None:
+    runner = SerialJobRunner()
+
+    runner.run(lambda: None)
+    runner.run(lambda: None)
+
+    QThreadPool.globalInstance().waitForDone()
+    qt_app.processEvents()
+    assert not runner.is_idle
+
+    QThreadPool.globalInstance().waitForDone()
+    qt_app.processEvents()
+    assert runner.is_idle
