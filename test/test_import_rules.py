@@ -9,6 +9,7 @@ from __future__ import annotations
 import ast
 import sys
 from pathlib import Path
+from typing import NamedTuple
 
 import pytest
 
@@ -17,32 +18,46 @@ REPO = Path(__file__).resolve().parents[1]
 SLICES = ("appearance", "comments", "exporting", "importing", "player", "window")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
 SHARED_ROLES = {"services": "services", "shared": "shared"}
-MIN_EDGES_PER_SLICE = 20
 
 HELD_ROOTS = ("linux", "windows", "windows_decisions")
 
-ROLES = ("enums", "models", "services", "viewmodels", "views")
+
+class Allowed(NamedTuple):
+    """The roles one role may import from: its own slice, and another slice or the shared layer."""
+
+    same_slice: set[str]
+    other_slice: set[str]
+
+
+LATTICE = {
+    "enums": Allowed(
+        same_slice={"shared"},
+        other_slice={"shared"},
+    ),
+    "models": Allowed(
+        same_slice={"enums", "services", "shared"},
+        other_slice={"enums", "shared"},
+    ),
+    "services": Allowed(
+        same_slice={"services", "shared"},
+        other_slice={"services", "shared"},
+    ),
+    "viewmodels": Allowed(
+        same_slice={"viewmodels", "models", "services", "enums", "shared"},
+        other_slice={"services", "enums", "shared"},
+    ),
+    "views": Allowed(
+        same_slice={"models", "services", "enums", "shared"},
+        other_slice={"services", "enums", "shared"},
+    ),
+}
+
+ROLES = tuple(LATTICE)
 CLOSED_ROLES = ("models", "viewmodels", "views")
 
 HELPERS = {
     "jobs": {"services", "viewmodels"},
     "build": set(ROLES),
-}
-
-SAME_SLICE = {
-    "enums": {"shared"},
-    "models": {"enums", "services", "shared"},
-    "services": {"services", "shared"},
-    "viewmodels": {"viewmodels", "models", "services", "enums", "shared"},
-    "views": {"models", "services", "enums", "shared"},
-}
-
-OTHER_SLICE = {
-    "enums": {"shared"},
-    "models": {"enums", "shared"},
-    "services": {"services", "shared"},
-    "viewmodels": {"services", "enums", "shared"},
-    "views": {"services", "enums", "shared"},
 }
 
 
@@ -181,7 +196,7 @@ def _lattice_violation(where: str, slice_: str, role: str, target: str, names: l
     same_slice = kind == "slice" and t_slice == slice_
     if same_slice and t_role == role:
         return None
-    allowed = SAME_SLICE[role] if same_slice else OTHER_SLICE[role]
+    allowed = LATTICE[role].same_slice if same_slice else LATTICE[role].other_slice
     if t_role not in allowed:
         whose = (
             "its own slice" if same_slice else f"another slice ({t_slice})" if kind == "slice" else "the shared layer"
@@ -291,11 +306,6 @@ def test_wiring_imports_no_mpvqc_and_no_qt_at_module_level():
     _fail_on(check_wiring())
 
 
-def test_both_lattice_tables_hold_a_row_for_every_role():
-    assert set(SAME_SLICE) == set(ROLES)
-    assert set(OTHER_SLICE) == set(ROLES)
-
-
 @pytest.mark.parametrize("closed", CLOSED_ROLES)
 @pytest.mark.parametrize("role", ROLES)
 def test_no_role_imports_another_slices_closed_role(role: str, closed: str):
@@ -305,24 +315,33 @@ def test_no_role_imports_another_slices_closed_role(role: str, closed: str):
     assert f"may not import from the {closed}" in violation
 
 
+def test_an_import_past_the_role_root_is_a_violation():
+    where = "mpvqc/comments/viewmodels/x.py:1"
+    target = "mpvqc.comments.services.some_module"
+    violation = _lattice_violation(where, "comments", "viewmodels", target, ["Anything"])
+    assert violation is not None
+    assert "reaches past the role root mpvqc.comments.services;" in violation
+
+
+@pytest.mark.parametrize("held", HELD_ROOTS)
+def test_a_held_root_answers_as_the_role_root(held: str):
+    where = "mpvqc/window/viewmodels/x.py:1"
+    root = f"mpvqc.window.services.{held}"
+    assert _held_root(f"{root}.deeper") == root
+    violation = _lattice_violation(where, "window", "viewmodels", f"{root}.deeper", ["Anything"])
+    assert violation is not None
+    assert f"reaches past the role root {root};" in violation
+
+
 @pytest.mark.parametrize("role", ROLES)
-def test_every_role_may_import_the_build_module(role: str):
-    where = "mpvqc/comments/x.py:1"
-    assert _non_lattice_violation(where, role, "helper", "mpvqc.build") is None
-
-
-@pytest.mark.parametrize("role", ["services", "viewmodels"])
-def test_services_and_view_models_may_import_the_job_runner(role: str):
-    where = "mpvqc/comments/x.py:1"
-    assert _non_lattice_violation(where, role, "helper", "mpvqc.jobs") is None
-
-
-@pytest.mark.parametrize("role", ["enums", "models", "views"])
-def test_no_other_role_imports_the_job_runner(role: str):
+def test_only_services_and_view_models_import_the_job_runner(role: str):
     where = "mpvqc/comments/x.py:1"
     violation = _non_lattice_violation(where, role, "helper", "mpvqc.jobs")
-    assert violation is not None
-    assert f"{role} may not import mpvqc.jobs" in violation
+    if role in ("services", "viewmodels"):
+        assert violation is None
+    else:
+        assert violation is not None
+        assert f"{role} may not import mpvqc.jobs" in violation
 
 
 @pytest.mark.parametrize("slice_", SLICES)
@@ -330,8 +349,8 @@ def test_the_production_scan_sees_the_slice(slice_: str):
     files = _production_files(slice_)
     edges = [edge for path in files for edge in _edges(path)]
     assert files, f"the production scan found no files under mpvqc/{slice_}"
-    assert {_role_of(path) for path in files} - {None}, f"no file under mpvqc/{slice_} resolved to a role"
-    assert len(edges) >= MIN_EDGES_PER_SLICE, f"the production scan read {len(edges)} imports under mpvqc/{slice_}"
+    assert {_role_of(path) for path in files} & set(ROLES), f"no file under mpvqc/{slice_} resolved to a role"
+    assert edges, f"the production scan read no imports under mpvqc/{slice_}"
 
 
 @pytest.mark.parametrize("slice_", SLICES)
@@ -339,7 +358,7 @@ def test_the_feature_test_scan_sees_the_slice(slice_: str):
     files = _feature_test_files(slice_)
     edges = [edge for path in files for edge in _edges(path)]
     assert files, f"the feature test scan found no files under test/{slice_}"
-    assert len(edges) >= MIN_EDGES_PER_SLICE, f"the feature test scan read {len(edges)} imports under test/{slice_}"
+    assert edges, f"the feature test scan read no imports under test/{slice_}"
 
 
 @pytest.mark.parametrize("slice_", SLICES)

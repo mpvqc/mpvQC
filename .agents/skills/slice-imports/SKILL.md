@@ -70,8 +70,8 @@ and `writing-services` decides the shape it takes there (ADR 0019).
 
 A slice joins the rules by being listed in the checker's `SLICES` table, and listing it arms the scans against the
 whole roster at once. Build the directories first: a `wiring.py`, which the wiring check reads without asking whether
-it exists; a role `__init__` that imports something; and at least `MIN_EDGES_PER_SLICE` imports under each of
-`mpvqc/<slice>/` and `test/<slice>/`.
+it exists; a role `__init__` that imports something; and a test under `test/<slice>/`. Each scan fails when it reads
+no imports under the slice, so an empty or misplaced tree is a red, not a pass.
 
 ## Done when
 
