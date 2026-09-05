@@ -14,9 +14,9 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
 
 from mpvqc.build import get_build_info
-from mpvqc.close_event_filter import CloseEventFilter
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
 from mpvqc.services import FileStartupService, FontLoaderService
+from mpvqc.shell.services import QuitService
 from mpvqc.window.services import MainWindowService
 
 if TYPE_CHECKING:
@@ -31,13 +31,13 @@ class MpvqcApplication(QGuiApplication):
     _i18n = inject.attr(InternationalizationService)
     _i18n_settings = inject.attr(I18nSettingsService)
     _main_window = inject.attr(MainWindowService)
+    _quit = inject.attr(QuitService)
 
     about_to_show = Signal()
     first_frame_rendered = Signal()
 
     def __init__(self, arguments: Sequence[str]) -> None:
         super().__init__(arguments)
-        self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
 
     def configure(self) -> None:
@@ -88,7 +88,7 @@ class MpvqcApplication(QGuiApplication):
             sys.exit(-1)
 
         self._main_window.initialize(root_window)
-        self._main_window.install_event_filter(self._close_event_filter)
+        self._quit.attach(root_window)
 
         self._announce_first_frame(root_window)
 

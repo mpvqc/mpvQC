@@ -9,14 +9,12 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.enums import MpvqcWindowTitleFormat
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import SettingsService, StateService
+from mpvqc.services import StateService
+from mpvqc.shell.services import ShellSettingsService, WindowTitleFormat
 from mpvqc.viewmodels import MpvqcHeaderViewModel
 from mpvqc.viewmodels.views.header.header import HeaderInputs, HeaderProps, derive_header_props
-
-WindowTitleFormat = MpvqcWindowTitleFormat.WindowTitleFormat
 
 
 @pytest.fixture
@@ -30,12 +28,12 @@ def configure_inject(
     common_bindings_with,
     state_service,
     player_service,
-    settings_service,
+    shell_settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(StateService, state_service)
         binder.bind(PlayerService, player_service)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(ShellSettingsService, shell_settings_service)
 
     common_bindings_with(custom_bindings)
 
@@ -126,7 +124,7 @@ def test_window_title_changed(
     view_model,
     configure_state,
     player_handle,
-    settings_service,
+    shell_settings_service,
     make_spy,
 ):
     file = Path.home() / "test_video.mp4"
@@ -135,18 +133,18 @@ def test_window_title_changed(
 
     spy = make_spy(view_model.windowTitleChanged)
 
-    settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
+    shell_settings_service.window_title_format = WindowTitleFormat.FILE_NAME
     assert spy.count() == 1
 
 
 def test_initial_snapshot_reads_services_at_construction(
     configure_state,
     player_handle,
-    settings_service,
+    shell_settings_service,
 ):
     configure_state(saved=False, document=Path("doc.qc"))
     player_handle.load_video("/videos/test_video.mp4")
-    settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
+    shell_settings_service.window_title_format = WindowTitleFormat.FILE_NAME
 
     # noinspection PyCallingNonCallable
     view_model = MpvqcHeaderViewModel()

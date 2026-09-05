@@ -6,7 +6,7 @@ import inject
 import pytest
 
 from mpvqc.exporting.services import ExportService
-from mpvqc.services import QuitService
+from mpvqc.shell.services import QuitService
 from mpvqc.viewmodels import MpvqcMessageBoxRequestRelayViewModel
 
 
@@ -42,8 +42,8 @@ def test_relays_export_errors(export_service, make_spy):
 
 def test_relays_quit_confirmation(quit_service, make_spy):
     view_model = MpvqcMessageBoxRequestRelayViewModel()
-    spy = make_spy(view_model.confirmQuit)
+    spy = make_spy(view_model.quitConfirmationNeeded)
 
-    quit_service.request_quit()
+    quit_service.confirmation_needed.emit()
 
     assert spy.count() == 1

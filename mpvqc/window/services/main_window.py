@@ -125,9 +125,6 @@ class MainWindowService(QObject):
 
         logger.debug("Wired up main window service")
 
-    def install_event_filter(self, event_filter: QObject) -> None:
-        self._active_window.installEventFilter(event_filter)
-
     def show(self) -> None:
         self._active_window.setVisible(True)
 

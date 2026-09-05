@@ -8,7 +8,7 @@ import inject
 from PySide6.QtCore import Qt
 
 from mpvqc.player.services import PlayerService
-from mpvqc.services import SettingsService
+from mpvqc.shell.services import ShellSettingsService
 
 from .main_window import MainWindowService
 from .platform import PlatformService
@@ -35,7 +35,7 @@ class VideoResizeService:
     _main_window = inject.attr(MainWindowService)
     _platform = inject.attr(PlatformService)
     _player = inject.attr(PlayerService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ShellSettingsService)
 
     @property
     def resizes_on_video_change(self) -> bool:

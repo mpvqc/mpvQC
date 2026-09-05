@@ -53,7 +53,7 @@ Item {
     MpvqcMessageBoxRequestRelayViewModel {
         onExportErrorOccurred: (message, line) => _messageBoxLoader.openExportErrorMessageBox(message, line)
 
-        onConfirmQuit: _messageBoxLoader.openMessageBox(MpvqcMessageBoxKind.MessageBoxKind.QUIT)
+        onQuitConfirmationNeeded: _messageBoxLoader.openMessageBox(MpvqcMessageBoxKind.MessageBoxKind.QUIT)
     }
 
     Connections {

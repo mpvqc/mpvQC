@@ -7,7 +7,7 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.exporting.services import ExportService
-from mpvqc.services import QuitService
+from mpvqc.shell.services import QuitService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -19,9 +19,9 @@ class MpvqcMessageBoxRequestRelayViewModel(QObject):
     _quit = inject.attr(QuitService)
 
     exportErrorOccurred = Signal(str, int)
-    confirmQuit = Signal()
+    quitConfirmationNeeded = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._exporter.export_error_occurred.connect(self.exportErrorOccurred)
-        self._quit.confirmQuit.connect(self.confirmQuit)
+        self._quit.confirmation_needed.connect(self.quitConfirmationNeeded)

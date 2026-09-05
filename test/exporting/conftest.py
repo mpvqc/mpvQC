@@ -13,11 +13,7 @@ import pytest
 from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
 from mpvqc.player.services import PlayerService
-from mpvqc.services import (
-    ApplicationPathsService,
-    SettingsService,
-    StateService,
-)
+from mpvqc.services import ApplicationPathsService, StateService
 
 
 @pytest.fixture
@@ -47,7 +43,6 @@ def configure_injections(
     comments_service_mock,
     export_settings_service,
     player_service_mock,
-    settings_service,
     state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
@@ -55,7 +50,6 @@ def configure_injections(
         binder.bind(CommentsService, comments_service_mock)
         binder.bind(ExportSettingsService, export_settings_service)
         binder.bind(PlayerService, player_service_mock)
-        binder.bind(SettingsService, settings_service)
         binder.bind(StateService, state_service_mock)
 
     common_bindings_with(custom_bindings)

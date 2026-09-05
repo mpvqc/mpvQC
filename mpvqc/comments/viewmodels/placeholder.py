@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import SettingsService
+from mpvqc.shell.services import ShellSettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcCommentPlaceholderViewModel(QObject):
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ShellSettingsService)
 
     layoutOrientationChanged = Signal(int)
 

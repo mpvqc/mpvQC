@@ -1,6 +1,6 @@
 ---
 name: slice-imports
-description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/i18n/, mpvqc/importing/, mpvqc/player/, mpvqc/window/) or its test tree, when moving code between roles, and when adding a new feature slice.
+description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/i18n/, mpvqc/importing/, mpvqc/player/, mpvqc/shell/, mpvqc/window/) or its test tree, when moving code between roles, and when adding a new feature slice.
 ---
 
 # Slice imports
@@ -38,8 +38,8 @@ Another slice, and the shared layer (`mpvqc/services/`):
 A foreign slice's `viewmodels`, `views` and `models` are off-limits to everyone: presentation never crosses a slice.
 
 `views` holds a class a slice writes in Python and QML instantiates as part of the scene, the video output mpv draws
-into being the case that asks for the role. `enums` holds the QML-registered enums the slice's area means, and what no
-slice has claimed stays in the shared enum package (ADR 0013).
+into being the case that asks for the role. `enums` holds the QML-registered enums the slice's area means (ADR 0013);
+the shared enum package is gone, so every QML enum has a slice.
 
 ## No domain role
 

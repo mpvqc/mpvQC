@@ -8,20 +8,18 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.enums import MpvqcTimeDisplayMode
 from mpvqc.player.services import PlayerService
-from mpvqc.services import FontLoaderService, LabelWidthCalculatorService, SettingsService
+from mpvqc.services import FontLoaderService, LabelWidthCalculatorService
+from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
 from mpvqc.viewmodels import MpvqcFooterViewModel
 from mpvqc.viewmodels.views.footer import FooterInputs, FooterProps, derive_footer_props
 
-TimeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode
-
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, player_service, settings_service):
+def configure_inject(common_bindings_with, player_service, shell_settings_service):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_service)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(ShellSettingsService, shell_settings_service)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
         binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())
 
@@ -231,10 +229,10 @@ def test_percent_pos_fold(make_view_model, player_handle, spy_notifies):
     assert spies["percentText"].at(0, 0) == "42%"
 
 
-def test_time_pos_fold(make_view_model, player_handle, settings_service, spy_notifies):
+def test_time_pos_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(time_pos=1.0)
-    settings_service.time_display_mode = TimeDisplayMode.CURRENT_TIME.value
+    shell_settings_service.time_display_mode = TimeDisplayMode.CURRENT_TIME
     view_model = make_view_model()
     assert view_model.timeText == "00:01"
     spies = spy_notifies(view_model)
@@ -246,10 +244,10 @@ def test_time_pos_fold(make_view_model, player_handle, settings_service, spy_not
     assert spies["timeText"].at(0, 0) == "00:10"
 
 
-def test_time_remaining_fold(make_view_model, player_handle, settings_service, spy_notifies):
+def test_time_remaining_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(time_remaining=1.0)
-    settings_service.time_display_mode = TimeDisplayMode.REMAINING_TIME.value
+    shell_settings_service.time_display_mode = TimeDisplayMode.REMAINING_TIME
     view_model = make_view_model()
     assert view_model.timeText == "-00:01"
     spies = spy_notifies(view_model)
@@ -274,48 +272,48 @@ def test_duration_fold(make_view_model, player_handle, spy_notifies):
     assert spies["timeWidth"].at(0, 0) == view_model.timeWidth
 
 
-def test_statusbar_percentage_fold(make_view_model, player_handle, settings_service, spy_notifies):
+def test_statusbar_percentage_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
     player_handle.load_video("/videos/movie.mkv")
     view_model = make_view_model()
     assert view_model.isPercentVisible
     spies = spy_notifies(view_model)
 
-    settings_service.statusbar_percentage = False
+    shell_settings_service.show_percentage = False
 
     assert emissions(spies) == {"statusbarPercentage": 1, "isPercentVisible": 1}
     assert spies["isPercentVisible"].at(0, 0) is False
 
 
-def test_time_display_mode_fold(make_view_model, player_handle, settings_service, spy_notifies):
+def test_time_display_mode_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(duration=125.0, time_pos=65.0, time_remaining=60.0)
     view_model = make_view_model()
     assert view_model.timeText == "01:05/02:05"
     spies = spy_notifies(view_model)
 
-    settings_service.time_display_mode = TimeDisplayMode.NONE.value
+    shell_settings_service.time_display_mode = TimeDisplayMode.NONE
 
     assert emissions(spies) == {"timeDisplayMode": 1, "isTimeVisible": 1, "timeText": 1, "timeWidth": 1}
     assert not spies["timeText"].at(0, 0)
     assert spies["timeWidth"].at(0, 0) == 0
 
 
-def test_time_display_mode_property_writes_through_to_settings(make_view_model, settings_service, make_spy):
+def test_time_display_mode_property_writes_through_to_settings(make_view_model, shell_settings_service, make_spy):
     view_model = make_view_model()
     spy = make_spy(view_model.timeDisplayModeChanged)
 
     view_model.timeDisplayMode = TimeDisplayMode.REMAINING_TIME.value
 
-    assert settings_service.time_display_mode == TimeDisplayMode.REMAINING_TIME.value
+    assert shell_settings_service.time_display_mode is TimeDisplayMode.REMAINING_TIME
     assert view_model.timeDisplayMode == TimeDisplayMode.REMAINING_TIME.value
     assert spy.count() == 1
 
 
-def test_toggle_statusbar_percentage_writes_through_to_settings(make_view_model, settings_service):
+def test_toggle_statusbar_percentage_writes_through_to_settings(make_view_model, shell_settings_service):
     view_model = make_view_model()
     initial = view_model.statusbarPercentage
 
     view_model.toggleStatusbarPercentage()
 
     assert view_model.statusbarPercentage is not initial
-    assert settings_service.statusbar_percentage is not initial
+    assert shell_settings_service.show_percentage is not initial

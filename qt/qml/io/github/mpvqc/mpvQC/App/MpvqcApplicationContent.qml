@@ -16,7 +16,6 @@ Item {
     required property bool windowActive
     required property real windowWidth
 
-    readonly property MpvqcAppViewModel _viewModel: MpvqcAppViewModel {}
     readonly property MpvqcPlayerViewModel _playerViewModel: MpvqcPlayerViewModel {}
 
     property bool _initialFocusDone: false
@@ -67,7 +66,7 @@ Item {
         anchors.fill: parent
 
         header: _header
-        layoutOrientation: root._viewModel.layoutOrientation
+        layoutOrientation: _menuBarViewModel.layoutOrientation
         headerHeight: _header.height
 
         onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)

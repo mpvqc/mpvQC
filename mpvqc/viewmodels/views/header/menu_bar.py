@@ -10,14 +10,11 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.build import get_build_info
 from mpvqc.comments.services import ResetService
-from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
 from mpvqc.i18n.services import I18nSettingsService
-from mpvqc.services import (
-    DesktopService,
-    SettingsService,
-    StateService,
-)
+from mpvqc.services import DesktopService, StateService
+from mpvqc.shell.enums import DialogKind, FileDialogKind, MessageBoxKind
+from mpvqc.shell.services import ShellSettingsService, WindowTitleFormat
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -29,7 +26,7 @@ class MpvqcMenuBarViewModel(QObject):
     _exporter = inject.attr(ExportService)
     _i18n_settings = inject.attr(I18nSettingsService)
     _resetter = inject.attr(ResetService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(ShellSettingsService)
     _state = inject.attr(StateService)
 
     confirmResetRequested = Signal()
@@ -46,12 +43,12 @@ class MpvqcMenuBarViewModel(QObject):
     closeAppRequested = Signal()
 
     windowTitleFormatChanged = Signal(int)
-    applicationLayoutChanged = Signal(int)
+    layoutOrientationChanged = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._settings.window_title_format_changed.connect(self.windowTitleFormatChanged)
-        self._settings.layout_orientation_changed.connect(self.applicationLayoutChanged)
+        self._settings.layout_orientation_changed.connect(self.layoutOrientationChanged)
 
     @Property(bool, constant=True, final=True)
     def isUpdateMenuVisible(self) -> bool:
@@ -61,8 +58,8 @@ class MpvqcMenuBarViewModel(QObject):
     def windowTitleFormat(self) -> int:
         return self._settings.window_title_format
 
-    @Property(int, notify=applicationLayoutChanged)
-    def applicationLayout(self) -> int:
+    @Property(int, notify=layoutOrientationChanged)
+    def layoutOrientation(self) -> int:
         return self._settings.layout_orientation
 
     @Slot()
@@ -161,10 +158,10 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot(int)
     def configureWindowTitleFormat(self, value: int) -> None:
-        self._settings.window_title_format = value
+        self._settings.window_title_format = WindowTitleFormat(value)
 
     @Slot(int)
-    def configureApplicationLayout(self, value: int) -> None:
+    def configureLayoutOrientation(self, value: int) -> None:
         self._settings.layout_orientation = value
 
     @Slot(str)

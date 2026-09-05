@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import QObject, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import QuitService
+from mpvqc.shell.services import QuitService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -18,5 +18,4 @@ class MpvqcQuitMessageBoxViewModel(QObject):
 
     @Slot()
     def quit(self) -> None:
-        self._quit.confirm_quit_despite_unsaved_changes()
-        self._quit.shutdown()
+        self._quit.quit_despite_unsaved_changes()
