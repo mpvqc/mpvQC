@@ -15,12 +15,12 @@ from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, QSe
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
+from mpvqc.build import BuildInfo
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.player.services import PlayerService
 from mpvqc.services import (
-    BuildInfoService,
     InternationalizationService,
     ResourceService,
     SettingsFileService,
@@ -99,6 +99,32 @@ class ManualJobExecutor:
 @pytest.fixture
 def manual_executor() -> ManualJobExecutor:
     return ManualJobExecutor()
+
+
+@pytest.fixture
+def make_build_info() -> Callable[..., BuildInfo]:
+    def _make(
+        *,
+        version: str = "1.0.0",
+        is_release: bool = True,
+        origin: str = "mpvqc-github",
+        offers_update_check: bool = False,
+    ) -> BuildInfo:
+        return BuildInfo(
+            name="mpvQC",
+            app_id="io.github.mpvqc.mpvQC",
+            organization="mpvQC",
+            domain="mpvqc.github.io",
+            version=version,
+            commit="abc12345",
+            is_release=is_release,
+            origin=origin,
+            offers_update_check=offers_update_check,
+            dependencies=(),
+            dev_dependencies=(),
+        )
+
+    return _make
 
 
 @pytest.fixture
@@ -213,7 +239,6 @@ def common_bindings_with():
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
             comments_bindings(binder)
-            binder.bind_to_constructor(BuildInfoService, BuildInfoService)
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)

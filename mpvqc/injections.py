@@ -26,7 +26,6 @@ def bindings(binder: inject.Binder) -> None:
     window_bindings(binder)
 
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
-    binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)

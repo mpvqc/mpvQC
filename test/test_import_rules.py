@@ -16,7 +16,6 @@ REPO = Path(__file__).resolve().parents[1]
 
 SLICES = ("appearance", "comments", "exporting", "importing", "player", "window")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
-HELPERS = ("jobs",)
 SHARED_ROLES = {"services": "services", "shared": "shared"}
 MIN_EDGES_PER_SLICE = 20
 
@@ -24,6 +23,11 @@ HELD_ROOTS = ("linux", "windows", "windows_decisions")
 
 ROLES = ("enums", "models", "services", "viewmodels", "views")
 CLOSED_ROLES = ("models", "viewmodels", "views")
+
+HELPERS = {
+    "jobs": {"services", "viewmodels"},
+    "build": set(ROLES),
+}
 
 SAME_SLICE = {
     "enums": {"shared"},
@@ -160,8 +164,8 @@ def _role_of(path: Path) -> str | None:
 
 
 def _non_lattice_violation(where: str, role: str, kind: str, target: str) -> str | None:
-    if kind == "helper" and role not in ("services", "viewmodels"):
-        return f"{where}: {role} may not import {target}; the helpers under mpvqc/ are for services and view models"
+    if kind == "helper" and role not in (allowed := HELPERS[target.split(".")[1]]):
+        return f"{where}: {role} may not import {target}; that helper is open to {', '.join(sorted(allowed))}"
     if kind == "unplaced":
         return (
             f"{where}: {target} has no row in the lattice yet; "
@@ -299,6 +303,26 @@ def test_no_role_imports_another_slices_closed_role(role: str, closed: str):
     violation = _lattice_violation(where, "comments", role, f"mpvqc.window.{closed}", ["Anything"])
     assert violation is not None
     assert f"may not import from the {closed}" in violation
+
+
+@pytest.mark.parametrize("role", ROLES)
+def test_every_role_may_import_the_build_module(role: str):
+    where = "mpvqc/comments/x.py:1"
+    assert _non_lattice_violation(where, role, "helper", "mpvqc.build") is None
+
+
+@pytest.mark.parametrize("role", ["services", "viewmodels"])
+def test_services_and_view_models_may_import_the_job_runner(role: str):
+    where = "mpvqc/comments/x.py:1"
+    assert _non_lattice_violation(where, role, "helper", "mpvqc.jobs") is None
+
+
+@pytest.mark.parametrize("role", ["enums", "models", "views"])
+def test_no_other_role_imports_the_job_runner(role: str):
+    where = "mpvqc/comments/x.py:1"
+    violation = _non_lattice_violation(where, role, "helper", "mpvqc.jobs")
+    assert violation is not None
+    assert f"{role} may not import mpvqc.jobs" in violation
 
 
 @pytest.mark.parametrize("slice_", SLICES)

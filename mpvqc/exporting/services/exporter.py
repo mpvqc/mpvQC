@@ -12,12 +12,12 @@ from typing import TYPE_CHECKING, Literal
 import inject
 from PySide6.QtCore import QObject, QStandardPaths, Signal
 
+from mpvqc.build import get_build_info
 from mpvqc.comments.services import CommentsService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
-    BuildInfoService,
     ResourceService,
     StateService,
 )
@@ -45,7 +45,6 @@ class ExportService(QObject):
     _resources = inject.attr(ResourceService)
     _settings = inject.attr(ExportSettingsService)
     _state = inject.attr(StateService)
-    _build_info = inject.attr(BuildInfoService)
     _comments = inject.attr(CommentsService)
 
     export_error_occurred = Signal(str, int)
@@ -59,6 +58,7 @@ class ExportService(QObject):
         return self._jobs.is_idle
 
     def _capture(self) -> ExportSnapshot:
+        build = get_build_info()
         return ExportSnapshot(
             captured_at=datetime.now(UTC).astimezone(),
             write_header_date=self._settings.write_header_date,
@@ -69,7 +69,7 @@ class ExportService(QObject):
             nickname=self._settings.nickname,
             video_path=self._player.path,
             external_subtitles=tuple(self._player.external_subtitles),
-            generator=f"{self._build_info.name} {self._build_info.version}",
+            generator=f"{build.name} {build.version}",
             comments=self._comments.comments(),
         )
 

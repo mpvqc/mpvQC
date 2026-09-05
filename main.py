@@ -17,7 +17,7 @@ def main() -> None:
     _register_resources()
 
     if "--version" in sys.argv[1:]:
-        _print_version()
+        print_version()
         sys.exit(0)
 
     from mpvqc.startup import perform_startup
@@ -34,10 +34,11 @@ def _add_directory_to_path() -> None:
     os.environ["PATH"] = str(Path(__file__).parent) + os.pathsep + os.environ["PATH"]
 
 
-def _print_version() -> None:
-    from mpvqc.services import BuildInfoService
+def print_version() -> None:
+    from mpvqc.build import get_build_info
 
-    print(BuildInfoService().full_version_info)
+    build = get_build_info()
+    print(f"{build.name} {build.version_label}")
 
 
 def _register_resources() -> None:

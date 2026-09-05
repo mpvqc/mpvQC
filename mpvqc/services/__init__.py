@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from .application_paths import ApplicationPathsService as ApplicationPathsService
-from .build_info import BuildInfoService as BuildInfoService
 from .desktop import DesktopService as DesktopService
 from .file_startup import FileStartupService as FileStartupService
 from .font_loader import FontLoaderService as FontLoaderService

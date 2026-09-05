@@ -2,24 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import os
 import sys
 import tomllib
 from dataclasses import dataclass
 from functools import cache
+from typing import TYPE_CHECKING
 
-
-@dataclass(frozen=True)
-class ApplicationInfo:
-    name: str
-    app_id: str
-    organization: str
-    domain: str
-    version: str
-    commit: str
-    is_release: bool
-    origin: str
-    offers_update_check: bool
+if TYPE_CHECKING:
+    from typing import Any
 
 
 @dataclass(frozen=True)
@@ -29,14 +22,26 @@ class Dependency:
     version: str
     url: str
     licence: str
-    platforms: list[str]
 
 
 @dataclass(frozen=True)
 class BuildInfo:
-    application: ApplicationInfo
+    name: str
+    app_id: str
+    organization: str
+    domain: str
+    version: str
+    commit: str
+    is_release: bool
+    origin: str
+    offers_update_check: bool
     dependencies: tuple[Dependency, ...]
     dev_dependencies: tuple[Dependency, ...]
+
+    @property
+    def version_label(self) -> str:
+        version = self.version if self.is_release else "dev build"
+        return f"{version} ({self.commit}) {self.origin}"
 
 
 @cache
@@ -53,11 +58,9 @@ def get_build_info() -> BuildInfo:
     finally:
         file.close()
 
-    current_platform = sys.platform
-
     data = tomllib.loads(content)
     app = data["application"]
-    application_info = ApplicationInfo(
+    return BuildInfo(
         name=app["name"],
         app_id=app["app_id"],
         organization=app["organization"],
@@ -71,38 +74,22 @@ def get_build_info() -> BuildInfo:
             flatpak_id=os.environ.get("FLATPAK_ID"),
         ),
         offers_update_check=app.get("offers_update_check", False),
+        dependencies=_read_dependencies(data["dependency"], platform=sys.platform),
+        dev_dependencies=_read_dependencies(data["dev_dependency"], platform=sys.platform),
     )
 
-    dependencies = [
+
+def _read_dependencies(tables: list[dict[str, Any]], *, platform: str) -> tuple[Dependency, ...]:
+    return tuple(
         Dependency(
             name=dep["name"],
             package=dep["package"],
             version=dep["version"],
             url=dep["url"],
             licence=dep["licence"],
-            platforms=dep["platforms"],
         )
-        for dep in data["dependency"]
-        if current_platform in dep["platforms"]
-    ]
-
-    dev_dependencies = [
-        Dependency(
-            name=dep["name"],
-            package=dep["package"],
-            version=dep["version"],
-            url=dep["url"],
-            licence=dep["licence"],
-            platforms=dep["platforms"],
-        )
-        for dep in data["dev_dependency"]
-        if current_platform in dep["platforms"]
-    ]
-
-    return BuildInfo(
-        application=application_info,
-        dependencies=tuple(dependencies),
-        dev_dependencies=tuple(dev_dependencies),
+        for dep in tables
+        if platform in dep["platforms"]
     )
 
 

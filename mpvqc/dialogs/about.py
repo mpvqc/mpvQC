@@ -9,8 +9,9 @@ from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
+from mpvqc.build import get_build_info
 from mpvqc.player.services import PlayerService
-from mpvqc.services import BuildInfoService, DesktopService
+from mpvqc.services import DesktopService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -19,16 +20,15 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcAboutDialogViewModel(QObject):
     _player = inject.attr(PlayerService)
-    _build_info = inject.attr(BuildInfoService)
     _desktop = inject.attr(DesktopService)
 
     @Property(str, constant=True, final=True)
     def applicationName(self) -> str:
-        return self._build_info.name
+        return get_build_info().name
 
     @Property(str, constant=True, final=True)
     def applicationVersion(self) -> str:
-        return self._build_info.version_info
+        return get_build_info().version_label
 
     @Property(str, constant=True, final=True)
     def pythonVersion(self) -> str:
@@ -48,4 +48,4 @@ class MpvqcAboutDialogViewModel(QObject):
 
     @Slot()
     def copyVersionInfoToClipboard(self) -> None:
-        QGuiApplication.clipboard().setText(self._build_info.version_info)
+        QGuiApplication.clipboard().setText(get_build_info().version_label)
