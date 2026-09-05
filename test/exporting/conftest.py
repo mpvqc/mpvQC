@@ -15,7 +15,6 @@ from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
 from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
-    BuildInfoService,
     SettingsService,
     StateService,
 )
@@ -32,11 +31,6 @@ def application_paths_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def build_info_service_mock() -> MagicMock:
-    return MagicMock(spec_set=BuildInfoService)
-
-
-@pytest.fixture
 def player_service_mock():
     return MagicMock(spec_set=PlayerService)
 
@@ -50,7 +44,6 @@ def state_service_mock() -> MagicMock:
 def configure_injections(
     common_bindings_with,
     application_paths_service_mock,
-    build_info_service_mock,
     comments_service_mock,
     export_settings_service,
     player_service_mock,
@@ -59,7 +52,6 @@ def configure_injections(
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(ApplicationPathsService, application_paths_service_mock)
-        binder.bind(BuildInfoService, build_info_service_mock)
         binder.bind(CommentsService, comments_service_mock)
         binder.bind(ExportSettingsService, export_settings_service)
         binder.bind(PlayerService, player_service_mock)

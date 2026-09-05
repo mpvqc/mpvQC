@@ -58,8 +58,10 @@ and `writing-services` decides the shape it takes there (ADR 0019).
   import Win32 bindings everywhere else; the window slice's `windows_decisions` package, because its Win32
   message-routing and frame-geometry vocabulary outnumbers the rest of the role and only the Windows package reads it.
   A new held root joins by being listed in the checker's `HELD_ROOTS` table.
-- **Top level**: `mpvqc.jobs` is a helper for services and view models. Any other top-level module needs a row in the
-  checker's tables before a slice uses it.
+- **Top level**: a helper under `mpvqc/` is open to a role set of its own, listed in the checker's `HELPERS` table.
+  `mpvqc.jobs` is open to services and view models, the roles that run work. `mpvqc.build` is open to every role,
+  because build info is read-only facts and the helper rule was written for the job runner. Any other top-level
+  module needs a row there before a slice uses it.
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and in production the
   composition roots (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. `test/conftest.py` and
   `testqml/` are composition roots too, so they import slice roots and the checker leaves them alone.

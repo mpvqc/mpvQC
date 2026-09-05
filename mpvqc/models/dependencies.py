@@ -6,11 +6,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import BuildInfoService
+from mpvqc.build import get_build_info
 
 if TYPE_CHECKING:
     from typing import Any
@@ -26,8 +25,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcDependencyModel(QAbstractListModel):
-    _build_info = inject.attr(BuildInfoService)
-
     NameRole = Qt.ItemDataRole.UserRole + 1
     PackageRole = Qt.ItemDataRole.UserRole + 2
     VersionRole = Qt.ItemDataRole.UserRole + 3
@@ -36,9 +33,10 @@ class MpvqcDependencyModel(QAbstractListModel):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
+        build_info = get_build_info()
         self._all_dependencies: list[Dependency] = [
-            *self._build_info.dependencies,
-            *self._build_info.dev_dependencies,
+            *build_info.dependencies,
+            *build_info.dev_dependencies,
         ]
 
     @override

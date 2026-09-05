@@ -11,7 +11,8 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import QObject, Qt, Signal
 
-from mpvqc.services import ApplicationPathsService, BuildInfoService
+from mpvqc.build import get_build_info
+from mpvqc.services import ApplicationPathsService
 from mpvqc.shared import map_path_to_str
 
 from .event_marshal import EventMarshal
@@ -44,7 +45,6 @@ logger = logging.getLogger(__name__)
 
 
 class PlayerService(QObject):
-    _build_info = inject.attr(BuildInfoService)
     _paths = inject.attr(ApplicationPathsService)
 
     video_loaded_changed = Signal(bool)
@@ -104,7 +104,7 @@ class PlayerService(QObject):
             win_id=win_id,
             config_dir=self._paths.dir_config,
             screenshot_directory=self._paths.dir_screenshots,
-            audio_client_name=self._build_info.name,
+            audio_client_name=get_build_info().name,
         )
         self._handle.open(mpv_init_args)
         self._opened = True
@@ -113,7 +113,7 @@ class PlayerService(QObject):
         mpv_init_args = make_in_scene_init_args(
             config_dir=self._paths.dir_config,
             screenshot_directory=self._paths.dir_screenshots,
-            audio_client_name=self._build_info.name,
+            audio_client_name=get_build_info().name,
         )
         self._handle.open(mpv_init_args)
         self._opened = True

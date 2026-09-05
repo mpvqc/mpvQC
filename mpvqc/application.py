@@ -13,9 +13,9 @@ from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
 
+from mpvqc.build import get_build_info
 from mpvqc.close_event_filter import CloseEventFilter
 from mpvqc.services import (
-    BuildInfoService,
     FileStartupService,
     FontLoaderService,
     InternationalizationService,
@@ -30,7 +30,6 @@ _ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplication.qml"
 
 
 class MpvqcApplication(QGuiApplication):
-    _build_info = inject.attr(BuildInfoService)
     _start_up = inject.attr(FileStartupService)
     _font_loader = inject.attr(FontLoaderService)
     _i18n = inject.attr(InternationalizationService)
@@ -65,7 +64,7 @@ class MpvqcApplication(QGuiApplication):
     def _set_window_icon(self) -> None:
         # On some desktop environments, providing the icon via theme makes them prefer the SVG over a rasterized snapshot.
         # Falls back to the bundled file where the theme lookup misses (non-Linux, dev runs).
-        icon = QIcon.fromTheme(self._build_info.app_id, QIcon(":/data/icon.svg"))
+        icon = QIcon.fromTheme(get_build_info().app_id, QIcon(":/data/icon.svg"))
         self.setWindowIcon(icon)
 
     @Slot()

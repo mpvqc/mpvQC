@@ -25,12 +25,12 @@ def configure_qt_application_data() -> None:
 
     from mpvqc.build import get_build_info
 
-    app = get_build_info().application
-    QGuiApplication.setApplicationName(app.name)
-    QGuiApplication.setDesktopFileName(app.app_id)
-    QGuiApplication.setOrganizationName(app.organization)
-    QGuiApplication.setOrganizationDomain(app.domain)
-    QGuiApplication.setApplicationVersion(app.version)
+    build = get_build_info()
+    QGuiApplication.setApplicationName(build.name)
+    QGuiApplication.setDesktopFileName(build.app_id)
+    QGuiApplication.setOrganizationName(build.organization)
+    QGuiApplication.setOrganizationDomain(build.domain)
+    QGuiApplication.setApplicationVersion(build.version)
 
 
 def configure_qt_style() -> None:

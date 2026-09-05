@@ -7,9 +7,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass
 
-import inject
-
-from .build_info import BuildInfoService
+from mpvqc.build import get_build_info
 
 HOME_URL = "https://mpvqc.github.io"
 _UPDATE_URL = f"{HOME_URL}/api/v1/public/version"
@@ -41,8 +39,6 @@ type CheckOutcome = NewVersionAvailable | UpToDate | ServerError | ServerNotReac
 
 
 class VersionCheckerService:
-    _build_info = inject.attr(BuildInfoService)
-
     def __init__(self) -> None:
         self._cached_version: str | None = None
 
@@ -62,6 +58,6 @@ class VersionCheckerService:
         except urllib.error.URLError:
             return ServerNotReachable()
 
-        if self._build_info.version != latest_version:
+        if get_build_info().version != latest_version:
             return NewVersionAvailable(version=latest_version)
         return UpToDate()
