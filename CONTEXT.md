@@ -82,6 +82,14 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   format when any time it may display can reach one hour. Exported documents always use the long format.
 - **Time display mode**: which time the footer shows: current, remaining, current over total, or none. Independent of
   the long and short time format, which only decides whether hours render.
+- **App shell**: the bars around the content and the split between the video and the comment table: the header with
+  its menu bar and toolbar, and the footer. It composes the window title, lists the shortcuts the app answers to, and
+  carries the dialogs and message boxes its menu opens that no feature means: about, config editing, the update check,
+  the quit and reset confirmations. The features own the transactions behind its commands. The decorations around it
+  are the window's. The OS has a shell too, Explorer or GNOME Shell; say whose.
+- **Layout orientation**: whether the comment table sits below the video or beside it.
+- **Window title format**: what the title shows once a video is loaded: the app name, the video's file name, or its
+  path. Unsaved work marks the title in every format.
 - **Wizard step**: one page of the import wizard: one per unresolved Concern, plus an errors page when documents were
   rejected. Canonical order: errors, session, video, subtitles.
 - **Choice row**: a row on a Wizard step the user picks, one per option or candidate, the whole row being the click
@@ -110,7 +118,7 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Accent color preference**: per color scheme, the user's pick: an accent color, or no preference when they never
   confirmed one. Under no preference the palette family's default renders, tracking the shipped default across
   releases.
-- **Appearance**: how the app looks: the palette in force and the color scheme it belongs to.
+- **Appearance**: how the app looks: the palette in force, the color scheme it belongs to, and the fonts.
 - **Appearance preference**: the user's choice of how the app looks: color scheme preference and accent color
   preference together. GNOME and macOS group these choices in a panel named Appearance; the panel is named for the
   thing it controls.
@@ -121,6 +129,15 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 - **Preview color**: a color that stands in for something on offer, so it can be recognised before it is picked. A
   palette family has one; so does every accent color in it.
 - **Color role**: one named entry in the palette: background, hint, row base. The Qt term.
+
+## Language
+
+- **Language**: a translation the app ships: its display name, its locale identifier, and who translated it. The list
+  is fixed at build time; the credits name every translator.
+- **Default language**: the first shipped language, in shipped order, that the system's UI languages name; English
+  when none matches. Used until the user picks one.
+- **Retranslate**: swap the app's translators to a language and set its locale and text direction. The fact is
+  published once the swap is done, so anything holding a translated string reads it again.
 
 ## Player
 
