@@ -1,4 +1,4 @@
-# Keep the native Windows frame and reclaim only the caption strip
+# Keep the native Windows frame and isolate its decisions from Win32
 
 The app draws its own title bar on Windows: window buttons, menu, drag area. The usual way to get one is a frameless
 window, which is what the two projects this code descends from do. Frameless costs the native drop shadow, the borders,
@@ -15,6 +15,24 @@ This is the mirror of the Wayland decision in ADR 0003. Same Qt idea, custom mar
 Windows pushes the client area outward over the caption, Wayland pulls the declared window inward from its padding.
 Windows needs no private ABI for it, only an undocumented property name.
 
+## Drive frame decisions through read-only probes
+
+The native event filter answers two messages: which part of the frame the cursor is over, and how large the client
+area should be. Both answers are arithmetic, but direct Win32 calls once made them impossible to test elsewhere.
+
+Each handler now takes a small read-only probe containing exactly the queries it needs. A probe answers lazily and in
+call order, so guards and early returns preserve the Win32 call sequence without gathering expensive cross-process
+facts up front. The handlers return decisions; the event filter performs the writes.
+
+Message routing is lazy for the same reason. It reads each native structure field only when a route needs it, and uses
+a fresh probe for every filter call. A shared mutable probe would be unsafe because Windows can re-enter the filter
+synchronously while a style changes or a cross-process call pumps messages. The narrower guarantee is the useful one:
+nothing on the message path is written while a message is being answered, and nested calls cannot alias one another.
+
+The arithmetic lives beside the platform-neutral window services. It imports nothing platform-specific, so tests can
+run on every platform with fake probes that also assert query order. Win32 owns only the probe implementations and the
+write boundary.
+
 ## Consequences
 
 - A native event filter corrects Qt's frame in the two cases where the negative caption margin is wrong: maximized,
@@ -29,3 +47,7 @@ Windows needs no private ABI for it, only an undocumented property name.
   scene would keep the stale margins; a one-pixel resize and back settles it.
 - The caption inset is measured once, from the primary monitor, at startup. Moving the window to a monitor with a
   different DPI does not remeasure it.
+- Reordering, hoisting, or caching a probe query changes what the app asks Windows and must be treated as a behavior
+  change.
+- Tests cover the arithmetic and query order off Windows. The frame's appearance and resizing still need checking on
+  Windows.

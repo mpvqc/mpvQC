@@ -87,7 +87,7 @@ def test_collects_module_registering_qml_type(tmp_path, decorator):
 
 @pytest.mark.parametrize("decorator", ["@dataclass", "@QtQml.QmlElement"])
 def test_skips_module_without_registered_class(tmp_path, decorator):
-    write_module(tmp_path, "domain.py", f"{decorator}\nclass Comment: ...\n")
+    write_module(tmp_path, "plain.py", f"{decorator}\nclass Comment: ...\n")
 
     assert collect_registered_modules(tmp_path) == {}
 

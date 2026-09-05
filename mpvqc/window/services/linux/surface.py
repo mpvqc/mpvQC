@@ -98,7 +98,7 @@ class SurfaceController(QObject):
     def _on_size_changed(self) -> None:
         # The resize is the trigger, the state signal only a backstop: the
         # compositor's configure resizes first and reports the state one queued
-        # event later. ADR 0021 has the frame-by-frame.
+        # event later.
         self._sync_surface()
         self._apply_input_mask()
 

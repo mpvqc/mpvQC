@@ -3,7 +3,7 @@
 On Windows the player embeds mpv as a native child window. Wayland has no protocol for embedding a foreign window at
 all, so Linux instead renders mpv through libmpv's render API: it draws video frames into the same framebuffer Qt
 renders its own UI into, in-scene rather than as a separate window. X11 does support native embedding, but a second
-path just for it isn't worth building: X11 gets no further investment either way (ADR 0017), so it takes the same
+path just for it isn't worth building: X11 gets no further investment either way (ADR 0011), so it takes the same
 framebuffer path as Wayland instead of its own. The render context takes Qt's native display handle for the active
 backend, `wl_display` on Wayland or the X11 `Display` under xcb, so mpv can reach hardware decode.
 
