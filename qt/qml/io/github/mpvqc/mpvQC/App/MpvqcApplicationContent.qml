@@ -38,11 +38,11 @@ Item {
     Keys.onEscapePressed: root.disableFullScreenRequested()
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
-    MpvqcHeaderViewModel {
+    MpvqcShellHeaderViewModel {
         id: _headerViewModel
     }
 
-    MpvqcMenuBarViewModel {
+    MpvqcShellMenuBarViewModel {
         id: _menuBarViewModel
     }
 
@@ -57,6 +57,11 @@ Item {
         onMinimizeRequested: root.minimizeRequested()
         onToggleMaximizeRequested: root.toggleMaximizeRequested()
         onCloseRequested: root.closeRequested()
+        onDialogRequested: kind => _overlayController.openDialog(kind)
+        onFileDialogRequested: kind => _overlayController.openFileDialog(kind)
+        onCustomExportRequested: template => _overlayController.openCustomExportFileDialog(template)
+        onMessageBoxRequested: kind => _overlayController.openMessageBox(kind)
+        onResizeVideoRequested: _layout.recalculateSizes()
     }
 
     MpvqcLayout {
@@ -103,11 +108,11 @@ Item {
     }
 
     MpvqcOverlayController {
+        id: _overlayController
+
         viewModel: _menuBarViewModel
 
         onFocusWanted: _layout.focusCommentTable()
-        onCloseAppRequested: root.closeRequested()
-        onResizeVideoRequested: _layout.recalculateSizes()
     }
 
     MpvqcContentKeyHandler {

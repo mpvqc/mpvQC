@@ -7,7 +7,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.models.shortcuts import MpvqcShortcutsModel, ShortcutsModelBackend
+from mpvqc.shell.models import MpvqcShortcutsModel, ShortcutsModelBackend
 
 
 def _labels(model: MpvqcShortcutsModel) -> list[str]:

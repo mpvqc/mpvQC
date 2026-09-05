@@ -13,14 +13,13 @@ from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
 from mpvqc.services import StateService
 from mpvqc.shell.services import ShellSettingsService, WindowTitleFormat
-from mpvqc.viewmodels import MpvqcHeaderViewModel
-from mpvqc.viewmodels.views.header.header import HeaderInputs, HeaderProps, derive_header_props
+from mpvqc.shell.viewmodels import HeaderInputs, HeaderProps, MpvqcShellHeaderViewModel, derive_header_props
 
 
 @pytest.fixture
-def view_model() -> MpvqcHeaderViewModel:
+def view_model() -> MpvqcShellHeaderViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcHeaderViewModel()
+    return MpvqcShellHeaderViewModel()
 
 
 @pytest.fixture(autouse=True)
@@ -147,7 +146,7 @@ def test_initial_snapshot_reads_services_at_construction(
     shell_settings_service.window_title_format = WindowTitleFormat.FILE_NAME
 
     # noinspection PyCallingNonCallable
-    view_model = MpvqcHeaderViewModel()
+    view_model = MpvqcShellHeaderViewModel()
 
     assert view_model.windowTitle == "test_video.mp4 (unsaved)"
 

@@ -25,13 +25,13 @@ class FooterInputs:
     time_pos: int
     time_remaining: int
     duration: float
-    statusbar_percentage: bool
+    show_percentage: bool
     time_display_mode: int
 
 
 @dataclass(frozen=True)
 class FooterProps:
-    statusbar_percentage: bool
+    show_percentage: bool
     time_display_mode: int
     is_percent_visible: bool
     percent_text: str
@@ -43,9 +43,9 @@ class FooterProps:
 def derive_footer_props(inputs: FooterInputs, measure_width: Callable[[str], int]) -> FooterProps:
     time_text = _derive_time_text(inputs)
     return FooterProps(
-        statusbar_percentage=inputs.statusbar_percentage,
+        show_percentage=inputs.show_percentage,
         time_display_mode=inputs.time_display_mode,
-        is_percent_visible=inputs.video_loaded and inputs.statusbar_percentage,
+        is_percent_visible=inputs.video_loaded and inputs.show_percentage,
         percent_text=f"{inputs.percent_pos}%",
         is_time_visible=inputs.video_loaded and inputs.time_display_mode != TimeDisplayMode.NONE,
         time_text=time_text,
@@ -72,12 +72,12 @@ def _derive_time_text(inputs: FooterInputs) -> str:
 
 
 @QmlElement
-class MpvqcFooterViewModel(QObject):
+class MpvqcShellFooterViewModel(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ShellSettingsService)
     _label_calculator = inject.attr(LabelWidthCalculatorService)
 
-    statusbarPercentageChanged = Signal(bool)
+    showPercentageChanged = Signal(bool)
     timeDisplayModeChanged = Signal(int)
     isPercentVisibleChanged = Signal(bool)
     percentTextChanged = Signal(str)
@@ -94,12 +94,12 @@ class MpvqcFooterViewModel(QObject):
             time_pos=self._player.time_pos,
             time_remaining=self._player.time_remaining,
             duration=self._player.duration,
-            statusbar_percentage=self._settings.show_percentage,
+            show_percentage=self._settings.show_percentage,
             time_display_mode=self._settings.time_display_mode,
         )
         self._props = self._derive()
 
-        self._settings.show_percentage_changed.connect(self._fold_statusbar_percentage)
+        self._settings.show_percentage_changed.connect(self._fold_show_percentage)
         self._settings.time_display_mode_changed.connect(self._fold_time_display_mode)
         self._player.video_loaded_changed.connect(self._fold_video_loaded)
         self._player.percent_pos_changed.connect(self._fold_percent_pos)
@@ -114,8 +114,8 @@ class MpvqcFooterViewModel(QObject):
         return self._label_calculator.calculate_width_for((text,))
 
     @Slot(bool)
-    def _fold_statusbar_percentage(self, value: bool) -> None:
-        self._update(replace(self._inputs, statusbar_percentage=value))
+    def _fold_show_percentage(self, value: bool) -> None:
+        self._update(replace(self._inputs, show_percentage=value))
 
     @Slot(int)
     def _fold_time_display_mode(self, value: int) -> None:
@@ -147,8 +147,8 @@ class MpvqcFooterViewModel(QObject):
         if new == old:
             return
         self._props = new
-        if new.statusbar_percentage != old.statusbar_percentage:
-            self.statusbarPercentageChanged.emit(new.statusbar_percentage)
+        if new.show_percentage != old.show_percentage:
+            self.showPercentageChanged.emit(new.show_percentage)
         if new.time_display_mode != old.time_display_mode:
             self.timeDisplayModeChanged.emit(new.time_display_mode)
         if new.is_percent_visible != old.is_percent_visible:
@@ -162,9 +162,9 @@ class MpvqcFooterViewModel(QObject):
         if new.time_width != old.time_width:
             self.timeWidthChanged.emit(new.time_width)
 
-    @Property(bool, notify=statusbarPercentageChanged)
-    def statusbarPercentage(self) -> bool:
-        return self._props.statusbar_percentage
+    @Property(bool, notify=showPercentageChanged)
+    def showPercentage(self) -> bool:
+        return self._props.show_percentage
 
     @Property(int, notify=timeDisplayModeChanged)
     def timeDisplayMode(self) -> int:
@@ -195,5 +195,5 @@ class MpvqcFooterViewModel(QObject):
         return self._props.time_width
 
     @Slot()
-    def toggleStatusbarPercentage(self) -> None:
-        self._settings.show_percentage = not self._props.statusbar_percentage
+    def togglePercentage(self) -> None:
+        self._settings.show_percentage = not self._props.show_percentage

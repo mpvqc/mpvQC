@@ -13,7 +13,14 @@ import io.github.mpvqc.mpvQC.Utility
 MenuBar {
     id: root
 
-    required property MpvqcMenuBarViewModel viewModel
+    required property MpvqcShellMenuBarViewModel viewModel
+
+    signal dialogRequested(kind: int)
+    signal fileDialogRequested(kind: int)
+    signal customExportRequested(template: url)
+    signal messageBoxRequested(kind: int)
+    signal closeRequested
+    signal resizeVideoRequested
 
     background: null
 
@@ -42,7 +49,7 @@ MenuBar {
             objectName: "openQcDocumentsMenuItem"
             text: qsTranslate("MainWindow", "Open QC Document(s)...")
             icon.source: MpvqcIcons.fileOpen
-            onTriggered: root.viewModel.requestOpenQcDocuments()
+            onTriggered: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.IMPORT_DOCUMENTS)
         }
 
         MpvqcMenuBarItem {
@@ -56,14 +63,14 @@ MenuBar {
             objectName: "saveQcDocumentAsMenuItem"
             text: qsTranslate("MainWindow", "Save QC Document As...")
             icon.source: MpvqcIcons.saveAs
-            onTriggered: root.viewModel.requestSaveQcDocumentAs()
+            onTriggered: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.SAVE_DOCUMENT)
         }
 
         MenuSeparator {}
 
         MpvqcExportQcDocumentMenu {
-            onClassicExportTriggered: root.viewModel.requestExportQcDocumentClassic()
-            onCustomExportTriggered: (name, path) => root.viewModel.requestExportQcDocumentCustom(name, path)
+            onClassicExportTriggered: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.EXPORT_CLASSIC_DOCUMENT)
+            onCustomExportTriggered: template => root.customExportRequested(template)
         }
 
         MenuSeparator {}
@@ -72,7 +79,7 @@ MenuBar {
             objectName: "exitMpvqcMenuItem"
             text: qsTranslate("MainWindow", "Exit mpvQC")
             icon.source: MpvqcIcons.exitToApp
-            onTriggered: root.viewModel.requestClose()
+            onTriggered: root.closeRequested()
         }
     }
 
@@ -84,14 +91,14 @@ MenuBar {
             objectName: "openVideoMenuItem"
             text: qsTranslate("MainWindow", "Open Video...")
             icon.source: MpvqcIcons.movie
-            onTriggered: root.viewModel.requestOpenVideo()
+            onTriggered: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.IMPORT_VIDEO)
         }
 
         MpvqcMenuBarItem {
             objectName: "openSubtitlesMenuItem"
             text: qsTranslate("MainWindow", "Open Subtitle(s)...")
             icon.source: MpvqcIcons.subtitles
-            onTriggered: root.viewModel.requestOpenSubtitles()
+            onTriggered: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.IMPORT_SUBTITLES)
         }
 
         MenuSeparator {}
@@ -100,7 +107,7 @@ MenuBar {
             objectName: "resizeVideoMenuItem"
             text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
             icon.source: MpvqcIcons.aspectRatio
-            onTriggered: root.viewModel.requestResizeVideo()
+            onTriggered: root.resizeVideoRequested()
         }
     }
 
@@ -112,14 +119,14 @@ MenuBar {
             objectName: "openAppearanceDialogMenuItem"
             text: qsTranslate("MainWindow", "Appearance...")
             icon.source: MpvqcIcons.palette
-            onTriggered: root.viewModel.requestOpenAppearanceDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.APPEARANCE)
         }
 
         MpvqcMenuBarItem {
             objectName: "openCommentTypesDialogMenuItem"
             text: qsTranslate("MainWindow", "Comment Type Settings...")
             icon.source: MpvqcIcons.comment
-            onTriggered: root.viewModel.requestOpenCommentTypesDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.COMMENT_TYPES)
         }
 
         MpvqcRadioMenu {
@@ -177,21 +184,21 @@ MenuBar {
             objectName: "openBackupSettingsDialogMenuItem"
             text: qsTranslate("MainWindow", "Backup Settings...")
             icon.source: MpvqcIcons.settingsBackupRestore
-            onTriggered: root.viewModel.requestOpenBackupSettingsDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.BACKUP_SETTINGS)
         }
 
         MpvqcMenuBarItem {
             objectName: "openExportSettingsDialogMenuItem"
             text: qsTranslate("MainWindow", "Export Settings...")
             icon.source: MpvqcIcons.upload
-            onTriggered: root.viewModel.requestOpenExportSettingsDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.EXPORT_SETTINGS)
         }
 
         MpvqcMenuBarItem {
             objectName: "openImportSettingsDialogMenuItem"
             text: qsTranslate("MainWindow", "Import Settings...")
             icon.source: MpvqcIcons.download
-            onTriggered: root.viewModel.requestOpenImportSettingsDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.IMPORT_SETTINGS)
         }
 
         MenuSeparator {}
@@ -200,14 +207,14 @@ MenuBar {
             objectName: "openEditMpvConfigDialogMenuItem"
             text: qsTranslate("MainWindow", "Edit mpv.conf...")
             icon.source: MpvqcIcons.movieEdit
-            onTriggered: root.viewModel.requestOpenEditMpvConfigDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.EDIT_MPV_CONFIG)
         }
 
         MpvqcMenuBarItem {
             objectName: "openEditInputConfigDialogMenuItem"
             text: qsTranslate("MainWindow", "Edit input.conf...")
             icon.source: MpvqcIcons.keyboard
-            onTriggered: root.viewModel.requestOpenEditInputConfigDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.EDIT_INPUT_CONFIG)
         }
 
         MenuSeparator {}
@@ -229,7 +236,7 @@ MenuBar {
             // Collapse when hidden via a sibling's natural height; reading own
             // implicitHeight here triggers a height -> implicitHeight binding loop.
             height: visible ? _keyboardShortcutsMenuItem.implicitHeight : 0
-            onTriggered: root.viewModel.requestOpenCheckForUpdatesDialog()
+            onTriggered: root.messageBoxRequested(MpvqcMessageBoxKind.MessageBoxKind.VERSION_CHECK)
         }
 
         MpvqcMenuBarItem {
@@ -238,7 +245,7 @@ MenuBar {
             objectName: "openKeyboardShortcutsMenuItem"
             text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
             icon.source: MpvqcIcons.keyboardDoubleArrowRight
-            onTriggered: root.viewModel.requestOpenKeyboardShortcutsDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.KEYBOARD_SHORTCUTS)
         }
 
         MenuSeparator {}
@@ -247,7 +254,7 @@ MenuBar {
             objectName: "openCustomExportsDialogMenuItem"
             text: qsTranslate("MainWindow", "Extended Exports...")
             icon.source: MpvqcIcons.upload
-            onTriggered: root.viewModel.requestOpenCustomExportsDialog()
+            onTriggered: root.messageBoxRequested(MpvqcMessageBoxKind.MessageBoxKind.CUSTOM_EXPORT)
         }
 
         MpvqcMenuBarItem {
@@ -263,7 +270,7 @@ MenuBar {
             objectName: "openAboutDialogMenuItem"
             text: qsTranslate("MainWindow", "About mpvQC...")
             icon.source: MpvqcIcons.info
-            onTriggered: root.viewModel.requestOpenAboutDialog()
+            onTriggered: root.dialogRequested(MpvqcDialogKind.DialogKind.ABOUT)
         }
     }
 
@@ -276,7 +283,7 @@ MenuBar {
     Shortcut {
         sequence: "CTRL+O"
         enabled: MpvqcWindowUtility.isMainWindowFocused
-        onActivated: root.viewModel.requestOpenQcDocuments()
+        onActivated: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.IMPORT_DOCUMENTS)
     }
 
     Shortcut {
@@ -288,30 +295,30 @@ MenuBar {
     Shortcut {
         sequence: "CTRL+Shift+S"
         enabled: MpvqcWindowUtility.isMainWindowFocused
-        onActivated: root.viewModel.requestSaveQcDocumentAs()
+        onActivated: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.SAVE_DOCUMENT)
     }
 
     Shortcut {
         sequence: "CTRL+Q"
         enabled: MpvqcWindowUtility.isMainWindowFocused
-        onActivated: root.viewModel.requestClose()
+        onActivated: root.closeRequested()
     }
 
     Shortcut {
         sequence: "CTRL+Alt+O"
         enabled: MpvqcWindowUtility.isMainWindowFocused
-        onActivated: root.viewModel.requestOpenVideo()
+        onActivated: root.fileDialogRequested(MpvqcFileDialogKind.FileDialogKind.IMPORT_VIDEO)
     }
 
     Shortcut {
         sequence: "CTRL+R"
         enabled: MpvqcWindowUtility.isMainWindowFocused
-        onActivated: root.viewModel.requestResizeVideo()
+        onActivated: root.resizeVideoRequested()
     }
 
     Shortcut {
         sequence: "?"
         enabled: MpvqcWindowUtility.isMainWindowFocused
-        onActivated: root.viewModel.requestOpenKeyboardShortcutsDialog()
+        onActivated: root.dialogRequested(MpvqcDialogKind.DialogKind.KEYBOARD_SHORTCUTS)
     }
 }

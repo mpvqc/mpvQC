@@ -8,9 +8,15 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import VersionCheckerService
-from mpvqc.services.version_checker import CheckOutcome, NewVersionAvailable, ServerError, ServerNotReachable, UpToDate
-from mpvqc.viewmodels.message_boxes.version_check import MpvqcVersionCheckMessageBoxViewModel, present_outcome
+from mpvqc.services import (
+    CheckOutcome,
+    NewVersionAvailable,
+    ServerError,
+    ServerNotReachable,
+    UpToDate,
+    VersionCheckerService,
+)
+from mpvqc.shell.viewmodels import MpvqcVersionCheckMessageBoxViewModel, present_outcome
 
 
 class PresentCase(NamedTuple):

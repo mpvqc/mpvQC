@@ -28,7 +28,7 @@
 ## Writing
 
 - Spell it "view model", two words, in all prose: docs, commit messages, tickets, comments. The closed form belongs to
-  identifiers only, where a space is impossible: the `ViewModel` class suffix, the `mpvqc/viewmodels/` package, the
+  identifiers only, where a space is impossible: the `ViewModel` class suffix, the `viewmodels` role directory, the
   `viewModel` QML property.
 - In ADRs and `CONTEXT.md`, name the thing, not where it lives. Paths and file names go stale, so describe the component
   or the command instead. Setup and workflow docs are the exception: there the path is the point.

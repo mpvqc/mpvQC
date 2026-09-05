@@ -9,8 +9,7 @@ import pytest
 from PySide6.QtCore import QTimer
 
 from mpvqc.player.services import PlayerService
-from mpvqc.viewmodels import MpvqcToolBarViewModel
-from mpvqc.viewmodels.views.header.toolbar import ToolbarInputs, ToolbarProps, derive_toolbar_props
+from mpvqc.shell.viewmodels import MpvqcShellToolBarViewModel, ToolbarInputs, ToolbarProps, derive_toolbar_props
 
 BOTH_TRACKS = [{"type": "audio"}, {"type": "sub"}]
 
@@ -33,14 +32,14 @@ def qt_app_must_be_running(qt_app):
 
 @pytest.fixture
 def make_view_model():
-    def _make() -> MpvqcToolBarViewModel:
+    def _make() -> MpvqcShellToolBarViewModel:
         # noinspection PyCallingNonCallable
-        return MpvqcToolBarViewModel(burst_window_ms=BURST_WINDOW_MS)
+        return MpvqcShellToolBarViewModel(burst_window_ms=BURST_WINDOW_MS)
 
     return _make
 
 
-def settle(view_model: MpvqcToolBarViewModel) -> None:
+def settle(view_model: MpvqcShellToolBarViewModel) -> None:
     timer = view_model.findChild(QTimer)
     assert timer is not None
     assert timer.isActive(), "no fold armed the settle timer, production would never emit"
@@ -49,7 +48,7 @@ def settle(view_model: MpvqcToolBarViewModel) -> None:
 
 @pytest.fixture
 def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcToolBarViewModel) -> dict:
+    def _spy(view_model: MpvqcShellToolBarViewModel) -> dict:
         return {
             "frameStepActive": make_spy(view_model.frameStepActiveChanged),
             "subtitleActive": make_spy(view_model.subtitleActiveChanged),

@@ -4,3 +4,4 @@
 
 from .dependencies import MpvqcDependencyModel as MpvqcDependencyModel
 from .shortcuts import MpvqcShortcutsModel as MpvqcShortcutsModel
+from .shortcuts import ShortcutsModelBackend as ShortcutsModelBackend

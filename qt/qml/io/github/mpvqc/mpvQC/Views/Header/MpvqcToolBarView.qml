@@ -13,7 +13,7 @@ import io.github.mpvqc.mpvQC.Utility
 Item {
     id: root
 
-    readonly property MpvqcToolBarViewModel viewModel: MpvqcToolBarViewModel {}
+    readonly property MpvqcShellToolBarViewModel viewModel: MpvqcShellToolBarViewModel {}
 
     readonly property int buttonPadding: 6
     readonly property int buttonSize: height - root.buttonPadding

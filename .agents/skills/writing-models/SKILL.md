@@ -21,7 +21,7 @@ other model, and a view model publishes it through:
 
 A registered model that Python constructs also carries `@QmlUncreatable`.
 
-Put a model in its feature package's `models/`, or in `mpvqc/models/` when no feature has claimed it.
+Put a model in its feature package's `models/` role; every area is a slice, so there is no shared models package.
 
 ## List contract
 

@@ -31,11 +31,11 @@ TestCase {
         return control;
     }
 
-    function configureStatusbar(control: MpvqcFooterView, enabled: bool): void {
-        if (control.viewModel.statusbarPercentage !== enabled) {
-            control.viewModel.toggleStatusbarPercentage();
+    function setPercentageShown(control: MpvqcFooterView, enabled: bool): void {
+        if (control.viewModel.showPercentage !== enabled) {
+            control.viewModel.togglePercentage();
         }
-        compare(control.viewModel.statusbarPercentage, enabled);
+        compare(control.viewModel.showPercentage, enabled);
     }
 
     function openContextMenuItem(control: Item, menuItem: string): var {
@@ -125,7 +125,7 @@ TestCase {
 
     function test_labelsStayBlankWithoutVideo(data): void {
         const control = makeControl();
-        configureStatusbar(control, false);
+        setPercentageShown(control, false);
 
         const timeLabel = findChild(control, "timeLabel");
         const percentLabel = findChild(control, "percentLabel");

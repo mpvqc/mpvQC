@@ -13,14 +13,14 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.jobs import Err, Ok, SerialJobRunner
-from mpvqc.services import VersionCheckerService
-from mpvqc.services.version_checker import (
+from mpvqc.services import (
     HOME_URL,
     CheckOutcome,
     NewVersionAvailable,
     ServerError,
     ServerNotReachable,
     UpToDate,
+    VersionCheckerService,
 )
 
 if TYPE_CHECKING:

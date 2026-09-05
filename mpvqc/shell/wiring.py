@@ -25,3 +25,5 @@ def bindings(binder: inject.Binder) -> None:
 
 def register_qml_types() -> None:
     import mpvqc.shell.enums  # ruff: ignore[unused-import]
+    import mpvqc.shell.models  # ruff: ignore[unused-import]
+    import mpvqc.shell.viewmodels  # ruff: ignore[unused-import]
