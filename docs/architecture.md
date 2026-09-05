@@ -23,9 +23,6 @@ flowchart LR
         SERVICE["services"]
     end
 
-    VOCAB["Shared vocabulary"]
-    BOUNDARY["Shared boundary services"]
-
     UI -->|"properties, slots, signals"| VM
     UI --> MODEL
     UI --> ENUM
@@ -33,18 +30,12 @@ flowchart LR
     VM --> SERVICE
     MODEL --> SERVICE
     VIEW --> SERVICE
-    VM --> VOCAB
-    MODEL --> VOCAB
-    ENUM --> VOCAB
-    VIEW --> VOCAB
-    SERVICE --> VOCAB
-    VM --> BOUNDARY
-    VIEW --> BOUNDARY
-    SERVICE --> BOUNDARY
 ```
 
 QML never imports a Python service directly. It talks to QML-registered view models, models, enums, and native view
 objects. All registered Python types share the `io.github.mpvqc.mpvQC.Python` QML module.
+
+Every Python role may use shared vocabulary. View models, views, and services may also use shared boundary services.
 
 QML modules use full reverse-DNS URIs. They are grouped by presentation concern. The style override directory is the
 exception to the dotted tree because Qt resolves styles from a root directory.
