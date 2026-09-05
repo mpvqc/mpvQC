@@ -15,8 +15,8 @@ Item {
     id: root
     objectName: "headerView"
 
-    required property MpvqcHeaderViewModel viewModel
-    required property MpvqcMenuBarViewModel menuBarViewModel
+    required property MpvqcShellHeaderViewModel viewModel
+    required property MpvqcShellMenuBarViewModel menuBarViewModel
 
     readonly property alias menuBarWidth: _menuBar.width
     readonly property alias menuBarHeight: _menuBar.height
@@ -29,6 +29,11 @@ Item {
     signal minimizeRequested
     signal toggleMaximizeRequested
     signal closeRequested
+    signal dialogRequested(kind: int)
+    signal fileDialogRequested(kind: int)
+    signal customExportRequested(template: url)
+    signal messageBoxRequested(kind: int)
+    signal resizeVideoRequested
 
     height: menuBarHeight
     visible: !MpvqcWindowUtility.isFullscreen
@@ -65,6 +70,13 @@ Item {
             id: _menuBar
 
             viewModel: root.menuBarViewModel
+
+            onDialogRequested: kind => root.dialogRequested(kind)
+            onFileDialogRequested: kind => root.fileDialogRequested(kind)
+            onCustomExportRequested: template => root.customExportRequested(template)
+            onMessageBoxRequested: kind => root.messageBoxRequested(kind)
+            onCloseRequested: root.closeRequested()
+            onResizeVideoRequested: root.resizeVideoRequested()
         }
 
         MpvqcToolBarView {

@@ -37,7 +37,7 @@ def derive_toolbar_props(inputs: ToolbarInputs) -> ToolbarProps:
 
 
 @QmlElement
-class MpvqcToolBarViewModel(QObject):
+class MpvqcShellToolBarViewModel(QObject):
     _player = inject.attr(PlayerService)
 
     frameStepActiveChanged = Signal(bool)

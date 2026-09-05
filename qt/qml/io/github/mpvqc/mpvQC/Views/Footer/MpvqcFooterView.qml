@@ -17,7 +17,7 @@ Item {
     required property int selectedCommentIndex
     required property int totalCommentCount
 
-    readonly property MpvqcFooterViewModel viewModel: MpvqcFooterViewModel {}
+    readonly property MpvqcShellFooterViewModel viewModel: MpvqcShellFooterViewModel {}
 
     readonly property int bottomMargin: MpvqcWindowUtility.isMaximized ? 2 : 0
     readonly property int rightMargin: MpvqcWindowUtility.isMaximized ? 0 : 1
@@ -133,13 +133,13 @@ Item {
             isCurrentTimeChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TIME
             isRemainingTimeChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.REMAINING_TIME
             isHideTimeChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.NONE
-            isPercentChecked: root.viewModel.statusbarPercentage
+            isPercentChecked: root.viewModel.showPercentage
 
             onDefaultFormatPicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TOTAL_TIME
             onCurrentTimePicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TIME
             onRemainingTimePicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.REMAINING_TIME
             onHideTimePicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.NONE
-            onPercentToggled: root.viewModel.toggleStatusbarPercentage()
+            onPercentToggled: root.viewModel.togglePercentage()
         }
 
         onLoaded: (item as MpvqcFooterContextMenu).open()

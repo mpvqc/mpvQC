@@ -50,7 +50,7 @@ def derive_header_props(inputs: HeaderInputs) -> HeaderProps:
 
 
 @QmlElement
-class MpvqcHeaderViewModel(QObject):
+class MpvqcShellHeaderViewModel(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ShellSettingsService)
     _state = inject.attr(StateService)

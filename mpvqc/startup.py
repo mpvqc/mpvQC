@@ -83,9 +83,6 @@ def pin_windows_ui_library() -> None:
 
 
 def register_qml_types() -> None:
-    import mpvqc.dialogs  # ruff: ignore[unused-import]
-    import mpvqc.models  # ruff: ignore[unused-import]
-    import mpvqc.viewmodels  # ruff: ignore[unused-import]
     from mpvqc import appearance, comments, exporting, i18n, importing, player, shell, window
 
     appearance.register_qml_types()

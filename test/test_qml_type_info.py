@@ -80,7 +80,7 @@ def registered_modules() -> dict[str, list[Path]]:
 
 @pytest.mark.parametrize("decorator", DECORATOR_FORMS)
 def test_collects_module_registering_qml_type(tmp_path, decorator):
-    write_module(tmp_path, "footer.py", f"{decorator}\nclass MpvqcFooterViewModel: ...\n")
+    write_module(tmp_path, "footer.py", f"{decorator}\nclass MpvqcExampleViewModel: ...\n")
 
     assert collect_registered_modules(tmp_path).keys() == {"footer"}
 
@@ -93,7 +93,7 @@ def test_skips_module_without_registered_class(tmp_path, decorator):
 
 
 def test_groups_modules_claiming_the_same_type_info_file(tmp_path):
-    source = "@QmlElement\nclass MpvqcFooterViewModel: ...\n"
+    source = "@QmlElement\nclass MpvqcExampleViewModel: ...\n"
     importing = write_module(tmp_path, "importing/footer.py", source)
     viewmodels = write_module(tmp_path, "viewmodels/footer.py", source)
 

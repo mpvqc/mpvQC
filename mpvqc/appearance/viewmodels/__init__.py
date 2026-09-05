@@ -6,6 +6,7 @@ from .dialog import AppearanceDialogInputs as AppearanceDialogInputs
 from .dialog import AppearanceDialogProps as AppearanceDialogProps
 from .dialog import MpvqcAppearanceDialogViewModel as MpvqcAppearanceDialogViewModel
 from .dialog import derive_appearance_dialog_props as derive_appearance_dialog_props
+from .fonts import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .palette import MpvqcPalette as MpvqcPalette
 from .palette import MpvqcPaletteViewModel as MpvqcPaletteViewModel
 from .palette import PaletteInputs as PaletteInputs

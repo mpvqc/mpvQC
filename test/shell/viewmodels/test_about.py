@@ -5,9 +5,9 @@
 import pytest
 from PySide6.QtGui import QGuiApplication
 
-from mpvqc.dialogs import MpvqcAboutDialogViewModel
+from mpvqc.shell.viewmodels import MpvqcAboutDialogViewModel
 
-MODULE = "mpvqc.dialogs.about"
+MODULE = "mpvqc.shell.viewmodels.about"
 VERSION_LABEL = "1.0.0 (abc12345) mpvqc-github"
 
 

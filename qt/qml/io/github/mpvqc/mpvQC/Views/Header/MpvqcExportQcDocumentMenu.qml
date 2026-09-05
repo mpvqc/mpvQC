@@ -15,7 +15,7 @@ MpvqcMenuBarMenu {
     objectName: "exportQcDocumentMenu"
 
     signal classicExportTriggered
-    signal customExportTriggered(name: string, path: url)
+    signal customExportTriggered(template: url)
 
     title: qsTranslate("MainWindow", "Export QC Document")
     icon.source: MpvqcIcons.fileExport
@@ -44,7 +44,7 @@ MpvqcMenuBarMenu {
 
             text: name
             icon.source: MpvqcIcons.notes
-            onTriggered: root.customExportTriggered(name, path)
+            onTriggered: root.customExportTriggered(path)
         }
     }
 }

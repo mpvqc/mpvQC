@@ -11,8 +11,7 @@ import pytest
 from mpvqc.player.services import PlayerService
 from mpvqc.services import FontLoaderService, LabelWidthCalculatorService
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
-from mpvqc.viewmodels import MpvqcFooterViewModel
-from mpvqc.viewmodels.views.footer import FooterInputs, FooterProps, derive_footer_props
+from mpvqc.shell.viewmodels import FooterInputs, FooterProps, MpvqcShellFooterViewModel, derive_footer_props
 
 
 @pytest.fixture(autouse=True)
@@ -33,18 +32,18 @@ def qt_app_must_be_running(qt_app):
 
 @pytest.fixture
 def make_view_model():
-    def _make() -> MpvqcFooterViewModel:
+    def _make() -> MpvqcShellFooterViewModel:
         # noinspection PyCallingNonCallable
-        return MpvqcFooterViewModel()
+        return MpvqcShellFooterViewModel()
 
     return _make
 
 
 @pytest.fixture
 def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcFooterViewModel) -> dict:
+    def _spy(view_model: MpvqcShellFooterViewModel) -> dict:
         return {
-            "statusbarPercentage": make_spy(view_model.statusbarPercentageChanged),
+            "showPercentage": make_spy(view_model.showPercentageChanged),
             "timeDisplayMode": make_spy(view_model.timeDisplayModeChanged),
             "isPercentVisible": make_spy(view_model.isPercentVisibleChanged),
             "percentText": make_spy(view_model.percentTextChanged),
@@ -70,7 +69,7 @@ BASE_INPUTS = FooterInputs(
     time_pos=65,
     time_remaining=60,
     duration=125.0,
-    statusbar_percentage=True,
+    show_percentage=True,
     time_display_mode=TimeDisplayMode.CURRENT_TOTAL_TIME,
 )
 
@@ -88,7 +87,7 @@ class DerivationCase(NamedTuple):
             name="current over total joins both times",
             inputs=BASE_INPUTS,
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.CURRENT_TOTAL_TIME,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -101,7 +100,7 @@ class DerivationCase(NamedTuple):
             name="current time",
             inputs=replace(BASE_INPUTS, time_display_mode=TimeDisplayMode.CURRENT_TIME),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.CURRENT_TIME,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -114,7 +113,7 @@ class DerivationCase(NamedTuple):
             name="remaining time carries a minus prefix",
             inputs=replace(BASE_INPUTS, time_display_mode=TimeDisplayMode.REMAINING_TIME),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.REMAINING_TIME,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -127,7 +126,7 @@ class DerivationCase(NamedTuple):
             name="none mode hides the time and zeroes the width",
             inputs=replace(BASE_INPUTS, time_display_mode=TimeDisplayMode.NONE),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.NONE,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -140,7 +139,7 @@ class DerivationCase(NamedTuple):
             name="one hour flips to the long format",
             inputs=replace(BASE_INPUTS, time_display_mode=TimeDisplayMode.CURRENT_TIME, duration=3600.0),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.CURRENT_TIME,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -153,7 +152,7 @@ class DerivationCase(NamedTuple):
             name="just under one hour stays short",
             inputs=replace(BASE_INPUTS, time_display_mode=TimeDisplayMode.CURRENT_TIME, duration=3599.0),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.CURRENT_TIME,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -166,7 +165,7 @@ class DerivationCase(NamedTuple):
             name="long format joins in total mode",
             inputs=replace(BASE_INPUTS, duration=7200.0),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.CURRENT_TOTAL_TIME,
                 is_percent_visible=True,
                 percent_text="42%",
@@ -179,7 +178,7 @@ class DerivationCase(NamedTuple):
             name="no video blanks the time and hides both labels",
             inputs=replace(BASE_INPUTS, video_loaded=False),
             expected=FooterProps(
-                statusbar_percentage=True,
+                show_percentage=True,
                 time_display_mode=TimeDisplayMode.CURRENT_TOTAL_TIME,
                 is_percent_visible=False,
                 percent_text="42%",
@@ -189,10 +188,10 @@ class DerivationCase(NamedTuple):
             ),
         ),
         DerivationCase(
-            name="statusbar setting off hides percent despite video",
-            inputs=replace(BASE_INPUTS, statusbar_percentage=False),
+            name="percentage setting off hides percent despite video",
+            inputs=replace(BASE_INPUTS, show_percentage=False),
             expected=FooterProps(
-                statusbar_percentage=False,
+                show_percentage=False,
                 time_display_mode=TimeDisplayMode.CURRENT_TOTAL_TIME,
                 is_percent_visible=False,
                 percent_text="42%",
@@ -272,7 +271,7 @@ def test_duration_fold(make_view_model, player_handle, spy_notifies):
     assert spies["timeWidth"].at(0, 0) == view_model.timeWidth
 
 
-def test_statusbar_percentage_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
+def test_show_percentage_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
     player_handle.load_video("/videos/movie.mkv")
     view_model = make_view_model()
     assert view_model.isPercentVisible
@@ -280,7 +279,7 @@ def test_statusbar_percentage_fold(make_view_model, player_handle, shell_setting
 
     shell_settings_service.show_percentage = False
 
-    assert emissions(spies) == {"statusbarPercentage": 1, "isPercentVisible": 1}
+    assert emissions(spies) == {"showPercentage": 1, "isPercentVisible": 1}
     assert spies["isPercentVisible"].at(0, 0) is False
 
 
@@ -309,11 +308,11 @@ def test_time_display_mode_property_writes_through_to_settings(make_view_model, 
     assert spy.count() == 1
 
 
-def test_toggle_statusbar_percentage_writes_through_to_settings(make_view_model, shell_settings_service):
+def test_toggle_percentage_writes_through_to_settings(make_view_model, shell_settings_service):
     view_model = make_view_model()
-    initial = view_model.statusbarPercentage
+    initial = view_model.showPercentage
 
-    view_model.toggleStatusbarPercentage()
+    view_model.togglePercentage()
 
-    assert view_model.statusbarPercentage is not initial
+    assert view_model.showPercentage is not initial
     assert shell_settings_service.show_percentage is not initial
