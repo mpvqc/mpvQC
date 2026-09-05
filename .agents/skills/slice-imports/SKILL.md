@@ -1,6 +1,6 @@
 ---
 name: slice-imports
-description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/importing/, mpvqc/player/, mpvqc/window/) or its test tree, when moving code between roles, and when adding a new feature slice.
+description: The import rules of the feature slices. Use when creating or editing Python under a feature package (mpvqc/appearance/, mpvqc/comments/, mpvqc/exporting/, mpvqc/i18n/, mpvqc/importing/, mpvqc/player/, mpvqc/window/) or its test tree, when moving code between roles, and when adding a new feature slice.
 ---
 
 # Slice imports

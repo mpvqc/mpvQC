@@ -15,12 +15,8 @@ from PySide6.QtQuick import QQuickWindow
 
 from mpvqc.build import get_build_info
 from mpvqc.close_event_filter import CloseEventFilter
-from mpvqc.services import (
-    FileStartupService,
-    FontLoaderService,
-    InternationalizationService,
-    SettingsService,
-)
+from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
+from mpvqc.services import FileStartupService, FontLoaderService
 from mpvqc.window.services import MainWindowService
 
 if TYPE_CHECKING:
@@ -33,8 +29,8 @@ class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
     _font_loader = inject.attr(FontLoaderService)
     _i18n = inject.attr(InternationalizationService)
+    _i18n_settings = inject.attr(I18nSettingsService)
     _main_window = inject.attr(MainWindowService)
-    _settings = inject.attr(SettingsService)
 
     about_to_show = Signal()
     first_frame_rendered = Signal()
@@ -54,11 +50,11 @@ class MpvqcApplication(QGuiApplication):
 
         self.aboutToQuit.connect(self._on_quit)
 
-        language = self._settings.language
+        language = self._i18n_settings.language
         self._i18n.retranslate(app=self, language_code=language)
         self._engine.setUiLanguage(language)
 
-        self._settings.language_changed.connect(self._on_language_changed)
+        self._i18n_settings.language_changed.connect(self._on_language_changed)
         self._engine.uiLanguageChanged.connect(self._retranslate)
 
     def _set_window_icon(self) -> None:

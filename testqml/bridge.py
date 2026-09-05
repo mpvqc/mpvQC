@@ -23,6 +23,7 @@ from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.comments.services import CommentsService, CommentsSettingsService
 from mpvqc.comments.viewmodels import MpvqcCommentLabelWidthCalculatorViewModel, MpvqcCommentTableTimeFormatViewModel
 from mpvqc.exporting.services import ExportService, ExportSettingsService
+from mpvqc.i18n.services import I18nSettingsService
 from mpvqc.importing.services import (
     FinishedPlan,
     ImportSettingsService,
@@ -420,4 +421,4 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=str)
     def language(self) -> str:
-        return inject.instance(SettingsService).language
+        return inject.instance(I18nSettingsService).language

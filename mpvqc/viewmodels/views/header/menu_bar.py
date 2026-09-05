@@ -12,6 +12,7 @@ from mpvqc.build import get_build_info
 from mpvqc.comments.services import ResetService
 from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.exporting.services import ExportService
+from mpvqc.i18n.services import I18nSettingsService
 from mpvqc.services import (
     DesktopService,
     SettingsService,
@@ -26,6 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcMenuBarViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _exporter = inject.attr(ExportService)
+    _i18n_settings = inject.attr(I18nSettingsService)
     _resetter = inject.attr(ResetService)
     _settings = inject.attr(SettingsService)
     _state = inject.attr(StateService)
@@ -167,4 +169,4 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot(str)
     def configureLanguage(self, value: str) -> None:
-        self._settings.language = value
+        self._i18n_settings.language = value

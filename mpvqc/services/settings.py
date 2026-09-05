@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast, overload
 
 from PySide6.QtCore import (
-    QLocale,
     QObject,
     QSettings,
     Qt,
@@ -16,25 +15,11 @@ from PySide6.QtCore import (
 )
 
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
-from mpvqc.languages import LANGUAGES
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtCore import SignalInstance
-
-
-def default_language(locale: QLocale | None = None) -> str:
-    if locale is None:
-        locale = QLocale.system()
-
-    system_languages = locale.uiLanguages()
-
-    for language in LANGUAGES:
-        if language.identifier in system_languages:
-            return language.identifier
-
-    return "en-US"
 
 
 @dataclass(eq=False)
@@ -64,14 +49,6 @@ class _Setting[T]:
 
 
 class SettingsService(QObject):
-    language_changed = Signal(str)
-    language = _Setting(
-        "Common/language",
-        default=default_language,
-        type_=str,
-        signal=lambda s: s.language_changed,
-    )
-
     statusbar_percentage_changed = Signal(bool)
     statusbar_percentage = _Setting(
         "StatusBar/statusbarPercentage",

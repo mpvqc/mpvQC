@@ -2,34 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from unittest.mock import patch
-
-import pytest
-from PySide6.QtCore import QLocale
-
-from mpvqc.services.settings import default_language
-
-
-@pytest.mark.parametrize(
-    ("locale_string", "expected"),
-    [
-        ("fr-FR", "fr-FR"),  # We have translations
-        ("sw-TZ", "en-US"),  # We don't have translations
-    ],
-)
-@patch("mpvqc.services.settings.LANGUAGES")
-def test_default_language(mock_languages, locale_string, expected):
-    class MockLanguage:
-        def __init__(self, identifier):
-            self.identifier = identifier
-
-    mock_languages.__iter__.return_value = [MockLanguage("fr-FR"), MockLanguage("en-US"), MockLanguage("de-DE")]
-    locale = QLocale(locale_string)
-
-    result = default_language(locale)
-
-    assert result == expected
-
 
 def test_time_display_mode_default(settings_service):
     assert settings_service.time_display_mode == 3

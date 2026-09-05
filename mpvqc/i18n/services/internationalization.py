@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class InternationalizationService(QObject):
     retranslated = Signal()
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, parent: QObject | None = None) -> None:
+        super().__init__(parent)
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
         self._translator_qt_overrides = QTranslator()

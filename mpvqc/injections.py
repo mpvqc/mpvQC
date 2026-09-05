@@ -8,6 +8,7 @@ import mpvqc.services as s
 from mpvqc.appearance import bindings as appearance_bindings
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.exporting import bindings as exporting_bindings
+from mpvqc.i18n import bindings as i18n_bindings
 from mpvqc.importing import bindings as importing_bindings
 from mpvqc.player import bindings as player_bindings
 from mpvqc.window import bindings as window_bindings
@@ -21,6 +22,7 @@ def bindings(binder: inject.Binder) -> None:
     appearance_bindings(binder)
     comments_bindings(binder)
     exporting_bindings(binder)
+    i18n_bindings(binder)
     importing_bindings(binder)
     player_bindings(binder)
     window_bindings(binder)
@@ -29,7 +31,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)
-    binder.bind_to_constructor(s.InternationalizationService, s.InternationalizationService)
     binder.bind_to_constructor(s.LabelWidthCalculatorService, s.LabelWidthCalculatorService)
     binder.bind_to_constructor(s.QuitService, s.QuitService)
     binder.bind_to_constructor(s.ResourceService, s.ResourceService)

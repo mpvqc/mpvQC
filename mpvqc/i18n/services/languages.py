@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 
-from PySide6.QtCore import QT_TRANSLATE_NOOP
+from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale
 
 
 @dataclass(frozen=True)
@@ -44,3 +44,16 @@ LANGUAGES = (
         translators=("Diogo_23",),
     ),
 )
+
+
+def default_language(locale: QLocale | None = None) -> str:
+    if locale is None:
+        locale = QLocale.system()
+
+    system_languages = locale.uiLanguages()
+
+    for language in LANGUAGES:
+        if language.identifier in system_languages:
+            return language.identifier
+
+    return "en-US"

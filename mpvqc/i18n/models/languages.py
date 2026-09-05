@@ -18,8 +18,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtQml import QmlElement
 
-from mpvqc.languages import LANGUAGES
-from mpvqc.services import InternationalizationService
+from mpvqc.i18n.services import LANGUAGES, InternationalizationService
 
 if TYPE_CHECKING:
     from typing import Any

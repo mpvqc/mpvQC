@@ -10,7 +10,8 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService, translate_comment_type
-from mpvqc.services import InternationalizationService, LabelWidthCalculatorService
+from mpvqc.i18n.services import InternationalizationService
+from mpvqc.services import LabelWidthCalculatorService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
