@@ -25,7 +25,7 @@ Same slice:
 | `viewmodels`  | `models`, `services`, `enums`, `shared`     |
 | `views`       | `models`, `services`, `enums`, `shared`     |
 
-Another slice, and the shared layer (`mpvqc/services/`):
+Another slice:
 
 | From          | May import (another slice)                  |
 | ------------- | ------------------------------------------- |
@@ -43,9 +43,8 @@ the shared enum package is gone, so every QML enum has a slice.
 
 ## Beyond the tables
 
-- **Role root**: each role's `__init__` is its public API. Import names from the role root (`mpvqc.services`,
-  `mpvqc.<slice>.<role>`), in production and in tests alike. A name worth reaching for is worth exporting from the
-  root.
+- **Role root**: each role's `__init__` is its public API. Import names from the role root (`mpvqc.<slice>.<role>`),
+  in production and in tests alike. A name worth reaching for is worth exporting from the root.
 - **Held roots**: a package inside a role that the role holds as a root of its own instead of re-exporting. An import
   names `mpvqc.<slice>.<role>.<package>` and takes it from there, and the role root above it re-exports none of its
   names. A package earns the status when re-exporting it would fail or would swamp the role: the `linux` and `windows`
@@ -54,9 +53,9 @@ the shared enum package is gone, so every QML enum has a slice.
   message-routing and frame-geometry vocabulary outnumbers the rest of the role and only the Windows package reads it.
   A new held root joins by being listed in the checker's `HELD_ROOTS` table.
 - **Top level**: a helper under `mpvqc/` is open to a role set of its own, listed in the checker's `HELPERS` table.
-  `mpvqc.jobs` is open to services and view models, the roles that run work. `mpvqc.settings` is open to services.
-  `mpvqc.build` is open to every role, because build info is read-only facts and the helper rule was written for the
-  job runner. Any other top-level module needs a row there before a slice uses it.
+  `mpvqc.jobs` and `mpvqc.session` are open to services and view models. `mpvqc.settings` and `mpvqc.resources` are
+  open to services. `mpvqc.build` is open to every role because build info is read-only facts. Any other top-level
+  module needs a row there before a slice uses it, following the placement rule in ADR 0012.
 - **Composition seams**: `wiring.py` imports first-party and Qt inside its functions only, and in production the
   composition roots (`mpvqc/injections.py`, `mpvqc/startup.py`) alone import a slice root. `test/conftest.py` and
   `testqml/` are composition roots too, so they import slice roots and the checker leaves them alone.

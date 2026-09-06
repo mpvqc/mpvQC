@@ -12,11 +12,13 @@ The slice itself exports no vocabulary.
 
 Ownership follows meaning. A slice owns its settings keys, defaults, typed accessors, and change signals even when the
 underlying ini section also contains another slice's keys. Stored keys do not rename cheaply because an older release
-may still read them. Every slice writes through the same settings file handle, opened by the composition root.
-The settings descriptor, decoders, and file opener are a top-level helper open to services, not a shared service.
+may still read them. The settings handle is bound once in composition, and every slice writes through it.
 
-Shared vocabulary, boundary services, narrow application-wide helpers, and composition stay horizontal. A feature
-slice owns what its area means, not the I/O several areas share.
+Shared vocabulary, top-level helpers, and composition stay horizontal. A bound class with an area belongs in that
+area's slice. A bound class every feature writes and none owns, holding a fact and no logic of its own, is a top-level
+helper. An unbound mechanism is a top-level helper. A pure rule several areas mean belongs in the shared vocabulary.
+The import checker's helper table is the roster. There is no core, common, infra, or platform package; a module fitting
+none of these stops the work until the placement rule is revisited.
 
 The desktop service is a shell-owned boundary: the about dialog, config editors, and app data command all hand URLs
 to the OS. The backup dialog uses that same service through the shell's public services API.
@@ -50,13 +52,13 @@ The communication rule in [ADR 0008](0008-communicate-across-slices-with-calls-n
 slices through public service calls, facts cross as public service state and signals, and presentation never crosses a
 slice. Every role may import freely inside itself and may import the shared vocabulary.
 
-| From | Same slice | Another slice | Shared services |
-| --- | --- | --- | --- |
-| `enums` | - | - | - |
-| `models` | `enums`, `services` | `enums` | - |
-| `services` | `services` | `services` | yes |
-| `viewmodels` | `models`, `services`, `enums` | `services`, `enums` | yes |
-| `views` | `models`, `services`, `enums` | `services`, `enums` | yes |
+| From | Same slice | Another slice |
+| --- | --- | --- |
+| `enums` | - | - |
+| `models` | `enums`, `services` | `enums` |
+| `services` | `services` | `services` |
+| `viewmodels` | `models`, `services`, `enums` | `services`, `enums` |
+| `views` | `models`, `services`, `enums` | `services`, `enums` |
 
 A foreign slice's models, view models, and views are closed. The `views` role holds native Qt objects that QML
 instantiates as part of the scene. The import checker enforces the lattice, role-root imports, and lazy wiring.
@@ -66,6 +68,5 @@ instantiates as part of the scene. The import checker enforces the lattice, role
 - One area is one tree, and each foreign edge is visible in its imports.
 - Adding logic means one choice: a container-bound class, a pure function, or shared vocabulary.
 - Adding or removing a role changes only the slice. Composition roots keep calling the same two wiring entry points.
-- A shared key or concept with no clear slice owner is evidence that its ownership has not been resolved.
 - Purity is no longer enforced for a whole role. A lapse affects the module that wanted pure tests rather than every
   slice paying for a mechanical wall.

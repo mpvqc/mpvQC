@@ -35,7 +35,7 @@ flowchart LR
 QML never imports a Python service directly. It talks to QML-registered view models, models, enums, and native view
 objects. All registered Python types share the `io.github.mpvqc.mpvQC.Python` QML module.
 
-Every Python role may use shared vocabulary. View models, views, and services may also use shared boundary services.
+Every Python role may use shared vocabulary.
 
 QML modules use full reverse-DNS URIs. They are grouped by presentation concern. The style override directory is the
 exception to the dotted tree because Qt resolves styles from a root directory.
@@ -64,22 +64,23 @@ running as an import side effect.
 ## Dependencies
 
 Every role may import freely within its own directory and may import the pure vocabulary in `mpvqc.shared`. Imports
-between roles and into shared services follow this lattice:
+between roles follow this lattice:
 
-| From | Same slice | Another slice | Shared services |
-| --- | --- | --- | --- |
-| `enums` | - | - | - |
-| `models` | `enums`, `services` | `enums` | - |
-| `services` | `services` | `services` | yes |
-| `viewmodels` | `models`, `services`, `enums` | `services`, `enums` | yes |
-| `views` | `models`, `services`, `enums` | `services`, `enums` | yes |
+| From | Same slice | Another slice |
+| --- | --- | --- |
+| `enums` | - | - |
+| `models` | `enums`, `services` | `enums` |
+| `services` | `services` | `services` |
+| `viewmodels` | `models`, `services`, `enums` | `services`, `enums` |
+| `views` | `models`, `services`, `enums` | `services`, `enums` |
 
 A foreign slice's models, view models, and views are closed. Commands cross slices through calls to public services.
 Facts cross through public service state and change signals. There is no event bus, and the service graph stays
 acyclic.
 
-Horizontal Python code is limited to shared vocabulary, shared boundary services, narrow application-wide helpers, and
-application composition.
+Horizontal Python code is limited to shared vocabulary, top-level helpers, and composition. Placement follows
+[ADR 0012](adr/0012-organize-python-as-feature-slices.md); the import checker's `HELPERS` table lists each helper's
+allowed roles.
 
 Import-rule tests check the slice lattice, role-root imports, held roots, and lazy wiring. Feature tests receive
 narrower checks. Composition roots are exceptions because they must assemble or replace collaborators.
@@ -89,7 +90,7 @@ narrower checks. Composition roots are exceptions because they must assemble or 
 ```mermaid
 flowchart TD
     ENTRY["Entry point<br/>register resources"] --> START["Startup orchestration"]
-    START --> DI["Dependency injection<br/>slice + shared bindings"]
+    START --> DI["Dependency injection<br/>slice + helper bindings"]
     START --> TYPES["QML type registration"]
     START --> APP["Application host"]
     APP --> ROOT["Load root QML"]
