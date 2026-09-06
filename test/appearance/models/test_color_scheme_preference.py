@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
+
 import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
@@ -19,7 +21,6 @@ from mpvqc.appearance.services import (
     NoPreference,
     PaletteCatalogService,
 )
-from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()
@@ -36,21 +37,18 @@ def style_hints(make_style_hints):
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(
-    common_bindings_with, appearance_settings_service, style_hints, make_palette_family_data, make_resource_service
-):
+def configure_injections(common_bindings_with, appearance_settings_service, style_hints, make_palette_family_data):
     light = make_palette_family_data(
         color_scheme="light", preview_color=LIGHT_PREVIEW_COLOR, default_accent_color="#l2", accents=["#l1", "#l2"]
     )
     dark = make_palette_family_data(
         color_scheme="dark", preview_color=DARK_PREVIEW_COLOR, default_accent_color="#d1", accents=["#d1", "#d2", "#d3"]
     )
-    fake = make_resource_service(light, dark)
+    catalog = PaletteCatalogService(json.dumps([light, dark]))
 
     def custom_bindings(binder: inject.Binder):
-        binder.bind(ResourceService, fake)
         binder.bind(AppearanceSettingsService, appearance_settings_service)
-        binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
+        binder.bind(PaletteCatalogService, catalog)
         binder.bind_to_constructor(ColorSchemeService, lambda: ColorSchemeService(style_hints))
 
     common_bindings_with(custom_bindings)

@@ -7,12 +7,11 @@ from pathlib import Path
 import inject
 
 from .application_paths import ApplicationPathsService
-from .resource import ResourceService
+from .resource import read_input_conf, read_mpv_conf
 
 
 class FileStartupService:
     _paths = inject.attr(ApplicationPathsService)
-    _resources = inject.attr(ResourceService)
 
     def create_missing_directories(self) -> None:
         self._paths.dir_config.mkdir(exist_ok=True, parents=True)
@@ -25,10 +24,10 @@ class FileStartupService:
         self._create_missing_mpv_conf()
 
     def _create_missing_input_conf(self) -> None:
-        self._create_missing_file(path=self._paths.file_input_conf, content=self._resources.input_conf_content)
+        self._create_missing_file(path=self._paths.file_input_conf, content=read_input_conf())
 
     def _create_missing_mpv_conf(self) -> None:
-        self._create_missing_file(path=self._paths.file_mpv_conf, content=self._resources.mpv_conf_content)
+        self._create_missing_file(path=self._paths.file_mpv_conf, content=read_mpv_conf())
 
     @staticmethod
     def _create_missing_file(path: Path, content: str) -> None:

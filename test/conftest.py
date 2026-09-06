@@ -21,7 +21,7 @@ from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import ResourceService, StateService
+from mpvqc.services import StateService
 from mpvqc.settings import open_settings_file
 from mpvqc.shell.services import ShellSettingsService
 from test.player.recording import RecordingPlayerHandle
@@ -240,7 +240,6 @@ def common_bindings_with(qsettings):
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(I18nSettingsService, i18n_settings_service)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
-            binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)
 
             for custom_config in custom_configs:

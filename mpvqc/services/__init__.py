@@ -5,7 +5,8 @@
 from .application_paths import ApplicationPathsService as ApplicationPathsService
 from .desktop import DesktopService as DesktopService
 from .file_startup import FileStartupService as FileStartupService
-from .resource import ResourceService as ResourceService
+from .resource import read_input_conf as read_input_conf
+from .resource import read_mpv_conf as read_mpv_conf
 from .state import StateService as StateService
 from .version_checker import HOME_URL as HOME_URL
 from .version_checker import CheckOutcome as CheckOutcome

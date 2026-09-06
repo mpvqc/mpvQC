@@ -33,7 +33,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
-    binder.bind_to_constructor(s.ResourceService, s.ResourceService)
     binder.bind_to_constructor(QSettings, qsettings)
     binder.bind_to_constructor(s.StateService, s.StateService)
     binder.bind_to_constructor(s.VersionCheckerService, s.VersionCheckerService)

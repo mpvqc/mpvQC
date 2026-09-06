@@ -7,10 +7,6 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import assert_never
 
-import inject
-
-from mpvqc.services import ResourceService
-
 from .preferences import AccentColor, AppearancePreference, NoPreference
 from .schemes import ColorScheme, Dark, Light, parse_color_scheme
 
@@ -145,10 +141,8 @@ def _parse_palette_family(data: dict) -> PaletteFamily:
 
 
 class PaletteCatalogService:
-    _resource = inject.attr(ResourceService)
-
-    def __init__(self) -> None:
-        raw = json.loads(self._resource.palette_catalog_json)
+    def __init__(self, catalog_text: str) -> None:
+        raw = json.loads(catalog_text)
         self._palette_families = tuple(_parse_palette_family(entry) for entry in raw)
         self._by_scheme: dict[ColorScheme, PaletteFamily] = {}
         for palette_family in self._palette_families:
