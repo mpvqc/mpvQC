@@ -10,8 +10,8 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.player.services import PlayerService
-from mpvqc.services import LabelWidthCalculatorService, TimeFormatterService
-from mpvqc.shared import needs_long_format
+from mpvqc.services import LabelWidthCalculatorService
+from mpvqc.shared import format_time_to_string, needs_long_format
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -57,15 +57,14 @@ def _derive_time_text(inputs: FooterInputs) -> str:
     if not inputs.video_loaded:
         return ""
     long_format = needs_long_format(inputs.duration)
-    to_string = TimeFormatterService.format_time_to_string
     match inputs.time_display_mode:
         case TimeDisplayMode.CURRENT_TIME:
-            return to_string(inputs.time_pos, long_format=long_format)
+            return format_time_to_string(inputs.time_pos, long_format=long_format)
         case TimeDisplayMode.REMAINING_TIME:
-            return f"-{to_string(inputs.time_remaining, long_format=long_format)}"
+            return f"-{format_time_to_string(inputs.time_remaining, long_format=long_format)}"
         case TimeDisplayMode.CURRENT_TOTAL_TIME:
-            current = to_string(inputs.time_pos, long_format=long_format)
-            total = to_string(inputs.duration, long_format=long_format)
+            current = format_time_to_string(inputs.time_pos, long_format=long_format)
+            total = format_time_to_string(inputs.duration, long_format=long_format)
             return f"{current}/{total}"
         case _:
             return ""

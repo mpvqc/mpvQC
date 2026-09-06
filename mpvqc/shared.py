@@ -26,6 +26,20 @@ def needs_long_format(seconds: float) -> bool:
     return seconds >= SECONDS_PER_HOUR
 
 
+def format_time_to_string(input_seconds: float, *, long_format: bool) -> str:
+    hours, remainder = divmod(input_seconds, SECONDS_PER_HOUR)
+    minutes, seconds = divmod(remainder, 60)
+    if long_format:
+        return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+
+    return f"{int(minutes):02d}:{int(seconds):02d}"
+
+
+def format_milliseconds_to_string(input_milliseconds: int, *, long_format: bool) -> str:
+    seconds = input_milliseconds // MILLISECONDS_PER_SECOND
+    return format_time_to_string(seconds, long_format=long_format)
+
+
 def format_milliseconds_to_subsecond_string(input_milliseconds: int) -> str:
     clamped = min(input_milliseconds, _MAX_SUBSECOND_TIME)
     seconds, milliseconds = divmod(clamped, MILLISECONDS_PER_SECOND)
