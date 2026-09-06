@@ -9,10 +9,9 @@ from urllib.error import HTTPError, URLError
 
 import pytest
 
-from mpvqc.services import VersionCheckerService
-from mpvqc.services.version_checker import NewVersionAvailable, ServerError, ServerNotReachable, UpToDate
+from mpvqc.shell.services import NewVersionAvailable, ServerError, ServerNotReachable, UpToDate, VersionCheckerService
 
-MODULE = "mpvqc.services.version_checker"
+MODULE = "mpvqc.shell.services.version_checker"
 
 
 @pytest.fixture

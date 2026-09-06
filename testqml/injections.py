@@ -20,12 +20,8 @@ from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.player.services import PlayerService
-from mpvqc.services import (
-    ApplicationPathsService,
-    DesktopService,
-    VersionCheckerService,
-)
-from mpvqc.services.version_checker import CheckOutcome, UpToDate
+from mpvqc.services import ApplicationPathsService, DesktopService
+from mpvqc.shell.services import CheckOutcome, UpToDate, VersionCheckerService
 from mpvqc.window.services import (
     MainWindowService,
     NoEmbeddedPlayerTracker,

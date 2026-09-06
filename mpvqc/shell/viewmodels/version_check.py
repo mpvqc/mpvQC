@@ -13,7 +13,7 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.jobs import Err, Ok, SerialJobRunner
-from mpvqc.services import (
+from mpvqc.shell.services import (
     HOME_URL,
     CheckOutcome,
     NewVersionAvailable,

@@ -35,7 +35,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(QSettings, qsettings)
     binder.bind_to_constructor(s.StateService, s.StateService)
-    binder.bind_to_constructor(s.VersionCheckerService, s.VersionCheckerService)
 
 
 def configure_injections() -> None:
