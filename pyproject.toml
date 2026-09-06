@@ -253,6 +253,7 @@ files = [
     "mpvqc/services/formatter_time.py",
     "mpvqc/services/label_width_calculator.py",
     "mpvqc/services/resource.py",
+    "mpvqc/services/settings.py",
     "mpvqc/services/settings_file.py",
     "mpvqc/services/state.py",
     "mpvqc/services/version_checker.py",
