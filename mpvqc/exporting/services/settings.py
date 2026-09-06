@@ -9,9 +9,11 @@ from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services import Setting, read_bool, read_int
+from mpvqc.services import MISSING, Setting, read_bool, read_int, stored_text
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from PySide6.QtCore import QSettings
 
 _BACKUP_ENABLED_KEY = "Backup/enabled"
@@ -26,6 +28,12 @@ _WRITE_HEADER_SUBTITLES_KEY = "Export/writeHeaderSubtitles"
 
 def _default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
+
+
+def _read_nickname(stored: object, default: Callable[[], str]) -> str:
+    if stored is MISSING:
+        return default()
+    return stored if isinstance(stored, str) else ""
 
 
 class ExportSettingsService(QObject):
@@ -56,17 +64,12 @@ class ExportSettingsService(QObject):
         notify=_notify_backup_interval,
     )
 
-    @property
-    def nickname(self) -> str:
-        # A cleared nickname stores @Invalid, which an untyped read cannot tell apart from a missing key
-        if self.qsettings.contains(_NICKNAME_KEY):
-            stored = self.qsettings.value(_NICKNAME_KEY, type=str)
-            return stored if isinstance(stored, str) else ""
-        return _default_username()
-
-    @nickname.setter
-    def nickname(self, nickname: str | None) -> None:
-        self.qsettings.setValue(_NICKNAME_KEY, nickname)
+    nickname: Setting[Self, str] = Setting[Self, str](
+        _NICKNAME_KEY,
+        default=_default_username,
+        read=stored_text,
+        decode=_read_nickname,
+    )
 
     write_header_date: Setting[Self, bool] = Setting[Self, bool](
         _WRITE_HEADER_DATE_KEY,
