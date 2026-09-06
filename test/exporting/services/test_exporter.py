@@ -93,17 +93,17 @@ def test_save_signals_on_write_failure(configure_mocks, service, make_spy, wait_
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_save_records_save(configure_mocks, service, tmp_path, state_service_mock, wait_for_jobs):
+def test_save_records_save(configure_mocks, service, tmp_path, session_service_mock, wait_for_jobs):
     configure_mocks()
     file = tmp_path / "saved.txt"
 
     service.save(file)
     wait_for_jobs()
 
-    state_service_mock.record_save.assert_called_once_with(file)
+    session_service_mock.record_save.assert_called_once_with(file)
 
 
-def test_save_failure_does_not_record_save(configure_mocks, service, state_service_mock, wait_for_jobs):
+def test_save_failure_does_not_record_save(configure_mocks, service, session_service_mock, wait_for_jobs):
     configure_mocks()
     file_mock = MagicMock()
     file_mock.write_text.side_effect = PermissionError("read-only target")
@@ -111,11 +111,11 @@ def test_save_failure_does_not_record_save(configure_mocks, service, state_servi
     service.save(file_mock)
     wait_for_jobs()
 
-    state_service_mock.record_save.assert_not_called()
+    session_service_mock.record_save.assert_not_called()
 
 
 def test_export_classic_writes_classic_document_without_recording(
-    configure_mocks, service, tmp_path, state_service_mock, wait_for_jobs
+    configure_mocks, service, tmp_path, session_service_mock, wait_for_jobs
 ):
     configure_mocks()
     file = tmp_path / "export.txt"
@@ -124,7 +124,7 @@ def test_export_classic_writes_classic_document_without_recording(
     wait_for_jobs()
 
     assert file.read_text(encoding="utf-8").startswith("[FILE]")
-    state_service_mock.record_save.assert_not_called()
+    session_service_mock.record_save.assert_not_called()
 
 
 def test_export_classic_signals_on_write_failure(configure_mocks, service, make_spy, wait_for_jobs):

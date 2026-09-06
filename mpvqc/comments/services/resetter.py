@@ -4,15 +4,15 @@
 
 import inject
 
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 
 from .service import CommentsService
 
 
 class ResetService:
     _comments = inject.attr(CommentsService)
-    _app_state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
 
     def reset(self) -> None:
         self._comments.reset()
-        self._app_state.record_reset()
+        self._session.record_reset()

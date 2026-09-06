@@ -21,7 +21,7 @@ from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 from mpvqc.settings import open_settings_file
 from mpvqc.shell.services import ShellSettingsService
 from test.player.recording import RecordingPlayerHandle
@@ -123,19 +123,19 @@ def make_build_info() -> Callable[..., BuildInfo]:
 
 
 @pytest.fixture
-def state_service() -> StateService:
-    return StateService()
+def session_service() -> SessionService:
+    return SessionService()
 
 
 @pytest.fixture
-def configure_state(state_service) -> Callable:
-    from mpvqc.services.state import ApplicationState
+def configure_session(session_service) -> Callable:
+    from mpvqc.session import SessionState
 
     def _configure(**kwargs):
         # noinspection PyProtectedMember
-        old = state_service._state
-        state_service._set(
-            ApplicationState(
+        old = session_service._state
+        session_service._set(
+            SessionState(
                 document=kwargs.get("document", old.document),
                 saved=bool(kwargs.get("saved", old.saved)),
             )
@@ -240,7 +240,7 @@ def common_bindings_with(qsettings):
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(I18nSettingsService, i18n_settings_service)
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
-            binder.bind_to_constructor(StateService, StateService)
+            binder.bind_to_constructor(SessionService, SessionService)
 
             for custom_config in custom_configs:
                 custom_config(binder)

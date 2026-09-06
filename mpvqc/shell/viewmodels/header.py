@@ -10,7 +10,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 from mpvqc.shell.services import ShellSettingsService, WindowTitleFormat
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -53,7 +53,7 @@ def derive_header_props(inputs: HeaderInputs) -> HeaderProps:
 class MpvqcShellHeaderViewModel(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ShellSettingsService)
-    _state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
     _i18n = inject.attr(InternationalizationService)
 
     windowTitleChanged = Signal(str)
@@ -65,7 +65,7 @@ class MpvqcShellHeaderViewModel(QObject):
             filename=self._player.filename,
             path=self._player.path,
             window_title_format=self._settings.window_title_format,
-            has_unsaved_document=self._state.has_unsaved_document,
+            has_unsaved_document=self._session.has_unsaved_document,
             app_name=QCoreApplication.applicationName(),
             unsaved_template=self._read_unsaved_template(),
         )
@@ -75,7 +75,7 @@ class MpvqcShellHeaderViewModel(QObject):
         self._player.filename_changed.connect(self._fold_filename)
         self._player.path_changed.connect(self._fold_path)
         self._settings.window_title_format_changed.connect(self._fold_window_title_format)
-        self._state.has_unsaved_document_changed.connect(self._fold_has_unsaved_document)
+        self._session.has_unsaved_document_changed.connect(self._fold_has_unsaved_document)
         self._i18n.retranslated.connect(self._fold_retranslated)
 
     @staticmethod

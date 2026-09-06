@@ -26,7 +26,7 @@ from mpvqc.importing.services import (
     any_video_loaded,
 )
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 from test.importing.plans import (
     SUB_A,
@@ -65,8 +65,8 @@ def import_settings_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def state_service_mock() -> MagicMock:
-    return MagicMock(spec_set=StateService)
+def session_service_mock() -> MagicMock:
+    return MagicMock(spec_set=SessionService)
 
 
 @pytest.fixture
@@ -85,14 +85,14 @@ def reset_service_mock() -> MagicMock:
 def configure_inject(
     player_service_mock: MagicMock,
     import_settings_service_mock: MagicMock,
-    state_service_mock: MagicMock,
+    session_service_mock: MagicMock,
     comments_service_mock: MagicMock,
     reset_service_mock: MagicMock,
 ) -> None:
     def config(binder: inject.Binder) -> None:
         binder.bind(PlayerService, player_service_mock)
         binder.bind(ImportSettingsService, import_settings_service_mock)
-        binder.bind(StateService, state_service_mock)
+        binder.bind(SessionService, session_service_mock)
         binder.bind(CommentsService, comments_service_mock)
         binder.bind(ResetService, reset_service_mock)
 
@@ -257,7 +257,7 @@ def test_open_gates_state_record_import(
     make_importer,
     make_spy,
     player_service_mock: MagicMock,
-    state_service_mock: MagicMock,
+    session_service_mock: MagicMock,
     case: RecordImportCase,
 ) -> None:
     player_service_mock.path = str(VIDEO_A) if case.player_already_has_video else ""
@@ -275,9 +275,9 @@ def test_open_gates_state_record_import(
         pending.finish(session=NotAsked(), video=case.resolve_video, subtitles=NotAsked())
 
     if case.expected_record:
-        state_service_mock.record_import.assert_called_once()
+        session_service_mock.record_import.assert_called_once()
     else:
-        state_service_mock.record_import.assert_not_called()
+        session_service_mock.record_import.assert_not_called()
 
 
 def test_finishing_with_a_replacing_session_resets_the_application(

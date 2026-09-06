@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtGui import QWindow
 
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 from mpvqc.shell.services import QuitService
 
 
@@ -19,10 +19,10 @@ def player_service_mock() -> MagicMock:
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, player_service_mock, state_service):
+def configure_inject(common_bindings_with, player_service_mock, session_service):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_service_mock)
-        binder.bind(StateService, state_service)
+        binder.bind(SessionService, session_service)
 
     common_bindings_with(custom_bindings)
 
@@ -36,8 +36,8 @@ def window(qt_app):
     window.destroy()
 
 
-def test_saved_document_closes_window(window, configure_state, player_service_mock, make_spy):
-    configure_state(saved=True)
+def test_saved_document_closes_window(window, configure_session, player_service_mock, make_spy):
+    configure_session(saved=True)
     service = QuitService()
     service.attach(window)
     spy = make_spy(service.confirmation_needed)
@@ -49,8 +49,8 @@ def test_saved_document_closes_window(window, configure_state, player_service_mo
     assert spy.count() == 0
 
 
-def test_unsaved_document_keeps_window_open(window, configure_state, player_service_mock, make_spy):
-    configure_state(saved=False)
+def test_unsaved_document_keeps_window_open(window, configure_session, player_service_mock, make_spy):
+    configure_session(saved=False)
     service = QuitService()
     service.attach(window)
     spy = make_spy(service.confirmation_needed)
@@ -63,9 +63,9 @@ def test_unsaved_document_keeps_window_open(window, configure_state, player_serv
 
 
 def test_confirming_quit_closes_window_after_handler_returns(
-    qt_app, window, configure_state, player_service_mock, make_spy
+    qt_app, window, configure_session, player_service_mock, make_spy
 ):
-    configure_state(saved=False)
+    configure_session(saved=False)
     service = QuitService()
     service.attach(window)
     spy = make_spy(service.confirmation_needed)

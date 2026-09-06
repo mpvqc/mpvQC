@@ -253,7 +253,7 @@ files = [
     "mpvqc/services/application_paths.py",
     "mpvqc/services/file_startup.py",
     "mpvqc/services/resource.py",
-    "mpvqc/services/state.py",
+    "mpvqc/session.py",
     "mpvqc/settings.py",
     "mpvqc/shared.py",
     "mpvqc/shell/__init__.py",

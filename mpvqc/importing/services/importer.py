@@ -14,7 +14,7 @@ from PySide6.QtCore import QObject, Signal
 from mpvqc.comments.services import CommentsService, ResetService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 
 from .concerns import SessionMerge, SessionReplace, SubtitlesLoad, SubtitlesSkip, VideoLoad, VideoSkip
 from .pending import PendingImport
@@ -42,7 +42,7 @@ class Scanning(Protocol):
 class ImportService(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ImportSettingsService)
-    _state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
     _comments = inject.attr(CommentsService)
     _resetter = inject.attr(ResetService)
 
@@ -127,7 +127,7 @@ class ImportService(QObject):
 
     def _notify_state(self, plan: FinishedPlan, *, is_new_video: bool) -> None:
         if plan.comments or is_new_video:
-            self._state.record_import()
+            self._session.record_import()
 
 
 def any_video_loaded(loaded_path: str, videos: Iterable[Path]) -> bool:

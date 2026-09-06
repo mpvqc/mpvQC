@@ -11,12 +11,12 @@ model through the seam `writing-models` describes under "Service seam".
 ## Placement and naming
 
 A service the inject container binds carries the `Service` suffix wherever it lives: `ImportService` inside the
-importing slice, `StateService` in `mpvqc/services/`. Everything the container does not bind names itself plainly, as
+importing slice, `SessionService` in `mpvqc.session`. Everything the container does not bind names itself plainly, as
 `WindowButtonDetector` does — the window slice's backend builds it in a factory, so it wears no suffix. A model the
 container binds keeps its model name, `CommentStore` being the one.
 
-`mpvqc/services/` holds what no feature package has claimed. A helper that belongs to no slice and to no container
-sits at the top level of `mpvqc/`, as `mpvqc/jobs.py` does.
+`mpvqc/services/` holds what no feature package has claimed. Application-wide helpers sit at the top level of `mpvqc/`,
+with allowed roles listed in the import checker's `HELPERS` table. Container binding does not decide placement.
 
 No service is QML-registered, so none wears the `Mpvqc` prefix that ADR 0009 governs.
 
@@ -72,8 +72,8 @@ Reach for the runner rather than a `QThreadPool`, a lock, or a queued signal of 
 
 ## Done when
 
-- Every module sits at its narrowest home: the owning slice's `services/`, `mpvqc/services/` when no slice owns it,
-  the top level of `mpvqc/` when no container binds it.
+- Every module sits at its narrowest home: the owning slice's `services/`, `mpvqc/services/` for unclaimed services,
+  the top level of `mpvqc/` for application-wide helpers.
 - Every container-bound service carries the `Service` suffix, and nothing the container leaves alone carries it.
 - The shape matches the logic: state or Qt lifecycle in a bound class, purity in a module-level function over frozen
   dataclasses.
