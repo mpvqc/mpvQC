@@ -47,9 +47,19 @@ def configure_qt_settings() -> None:
 
 
 def configure_logging() -> None:
-    from mpvqc.logging_utils import setup_mpvqc_logging
+    import logging
+
+    from mpvqc.appdata.services import ApplicationPathsService
+    from mpvqc.logging_utils import attach_file_logging, setup_mpvqc_logging
 
     setup_mpvqc_logging()
+
+    try:
+        paths = ApplicationPathsService()
+        paths.dir_logs.mkdir(parents=True, exist_ok=True)
+        attach_file_logging(paths.file_log)
+    except Exception:
+        logging.getLogger(__name__).exception("Could not set up file logging")
 
 
 def configure_dependency_injection() -> None:
@@ -83,8 +93,9 @@ def pin_windows_ui_library() -> None:
 
 
 def register_qml_types() -> None:
-    from mpvqc import appearance, comments, exporting, i18n, importing, player, shell, window
+    from mpvqc import appdata, appearance, comments, exporting, i18n, importing, player, shell, window
 
+    appdata.register_qml_types()
     appearance.register_qml_types()
     comments.register_qml_types()
     exporting.register_qml_types()

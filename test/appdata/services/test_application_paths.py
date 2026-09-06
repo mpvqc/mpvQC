@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.services.application_paths import ApplicationPathsService
+from mpvqc.appdata.services import ApplicationPathsService
 
 
 def test_portable(tmp_path):

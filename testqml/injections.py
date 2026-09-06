@@ -15,12 +15,12 @@ import inject
 from PySide6.QtCore import QSettings, QUrl
 from PySide6.QtGui import QGuiApplication
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.player.services import PlayerService
-from mpvqc.services import ApplicationPathsService
 from mpvqc.shell.services import CheckOutcome, DesktopService, UpToDate, VersionCheckerService
 from mpvqc.window.services import (
     MainWindowService,

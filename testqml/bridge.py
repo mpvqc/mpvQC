@@ -12,6 +12,7 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QDeadlineTimer, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.appearance.services import (
     AccentColor,
     AppearanceSettingsService,
@@ -33,7 +34,6 @@ from mpvqc.importing.services import (
     VideoLoad,
 )
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
-from mpvqc.services import ApplicationPathsService
 from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 from mpvqc.shell.services import DesktopService, ShellSettingsService

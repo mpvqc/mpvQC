@@ -13,9 +13,9 @@ from PySide6.QtGui import QFontDatabase, QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
 
+from mpvqc.appdata.services import ApplicationPathsService, prepare_app_data
 from mpvqc.build import get_build_info
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
-from mpvqc.services import FileStartupService
 from mpvqc.shell.services import QuitService
 from mpvqc.window.services import MainWindowService
 
@@ -34,7 +34,7 @@ def _load_application_fonts() -> None:
 
 
 class MpvqcApplication(QGuiApplication):
-    _start_up = inject.attr(FileStartupService)
+    _paths = inject.attr(ApplicationPathsService)
     _i18n = inject.attr(InternationalizationService)
     _i18n_settings = inject.attr(I18nSettingsService)
     _main_window = inject.attr(MainWindowService)
@@ -52,8 +52,7 @@ class MpvqcApplication(QGuiApplication):
 
         _load_application_fonts()
 
-        self._start_up.create_missing_directories()
-        self._start_up.create_missing_files()
+        prepare_app_data(self._paths)
 
         self.aboutToQuit.connect(self._on_quit)
 

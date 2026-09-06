@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Generator
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import inject
@@ -12,13 +13,20 @@ from PySide6.QtGui import QFontDatabase
 from PySide6.QtQuick import QQuickWindow
 
 from mpvqc import application
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
-from mpvqc.services import FileStartupService
 
 
 @pytest.fixture
-def file_startup_service_mock():
-    return MagicMock(spec_set=FileStartupService)
+def application_paths(tmp_path: Path) -> ApplicationPathsService:
+    (tmp_path / "portable").touch()
+    return ApplicationPathsService(tmp_path)
+
+
+@pytest.fixture
+def prepare_app_data_mock() -> Generator[MagicMock]:
+    with patch("mpvqc.application.prepare_app_data") as mock:
+        yield mock
 
 
 @pytest.fixture
@@ -28,9 +36,9 @@ def load_application_fonts_mock() -> Generator[MagicMock]:
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with, file_startup_service_mock):
+def configure_injections(common_bindings_with, application_paths):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(FileStartupService, file_startup_service_mock)
+        binder.bind(ApplicationPathsService, application_paths)
 
     common_bindings_with(custom_bindings)
 
@@ -55,19 +63,19 @@ def retranslate_mock(internationalization_service) -> Generator[MagicMock]:
 
 def test_application_configured(
     qt_app,
-    file_startup_service_mock,
+    prepare_app_data_mock,
+    application_paths,
     load_application_fonts_mock,
     retranslate_mock,
 ):
     qt_app.configure()
 
     load_application_fonts_mock.assert_called_once()
-    file_startup_service_mock.create_missing_directories.assert_called_once()
-    file_startup_service_mock.create_missing_files.assert_called_once()
+    prepare_app_data_mock.assert_called_once_with(application_paths)
     retranslate_mock.assert_called_once()
 
 
-def test_language_change_triggers_retranslation(qt_app, retranslate_mock, i18n_settings_service):
+def test_language_change_triggers_retranslation(qt_app, prepare_app_data_mock, retranslate_mock, i18n_settings_service):
     qt_app.configure()
 
     i18n_settings_service.language_changed.emit("he-IL")
@@ -87,7 +95,7 @@ def test_first_frame_rendered_emitted_once_despite_multiple_frames(qt_app, make_
     assert spy.count() == 1
 
 
-def test_retranslation_happens_before_engine_language_set(qt_app, retranslate_mock):
+def test_retranslation_happens_before_engine_language_set(qt_app, prepare_app_data_mock, retranslate_mock):
     call_order = []
     retranslate_mock.side_effect = lambda **kwargs: call_order.append("retranslate")
     qt_app._engine.setUiLanguage = lambda lang: call_order.append("setUiLanguage")

@@ -218,6 +218,14 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
 └───────────────────────────────────────┘
 ```
 
+## App data
+
+- **App data**: everything the app keeps for the user between runs: settings, backups, logs, screenshots, export
+  templates and the player config files. One folder: the OS config location, or beside the executable in portable mode.
+- **Portable mode**: app data kept beside the executable, chosen by a file named `portable` next to it.
+- **Player config files**: `mpv.conf` and `input.conf`, the player's own configuration, which the user may edit from
+  the app. Written from bundled defaults when missing.
+
 ## Build origin
 
 - **Channel**: the store a build ships through, stamped into build-info at build time. `mpvqc-github` and

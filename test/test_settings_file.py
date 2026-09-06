@@ -8,8 +8,8 @@ from unittest.mock import MagicMock
 import inject
 from PySide6.QtCore import QSettings
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.injections import bindings
-from mpvqc.services import ApplicationPathsService
 from mpvqc.settings import open_settings_file
 
 

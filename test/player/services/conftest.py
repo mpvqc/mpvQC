@@ -7,8 +7,8 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.player.services import RawPropertyValue
-from mpvqc.services import ApplicationPathsService
 
 
 @pytest.fixture

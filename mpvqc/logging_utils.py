@@ -99,7 +99,6 @@ class MpvqcFormatter(logging.Formatter):
 
 def setup_mpvqc_logging() -> None:
     _setup_console_logging()
-    _setup_file_logging()
     qInstallMessageHandler(_qt_log_handler())
 
 
@@ -120,17 +119,6 @@ def _setup_console_logging() -> None:
         logging.getLogger("mpvqc").setLevel(logging.DEBUG)
         for name in ("inject",):
             logging.getLogger(name).setLevel(logging.WARNING)
-
-
-def _setup_file_logging() -> None:
-    try:
-        from mpvqc.services.application_paths import ApplicationPathsService
-
-        paths = ApplicationPathsService()
-        paths.dir_logs.mkdir(parents=True, exist_ok=True)
-        attach_file_logging(paths.file_log)
-    except Exception:
-        logging.getLogger(__name__).exception("Could not set up file logging")
 
 
 def attach_file_logging(log_file: Path) -> None:

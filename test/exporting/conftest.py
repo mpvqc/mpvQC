@@ -10,10 +10,10 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
 from mpvqc.player.services import PlayerService
-from mpvqc.services import ApplicationPathsService
 from mpvqc.session import SessionService
 
 
