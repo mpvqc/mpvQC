@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import (
+from mpvqc.shell.services import (
     CheckOutcome,
     NewVersionAvailable,
     ServerError,
