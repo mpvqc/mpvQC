@@ -16,7 +16,8 @@ from mpvqc.build import get_build_info
 from mpvqc.comments.services import CommentsService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.player.services import PlayerService
-from mpvqc.services import ApplicationPathsService, StateService
+from mpvqc.services import ApplicationPathsService
+from mpvqc.session import SessionService
 
 from .backup import backup as create_backup
 from .errors import ExportError
@@ -40,7 +41,7 @@ class ExportService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ExportSettingsService)
-    _state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
     _comments = inject.attr(CommentsService)
 
     export_error_occurred = Signal(str, int)
@@ -83,7 +84,7 @@ class ExportService(QObject):
         self._run_export(
             work=lambda: write(document, render_v1(snapshot)),
             failure="Failed to save document",
-            on_success=lambda: self._state.record_save(document),
+            on_success=lambda: self._session.record_save(document),
         )
 
     def export_classic(self, document: Path) -> None:

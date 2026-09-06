@@ -64,6 +64,9 @@ here. Architecture vocabulary is not domain vocabulary: it lives in `docs/archit
   on their own, to move the user to the row an undo step is about to change before it changes.
 - **Selection state**: where the selection stands in the comment table: which row it is on, and whether that row is on
   screen. It is where a search carries on from, and what undo and redo check before they move the user.
+- **Session**: the comments in the app right now, the document they were last saved to or loaded from, and whether they
+  changed since. A change, a save, an import and a reset all move it. The import Concern of the same name asks whether
+  an import merges into it or replaces it.
 
 ## UI
 

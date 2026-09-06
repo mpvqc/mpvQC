@@ -11,7 +11,7 @@ from PySide6.QtCore import QObject, Signal, Slot
 
 
 @dataclass(frozen=True)
-class ApplicationState:
+class SessionState:
     document: Path | None
     saved: bool
 
@@ -20,13 +20,13 @@ class ApplicationState:
         return not self.saved and self.document is not None
 
 
-class StateService(QObject):
+class SessionService(QObject):
     saved_changed = Signal(bool)
     has_unsaved_document_changed = Signal(bool)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._state = ApplicationState(document=None, saved=True)
+        self._state = SessionState(document=None, saved=True)
 
     @property
     def saved(self) -> bool:
@@ -58,7 +58,7 @@ class StateService(QObject):
         new_state = replace(self._state, document=None, saved=False)
         self._set(new_state)
 
-    def _set(self, new_state: ApplicationState) -> None:
+    def _set(self, new_state: SessionState) -> None:
         was_saved = self._state.saved
         was_unsaved_document = self._state.has_unsaved_document
         self._state = new_state

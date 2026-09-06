@@ -9,12 +9,12 @@ from PySide6.QtCore import QEvent, QObject, QTimer, Signal
 from PySide6.QtGui import QWindow
 
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 
 
 class QuitService(QObject):
     _player = inject.attr(PlayerService)
-    _state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
 
     confirmation_needed = Signal()
 
@@ -37,7 +37,7 @@ class QuitService(QObject):
     @override
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.Type.Close:
-            if self._state.saved or self._quit_despite_unsaved_changes:
+            if self._session.saved or self._quit_despite_unsaved_changes:
                 self._player.terminate()
                 event.accept()
                 return False

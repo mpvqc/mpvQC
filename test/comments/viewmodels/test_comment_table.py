@@ -11,13 +11,13 @@ from PySide6.QtGui import QGuiApplication
 from mpvqc.comments.services import CommentsService, CommentsSettingsService
 from mpvqc.comments.viewmodels import MpvqcCommentTableViewModel
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 
 
 @pytest.fixture
-def state_service_mock():
-    return MagicMock(spec_set=StateService)
+def session_service_mock():
+    return MagicMock(spec_set=SessionService)
 
 
 @pytest.fixture(autouse=True)
@@ -25,11 +25,11 @@ def configure_inject(
     common_bindings_with,
     comments_settings_service,
     player_service,
-    state_service_mock,
+    session_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_service)
-        binder.bind(StateService, state_service_mock)
+        binder.bind(SessionService, session_service_mock)
         binder.bind(CommentsSettingsService, comments_settings_service)
 
     common_bindings_with(custom_bindings)
@@ -56,15 +56,15 @@ def make_view_model(comments_service):
     return _make
 
 
-def test_state_changes_on_mutation(make_view_model, state_service_mock):
+def test_state_changes_on_mutation(make_view_model, session_service_mock):
     vm = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
-    state_service_mock.reset_mock()  # ignore setup-time import dirty
+    session_service_mock.reset_mock()  # ignore setup-time import dirty
 
     vm.removeRow(0)
-    assert state_service_mock.record_change.call_count == 1
+    assert session_service_mock.record_change.call_count == 1
 
     vm.undo()
-    assert state_service_mock.record_change.call_count == 2
+    assert session_service_mock.record_change.call_count == 2
 
 
 def test_add_row_captures_exact_player_time(make_view_model, comments_service, player_handle):

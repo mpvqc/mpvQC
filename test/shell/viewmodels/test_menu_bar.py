@@ -11,7 +11,8 @@ from PySide6.QtCore import Qt, QUrl
 
 from mpvqc.comments.services import ResetService
 from mpvqc.exporting.services import ExportService
-from mpvqc.services import ApplicationPathsService, StateService
+from mpvqc.services import ApplicationPathsService
+from mpvqc.session import SessionService
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind
 from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService
 from mpvqc.shell.viewmodels import MpvqcShellMenuBarViewModel
@@ -49,7 +50,7 @@ def view_model() -> MpvqcShellMenuBarViewModel:
 def configure_inject(
     common_bindings_with,
     reset_service_mock,
-    state_service,
+    session_service,
     shell_settings_service,
     export_service_mock,
     desktop_service_mock,
@@ -60,7 +61,7 @@ def configure_inject(
         paths = MagicMock(spec_set=ApplicationPathsService, dir_config=tmp_path / "app data")
         binder.bind(ApplicationPathsService, paths)
         binder.bind(DesktopService, desktop_service_mock)
-        binder.bind(StateService, state_service)
+        binder.bind(SessionService, session_service)
         binder.bind(ResetService, reset_service_mock)
         binder.bind(ShellSettingsService, shell_settings_service)
         binder.bind(ExportService, export_service_mock)
@@ -69,16 +70,16 @@ def configure_inject(
     common_bindings_with(custom_bindings)
 
 
-def test_request_reset_app_state(view_model, configure_state, reset_service_mock, make_spy):
+def test_request_reset_app_state(view_model, configure_session, reset_service_mock, make_spy):
     spy = make_spy(view_model.messageBoxRequested)
 
-    configure_state(saved=True)
+    configure_session(saved=True)
     view_model.requestResetAppState()
     reset_service_mock.reset.assert_called_once()
     assert spy.count() == 0
 
     reset_service_mock.reset.reset_mock()
-    configure_state(saved=False)
+    configure_session(saved=False)
     view_model.requestResetAppState()
     assert spy.count() == 1
     assert spy.at(0, 0) == MessageBoxKind.RESET
@@ -113,17 +114,17 @@ def test_request_export_error_message_box(common_bindings_with, shell_settings_s
     assert spy.at(0, 1) == 42
 
 
-def test_save(view_model, make_spy, configure_state, export_service_mock):
+def test_save(view_model, make_spy, configure_session, export_service_mock):
     spy = make_spy(view_model.fileDialogRequested)
 
-    configure_state(document=None)
+    configure_session(document=None)
     view_model.requestSaveQcDocument()
     assert spy.count() == 1
     assert spy.at(0, 0) == FileDialogKind.SAVE_DOCUMENT
     export_service_mock.save.assert_not_called()
 
     path = Path() / "test_document.txt"
-    configure_state(document=path)
+    configure_session(document=path)
     view_model.requestSaveQcDocument()
     assert spy.count() == 1
     assert export_service_mock.save.call_count == 1

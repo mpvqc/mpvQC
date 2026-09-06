@@ -33,10 +33,8 @@ from mpvqc.importing.services import (
     VideoLoad,
 )
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
-from mpvqc.services import (
-    ApplicationPathsService,
-    StateService,
-)
+from mpvqc.services import ApplicationPathsService
+from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 from mpvqc.shell.services import DesktopService, ShellSettingsService
 from mpvqc.window.viewmodels import MpvqcPlatformViewModel, MpvqcWindowControlsViewModel
@@ -232,7 +230,7 @@ class MpvqcTestBridge(QObject):
 
     @Property(bool)
     def saved(self) -> bool:
-        return inject.instance(StateService).saved
+        return inject.instance(SessionService).saved
 
     @Slot(str, result=QUrl)
     def importArtifact(self, name: str) -> QUrl:

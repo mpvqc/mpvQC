@@ -11,7 +11,7 @@ import pytest
 
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 from mpvqc.shell.services import ShellSettingsService, WindowTitleFormat
 from mpvqc.shell.viewmodels import HeaderInputs, HeaderProps, MpvqcShellHeaderViewModel, derive_header_props
 
@@ -25,12 +25,12 @@ def view_model() -> MpvqcShellHeaderViewModel:
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
-    state_service,
+    session_service,
     player_service,
     shell_settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(StateService, state_service)
+        binder.bind(SessionService, session_service)
         binder.bind(PlayerService, player_service)
         binder.bind(ShellSettingsService, shell_settings_service)
 
@@ -121,13 +121,13 @@ def test_derivation(case: DerivationCase):
 
 def test_window_title_changed(
     view_model,
-    configure_state,
+    configure_session,
     player_handle,
     shell_settings_service,
     make_spy,
 ):
     file = Path.home() / "test_video.mp4"
-    configure_state(saved=False)
+    configure_session(saved=False)
     player_handle.load_video(f"{file.resolve()}")
 
     spy = make_spy(view_model.windowTitleChanged)
@@ -137,11 +137,11 @@ def test_window_title_changed(
 
 
 def test_initial_snapshot_reads_services_at_construction(
-    configure_state,
+    configure_session,
     player_handle,
     shell_settings_service,
 ):
-    configure_state(saved=False, document=Path("doc.qc"))
+    configure_session(saved=False, document=Path("doc.qc"))
     player_handle.load_video("/videos/test_video.mp4")
     shell_settings_service.window_title_format = WindowTitleFormat.FILE_NAME
 
@@ -154,10 +154,10 @@ def test_initial_snapshot_reads_services_at_construction(
 def test_retranslation_folds_german_unsaved_template(
     qt_app,
     view_model,
-    configure_state,
+    configure_session,
     make_spy,
 ):
-    configure_state(saved=False, document=Path("doc.qc"))
+    configure_session(saved=False, document=Path("doc.qc"))
     assert view_model.windowTitle == "TestApp (unsaved)"
     spy = make_spy(view_model.windowTitleChanged)
 

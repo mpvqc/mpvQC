@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, assert_never
 import inject
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services import StateService
+from mpvqc.session import SessionService
 
 from .history import Applied, FocusFirst, History, NoStep
 from .search import CommentSearchEngine
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 
 
 class CommentsService(QObject):
-    _state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
 
     view_action = Signal(object)  # ViewAction union; Qt sigs can't carry type aliases
     comments_changed = Signal()
@@ -125,7 +125,7 @@ class CommentsService(QObject):
 
     def _emit_applied(self, applied: Applied) -> None:
         self._search.invalidate()
-        self._state.record_change()
+        self._session.record_change()
         self.comments_changed.emit()
         self._emit_view_action(applied.action)
 

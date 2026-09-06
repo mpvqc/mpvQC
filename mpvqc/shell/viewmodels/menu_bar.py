@@ -12,7 +12,8 @@ from mpvqc.build import get_build_info
 from mpvqc.comments.services import ResetService
 from mpvqc.exporting.services import ExportService
 from mpvqc.i18n.services import I18nSettingsService
-from mpvqc.services import ApplicationPathsService, StateService
+from mpvqc.services import ApplicationPathsService
+from mpvqc.session import SessionService
 from mpvqc.shared import map_path_to_url
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind
 from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService, WindowTitleFormat
@@ -30,7 +31,7 @@ class MpvqcShellMenuBarViewModel(QObject):
     _quit = inject.attr(QuitService)
     _resetter = inject.attr(ResetService)
     _settings = inject.attr(ShellSettingsService)
-    _state = inject.attr(StateService)
+    _session = inject.attr(SessionService)
 
     fileDialogRequested = Signal(int)
 
@@ -61,14 +62,14 @@ class MpvqcShellMenuBarViewModel(QObject):
 
     @Slot()
     def requestResetAppState(self) -> None:
-        if self._state.saved:
+        if self._session.saved:
             self._resetter.reset()
         else:
             self.messageBoxRequested.emit(MessageBoxKind.RESET)
 
     @Slot()
     def requestSaveQcDocument(self) -> None:
-        if document := self._state.document:
+        if document := self._session.document:
             self._exporter.save(document)
         else:
             self.fileDialogRequested.emit(FileDialogKind.SAVE_DOCUMENT)

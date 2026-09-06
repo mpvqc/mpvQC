@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from mpvqc.services.state import ApplicationState, StateService
+from mpvqc.session import SessionService, SessionState
 
 
 @pytest.fixture(autouse=True)
@@ -14,14 +14,14 @@ def configure_injections(common_bindings_with):
     common_bindings_with()
 
 
-def _make(state: ApplicationState) -> StateService:
-    service = StateService()
+def _make(state: SessionState) -> SessionService:
+    service = SessionService()
     service._state = state
     return service
 
 
 def test_record_save_sets_document_and_marks_saved() -> None:
-    service = _make(ApplicationState(document=None, saved=False))
+    service = _make(SessionState(document=None, saved=False))
 
     service.record_save(Path("document"))
 
@@ -30,7 +30,7 @@ def test_record_save_sets_document_and_marks_saved() -> None:
 
 
 def test_record_change_marks_unsaved() -> None:
-    service = _make(ApplicationState(document=Path("document"), saved=True))
+    service = _make(SessionState(document=Path("document"), saved=True))
 
     service.record_change()
 
@@ -39,7 +39,7 @@ def test_record_change_marks_unsaved() -> None:
 
 
 def test_record_reset_clears_document_and_marks_saved() -> None:
-    service = _make(ApplicationState(document=Path("document"), saved=False))
+    service = _make(SessionState(document=Path("document"), saved=False))
 
     service.record_reset()
 
@@ -48,7 +48,7 @@ def test_record_reset_clears_document_and_marks_saved() -> None:
 
 
 def test_record_import_clears_document_and_marks_unsaved() -> None:
-    service = _make(ApplicationState(document=Path("document"), saved=True))
+    service = _make(SessionState(document=Path("document"), saved=True))
 
     service.record_import()
 
@@ -57,7 +57,7 @@ def test_record_import_clears_document_and_marks_unsaved() -> None:
 
 
 def test_saved_changed_signal_emits_only_on_transition() -> None:
-    service = StateService()
+    service = SessionService()
     received: list[bool] = []
     service.saved_changed.connect(received.append)
 
@@ -72,7 +72,7 @@ def test_saved_changed_signal_emits_only_on_transition() -> None:
 
 
 def test_has_unsaved_document_signal_emits_only_on_transition() -> None:
-    service = StateService()
+    service = SessionService()
     received: list[bool] = []
     service.has_unsaved_document_changed.connect(received.append)
 
