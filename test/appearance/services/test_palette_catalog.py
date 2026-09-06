@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 from dataclasses import asdict
 
-import inject
 import pytest
 from PySide6.QtGui import QColor
 
@@ -16,8 +16,8 @@ from mpvqc.appearance.services import (
     Light,
     NoPreference,
     PaletteCatalogService,
+    read_palette_catalog,
 )
-from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
 NO_PREFERENCE = NoPreference()
@@ -31,26 +31,15 @@ def _appearance_preference(*, light_accent: str | None = None, dark_accent: str 
     )
 
 
-@pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with):
-    common_bindings_with()
-
-
 @pytest.fixture
 def catalog():
-    return PaletteCatalogService()
+    return PaletteCatalogService(read_palette_catalog())
 
 
 @pytest.fixture
-def catalog_with(common_bindings_with, make_resource_service):
+def catalog_with():
     def _make(*palette_families: dict) -> PaletteCatalogService:
-        fake = make_resource_service(*palette_families)
-
-        def bind_fake(binder: inject.Binder):
-            binder.bind(ResourceService, fake)
-
-        common_bindings_with(bind_fake)
-        return PaletteCatalogService()
+        return PaletteCatalogService(json.dumps(palette_families))
 
     return _make
 

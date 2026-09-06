@@ -16,17 +16,14 @@ from mpvqc.build import get_build_info
 from mpvqc.comments.services import CommentsService
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.player.services import PlayerService
-from mpvqc.services import (
-    ApplicationPathsService,
-    ResourceService,
-    StateService,
-)
+from mpvqc.services import ApplicationPathsService, StateService
 
 from .backup import backup as create_backup
 from .errors import ExportError
 from .file_names import propose_document_path
 from .render_template import render_template, render_template_file
 from .render_v1 import render_v1
+from .resource import read_shipped_export_template
 from .settings import ExportSettingsService
 from .snapshot import ExportSnapshot
 from .writer import write
@@ -42,7 +39,6 @@ logger = logging.getLogger(__name__)
 class ExportService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _player = inject.attr(PlayerService)
-    _resources = inject.attr(ResourceService)
     _settings = inject.attr(ExportSettingsService)
     _state = inject.attr(StateService)
     _comments = inject.attr(CommentsService)
@@ -92,7 +88,7 @@ class ExportService(QObject):
 
     def export_classic(self, document: Path) -> None:
         snapshot = self._capture()
-        template = self._resources.default_export_template
+        template = read_shipped_export_template()
         self._run_export(
             work=lambda: write(document, render_template(template, snapshot)),
             failure="Failed to export document",

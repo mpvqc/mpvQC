@@ -8,14 +8,31 @@ from pathlib import Path
 
 import pytest
 
-from mpvqc.exporting.services import render_template
-from mpvqc.services import ResourceService
+from mpvqc.exporting.services import read_shipped_export_template, render_template
 from mpvqc.shared import Comment
 
 
 @pytest.fixture
-def resource_service() -> ResourceService:
-    return ResourceService()
+def shipped_export_template() -> str:
+    return read_shipped_export_template()
+
+
+def test_shipped_export_template():
+    assert read_shipped_export_template()
+
+    export_template = read_shipped_export_template()
+    assert "write_date" in export_template
+    assert "date" in export_template
+    assert "write_generator" in export_template
+    assert "generator" in export_template
+    assert "write_nickname" in export_template
+    assert "nickname" in export_template
+    assert "write_video_path" in export_template
+    assert "video_path" in export_template
+    assert "comments" in export_template
+    assert "comment['time'] | as_time" in export_template
+    assert "comment['commentType'] | as_comment_type" in export_template
+    assert "comment['comment'] | trim" in export_template
 
 
 def test_video_path_video_name(make_snapshot):
@@ -38,12 +55,12 @@ def test_video_path_video_name(make_snapshot):
     assert actual == expected
 
 
-def test_renders_text_that_ends_with_newline(make_snapshot, resource_service):
-    actual = render_template(resource_service.default_export_template, make_snapshot())
+def test_renders_text_that_ends_with_newline(make_snapshot, shipped_export_template):
+    actual = render_template(shipped_export_template, make_snapshot())
     assert actual[-1] == "\n"
 
 
-def test_renders_no_headers(make_snapshot, resource_service):
+def test_renders_no_headers(make_snapshot, shipped_export_template):
     expected = textwrap.dedent(
         """\
         [FILE]
@@ -52,11 +69,11 @@ def test_renders_no_headers(make_snapshot, resource_service):
         # total lines: 0
         """
     )
-    actual = render_template(resource_service.default_export_template, make_snapshot())
+    actual = render_template(shipped_export_template, make_snapshot())
     assert expected == actual
 
 
-def test_renders_partial_headers(make_snapshot, resource_service):
+def test_renders_partial_headers(make_snapshot, shipped_export_template):
     snapshot = make_snapshot(
         write_header_video_path=True,
         video="/path/to/video",
@@ -74,11 +91,11 @@ def test_renders_partial_headers(make_snapshot, resource_service):
         # total lines: 0
         """
     )
-    actual = render_template(resource_service.default_export_template, snapshot)
+    actual = render_template(shipped_export_template, snapshot)
     assert expected == actual
 
 
-def test_renders_partial_headers_generator(make_snapshot, resource_service):
+def test_renders_partial_headers_generator(make_snapshot, shipped_export_template):
     snapshot = make_snapshot(write_header_generator=True, generator="Jon Snow")
 
     expected = textwrap.dedent(
@@ -90,20 +107,20 @@ def test_renders_partial_headers_generator(make_snapshot, resource_service):
         # total lines: 0
         """
     )
-    actual = render_template(resource_service.default_export_template, snapshot)
+    actual = render_template(shipped_export_template, snapshot)
     assert expected == actual
 
 
-def test_renders_the_captured_date(make_snapshot, resource_service):
+def test_renders_the_captured_date(make_snapshot, shipped_export_template):
     captured_at = datetime(2019, 3, 4, 5, 6, 7, tzinfo=timezone(timedelta(hours=2)))
     snapshot = make_snapshot(captured_at=captured_at, write_header_date=True)
 
-    actual = render_template(resource_service.default_export_template, snapshot)
+    actual = render_template(shipped_export_template, snapshot)
 
     assert "date      : 2019-03-04 05:06\n" in actual
 
 
-def test_renders_comments(make_snapshot, resource_service):
+def test_renders_comments(make_snapshot, shipped_export_template):
     snapshot = make_snapshot(
         comments=[
             Comment(time=0 * 1000, comment_type="Translation", comment="My first comment"),
@@ -123,7 +140,7 @@ def test_renders_comments(make_snapshot, resource_service):
         # total lines: 3
         """
     )
-    actual = render_template(resource_service.default_export_template, snapshot)
+    actual = render_template(shipped_export_template, snapshot)
     assert expected == actual
 
 
@@ -145,7 +162,7 @@ def test_as_time_ms_filter_formats_subsecond_time(make_snapshot):
     assert render_template("{{ comments[0]['time_ms'] | as_time_ms }}", snapshot) == "00:15:29.340"
 
 
-def test_renders_no_subtitles(make_snapshot, resource_service):
+def test_renders_no_subtitles(make_snapshot, shipped_export_template):
     subtitles = [Path.home() / "subtitle.ass"]
     expected = textwrap.dedent(
         """\
@@ -156,20 +173,18 @@ def test_renders_no_subtitles(make_snapshot, resource_service):
         """
     )
 
-    assert expected == render_template(resource_service.default_export_template, make_snapshot())
+    assert expected == render_template(shipped_export_template, make_snapshot())
 
-    assert expected == render_template(resource_service.default_export_template, make_snapshot(subtitles=subtitles))
+    assert expected == render_template(shipped_export_template, make_snapshot(subtitles=subtitles))
 
-    assert expected == render_template(
-        resource_service.default_export_template, make_snapshot(write_header_subtitles=True)
-    )
+    assert expected == render_template(shipped_export_template, make_snapshot(write_header_subtitles=True))
 
     assert expected != render_template(
-        resource_service.default_export_template, make_snapshot(write_header_subtitles=True, subtitles=subtitles)
+        shipped_export_template, make_snapshot(write_header_subtitles=True, subtitles=subtitles)
     ), "Documents should not match as subtitles should now be rendered"
 
 
-def test_renders_subtitles(make_snapshot, resource_service):
+def test_renders_subtitles(make_snapshot, shipped_export_template):
     subtitle1 = Path.home() / "subtitle-1.ass"
     subtitle2 = Path.home() / "subtitle-2.srt"
 
@@ -188,7 +203,7 @@ def test_renders_subtitles(make_snapshot, resource_service):
         # total lines: 0
         """
     )
-    assert expected == render_template(resource_service.default_export_template, snapshot)
+    assert expected == render_template(shipped_export_template, snapshot)
 
     snapshot = make_snapshot(
         write_header_nickname=True,
@@ -207,4 +222,4 @@ def test_renders_subtitles(make_snapshot, resource_service):
         # total lines: 0
         """
     )
-    assert expected == render_template(resource_service.default_export_template, snapshot)
+    assert expected == render_template(shipped_export_template, snapshot)

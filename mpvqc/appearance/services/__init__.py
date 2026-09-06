@@ -12,6 +12,7 @@ from .palette_catalog import PaletteFamily as PaletteFamily
 from .preferences import AccentColor as AccentColor
 from .preferences import AppearancePreference as AppearancePreference
 from .preferences import NoPreference as NoPreference
+from .resource import read_palette_catalog as read_palette_catalog
 from .schemes import COLOR_SCHEME_PREFERENCES as COLOR_SCHEME_PREFERENCES
 from .schemes import ColorScheme as ColorScheme
 from .schemes import ColorSchemePreference as ColorSchemePreference
