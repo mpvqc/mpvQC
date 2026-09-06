@@ -7,8 +7,9 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.exporting.services import ExportSettingsService
-from mpvqc.services import ApplicationPathsService, DesktopService
-from mpvqc.shared import map_path_to_str
+from mpvqc.services import ApplicationPathsService
+from mpvqc.shared import map_path_to_str, map_path_to_url
+from mpvqc.shell.services import DesktopService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -55,7 +56,7 @@ class MpvqcExportBackupDialogViewModel(QObject):
 
     @Slot()
     def openBackupDirectory(self) -> None:
-        self._desktop.open_backup_folder()
+        self._desktop.open_url(map_path_to_url(self._paths.dir_backup))
 
     @Slot()
     def accept(self) -> None:

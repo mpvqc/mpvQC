@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .desktop import DesktopService as DesktopService
 from .quit import QuitService as QuitService
 from .settings import ShellSettingsService as ShellSettingsService
 from .version_checker import HOME_URL as HOME_URL

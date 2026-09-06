@@ -50,7 +50,7 @@ TestCase {
 
         it.menu.trigger(control, "helpMenu", "openAppDataFolderMenuItem");
 
-        tryVerify(() => it.bridge.openedDesktopUrls().includes("mpvqc-test://app-data-folder"));
+        tryVerify(() => it.bridge.openedDesktopUrls().includes(it.bridge.appDataFolderUrl().toString()));
     }
 
     function test_about_opensDialog(): void {

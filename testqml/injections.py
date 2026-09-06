@@ -20,8 +20,8 @@ from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.player.services import PlayerService
-from mpvqc.services import ApplicationPathsService, DesktopService
-from mpvqc.shell.services import CheckOutcome, UpToDate, VersionCheckerService
+from mpvqc.services import ApplicationPathsService
+from mpvqc.shell.services import CheckOutcome, DesktopService, UpToDate, VersionCheckerService
 from mpvqc.window.services import (
     MainWindowService,
     NoEmbeddedPlayerTracker,
@@ -173,14 +173,6 @@ class VersionCheckerServiceOverride(VersionCheckerService):
 class DesktopServiceOverride(DesktopService):
     def __init__(self) -> None:
         self.opened_urls: list[QUrl] = []
-
-    @override
-    def open_app_data_folder(self) -> None:
-        self.opened_urls.append(QUrl("mpvqc-test://app-data-folder"))
-
-    @override
-    def open_backup_folder(self) -> None:
-        self.opened_urls.append(QUrl("mpvqc-test://backup-folder"))
 
     @override
     def open_url(self, url: QUrl) -> None:
