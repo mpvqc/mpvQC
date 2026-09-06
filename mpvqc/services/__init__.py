@@ -9,6 +9,10 @@ from .font_loader import FontLoaderService as FontLoaderService
 from .formatter_time import TimeFormatterService as TimeFormatterService
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
 from .resource import ResourceService as ResourceService
+from .settings import Setting as Setting
+from .settings import read_bool as read_bool
+from .settings import read_int as read_int
+from .settings import read_member as read_member
 from .settings_file import SettingsFileService as SettingsFileService
 from .state import StateService as StateService
 from .version_checker import HOME_URL as HOME_URL
