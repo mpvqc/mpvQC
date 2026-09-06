@@ -25,7 +25,7 @@ class Setting[Owner: SettingsOwner, T]:
         key: str,
         *,
         default: Callable[[], T],
-        decode: Callable[[object, T], T],
+        decode: Callable[[object, Callable[[], T]], T],
         encode: Callable[[T], object] = lambda value: value,
         notify: Callable[[Owner, T], None] | None = None,
     ) -> None:
@@ -44,7 +44,7 @@ class Setting[Owner: SettingsOwner, T]:
     def __get__(self, instance: Owner | None, owner: type[Owner] | None = None) -> Setting[Owner, T] | T:
         if instance is None:
             return self
-        return self._decode(instance.qsettings.value(self.key), self._default())
+        return self._decode(instance.qsettings.value(self.key), self._default)
 
     def __set__(self, instance: Owner, value: T) -> None:
         if self._notify is not None and self.__get__(instance) == value:
@@ -55,27 +55,27 @@ class Setting[Owner: SettingsOwner, T]:
 
 
 # A later run reads INI text, not the native value QSettings caches for its writer.
-def read_bool(stored: object, default: bool) -> bool:
+def read_bool(stored: object, default: Callable[[], bool]) -> bool:
     if isinstance(stored, bool):
         return stored
     if isinstance(stored, str) and stored.lower() in {"true", "false"}:
         return stored.lower() == "true"
-    return default
+    return default()
 
 
-def read_int(stored: object, default: int) -> int:
+def read_int(stored: object, default: Callable[[], int]) -> int:
     if isinstance(stored, bool):
-        return default
+        return default()
     if isinstance(stored, int):
         return stored
     if isinstance(stored, str):
         with suppress(ValueError):
             return int(stored)
-    return default
+    return default()
 
 
-def read_member[M: IntEnum](stored: object, of: type[M], default: M) -> M:
+def read_member[M: IntEnum](stored: object, of: type[M], default: Callable[[], M]) -> M:
     # QSettings' type=int coercion turns corrupt text into 0, which may name a valid member.
     with suppress(ValueError):
-        return of(read_int(stored, default.value))
-    return default
+        return of(read_int(stored, lambda: default().value))
+    return default()
