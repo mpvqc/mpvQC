@@ -21,12 +21,8 @@ from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.exporting.services import ExportSettingsService, ExportTemplateCatalogService
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import (
-    ResourceService,
-    SettingsFileService,
-    StateService,
-)
-from mpvqc.shared import map_path_to_str
+from mpvqc.services import ResourceService, StateService
+from mpvqc.settings import open_settings_file
 from mpvqc.shell.services import ShellSettingsService
 from test.player.recording import RecordingPlayerHandle
 
@@ -149,9 +145,8 @@ def configure_state(state_service) -> Callable:
 
 
 @pytest.fixture
-def settings_file(tmp_path) -> SettingsFileService:
-    file = tmp_path / "test_settings.ini"
-    return SettingsFileService(ini_file=map_path_to_str(file))
+def qsettings(tmp_path) -> QSettings:
+    return open_settings_file(tmp_path / "test_settings.ini")
 
 
 class QSettingsIniParser(RawConfigParser):
@@ -164,9 +159,9 @@ class QSettingsIniParser(RawConfigParser):
 
 
 @pytest.fixture
-def ini_section(settings_file, tmp_path) -> Callable[[str], SectionProxy]:
+def ini_section(qsettings, tmp_path) -> Callable[[str], SectionProxy]:
     def _section(name: str) -> SectionProxy:
-        settings_file.qsettings.sync()
+        qsettings.sync()
         parser = QSettingsIniParser()
         parser.read(tmp_path / "test_settings.ini")
         return parser[name]
@@ -187,18 +182,18 @@ def read_existing_settings(tmp_path) -> Callable[[str], QSettings]:
 
 
 @pytest.fixture
-def comments_settings_service(settings_file) -> CommentsSettingsService:
-    return CommentsSettingsService(settings_file.qsettings)
+def comments_settings_service(qsettings) -> CommentsSettingsService:
+    return CommentsSettingsService(qsettings)
 
 
 @pytest.fixture
-def export_settings_service(settings_file) -> ExportSettingsService:
-    return ExportSettingsService(settings_file.qsettings)
+def export_settings_service(qsettings) -> ExportSettingsService:
+    return ExportSettingsService(qsettings)
 
 
 @pytest.fixture
-def shell_settings_service(settings_file) -> ShellSettingsService:
-    return ShellSettingsService(settings_file.qsettings)
+def shell_settings_service(qsettings) -> ShellSettingsService:
+    return ShellSettingsService(qsettings)
 
 
 @pytest.fixture(autouse=True)
@@ -234,12 +229,13 @@ def check_generated_resources():
 
 
 @pytest.fixture
-def common_bindings_with(settings_file):
+def common_bindings_with(qsettings):
     def i18n_settings_service() -> I18nSettingsService:
-        return I18nSettingsService(settings_file.qsettings)
+        return I18nSettingsService(qsettings)
 
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
+            binder.bind(QSettings, qsettings)
             comments_bindings(binder)
             binder.bind_to_constructor(ExportTemplateCatalogService, ExportTemplateCatalogService)
             binder.bind_to_constructor(I18nSettingsService, i18n_settings_service)

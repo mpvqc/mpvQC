@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 def bindings(binder: inject.Binder) -> None:
     import inject
+    from PySide6.QtCore import QSettings
     from PySide6.QtGui import QGuiApplication
 
     from mpvqc.appearance.services import (
@@ -20,10 +21,9 @@ def bindings(binder: inject.Binder) -> None:
         PaletteCatalogService,
         QtStyleHints,
     )
-    from mpvqc.services import SettingsFileService
 
     def appearance_settings_service() -> AppearanceSettingsService:
-        return AppearanceSettingsService(inject.instance(SettingsFileService).qsettings)
+        return AppearanceSettingsService(inject.instance(QSettings))
 
     def color_scheme_service() -> ColorSchemeService:
         return ColorSchemeService(QtStyleHints(QGuiApplication.styleHints()))

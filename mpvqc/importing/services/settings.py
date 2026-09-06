@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QStandardPaths, QUrl
 
-from mpvqc.services import Setting, read_member
+from mpvqc.settings import Setting, read_member
 
 from .concerns import LoadFoundVideo
 

@@ -8,13 +8,20 @@ from contextlib import suppress
 from enum import IntEnum
 from typing import TYPE_CHECKING, Protocol, overload
 
+from PySide6.QtCore import QSettings
+
+from mpvqc.shared import map_path_to_str
+
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-    from PySide6.QtCore import QSettings
+    from pathlib import Path
 
 
 MISSING = object()
+
+
+def open_settings_file(path: Path) -> QSettings:
+    return QSettings(map_path_to_str(path), QSettings.Format.IniFormat)
 
 
 class SettingsOwner(Protocol):

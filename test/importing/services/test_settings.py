@@ -47,11 +47,11 @@ def test_import_found_video_set_and_get(import_settings_service, setting):
         (" +2 ", LoadFoundVideo.NEVER),
     ],
 )
-def test_native_and_text_members_read_without_rewriting(import_settings_service, settings_file, stored, expected):
-    settings_file.qsettings.setValue("Import/loadFoundVideo", stored)
+def test_native_and_text_members_read_without_rewriting(import_settings_service, qsettings, stored, expected):
+    qsettings.setValue("Import/loadFoundVideo", stored)
 
     assert import_settings_service.import_found_video is expected
-    assert settings_file.qsettings.value("Import/loadFoundVideo") == stored
+    assert qsettings.value("Import/loadFoundVideo") == stored
 
 
 @pytest.mark.parametrize(
@@ -69,12 +69,12 @@ def test_native_and_text_members_read_without_rewriting(import_settings_service,
         pytest.param(None, id="none"),
     ],
 )
-def test_unreadable_import_found_video_falls_back_to_ask_every_time(import_settings_service, settings_file, stored):
-    settings_file.qsettings.setValue("Import/loadFoundVideo", stored)
+def test_unreadable_import_found_video_falls_back_to_ask_every_time(import_settings_service, qsettings, stored):
+    qsettings.setValue("Import/loadFoundVideo", stored)
 
     assert import_settings_service.import_found_video is LoadFoundVideo.ASK_EVERY_TIME
-    assert settings_file.qsettings.contains("Import/loadFoundVideo")
-    assert settings_file.qsettings.value("Import/loadFoundVideo") == stored
+    assert qsettings.contains("Import/loadFoundVideo")
+    assert qsettings.value("Import/loadFoundVideo") == stored
 
 
 def test_last_directory_video_defaults_to_the_movies_location(import_settings_service):
@@ -120,13 +120,13 @@ def test_every_write_lands_under_its_stored_key_in_the_import_ini_section(import
     assert section["lastDirectorySubtitles"].startswith("@Variant(")
 
 
-def test_synced_writes_read_back_in_a_fresh_process(import_settings_service, settings_file):
+def test_synced_writes_read_back_in_a_fresh_process(import_settings_service, qsettings):
     import_settings_service.import_found_video = LoadFoundVideo.ALWAYS
     import_settings_service.last_directory_video = QUrl("file:///videos")
     import_settings_service.last_directory_documents = QUrl("file:///documents")
     import_settings_service.last_directory_subtitles = QUrl("file:///subtitles")
-    settings_file.qsettings.sync()
-    assert settings_file.qsettings.status() == QSettings.Status.NoError
+    qsettings.sync()
+    assert qsettings.status() == QSettings.Status.NoError
 
     reader = dedent("""
         import json
@@ -152,7 +152,7 @@ def test_synced_writes_read_back_in_a_fresh_process(import_settings_service, set
     """)
     process = QProcess()
     process.setWorkingDirectory(str(Path(__file__).resolve().parents[3]))
-    process.start(sys.executable, ["-c", reader, settings_file.qsettings.fileName()])
+    process.start(sys.executable, ["-c", reader, qsettings.fileName()])
     finished = process.waitForFinished(30_000)
     if not finished:
         process.kill()
@@ -171,12 +171,12 @@ def test_synced_writes_read_back_in_a_fresh_process(import_settings_service, set
     }
 
 
-def test_the_previous_builds_found_video_key_is_ignored(import_settings_service, settings_file):
-    settings_file.qsettings.setValue("Import/importFoundVideo", LoadFoundVideo.ALWAYS.value)
+def test_the_previous_builds_found_video_key_is_ignored(import_settings_service, qsettings):
+    qsettings.setValue("Import/importFoundVideo", LoadFoundVideo.ALWAYS.value)
 
     assert import_settings_service.import_found_video == LoadFoundVideo.ASK_EVERY_TIME
-    assert settings_file.qsettings.value("Import/importFoundVideo") == 0
-    assert not settings_file.qsettings.contains("Import/loadFoundVideo")
+    assert qsettings.value("Import/importFoundVideo") == 0
+    assert not qsettings.contains("Import/loadFoundVideo")
 
 
 @pytest.mark.parametrize(
@@ -188,8 +188,8 @@ def test_the_previous_builds_found_video_key_is_ignored(import_settings_service,
         pytest.param(None, id="none"),
     ],
 )
-def test_malformed_directories_use_lazy_fallback_without_repair(settings_file, stored):
-    store = settings_file.qsettings
+def test_malformed_directories_use_lazy_fallback_without_repair(qsettings, stored):
+    store = qsettings
     keys = ("Import/lastDirectoryVideo", "Import/lastDirectoryDocuments", "Import/lastDirectorySubtitles")
     with patch.object(QStandardPaths, "writableLocation", side_effect=["/first"] * 3 + ["/second"] * 3) as location:
         service = ImportSettingsService(store)
@@ -220,9 +220,9 @@ def test_malformed_directories_use_lazy_fallback_without_repair(settings_file, s
     assert all(store.contains(key) for key in keys)
 
 
-def test_plain_owner_writes_defaults_and_equal_values_unconditionally(import_settings_service, settings_file):
+def test_plain_owner_writes_defaults_and_equal_values_unconditionally(import_settings_service, qsettings):
     service = import_settings_service
-    store = settings_file.qsettings
+    store = qsettings
     assert not isinstance(service, QObject)
     video, documents, subtitles = (
         service.last_directory_video,

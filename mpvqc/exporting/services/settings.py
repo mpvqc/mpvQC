@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services import MISSING, Setting, read_bool, read_int, stored_text
+from mpvqc.settings import MISSING, Setting, read_bool, read_int, stored_text
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -8,5 +8,5 @@ from mpvqc.importing.services import ImportSettingsService
 
 
 @pytest.fixture
-def import_settings_service(settings_file) -> ImportSettingsService:
-    return ImportSettingsService(settings_file.qsettings)
+def import_settings_service(qsettings) -> ImportSettingsService:
+    return ImportSettingsService(qsettings)

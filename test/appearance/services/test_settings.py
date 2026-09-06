@@ -39,8 +39,8 @@ def test_color_scheme_preference_writes_into_the_appearance_ini_section(appearan
     assert ini_section("Appearance")["colorSchemePreference"] == "light"
 
 
-def test_unreadable_color_scheme_preference_falls_back_to_system(appearance_settings_service, settings_file):
-    settings_file.qsettings.setValue("Appearance/colorSchemePreference", "sepia")
+def test_unreadable_color_scheme_preference_falls_back_to_system(appearance_settings_service, qsettings):
+    qsettings.setValue("Appearance/colorSchemePreference", "sepia")
 
     assert appearance_settings_service.color_scheme_preference == SYSTEM
 
@@ -61,7 +61,7 @@ def test_set_accent_color_preference_stores_one_value_per_color_scheme(appearanc
 
 
 def test_set_accent_color_preference_to_no_preference_clears_the_stored_entry(
-    appearance_settings_service, settings_file, make_spy
+    appearance_settings_service, qsettings, make_spy
 ):
     appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#3f51b5"))
     spy = make_spy(appearance_settings_service.appearance_preference_changed)
@@ -70,7 +70,7 @@ def test_set_accent_color_preference_to_no_preference_clears_the_stored_entry(
     appearance_settings_service.set_accent_color_preference(DARK, NO_PREFERENCE)
 
     assert appearance_settings_service.appearance_preference.accent_color_preference_for(DARK) == NO_PREFERENCE
-    assert not settings_file.qsettings.contains("Appearance/accentColor/dark")
+    assert not qsettings.contains("Appearance/accentColor/dark")
     assert spy.count() == 1
 
 
@@ -116,7 +116,7 @@ def test_preference_write_emits_the_appearance_preference(appearance_settings_se
     assert spy.count() == 1
 
 
-def test_restore_writes_every_key_before_emitting_once(appearance_settings_service, settings_file, make_spy):
+def test_restore_writes_every_key_before_emitting_once(appearance_settings_service, qsettings, make_spy):
     appearance_settings_service.color_scheme_preference = DARK
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
     baseline = appearance_settings_service.appearance_preference
@@ -125,7 +125,7 @@ def test_restore_writes_every_key_before_emitting_once(appearance_settings_servi
     appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#009688"))
     spy = make_spy(appearance_settings_service.appearance_preference_changed)
     deliveries = []
-    store = settings_file.qsettings
+    store = qsettings
     appearance_settings_service.appearance_preference_changed.connect(
         lambda preference: deliveries.append(
             (

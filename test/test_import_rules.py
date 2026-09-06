@@ -57,6 +57,7 @@ CLOSED_ROLES = ("models", "viewmodels", "views")
 
 HELPERS = {
     "jobs": {"services", "viewmodels"},
+    "settings": {"services"},
     "build": set(ROLES),
 }
 
@@ -342,6 +343,18 @@ def test_only_services_and_view_models_import_the_job_runner(role: str):
     else:
         assert violation is not None
         assert f"{role} may not import mpvqc.jobs" in violation
+
+
+@pytest.mark.parametrize("role", ROLES)
+def test_only_services_import_the_settings_helper(role: str):
+    where = "mpvqc/comments/x.py:1"
+    target = "mpvqc.settings"
+    violation = _non_lattice_violation(where, role, _classify(target)[0], target)
+    if role == "services":
+        assert violation is None
+    else:
+        assert violation is not None
+        assert f"{role} may not import mpvqc.settings" in violation
 
 
 @pytest.mark.parametrize("slice_", SLICES)

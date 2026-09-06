@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP, QObject, Signal
 
-from mpvqc.services import MISSING, Setting
+from mpvqc.settings import MISSING, Setting
 
 if TYPE_CHECKING:
     from collections.abc import Callable

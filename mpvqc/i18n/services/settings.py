@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services import Setting, stored_text
+from mpvqc.settings import Setting, stored_text
 
 from .languages import default_language
 

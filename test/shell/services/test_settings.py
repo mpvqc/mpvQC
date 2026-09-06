@@ -87,9 +87,9 @@ def test_window_title_format_set_and_get(shell_settings_service, title_format):
     assert shell_settings_service.window_title_format is title_format
 
 
-def test_each_change_is_stored_before_its_one_signal(shell_settings_service, settings_file):
+def test_each_change_is_stored_before_its_one_signal(shell_settings_service, qsettings):
     service = shell_settings_service
-    store = settings_file.qsettings
+    store = qsettings
     remaining = TimeDisplayMode.REMAINING_TIME
     file_path = WindowTitleFormat.FILE_PATH
     deliveries: list[tuple[str, object, object, object]] = []
@@ -197,10 +197,8 @@ class FallbackCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_an_unreadable_member_falls_back_to_its_default(
-    shell_settings_service, settings_file, case: FallbackCase, stored
-):
-    settings_file.qsettings.setValue(case.key, stored)
+def test_an_unreadable_member_falls_back_to_its_default(shell_settings_service, qsettings, case: FallbackCase, stored):
+    qsettings.setValue(case.key, stored)
 
     assert case.read(shell_settings_service) is case.default
 
@@ -216,8 +214,8 @@ def test_an_unreadable_member_falls_back_to_its_default(
         pytest.param(1.5, id="float"),
     ],
 )
-def test_an_unreadable_layout_orientation_falls_back_to_vertical(shell_settings_service, settings_file, stored):
-    settings_file.qsettings.setValue("SplitView/layoutOrientation", stored)
+def test_an_unreadable_layout_orientation_falls_back_to_vertical(shell_settings_service, qsettings, stored):
+    qsettings.setValue("SplitView/layoutOrientation", stored)
 
     assert shell_settings_service.layout_orientation == VERTICAL
     assert type(shell_settings_service.layout_orientation) is int
@@ -234,8 +232,8 @@ def test_an_unreadable_layout_orientation_falls_back_to_vertical(shell_settings_
         ("FaLsE", False),
     ],
 )
-def test_show_percentage_reads_native_and_text_booleans(shell_settings_service, settings_file, stored, expected):
-    settings_file.qsettings.setValue("StatusBar/statusbarPercentage", stored)
+def test_show_percentage_reads_native_and_text_booleans(shell_settings_service, qsettings, stored, expected):
+    qsettings.setValue("StatusBar/statusbarPercentage", stored)
 
     assert shell_settings_service.show_percentage is expected
 
@@ -252,8 +250,8 @@ def test_show_percentage_reads_native_and_text_booleans(shell_settings_service, 
         pytest.param("banana", id="text"),
     ],
 )
-def test_an_unreadable_percentage_falls_back_to_on(shell_settings_service, settings_file, stored):
-    settings_file.qsettings.setValue("StatusBar/statusbarPercentage", stored)
+def test_an_unreadable_percentage_falls_back_to_on(shell_settings_service, qsettings, stored):
+    qsettings.setValue("StatusBar/statusbarPercentage", stored)
 
     assert shell_settings_service.show_percentage is True
 
@@ -270,8 +268,8 @@ def test_an_unreadable_percentage_falls_back_to_on(shell_settings_service, setti
         (" +42 ", 42),
     ],
 )
-def test_layout_orientation_reads_native_and_text_integers(shell_settings_service, settings_file, stored, expected):
-    settings_file.qsettings.setValue("SplitView/layoutOrientation", stored)
+def test_layout_orientation_reads_native_and_text_integers(shell_settings_service, qsettings, stored, expected):
+    qsettings.setValue("SplitView/layoutOrientation", stored)
 
     assert shell_settings_service.layout_orientation == expected
     assert type(shell_settings_service.layout_orientation) is int
@@ -286,9 +284,8 @@ def test_layout_orientation_reads_native_and_text_integers(shell_settings_servic
     ],
 )
 def test_reads_and_no_op_assignments_leave_storage_untouched(
-    shell_settings_service, settings_file, shell_settings_spies, storage
+    shell_settings_service, qsettings, shell_settings_spies, storage
 ):
-    qsettings = settings_file.qsettings
     defaults = {
         "StatusBar/statusbarPercentage": "true",
         "StatusBar/timeFormat": "3",
@@ -316,8 +313,8 @@ def test_reads_and_no_op_assignments_leave_storage_untouched(
     assert [spy.count() for spy in shell_settings_spies] == [0, 0, 0, 0]
 
 
-def test_instances_share_a_file_but_never_a_value(shell_settings_service, settings_file, tmp_path):
-    same_file = ShellSettingsService(QSettings(settings_file.qsettings.fileName(), QSettings.Format.IniFormat))
+def test_instances_share_a_file_but_never_a_value(shell_settings_service, qsettings, tmp_path):
+    same_file = ShellSettingsService(QSettings(qsettings.fileName(), QSettings.Format.IniFormat))
     other_file = ShellSettingsService(QSettings(str(tmp_path / "other.ini"), QSettings.Format.IniFormat))
 
     shell_settings_service.show_percentage = False

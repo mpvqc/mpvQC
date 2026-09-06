@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 def bindings(binder: inject.Binder) -> None:
     import inject
+    from PySide6.QtCore import QSettings
 
     from mpvqc.comments.models import CommentStore
     from mpvqc.comments.services import (
@@ -21,13 +22,12 @@ def bindings(binder: inject.Binder) -> None:
         ResetService,
         TimeFormatPolicyService,
     )
-    from mpvqc.services import SettingsFileService
 
     def comments_service() -> CommentsService:
         return CommentsService(inject.instance(CommentStore))
 
     def comments_settings_service() -> CommentsSettingsService:
-        return CommentsSettingsService(inject.instance(SettingsFileService).qsettings)
+        return CommentsSettingsService(inject.instance(QSettings))
 
     binder.bind_to_constructor(CommentStore, CommentStore)
     binder.bind_to_constructor(CommentsService, comments_service)

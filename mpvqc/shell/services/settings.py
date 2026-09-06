@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QObject, Qt, Signal
 
-from mpvqc.services import Setting, read_bool, read_int, read_member
+from mpvqc.settings import Setting, read_bool, read_int, read_member
 
 from .vocabulary import TimeDisplayMode, WindowTitleFormat
 

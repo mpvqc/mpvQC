@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 def bindings(binder: inject.Binder) -> None:
     import inject
+    from PySide6.QtCore import QSettings
 
-    from mpvqc.services import SettingsFileService
     from mpvqc.shell.services import QuitService, ShellSettingsService
 
     def shell_settings_service() -> ShellSettingsService:
-        return ShellSettingsService(inject.instance(SettingsFileService).qsettings)
+        return ShellSettingsService(inject.instance(QSettings))
 
     binder.bind_to_constructor(QuitService, QuitService)
     binder.bind_to_constructor(ShellSettingsService, shell_settings_service)
