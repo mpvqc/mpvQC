@@ -104,9 +104,13 @@ def test_unreadable_backup_interval_falls_back_to_one_minute(export_settings_ser
     assert type(export_settings_service.backup_interval) is int
 
 
-def test_nickname_defaults_to_the_os_username(export_settings_service, monkeypatch):
+def test_nickname_defaults_to_the_current_os_username(export_settings_service, settings_file, monkeypatch):
     monkeypatch.setenv("USERNAME", "os-user")
     assert export_settings_service.nickname == "os-user"
+
+    monkeypatch.setenv("USERNAME", "new-user")
+    assert export_settings_service.nickname == "new-user"
+    assert not settings_file.qsettings.contains("Export/nickname")
 
 
 def test_nickname_set_and_get(export_settings_service):
@@ -114,9 +118,29 @@ def test_nickname_set_and_get(export_settings_service):
     assert export_settings_service.nickname == "lorem"
 
 
-def test_a_nickname_cleared_to_none_reads_back_as_empty(export_settings_service):
-    export_settings_service.nickname = None
+def test_a_cleared_nickname_stays_empty(export_settings_service, ini_section, monkeypatch):
+    monkeypatch.setenv("USERNAME", "os-user")
+    export_settings_service.nickname = "previous-user"
+    export_settings_service.nickname = ""
+
+    assert isinstance(export_settings_service.nickname, str)
     assert not export_settings_service.nickname
+    assert not ini_section("Export")["nickname"]
+
+
+@pytest.mark.parametrize(
+    "encoded",
+    [
+        pytest.param("", id="empty"),
+        pytest.param("@Invalid()", id="invalid"),
+    ],
+)
+def test_an_earlier_run_with_a_cleared_nickname_stays_empty(existing_settings_service, monkeypatch, encoded):
+    monkeypatch.setenv("USERNAME", "os-user")
+
+    nickname = existing_settings_service(f"[Export]\nnickname={encoded}\n").nickname
+    assert isinstance(nickname, str)
+    assert not nickname
 
 
 def test_write_header_date_defaults_to_on(export_settings_service):
