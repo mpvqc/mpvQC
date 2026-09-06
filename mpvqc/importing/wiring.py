@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 def bindings(binder: inject.Binder) -> None:
     import inject
+    from PySide6.QtCore import QSettings
 
     from mpvqc.importing.services import ImportService, ImportSettingsService
-    from mpvqc.services import SettingsFileService
 
     def import_settings_service() -> ImportSettingsService:
-        return ImportSettingsService(inject.instance(SettingsFileService).qsettings)
+        return ImportSettingsService(inject.instance(QSettings))
 
     binder.bind_to_constructor(ImportService, ImportService)
     binder.bind_to_constructor(ImportSettingsService, import_settings_service)

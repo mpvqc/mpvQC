@@ -47,9 +47,9 @@ def test_backup_interval_set_and_get(export_settings_service):
     assert export_settings_service.backup_interval == 120
 
 
-def test_each_backup_change_is_stored_before_its_one_signal(export_settings_service, settings_file):
+def test_each_backup_change_is_stored_before_its_one_signal(export_settings_service, qsettings):
     service = export_settings_service
-    store = settings_file.qsettings
+    store = qsettings
     deliveries: list[tuple[str, object, object, object]] = []
     service.backup_enabled_changed.connect(
         lambda payload: deliveries.append(("enabled", payload, store.value("Backup/enabled"), service.backup_enabled))
@@ -80,8 +80,8 @@ def test_each_backup_change_is_stored_before_its_one_signal(export_settings_serv
         pytest.param(["a", "b"], id="comma-separated"),
     ],
 )
-def test_unreadable_backup_enabled_falls_back_to_on(export_settings_service, settings_file, stored):
-    settings_file.qsettings.setValue("Backup/enabled", stored)
+def test_unreadable_backup_enabled_falls_back_to_on(export_settings_service, qsettings, stored):
+    qsettings.setValue("Backup/enabled", stored)
 
     assert export_settings_service.backup_enabled
 
@@ -97,20 +97,20 @@ def test_unreadable_backup_enabled_falls_back_to_on(export_settings_service, set
         pytest.param(False, id="false"),
     ],
 )
-def test_unreadable_backup_interval_falls_back_to_one_minute(export_settings_service, settings_file, stored):
-    settings_file.qsettings.setValue("Backup/interval", stored)
+def test_unreadable_backup_interval_falls_back_to_one_minute(export_settings_service, qsettings, stored):
+    qsettings.setValue("Backup/interval", stored)
 
     assert export_settings_service.backup_interval == 60
     assert type(export_settings_service.backup_interval) is int
 
 
-def test_nickname_defaults_to_the_current_os_username(export_settings_service, settings_file, monkeypatch):
+def test_nickname_defaults_to_the_current_os_username(export_settings_service, qsettings, monkeypatch):
     monkeypatch.setenv("USERNAME", "os-user")
     assert export_settings_service.nickname == "os-user"
 
     monkeypatch.setenv("USERNAME", "new-user")
     assert export_settings_service.nickname == "new-user"
-    assert not settings_file.qsettings.contains("Export/nickname")
+    assert not qsettings.contains("Export/nickname")
 
 
 def test_nickname_set_and_get(export_settings_service):
@@ -197,9 +197,8 @@ def test_write_header_subtitles_set_and_get(export_settings_service):
     ],
 )
 def test_header_defaults_are_written_unconditionally_without_signals(
-    export_settings_service, settings_file, ini_section, backup_spies, storage
+    export_settings_service, qsettings, ini_section, backup_spies, storage
 ):
-    qsettings = settings_file.qsettings
     expected = {
         "writeHeaderDate": "true",
         "writeHeaderGenerator": "true",

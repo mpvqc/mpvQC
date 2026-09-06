@@ -72,9 +72,7 @@ def test_comment_types_stored_by_an_earlier_run_read_on(existing_settings_servic
     assert service.comment_types == expected
 
 
-def test_missing_comment_types_return_a_fresh_default_list_on_each_read(
-    comments_settings_service, settings_file, make_spy
-):
+def test_missing_comment_types_return_a_fresh_default_list_on_each_read(comments_settings_service, qsettings, make_spy):
     spy = make_spy(comments_settings_service.comment_types_changed)
 
     first = comments_settings_service.comment_types
@@ -82,7 +80,7 @@ def test_missing_comment_types_return_a_fresh_default_list_on_each_read(
     assert comments_settings_service.comment_types == SHIPPED_TYPES
 
     comments_settings_service.comment_types = SHIPPED_TYPES.copy()
-    assert not settings_file.qsettings.contains("Common/commentTypes")
+    assert not qsettings.contains("Common/commentTypes")
     assert spy.count() == 0
 
 

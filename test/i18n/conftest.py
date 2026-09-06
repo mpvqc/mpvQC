@@ -8,8 +8,8 @@ from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
 
 
 @pytest.fixture
-def i18n_settings_service(settings_file) -> I18nSettingsService:
-    return I18nSettingsService(settings_file.qsettings)
+def i18n_settings_service(qsettings) -> I18nSettingsService:
+    return I18nSettingsService(qsettings)
 
 
 @pytest.fixture

@@ -6,13 +6,6 @@ from .application_paths import ApplicationPathsService as ApplicationPathsServic
 from .desktop import DesktopService as DesktopService
 from .file_startup import FileStartupService as FileStartupService
 from .resource import ResourceService as ResourceService
-from .settings import MISSING as MISSING
-from .settings import Setting as Setting
-from .settings import read_bool as read_bool
-from .settings import read_int as read_int
-from .settings import read_member as read_member
-from .settings import stored_text as stored_text
-from .settings_file import SettingsFileService as SettingsFileService
 from .state import StateService as StateService
 from .version_checker import HOME_URL as HOME_URL
 from .version_checker import CheckOutcome as CheckOutcome

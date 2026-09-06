@@ -23,7 +23,6 @@ from mpvqc.player.services import PlayerService
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    SettingsFileService,
     VersionCheckerService,
 )
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
@@ -193,11 +192,11 @@ class DesktopServiceOverride(DesktopService):
 
 
 def _export_settings_service_override() -> ExportSettingsServiceOverride:
-    return ExportSettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
+    return ExportSettingsServiceOverride(inject.instance(QSettings))
 
 
 def _import_settings_service_override() -> ImportSettingsServiceOverride:
-    return ImportSettingsServiceOverride(inject.instance(SettingsFileService).qsettings)
+    return ImportSettingsServiceOverride(inject.instance(QSettings))
 
 
 def _recorded_player() -> RecordedPlayer:

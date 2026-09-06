@@ -13,8 +13,8 @@ from mpvqc.services import ResourceService
 
 
 @pytest.fixture
-def appearance_settings_service(settings_file) -> AppearanceSettingsService:
-    return AppearanceSettingsService(settings_file.qsettings)
+def appearance_settings_service(qsettings) -> AppearanceSettingsService:
+    return AppearanceSettingsService(qsettings)
 
 
 class FakeResourceService(ResourceService):

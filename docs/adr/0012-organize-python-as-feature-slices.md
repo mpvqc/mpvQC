@@ -12,8 +12,8 @@ The slice itself exports no vocabulary.
 
 Ownership follows meaning. A slice owns its settings keys, defaults, typed accessors, and change signals even when the
 underlying ini section also contains another slice's keys. Stored keys do not rename cheaply because an older release
-may still read them. The settings file itself stays a shared boundary service: every slice writes through the same
-file handle, while the shared layer knows only about files.
+may still read them. Every slice writes through the same settings file handle, opened by the composition root.
+The settings descriptor, decoders, and file opener are a top-level helper open to services, not a shared service.
 
 Shared vocabulary, boundary services, narrow application-wide helpers, and composition stay horizontal. A feature
 slice owns what its area means, not the I/O several areas share.
