@@ -5,8 +5,6 @@
 from .application_paths import ApplicationPathsService as ApplicationPathsService
 from .desktop import DesktopService as DesktopService
 from .file_startup import FileStartupService as FileStartupService
-from .font_loader import FontLoaderService as FontLoaderService
-from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
 from .resource import ResourceService as ResourceService
 from .settings import MISSING as MISSING
 from .settings import Setting as Setting

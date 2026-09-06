@@ -17,7 +17,6 @@ from mpvqc.comments.viewmodels import (
 )
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
-from mpvqc.services import FontLoaderService, LabelWidthCalculatorService
 
 
 @pytest.fixture(autouse=True)
@@ -27,8 +26,6 @@ def configure_inject(common_bindings_with, comments_settings_service, player_ser
         binder.bind(PlayerService, player_service)
         binder.bind_to_constructor(CommentTypesPolicyService, CommentTypesPolicyService)
         binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
-        binder.bind_to_constructor(FontLoaderService, FontLoaderService)
-        binder.bind_to_constructor(LabelWidthCalculatorService, LabelWidthCalculatorService)
 
     common_bindings_with(custom_bindings)
 

@@ -2,11 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from collections.abc import Iterable
 from dataclasses import dataclass
+from math import ceil
 from pathlib import Path
 from typing import Final
 
 from PySide6.QtCore import QUrl
+from PySide6.QtGui import QFontMetricsF
 
 MILLISECONDS_PER_SECOND: Final = 1000
 SECONDS_PER_HOUR: Final = 3600
@@ -46,6 +49,10 @@ def format_milliseconds_to_subsecond_string(input_milliseconds: int) -> str:
     hours, remainder = divmod(seconds, SECONDS_PER_HOUR)
     minutes, seconds = divmod(remainder, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}.{milliseconds:03d}"
+
+
+def calculate_label_width(texts: Iterable[str], metrics: QFontMetricsF) -> int:
+    return ceil(max((metrics.horizontalAdvance(text) for text in texts), default=0))
 
 
 def map_url_to_path(url: QUrl) -> Path:

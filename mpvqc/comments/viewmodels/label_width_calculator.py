@@ -7,11 +7,13 @@ from dataclasses import dataclass, replace
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
+from PySide6.QtGui import QFontMetricsF
 from PySide6.QtQml import QmlElement
 
+from mpvqc.appearance.services import application_font
 from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService, translate_comment_type
 from mpvqc.i18n.services import InternationalizationService
-from mpvqc.services import LabelWidthCalculatorService
+from mpvqc.shared import calculate_label_width
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -60,7 +62,6 @@ class MpvqcCommentLabelWidthCalculatorViewModel(QObject):
     _i18n = inject.attr(InternationalizationService)
     _comment_types_policy = inject.attr(CommentTypesPolicyService)
     _time_format_policy = inject.attr(TimeFormatPolicyService)
-    _width_service = inject.attr(LabelWidthCalculatorService)
 
     commentTypesLabelWidthChanged = Signal(int)
     timeLabelWidthChanged = Signal(int)
@@ -68,6 +69,7 @@ class MpvqcCommentLabelWidthCalculatorViewModel(QObject):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
 
+        self._font_metrics = QFontMetricsF(application_font())
         types = self._comment_types_policy.displayable_comment_types
         self._inputs = CommentLabelWidthCalculatorInputs(
             displayable_comment_types=types,
@@ -81,7 +83,10 @@ class MpvqcCommentLabelWidthCalculatorViewModel(QObject):
         self._time_format_policy.table_long_format_changed.connect(self._fold_table_long_format)
 
     def _derive(self) -> CommentLabelWidthCalculatorProps:
-        return derive_comment_label_width_calculator_props(self._inputs, self._width_service.calculate_width_for)
+        return derive_comment_label_width_calculator_props(self._inputs, self._measure_width)
+
+    def _measure_width(self, texts: Iterable[str]) -> int:
+        return calculate_label_width(texts, self._font_metrics)
 
     @Slot()
     def _fold_retranslated(self) -> None:
