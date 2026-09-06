@@ -8,6 +8,8 @@ import pytest
 
 from mpvqc.comments.services import CommentsSettingsService, default_comment_types
 
+SHIPPED_TYPES = ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"]
+
 
 @pytest.fixture
 def existing_settings_service(read_existing_settings) -> Callable[[str], CommentsSettingsService]:
@@ -44,14 +46,22 @@ def test_comment_types_write_into_the_common_ini_section(comments_settings_servi
     assert ini_section("Common")["commentTypes"] == "Translation, Phrasing"
 
 
+def test_a_cleared_list_stays_empty_instead_of_restoring_the_defaults(comments_settings_service, ini_section):
+    comments_settings_service.comment_types = []
+
+    assert comments_settings_service.comment_types == []
+    assert ini_section("Common")["commentTypes"] == "@Invalid()"
+
+
 @pytest.mark.parametrize(
     ("stored", "expected"),
     [
-        ("Translation, Phrasing", ["Translation", "Phrasing"]),
-        ("Translation", ["Translation"]),
-        ("@Invalid()", []),
+        pytest.param("Translation, Phrasing", ["Translation", "Phrasing"], id="several"),
+        pytest.param("Translation", ["Translation"], id="single"),
+        pytest.param("@Invalid()", [], id="emptied"),
+        pytest.param("", [""], id="empty-text"),
+        pytest.param("Custom type", ["Custom type"], id="custom"),
     ],
-    ids=["several", "single", "emptied"],
 )
 def test_comment_types_stored_by_an_earlier_run_read_on(existing_settings_service, stored, expected):
     service = existing_settings_service(f"""
@@ -60,3 +70,37 @@ def test_comment_types_stored_by_an_earlier_run_read_on(existing_settings_servic
     """)
 
     assert service.comment_types == expected
+
+
+def test_missing_comment_types_return_a_fresh_default_list_on_each_read(
+    comments_settings_service, settings_file, make_spy
+):
+    spy = make_spy(comments_settings_service.comment_types_changed)
+
+    first = comments_settings_service.comment_types
+    first.clear()
+    assert comments_settings_service.comment_types == SHIPPED_TYPES
+
+    comments_settings_service.comment_types = SHIPPED_TYPES.copy()
+    assert not settings_file.qsettings.contains("Common/commentTypes")
+    assert spy.count() == 0
+
+
+@pytest.mark.parametrize(
+    ("stored", "value"),
+    [
+        pytest.param("@Invalid()", [], id="emptied"),
+        pytest.param("Custom", ["Custom"], id="custom"),
+    ],
+)
+def test_equal_comment_types_preserve_earlier_run_encoding(read_existing_settings, make_spy, stored, value):
+    store = read_existing_settings(f"[Common]\ncommentTypes={stored}\n")
+    original = store.value("Common/commentTypes")
+    service = CommentsSettingsService(store)
+    spy = make_spy(service.comment_types_changed)
+
+    service.comment_types = value
+
+    assert store.contains("Common/commentTypes")
+    assert store.value("Common/commentTypes") == original
+    assert spy.count() == 0

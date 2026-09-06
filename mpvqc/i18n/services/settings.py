@@ -4,16 +4,16 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QObject, Signal
+
+from mpvqc.services import Setting, stored_text
 
 from .languages import default_language
 
 if TYPE_CHECKING:
     from PySide6.QtCore import QSettings
-
-_LANGUAGE_KEY = "Common/language"
 
 
 class I18nSettingsService(QObject):
@@ -21,19 +21,15 @@ class I18nSettingsService(QObject):
 
     def __init__(self, qsettings: QSettings, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._qsettings = qsettings
+        self.qsettings = qsettings
 
-    @property
-    def language(self) -> str:
-        # A typed read of a missing key hands back "", never None
-        if not self._qsettings.contains(_LANGUAGE_KEY):
-            return default_language()
-        stored = self._qsettings.value(_LANGUAGE_KEY, type=str)
-        return stored if isinstance(stored, str) else default_language()
-
-    @language.setter
-    def language(self, language: str) -> None:
-        if self.language == language:
-            return
-        self._qsettings.setValue(_LANGUAGE_KEY, language)
+    def _notify_language(self, language: str) -> None:
         self.language_changed.emit(language)
+
+    language: Setting[Self, str] = Setting[Self, str](
+        "Common/language",
+        default=default_language,
+        read=stored_text,
+        decode=lambda stored, default: stored if isinstance(stored, str) else default(),
+        notify=_notify_language,
+    )

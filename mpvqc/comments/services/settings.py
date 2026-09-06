@@ -4,14 +4,16 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP, QObject, Signal
 
-if TYPE_CHECKING:
-    from PySide6.QtCore import QSettings
+from mpvqc.services import MISSING, Setting
 
-_COMMENT_TYPES_KEY = "Common/commentTypes"
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from PySide6.QtCore import QSettings
 
 
 def default_comment_types() -> list[str]:
@@ -27,7 +29,9 @@ def default_comment_types() -> list[str]:
 
 
 # Until something writes the key this run, an untyped read hands back the ini text, never the type that was stored
-def _read_comment_types(stored: object) -> list[str]:
+def _read_comment_types(stored: object, default: Callable[[], list[str]]) -> list[str]:
+    if stored is MISSING:
+        return default()
     if isinstance(stored, list):
         return [str(comment_type) for comment_type in stored]
     if isinstance(stored, str):
@@ -41,17 +45,14 @@ class CommentsSettingsService(QObject):
 
     def __init__(self, qsettings: QSettings, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._qsettings = qsettings
+        self.qsettings = qsettings
 
-    @property
-    def comment_types(self) -> list[str]:
-        if not self._qsettings.contains(_COMMENT_TYPES_KEY):
-            return default_comment_types()
-        return _read_comment_types(self._qsettings.value(_COMMENT_TYPES_KEY))
-
-    @comment_types.setter
-    def comment_types(self, comment_types: list[str]) -> None:
-        if self.comment_types == comment_types:
-            return
-        self._qsettings.setValue(_COMMENT_TYPES_KEY, comment_types)
+    def _notify_comment_types(self, comment_types: list[str]) -> None:
         self.comment_types_changed.emit(comment_types)
+
+    comment_types: Setting[Self, list[str]] = Setting[Self, list[str]](
+        "Common/commentTypes",
+        default=default_comment_types,
+        decode=_read_comment_types,
+        notify=_notify_comment_types,
+    )
