@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import QObject, Qt, Signal
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.build import get_build_info
-from mpvqc.services import ApplicationPathsService
 from mpvqc.shared import map_path_to_str
 
 from .event_marshal import EventMarshal

@@ -8,11 +8,11 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.build import get_build_info
 from mpvqc.comments.services import ResetService
 from mpvqc.exporting.services import ExportService
 from mpvqc.i18n.services import I18nSettingsService
-from mpvqc.services import ApplicationPathsService
 from mpvqc.session import SessionService
 from mpvqc.shared import map_path_to_url
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind

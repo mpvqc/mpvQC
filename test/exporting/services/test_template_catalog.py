@@ -8,8 +8,8 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.exporting.services import ExportTemplateCatalogService
-from mpvqc.services import ApplicationPathsService
 
 
 @pytest.fixture

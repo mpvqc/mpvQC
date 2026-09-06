@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import inject
 
-from mpvqc.services import ApplicationPathsService
+from mpvqc.appdata.services import ApplicationPathsService
 
 if TYPE_CHECKING:
     from pathlib import Path

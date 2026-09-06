@@ -5,7 +5,8 @@
 import inject
 from PySide6.QtCore import QSettings
 
-import mpvqc.services as s
+from mpvqc.appdata import bindings as appdata_bindings
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.appearance import bindings as appearance_bindings
 from mpvqc.comments import bindings as comments_bindings
 from mpvqc.exporting import bindings as exporting_bindings
@@ -20,8 +21,9 @@ from mpvqc.window import bindings as window_bindings
 
 def bindings(binder: inject.Binder) -> None:
     def qsettings() -> QSettings:
-        return open_settings_file(inject.instance(s.ApplicationPathsService).file_settings)
+        return open_settings_file(inject.instance(ApplicationPathsService).file_settings)
 
+    appdata_bindings(binder)
     appearance_bindings(binder)
     comments_bindings(binder)
     exporting_bindings(binder)
@@ -31,8 +33,6 @@ def bindings(binder: inject.Binder) -> None:
     shell_bindings(binder)
     window_bindings(binder)
 
-    binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
-    binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(QSettings, qsettings)
     binder.bind_to_constructor(SessionService, SessionService)
 

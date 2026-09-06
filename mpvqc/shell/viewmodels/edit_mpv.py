@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, read_mpv_conf
+from mpvqc.appdata.services import ApplicationPathsService, read_mpv_conf
 from mpvqc.shared import map_path_to_url
 from mpvqc.shell.services import DesktopService
 

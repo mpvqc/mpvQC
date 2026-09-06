@@ -9,8 +9,8 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.exporting.models import MpvqcExportTemplateModel
-from mpvqc.services import ApplicationPathsService
 
 
 @pytest.fixture

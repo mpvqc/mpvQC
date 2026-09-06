@@ -9,9 +9,9 @@ import inject
 import pytest
 from PySide6.QtCore import Qt, QUrl
 
+from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.comments.services import ResetService
 from mpvqc.exporting.services import ExportService
-from mpvqc.services import ApplicationPathsService
 from mpvqc.session import SessionService
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind
 from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService

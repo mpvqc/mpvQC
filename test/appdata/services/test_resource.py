@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.services import read_input_conf, read_mpv_conf
+from mpvqc.appdata.services import read_input_conf, read_mpv_conf
 
 
 def test_resources():
