@@ -12,8 +12,12 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QCoreApplication
 
 from mpvqc.comments.services import translate_comment_type
-from mpvqc.services import TimeFormatterService
-from mpvqc.shared import MILLISECONDS_PER_SECOND, format_milliseconds_to_subsecond_string, map_path_to_str
+from mpvqc.shared import (
+    MILLISECONDS_PER_SECOND,
+    format_milliseconds_to_subsecond_string,
+    format_time_to_string,
+    map_path_to_str,
+)
 
 from .errors import ExportError
 
@@ -63,7 +67,7 @@ def _environment() -> Environment:
 
 
 def _as_time(seconds: int) -> str:
-    return TimeFormatterService.format_time_to_string(seconds, long_format=True)
+    return format_time_to_string(seconds, long_format=True)
 
 
 def _arguments(snapshot: ExportSnapshot) -> dict:

@@ -8,7 +8,9 @@ import pytest
 from PySide6.QtCore import QUrl
 
 from mpvqc.shared import (
+    format_milliseconds_to_string,
     format_milliseconds_to_subsecond_string,
+    format_time_to_string,
     map_path_to_str,
     map_path_to_url,
     map_url_to_path,
@@ -28,6 +30,48 @@ from mpvqc.shared import (
 )
 def test_needs_long_format_is_inclusive_at_one_hour(seconds, expected):
     assert needs_long_format(seconds) is expected
+
+
+@pytest.mark.parametrize(
+    ("expected", "input_seconds"),
+    [
+        ("00:00:00", 0),
+        ("00:01:08", 68),
+        ("00:16:39", 999),
+        ("02:46:40", 10000),
+    ],
+)
+def test_format_time_to_string_long(expected, input_seconds):
+    actual = format_time_to_string(input_seconds, long_format=True)
+    assert expected == actual
+
+
+@pytest.mark.parametrize(
+    ("expected", "input_seconds"),
+    [
+        ("00:00", 0),
+        ("01:08", 68),
+        ("16:39", 999),
+    ],
+)
+def test_format_time_to_string_short(expected, input_seconds):
+    actual = format_time_to_string(input_seconds, long_format=False)
+    assert expected == actual
+
+
+@pytest.mark.parametrize(
+    ("expected", "input_milliseconds", "long_format"),
+    [
+        ("00:00:00", 0 * 1000, True),
+        ("00:01:08", 68 * 1000, True),
+        ("02:46:40", 10000 * 1000, True),
+        ("00:01:08", 68 * 1000 + 999, True),
+        ("01:08", 68 * 1000, False),
+    ],
+)
+def test_format_milliseconds_to_string(expected, input_milliseconds, long_format):
+    actual = format_milliseconds_to_string(input_milliseconds, long_format=long_format)
+    assert expected == actual
 
 
 @pytest.mark.parametrize(

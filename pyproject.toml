@@ -250,7 +250,6 @@ files = [
     "mpvqc/services/desktop.py",
     "mpvqc/services/file_startup.py",
     "mpvqc/services/font_loader.py",
-    "mpvqc/services/formatter_time.py",
     "mpvqc/services/label_width_calculator.py",
     "mpvqc/services/resource.py",
     "mpvqc/services/settings.py",

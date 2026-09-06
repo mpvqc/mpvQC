@@ -21,8 +21,7 @@ from mpvqc.comments.services import (
     translate_comment_type,
 )
 from mpvqc.player.services import PlayerService
-from mpvqc.services import TimeFormatterService
-from mpvqc.shared import MILLISECONDS_PER_SECOND
+from mpvqc.shared import MILLISECONDS_PER_SECOND, format_milliseconds_to_string
 
 from .selection import MpvqcCommentSelectionViewModel
 
@@ -36,7 +35,6 @@ class MpvqcCommentTableViewModel(QObject):
     _comment_store = inject.attr(CommentStore)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(CommentsSettingsService)
-    _time_formatter = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)
@@ -111,7 +109,7 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(int)
     def copyToClipboard(self, row: int) -> None:
         comment = self._comments.comment_at(row)
-        time = self._time_formatter.format_milliseconds_to_string(comment.time, long_format=True)
+        time = format_milliseconds_to_string(comment.time, long_format=True)
         comment_type = translate_comment_type(comment.comment_type)
         content = f"[{time}] [{comment_type}] {comment.comment}"
         self._clipboard.setText(content)

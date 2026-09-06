@@ -25,7 +25,6 @@ from mpvqc.services import (
     ResourceService,
     SettingsFileService,
     StateService,
-    TimeFormatterService,
 )
 from mpvqc.shared import map_path_to_str
 from mpvqc.shell.services import ShellSettingsService
@@ -247,7 +246,6 @@ def common_bindings_with(settings_file):
             binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)
-            binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)
 
             for custom_config in custom_configs:
                 custom_config(binder)
