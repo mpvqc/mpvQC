@@ -9,7 +9,6 @@ import inject
 import pytest
 
 from mpvqc.player.services import PlayerService
-from mpvqc.services import FontLoaderService, LabelWidthCalculatorService
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
 from mpvqc.shell.viewmodels import FooterInputs, FooterProps, MpvqcShellFooterViewModel, derive_footer_props
 
@@ -19,8 +18,6 @@ def configure_inject(common_bindings_with, player_service, shell_settings_servic
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_service)
         binder.bind(ShellSettingsService, shell_settings_service)
-        binder.bind_to_constructor(FontLoaderService, FontLoaderService)
-        binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())
 
     common_bindings_with(custom_bindings)
 

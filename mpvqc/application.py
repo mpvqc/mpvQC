@@ -8,14 +8,14 @@ import sys
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Qt, QUrl, Signal, Slot
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtCore import QDir, Qt, QUrl, Signal, Slot
+from PySide6.QtGui import QFontDatabase, QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
 
 from mpvqc.build import get_build_info
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
-from mpvqc.services import FileStartupService, FontLoaderService
+from mpvqc.services import FileStartupService
 from mpvqc.shell.services import QuitService
 from mpvqc.window.services import MainWindowService
 
@@ -25,9 +25,16 @@ if TYPE_CHECKING:
 _ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplication.qml"
 
 
+def _load_application_fonts() -> None:
+    for entry_info in QDir(":/data/fonts").entryInfoList():
+        resource_path = entry_info.filePath()
+        if QFontDatabase.addApplicationFont(resource_path) == -1:
+            msg = f"Cannot load font from {resource_path}"
+            raise ValueError(msg)
+
+
 class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
-    _font_loader = inject.attr(FontLoaderService)
     _i18n = inject.attr(InternationalizationService)
     _i18n_settings = inject.attr(I18nSettingsService)
     _main_window = inject.attr(MainWindowService)
@@ -43,7 +50,7 @@ class MpvqcApplication(QGuiApplication):
     def configure(self) -> None:
         self._set_window_icon()
 
-        self._font_loader.load_application_fonts()
+        _load_application_fonts()
 
         self._start_up.create_missing_directories()
         self._start_up.create_missing_files()

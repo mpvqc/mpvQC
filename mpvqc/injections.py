@@ -28,8 +28,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
-    binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)
-    binder.bind_to_constructor(s.LabelWidthCalculatorService, s.LabelWidthCalculatorService)
     binder.bind_to_constructor(s.ResourceService, s.ResourceService)
     binder.bind_to_constructor(s.SettingsFileService, s.SettingsFileService)
     binder.bind_to_constructor(s.StateService, s.StateService)

@@ -7,11 +7,13 @@ from unittest.mock import MagicMock, patch
 
 import inject
 import pytest
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication, QFile
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtQuick import QQuickWindow
 
+from mpvqc import application
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
-from mpvqc.services import FileStartupService, FontLoaderService
+from mpvqc.services import FileStartupService
 
 
 @pytest.fixture
@@ -20,15 +22,15 @@ def file_startup_service_mock():
 
 
 @pytest.fixture
-def font_loader_service_mock():
-    return MagicMock(spec_set=FontLoaderService)
+def load_application_fonts_mock() -> Generator[MagicMock]:
+    with patch("mpvqc.application._load_application_fonts") as mock:
+        yield mock
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with, file_startup_service_mock, font_loader_service_mock):
+def configure_injections(common_bindings_with, file_startup_service_mock):
     def custom_bindings(binder: inject.Binder):
         binder.bind(FileStartupService, file_startup_service_mock)
-        binder.bind(FontLoaderService, font_loader_service_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -54,12 +56,12 @@ def retranslate_mock(internationalization_service) -> Generator[MagicMock]:
 def test_application_configured(
     qt_app,
     file_startup_service_mock,
-    font_loader_service_mock,
+    load_application_fonts_mock,
     retranslate_mock,
 ):
     qt_app.configure()
 
-    font_loader_service_mock.load_application_fonts.assert_called_once()
+    load_application_fonts_mock.assert_called_once()
     file_startup_service_mock.create_missing_directories.assert_called_once()
     file_startup_service_mock.create_missing_files.assert_called_once()
     retranslate_mock.assert_called_once()
@@ -93,3 +95,37 @@ def test_retranslation_happens_before_engine_language_set(qt_app, retranslate_mo
     qt_app.configure()
 
     assert call_order == ["retranslate", "setUiLanguage"]
+
+
+def test_fonts_present_in_resources(qt_app):
+    variants = [
+        "NotoSans-Regular.ttf",
+        "NotoSans-Italic.ttf",
+        "NotoSans-Bold.ttf",
+        "NotoSans-SemiBold.ttf",
+        "NotoSansHebrew-Bold.ttf",
+        "NotoSansHebrew-Regular.ttf",
+        "NotoSansHebrew-SemiBold.ttf",
+        "NotoSansMono-Regular.ttf",
+    ]
+    for variant in variants:
+        file = QFile(f":/data/fonts/{variant}")
+        assert file.exists(), f"Expected to find {variant} in resources but couldn't"
+
+
+def test_fonts_loaded(qt_app):
+    # It's not possible to clear Qt's entire font database. Additionally, font backends on different OS's behave
+    # differently. Therefore, we just test for the common font families.
+    verifiable_font_families = [
+        "Noto Sans",
+        "Noto Sans Hebrew",
+        "Noto Sans Mono",
+    ]
+
+    application._load_application_fonts()
+    loaded_font_families = QFontDatabase.families()
+
+    for font_family in verifiable_font_families:
+        assert font_family in loaded_font_families, (
+            f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}"
+        )

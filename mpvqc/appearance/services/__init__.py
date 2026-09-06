@@ -4,6 +4,8 @@
 
 from .color_scheme import ColorSchemeService as ColorSchemeService
 from .color_scheme import QtStyleHints as QtStyleHints
+from .fonts import application_font as application_font
+from .fonts import monospace_font as monospace_font
 from .palette_catalog import Palette as Palette
 from .palette_catalog import PaletteCatalogService as PaletteCatalogService
 from .palette_catalog import PaletteFamily as PaletteFamily

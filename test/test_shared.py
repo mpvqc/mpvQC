@@ -6,8 +6,11 @@ from pathlib import Path
 
 import pytest
 from PySide6.QtCore import QUrl
+from PySide6.QtGui import QFontMetricsF
 
+from mpvqc.appearance.services import application_font
 from mpvqc.shared import (
+    calculate_label_width,
     format_milliseconds_to_string,
     format_milliseconds_to_subsecond_string,
     format_time_to_string,
@@ -89,6 +92,40 @@ def test_format_milliseconds_to_string(expected, input_milliseconds, long_format
 def test_format_milliseconds_to_subsecond_string(expected, input_milliseconds):
     actual = format_milliseconds_to_subsecond_string(input_milliseconds)
     assert expected == actual
+
+
+@pytest.fixture
+def metrics(qt_app) -> QFontMetricsF:
+    return QFontMetricsF(application_font())
+
+
+def test_empty_input_yields_zero(metrics):
+    assert calculate_label_width([], metrics) == 0
+
+
+def test_empty_generator_yields_zero(metrics):
+    empty: list[str] = []
+    assert calculate_label_width((text for text in empty), metrics) == 0
+
+
+def test_one_shot_generator_measures_like_a_list(metrics):
+    expected = calculate_label_width(["i", "Wwwwwwwwww"], metrics)
+
+    assert calculate_label_width((text for text in ["i", "Wwwwwwwwww"]), metrics) == expected
+
+
+def test_width_is_the_advance_width_rounded_up(metrics):
+    advance = metrics.horizontalAdvance("Translation")
+
+    width = calculate_label_width(["Translation"], metrics)
+
+    assert advance <= width < advance + 1
+
+
+def test_widest_text_wins(metrics):
+    widest = calculate_label_width(["Wwwwwwwwww"], metrics)
+
+    assert calculate_label_width(["i", "Wwwwwwwwww"], metrics) == widest
 
 
 @pytest.fixture

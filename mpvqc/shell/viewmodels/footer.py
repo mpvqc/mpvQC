@@ -7,11 +7,12 @@ from dataclasses import dataclass, replace
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
+from PySide6.QtGui import QFontMetricsF
 from PySide6.QtQml import QmlElement
 
+from mpvqc.appearance.services import application_font
 from mpvqc.player.services import PlayerService
-from mpvqc.services import LabelWidthCalculatorService
-from mpvqc.shared import format_time_to_string, needs_long_format
+from mpvqc.shared import calculate_label_width, format_time_to_string, needs_long_format
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -74,7 +75,6 @@ def _derive_time_text(inputs: FooterInputs) -> str:
 class MpvqcShellFooterViewModel(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(ShellSettingsService)
-    _label_calculator = inject.attr(LabelWidthCalculatorService)
 
     showPercentageChanged = Signal(bool)
     timeDisplayModeChanged = Signal(int)
@@ -87,6 +87,7 @@ class MpvqcShellFooterViewModel(QObject):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
 
+        self._font_metrics = QFontMetricsF(application_font())
         self._inputs = FooterInputs(
             video_loaded=self._player.video_loaded,
             percent_pos=self._player.percent_pos,
@@ -110,7 +111,7 @@ class MpvqcShellFooterViewModel(QObject):
         return derive_footer_props(self._inputs, self._measure_width)
 
     def _measure_width(self, text: str) -> int:
-        return self._label_calculator.calculate_width_for((text,))
+        return calculate_label_width((text,), self._font_metrics)
 
     @Slot(bool)
     def _fold_show_percentage(self, value: bool) -> None:
