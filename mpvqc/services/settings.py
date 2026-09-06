@@ -14,6 +14,9 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QSettings
 
 
+MISSING = object()
+
+
 class SettingsOwner(Protocol):
     @property
     def qsettings(self) -> QSettings: ...
@@ -26,12 +29,14 @@ class Setting[Owner: SettingsOwner, T]:
         *,
         default: Callable[[], T],
         decode: Callable[[object, Callable[[], T]], T],
+        read: Callable[[QSettings, str], object] = lambda store, key: store.value(key),
         encode: Callable[[T], object] = lambda value: value,
         notify: Callable[[Owner, T], None] | None = None,
     ) -> None:
         self.key = key
         self._default = default
         self._decode = decode
+        self._read = read
         self._encode = encode
         self._notify = notify
 
@@ -44,7 +49,8 @@ class Setting[Owner: SettingsOwner, T]:
     def __get__(self, instance: Owner | None, owner: type[Owner] | None = None) -> Setting[Owner, T] | T:
         if instance is None:
             return self
-        return self._decode(instance.qsettings.value(self.key), self._default)
+        stored = self._read(instance.qsettings, self.key) if instance.qsettings.contains(self.key) else MISSING
+        return self._decode(stored, self._default)
 
     def __set__(self, instance: Owner, value: T) -> None:
         if self._notify is not None and self.__get__(instance) == value:
@@ -52,6 +58,10 @@ class Setting[Owner: SettingsOwner, T]:
         instance.qsettings.setValue(self.key, self._encode(value))
         if self._notify is not None:
             self._notify(instance, value)
+
+
+def stored_text(store: QSettings, key: str) -> object:
+    return store.value(key, type=str)
 
 
 # A later run reads INI text, not the native value QSettings caches for its writer.
