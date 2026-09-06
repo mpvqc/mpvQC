@@ -17,14 +17,12 @@ REPO = Path(__file__).resolve().parents[1]
 
 SLICES = ("appdata", "appearance", "comments", "exporting", "i18n", "importing", "player", "shell", "window")
 COMPOSITION_ROOTS = "mpvqc/injections.py and mpvqc/startup.py"
-SHARED_ROLES = {"services": "services", "shared": "shared"}
+SHARED_ROLES = {"shared": "shared"}
 
 HELD_ROOTS = ("linux", "windows", "windows_decisions")
 
 
 class Allowed(NamedTuple):
-    """The roles one role may import from: its own slice, and another slice or the shared layer."""
-
     same_slice: set[str]
     other_slice: set[str]
 
@@ -202,7 +200,11 @@ def _lattice_violation(where: str, slice_: str, role: str, target: str, names: l
     allowed = LATTICE[role].same_slice if same_slice else LATTICE[role].other_slice
     if t_role not in allowed:
         whose = (
-            "its own slice" if same_slice else f"another slice ({t_slice})" if kind == "slice" else "the shared layer"
+            "its own slice"
+            if same_slice
+            else f"another slice ({t_slice})"
+            if kind == "slice"
+            else "the shared vocabulary"
         )
         return (
             f"{where}: {role} may not import from the {t_role} of {whose}; "

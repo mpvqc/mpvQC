@@ -15,8 +15,10 @@ importing slice, `SessionService` in `mpvqc.session`. Everything the container d
 `WindowButtonDetector` does — the window slice's backend builds it in a factory, so it wears no suffix. A model the
 container binds keeps its model name, `CommentStore` being the one.
 
-`mpvqc/services/` holds what no feature package has claimed. Application-wide helpers sit at the top level of `mpvqc/`,
-with allowed roles listed in the import checker's `HELPERS` table. Container binding does not decide placement.
+A bound class with an area belongs in that area's slice. A bound class every feature writes and none owns, holding
+a fact and no logic of its own, sits at the top level of `mpvqc/` as a helper. An unbound mechanism is a top-level
+helper. A pure rule several areas mean belongs in the shared vocabulary. There is no core, common, infra, or platform
+package; a module fitting none of these stops the work until the placement rule is revisited (ADR 0012).
 
 No service is QML-registered, so none wears the `Mpvqc` prefix that ADR 0009 governs.
 
@@ -72,8 +74,7 @@ Reach for the runner rather than a `QThreadPool`, a lock, or a queued signal of 
 
 ## Done when
 
-- Every module sits at its narrowest home: the owning slice's `services/`, `mpvqc/services/` for unclaimed services,
-  the top level of `mpvqc/` for application-wide helpers.
+- Every module follows the placement rule above.
 - Every container-bound service carries the `Service` suffix, and nothing the container leaves alone carries it.
 - The shape matches the logic: state or Qt lifecycle in a bound class, purity in a module-level function over frozen
   dataclasses.
