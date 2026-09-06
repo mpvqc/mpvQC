@@ -254,7 +254,7 @@ TestCase {
         const locationButton = findChild(dialog, "backupOpenLocationButton");
         verify(locationButton, "backupOpenLocationButton not found");
         mouseClick(locationButton);
-        tryVerify(() => it.bridge.openedDesktopUrls().includes("mpvqc-test://backup-folder"));
+        tryVerify(() => it.bridge.openedDesktopUrls().includes(it.bridge.backupFolderUrl().toString()));
 
         it.dialog.accept(dialog);
 

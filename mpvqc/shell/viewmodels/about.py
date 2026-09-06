@@ -11,7 +11,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.build import get_build_info
 from mpvqc.player.services import PlayerService
-from mpvqc.services import DesktopService
+from mpvqc.shell.services import DesktopService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

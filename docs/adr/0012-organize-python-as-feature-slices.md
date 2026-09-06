@@ -18,6 +18,9 @@ The settings descriptor, decoders, and file opener are a top-level helper open t
 Shared vocabulary, boundary services, narrow application-wide helpers, and composition stay horizontal. A feature
 slice owns what its area means, not the I/O several areas share.
 
+The desktop service is a shell-owned boundary: the about dialog, config editors, and app data command all hand URLs
+to the OS. The backup dialog uses that same service through the shell's public services API.
+
 ## Logic lives in services
 
 The services role is a slice's one home for application logic. Stateful logic, Qt lifecycle, and substitution seams

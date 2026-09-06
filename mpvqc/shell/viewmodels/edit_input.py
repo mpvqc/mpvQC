@@ -6,8 +6,9 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, DesktopService, read_input_conf
+from mpvqc.services import ApplicationPathsService, read_input_conf
 from mpvqc.shared import map_path_to_url
+from mpvqc.shell.services import DesktopService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

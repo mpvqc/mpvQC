@@ -12,9 +12,10 @@ from mpvqc.build import get_build_info
 from mpvqc.comments.services import ResetService
 from mpvqc.exporting.services import ExportService
 from mpvqc.i18n.services import I18nSettingsService
-from mpvqc.services import DesktopService, StateService
+from mpvqc.services import ApplicationPathsService, StateService
+from mpvqc.shared import map_path_to_url
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind
-from mpvqc.shell.services import QuitService, ShellSettingsService, WindowTitleFormat
+from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService, WindowTitleFormat
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -25,6 +26,7 @@ class MpvqcShellMenuBarViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _exporter = inject.attr(ExportService)
     _i18n_settings = inject.attr(I18nSettingsService)
+    _paths = inject.attr(ApplicationPathsService)
     _quit = inject.attr(QuitService)
     _resetter = inject.attr(ResetService)
     _settings = inject.attr(ShellSettingsService)
@@ -73,7 +75,7 @@ class MpvqcShellMenuBarViewModel(QObject):
 
     @Slot()
     def openAppDataFolder(self) -> None:
-        self._desktop.open_app_data_folder()
+        self._desktop.open_url(map_path_to_url(self._paths.dir_config))
 
     @Slot(int)
     def configureWindowTitleFormat(self, value: int) -> None:

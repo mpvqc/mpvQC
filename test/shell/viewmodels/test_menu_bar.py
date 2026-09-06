@@ -7,13 +7,13 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QUrl
 
 from mpvqc.comments.services import ResetService
 from mpvqc.exporting.services import ExportService
-from mpvqc.services import DesktopService, StateService
+from mpvqc.services import ApplicationPathsService, StateService
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind
-from mpvqc.shell.services import QuitService, ShellSettingsService
+from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService
 from mpvqc.shell.viewmodels import MpvqcShellMenuBarViewModel
 
 MODULE = "mpvqc.shell.viewmodels.menu_bar"
@@ -54,8 +54,11 @@ def configure_inject(
     export_service_mock,
     desktop_service_mock,
     quit_service,
+    tmp_path,
 ):
     def custom_bindings(binder: inject.Binder):
+        paths = MagicMock(spec_set=ApplicationPathsService, dir_config=tmp_path / "app data")
+        binder.bind(ApplicationPathsService, paths)
         binder.bind(DesktopService, desktop_service_mock)
         binder.bind(StateService, state_service)
         binder.bind(ResetService, reset_service_mock)
@@ -127,10 +130,10 @@ def test_save(view_model, make_spy, configure_state, export_service_mock):
     export_service_mock.save.assert_called_with(path)
 
 
-def test_open_app_data_folder(view_model, desktop_service_mock):
+def test_open_app_data_folder(view_model, desktop_service_mock, tmp_path):
     view_model.openAppDataFolder()
 
-    desktop_service_mock.open_app_data_folder.assert_called_once_with()
+    desktop_service_mock.open_url.assert_called_once_with(QUrl.fromLocalFile(str(tmp_path / "app data")))
 
 
 def test_configure_layout_orientation(view_model, shell_settings_service, make_spy):

@@ -35,17 +35,17 @@ from mpvqc.importing.services import (
 from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,
-    DesktopService,
     StateService,
 )
 from mpvqc.shared import Comment
-from mpvqc.shell.services import ShellSettingsService
+from mpvqc.shell.services import DesktopService, ShellSettingsService
 from mpvqc.window.viewmodels import MpvqcPlatformViewModel, MpvqcWindowControlsViewModel
 from testqml import import_wizard_fixtures
 from testqml.injections import (
     FIXTURES_DIR,
     TEMP_ROOT,
     TEMP_SAVES_DIR,
+    DesktopServiceOverride,
     RecordedPlayer,
     configure_injections,
     current_platform,
@@ -300,8 +300,19 @@ class MpvqcTestBridge(QObject):
 
     @Slot(result=list)
     def openedDesktopUrls(self) -> list[str]:
-        urls = getattr(inject.instance(DesktopService), "opened_urls", ())
-        return [url.toString() for url in urls]
+        desktop = inject.instance(DesktopService)
+        if not isinstance(desktop, DesktopServiceOverride):
+            msg = "Desktop URL recording requires DesktopServiceOverride"
+            raise TypeError(msg)
+        return [url.toString() for url in desktop.opened_urls]
+
+    @Slot(result=QUrl)
+    def appDataFolderUrl(self) -> QUrl:
+        return QUrl.fromLocalFile(str(inject.instance(ApplicationPathsService).dir_config))
+
+    @Slot(result=QUrl)
+    def backupFolderUrl(self) -> QUrl:
+        return QUrl.fromLocalFile(str(inject.instance(ApplicationPathsService).dir_backup))
 
     @Slot(result=int)
     def backupWriteCount(self) -> int:
