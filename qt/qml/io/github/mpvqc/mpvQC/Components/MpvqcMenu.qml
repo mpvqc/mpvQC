@@ -35,6 +35,7 @@ Menu {
     z: MpvqcConstants.zModal
     transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
     popupType: MpvqcPlatform.preferredPopupType
+    font: MpvqcFonts.applicationFont
     dim: false
 
     width: calculateMenuWidths()
