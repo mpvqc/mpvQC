@@ -19,6 +19,7 @@ Dialog {
     readonly property int _panelPadding: 16
 
     popupType: MpvqcPlatform.preferredPopupType
+    font: MpvqcFonts.applicationFont
     contentWidth: 420
     z: MpvqcConstants.zModal
     standardButtons: Dialog.Ok
