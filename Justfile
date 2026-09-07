@@ -68,7 +68,7 @@ update-python-dependencies:
 
 [group('dev')]
 update-git-hook-dependencies:
-    uv run prek --config .config/prek.toml auto-update
+    uv run prek --config .config/prek.toml update
 
 # Stamp version info into data/build-info.toml
 [group('build')]
