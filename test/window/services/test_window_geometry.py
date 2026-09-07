@@ -45,24 +45,9 @@ class NativeMarginTestCase(NamedTuple):
 @pytest.mark.parametrize(
     "case",
     [
-        NativeMarginTestCase(
-            name="below_half_rounds_down",
-            margin=9,
-            factor=1.25,
-            expected=11,
-        ),
-        NativeMarginTestCase(
-            name="above_half_rounds_up",
-            margin=11,
-            factor=1.25,
-            expected=14,
-        ),
-        NativeMarginTestCase(
-            name="half_rounds_up_not_to_even",
-            margin=10,
-            factor=1.25,
-            expected=13,
-        ),
+        NativeMarginTestCase(name="below_half_rounds_down", margin=9, factor=1.25, expected=11),
+        NativeMarginTestCase(name="above_half_rounds_up", margin=11, factor=1.25, expected=14),
+        NativeMarginTestCase(name="half_rounds_up_not_to_even", margin=10, factor=1.25, expected=13),
     ],
     ids=lambda case: case.name,
 )

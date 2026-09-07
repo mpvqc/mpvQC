@@ -67,10 +67,34 @@ class SpendCase(NamedTuple):
 
 
 SPEND_CASES = [
-    SpendCase("finish then dismiss", finish, dismiss, [ANSWERED], []),
-    SpendCase("dismiss then finish", dismiss, finish, [], [True]),
-    SpendCase("finish then finish", finish, finish, [ANSWERED], []),
-    SpendCase("dismiss then dismiss", dismiss, dismiss, [], [True]),
+    SpendCase(
+        name="finish then dismiss",
+        first=finish,
+        second=dismiss,
+        expected_finished=[ANSWERED],
+        expected_dismissals=[],
+    ),
+    SpendCase(
+        name="dismiss then finish",
+        first=dismiss,
+        second=finish,
+        expected_finished=[],
+        expected_dismissals=[True],
+    ),
+    SpendCase(
+        name="finish then finish",
+        first=finish,
+        second=finish,
+        expected_finished=[ANSWERED],
+        expected_dismissals=[],
+    ),
+    SpendCase(
+        name="dismiss then dismiss",
+        first=dismiss,
+        second=dismiss,
+        expected_finished=[],
+        expected_dismissals=[True],
+    ),
 ]
 
 

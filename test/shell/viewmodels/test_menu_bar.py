@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pathlib import Path
+from typing import NamedTuple
 from unittest.mock import MagicMock
 
 import inject
@@ -149,13 +150,19 @@ def test_configure_layout_orientation(view_model, shell_settings_service, make_s
     assert spy.at(0, 0) == horizontal
 
 
+class UpdateMenuCase(NamedTuple):
+    debug_env: str | None
+    offers_update_check: bool
+    expected: bool
+
+
 @pytest.mark.parametrize(
     ("debug_env", "offers_update_check", "expected"),
     [
-        (None, False, False),
-        (None, True, True),
-        ("1", False, True),
-        ("1", True, True),
+        UpdateMenuCase(debug_env=None, offers_update_check=False, expected=False),
+        UpdateMenuCase(debug_env=None, offers_update_check=True, expected=True),
+        UpdateMenuCase(debug_env="1", offers_update_check=False, expected=True),
+        UpdateMenuCase(debug_env="1", offers_update_check=True, expected=True),
     ],
 )
 def test_is_update_menu_visible(

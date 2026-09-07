@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Callable
+from typing import NamedTuple
 
 import pytest
 
@@ -53,23 +54,30 @@ def test_a_cleared_list_stays_empty_instead_of_restoring_the_defaults(comments_s
     assert ini_section("Common")["commentTypes"] == "@Invalid()"
 
 
+class ReadCase(NamedTuple):
+    name: str
+    stored: str
+    expected: list[str]
+
+
 @pytest.mark.parametrize(
-    ("stored", "expected"),
+    "case",
     [
-        pytest.param("Translation, Phrasing", ["Translation", "Phrasing"], id="several"),
-        pytest.param("Translation", ["Translation"], id="single"),
-        pytest.param("@Invalid()", [], id="emptied"),
-        pytest.param("", [""], id="empty-text"),
-        pytest.param("Custom type", ["Custom type"], id="custom"),
+        ReadCase(name="several", stored="Translation, Phrasing", expected=["Translation", "Phrasing"]),
+        ReadCase(name="single", stored="Translation", expected=["Translation"]),
+        ReadCase(name="emptied", stored="@Invalid()", expected=[]),
+        ReadCase(name="empty-text", stored="", expected=[""]),
+        ReadCase(name="custom", stored="Custom type", expected=["Custom type"]),
     ],
+    ids=lambda case: case.name,
 )
-def test_comment_types_stored_by_an_earlier_run_read_on(existing_settings_service, stored, expected):
+def test_comment_types_stored_by_an_earlier_run_read_on(existing_settings_service, case: ReadCase):
     service = existing_settings_service(f"""
         [Common]
-        commentTypes={stored}
+        commentTypes={case.stored}
     """)
 
-    assert service.comment_types == expected
+    assert service.comment_types == case.expected
 
 
 def test_missing_comment_types_return_a_fresh_default_list_on_each_read(comments_settings_service, qsettings, make_spy):
@@ -84,20 +92,27 @@ def test_missing_comment_types_return_a_fresh_default_list_on_each_read(comments
     assert spy.count() == 0
 
 
+class EncodingCase(NamedTuple):
+    name: str
+    stored: str
+    value: list[str]
+
+
 @pytest.mark.parametrize(
-    ("stored", "value"),
+    "case",
     [
-        pytest.param("@Invalid()", [], id="emptied"),
-        pytest.param("Custom", ["Custom"], id="custom"),
+        EncodingCase(name="emptied", stored="@Invalid()", value=[]),
+        EncodingCase(name="custom", stored="Custom", value=["Custom"]),
     ],
+    ids=lambda case: case.name,
 )
-def test_equal_comment_types_preserve_earlier_run_encoding(read_existing_settings, make_spy, stored, value):
-    store = read_existing_settings(f"[Common]\ncommentTypes={stored}\n")
+def test_equal_comment_types_preserve_earlier_run_encoding(read_existing_settings, make_spy, case: EncodingCase):
+    store = read_existing_settings(f"[Common]\ncommentTypes={case.stored}\n")
     original = store.value("Common/commentTypes")
     service = CommentsSettingsService(store)
     spy = make_spy(service.comment_types_changed)
 
-    service.comment_types = value
+    service.comment_types = case.value
 
     assert store.contains("Common/commentTypes")
     assert store.value("Common/commentTypes") == original

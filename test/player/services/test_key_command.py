@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
+
 import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QKeyEvent
@@ -12,70 +14,320 @@ Modifiers = Qt.KeyboardModifier
 Keys = Qt.Key
 
 
+class KeyCommandCase(NamedTuple):
+    expected: str | None
+    key: Keys | None
+    modifiers: Modifiers
+
+
 @pytest.mark.parametrize(
     ("expected", "key", "modifiers"),
     [
-        (None, None, Modifiers.NoModifier),
-        (None, None, Modifiers.ShiftModifier),
-        (None, None, Modifiers.AltModifier),
-        (None, None, Modifiers.ControlModifier),
-        (None, None, Modifiers.AltModifier | Modifiers.ControlModifier | Modifiers.ShiftModifier),
-        ("PGUP", Keys.Key_PageUp, Modifiers.NoModifier),
-        ("HOME", Keys.Key_Home, Modifiers.NoModifier),
-        ("LEFT", Keys.Key_Left, Modifiers.NoModifier),
-        ("RIGHT", Keys.Key_Right, Modifiers.NoModifier),
-        ("SPACE", Keys.Key_Space, Modifiers.NoModifier),
-        ("shift+SPACE", Keys.Key_Space, Modifiers.ShiftModifier),
-        ("ctrl+SPACE", Keys.Key_Space, Modifiers.ControlModifier),
-        ("alt+SPACE", Keys.Key_Space, Modifiers.AltModifier),
-        ("shift+alt+SPACE", Keys.Key_Space, Modifiers.AltModifier | Modifiers.ShiftModifier),
-        ("shift+LEFT", Keys.Key_Left, Modifiers.ShiftModifier),
-        ("shift+RIGHT", Keys.Key_Right, Modifiers.ShiftModifier),
-        ("ctrl+LEFT", Keys.Key_Left, Modifiers.ControlModifier),
-        ("ctrl+RIGHT", Keys.Key_Right, Modifiers.ControlModifier),
-        ("UP", Keys.Key_Up, Modifiers.NoModifier),
-        ("shift+UP", Keys.Key_Up, Modifiers.ShiftModifier),
-        ("DOWN", Keys.Key_Down, Modifiers.NoModifier),
-        ("ctrl+DOWN", Keys.Key_Down, Modifiers.ControlModifier),
-        ("BS", Keys.Key_Backspace, Modifiers.NoModifier),
-        ("alt+BS", Keys.Key_Backspace, Modifiers.AltModifier),
-        ("ENTER", Keys.Key_Return, Modifiers.NoModifier),
-        ("ctrl+ENTER", Keys.Key_Return, Modifiers.ControlModifier),
-        ("ENTER", Keys.Key_Enter, Modifiers.NoModifier),
-        (None, Keys.Key_F1, Modifiers.NoModifier),
-        (None, Keys.Key_F1, Modifiers.ControlModifier),
-        ("u", Keys.Key_U, Modifiers.NoModifier),
-        ("U", Keys.Key_U, Modifiers.ShiftModifier),
-        ("alt+u", Keys.Key_U, Modifiers.AltModifier),
-        ("alt+U", Keys.Key_U, Modifiers.AltModifier | Modifiers.ShiftModifier),
-        ("ctrl+u", Keys.Key_U, Modifiers.ControlModifier),
-        ("ctrl+U", Keys.Key_U, Modifiers.ControlModifier | Modifiers.ShiftModifier),
-        ("ctrl+alt+u", Keys.Key_U, Modifiers.ControlModifier | Modifiers.AltModifier),
-        ("ctrl+alt+U", Keys.Key_U, Modifiers.AltModifier | Modifiers.ControlModifier | Modifiers.ShiftModifier),
-        ("0", Keys.Key_0, Modifiers.NoModifier),
-        ("ctrl+alt+0", Keys.Key_0, Modifiers.AltModifier | Modifiers.ControlModifier | Modifiers.ShiftModifier),
-        ("p", Keys.Key_P, Modifiers.NoModifier),
-        (".", Keys.Key_Period, Modifiers.NoModifier),
-        (",", Keys.Key_Comma, Modifiers.NoModifier),
-        ("9", Keys.Key_9, Modifiers.NoModifier),
-        ("m", Keys.Key_M, Modifiers.NoModifier),
-        ("j", Keys.Key_J, Modifiers.NoModifier),
-        ("J", Keys.Key_J, Modifiers.ShiftModifier),
-        ("ä", Keys.Key_Adiaeresis, Modifiers.NoModifier),
-        ("Ä", Keys.Key_Adiaeresis, Modifiers.ShiftModifier),
-        ("å", Keys.Key_Aring, Modifiers.NoModifier),
-        ("Å", Keys.Key_Aring, Modifiers.ShiftModifier),
-        ("ø", Keys.Key_Ooblique, Modifiers.NoModifier),
-        ("ctrl+ø", Keys.Key_Ooblique, Modifiers.ControlModifier),
-        ("ß", Keys.Key_ssharp, Modifiers.NoModifier),
-        ("ß", Keys.Key_ssharp, Modifiers.ShiftModifier),
-        ("SHARP", Keys.Key_NumberSign, Modifiers.NoModifier),
-        ("SHARP", Keys.Key_NumberSign, Modifiers.ShiftModifier),
-        ("l", Keys.Key_L, Modifiers.NoModifier),
-        ("s", Keys.Key_S, Modifiers.NoModifier),
-        ("S", Keys.Key_S, Modifiers.ShiftModifier),
-        ("b", Keys.Key_B, Modifiers.NoModifier),
-        ("i", Keys.Key_I, Modifiers.NoModifier),
+        KeyCommandCase(
+            expected=None,
+            key=None,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected=None,
+            key=None,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected=None,
+            key=None,
+            modifiers=Modifiers.AltModifier,
+        ),
+        KeyCommandCase(
+            expected=None,
+            key=None,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected=None,
+            key=None,
+            modifiers=Modifiers.AltModifier | Modifiers.ControlModifier | Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="PGUP",
+            key=Keys.Key_PageUp,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="HOME",
+            key=Keys.Key_Home,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="LEFT",
+            key=Keys.Key_Left,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="RIGHT",
+            key=Keys.Key_Right,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="SPACE",
+            key=Keys.Key_Space,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="shift+SPACE",
+            key=Keys.Key_Space,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+SPACE",
+            key=Keys.Key_Space,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="alt+SPACE",
+            key=Keys.Key_Space,
+            modifiers=Modifiers.AltModifier,
+        ),
+        KeyCommandCase(
+            expected="shift+alt+SPACE",
+            key=Keys.Key_Space,
+            modifiers=Modifiers.AltModifier | Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="shift+LEFT",
+            key=Keys.Key_Left,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="shift+RIGHT",
+            key=Keys.Key_Right,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+LEFT",
+            key=Keys.Key_Left,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+RIGHT",
+            key=Keys.Key_Right,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="UP",
+            key=Keys.Key_Up,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="shift+UP",
+            key=Keys.Key_Up,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="DOWN",
+            key=Keys.Key_Down,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+DOWN",
+            key=Keys.Key_Down,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="BS",
+            key=Keys.Key_Backspace,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="alt+BS",
+            key=Keys.Key_Backspace,
+            modifiers=Modifiers.AltModifier,
+        ),
+        KeyCommandCase(
+            expected="ENTER",
+            key=Keys.Key_Return,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+ENTER",
+            key=Keys.Key_Return,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="ENTER",
+            key=Keys.Key_Enter,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected=None,
+            key=Keys.Key_F1,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected=None,
+            key=Keys.Key_F1,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="u",
+            key=Keys.Key_U,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="U",
+            key=Keys.Key_U,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="alt+u",
+            key=Keys.Key_U,
+            modifiers=Modifiers.AltModifier,
+        ),
+        KeyCommandCase(
+            expected="alt+U",
+            key=Keys.Key_U,
+            modifiers=Modifiers.AltModifier | Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+u",
+            key=Keys.Key_U,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+U",
+            key=Keys.Key_U,
+            modifiers=Modifiers.ControlModifier | Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+alt+u",
+            key=Keys.Key_U,
+            modifiers=Modifiers.ControlModifier | Modifiers.AltModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+alt+U",
+            key=Keys.Key_U,
+            modifiers=Modifiers.AltModifier | Modifiers.ControlModifier | Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="0",
+            key=Keys.Key_0,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+alt+0",
+            key=Keys.Key_0,
+            modifiers=Modifiers.AltModifier | Modifiers.ControlModifier | Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="p",
+            key=Keys.Key_P,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected=".",
+            key=Keys.Key_Period,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected=",",
+            key=Keys.Key_Comma,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="9",
+            key=Keys.Key_9,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="m",
+            key=Keys.Key_M,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="j",
+            key=Keys.Key_J,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="J",
+            key=Keys.Key_J,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="ä",
+            key=Keys.Key_Adiaeresis,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="Ä",
+            key=Keys.Key_Adiaeresis,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="å",
+            key=Keys.Key_Aring,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="Å",
+            key=Keys.Key_Aring,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="ø",
+            key=Keys.Key_Ooblique,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="ctrl+ø",
+            key=Keys.Key_Ooblique,
+            modifiers=Modifiers.ControlModifier,
+        ),
+        KeyCommandCase(
+            expected="ß",
+            key=Keys.Key_ssharp,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="ß",
+            key=Keys.Key_ssharp,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="SHARP",
+            key=Keys.Key_NumberSign,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="SHARP",
+            key=Keys.Key_NumberSign,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="l",
+            key=Keys.Key_L,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="s",
+            key=Keys.Key_S,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="S",
+            key=Keys.Key_S,
+            modifiers=Modifiers.ShiftModifier,
+        ),
+        KeyCommandCase(
+            expected="b",
+            key=Keys.Key_B,
+            modifiers=Modifiers.NoModifier,
+        ),
+        KeyCommandCase(
+            expected="i",
+            key=Keys.Key_I,
+            modifiers=Modifiers.NoModifier,
+        ),
     ],
 )
 def test_key_command(expected: str | None, key: Keys | None, modifiers: Modifiers) -> None:

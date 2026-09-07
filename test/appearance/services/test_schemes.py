@@ -2,13 +2,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
+
 import pytest
 
 from mpvqc.appearance.services import (
     COLOR_SCHEME_PREFERENCES,
+    ColorScheme,
+    ColorSchemePreference,
     Dark,
     FollowSystem,
     Light,
+    SystemColorScheme,
     Unknown,
     default_color_scheme_preference,
     format_color_scheme,
@@ -25,33 +30,75 @@ DARK = Dark()
 UNKNOWN = Unknown()
 
 
+class ResolveCase(NamedTuple):
+    name: str
+    preference: ColorSchemePreference
+    system_color_scheme: SystemColorScheme
+    expected: ColorScheme
+
+
 @pytest.mark.parametrize(
-    ("preference", "system_color_scheme", "expected"),
+    "case",
     [
-        (LIGHT, LIGHT, LIGHT),
-        (LIGHT, DARK, LIGHT),
-        (LIGHT, UNKNOWN, LIGHT),
-        (DARK, LIGHT, DARK),
-        (DARK, DARK, DARK),
-        (DARK, UNKNOWN, DARK),
-        (SYSTEM, LIGHT, LIGHT),
-        (SYSTEM, DARK, DARK),
-        (SYSTEM, UNKNOWN, LIGHT),
+        ResolveCase(
+            name="light-over-light",
+            preference=LIGHT,
+            system_color_scheme=LIGHT,
+            expected=LIGHT,
+        ),
+        ResolveCase(
+            name="light-over-dark",
+            preference=LIGHT,
+            system_color_scheme=DARK,
+            expected=LIGHT,
+        ),
+        ResolveCase(
+            name="light-over-unknown",
+            preference=LIGHT,
+            system_color_scheme=UNKNOWN,
+            expected=LIGHT,
+        ),
+        ResolveCase(
+            name="dark-over-light",
+            preference=DARK,
+            system_color_scheme=LIGHT,
+            expected=DARK,
+        ),
+        ResolveCase(
+            name="dark-over-dark",
+            preference=DARK,
+            system_color_scheme=DARK,
+            expected=DARK,
+        ),
+        ResolveCase(
+            name="dark-over-unknown",
+            preference=DARK,
+            system_color_scheme=UNKNOWN,
+            expected=DARK,
+        ),
+        ResolveCase(
+            name="system-follows-light",
+            preference=SYSTEM,
+            system_color_scheme=LIGHT,
+            expected=LIGHT,
+        ),
+        ResolveCase(
+            name="system-follows-dark",
+            preference=SYSTEM,
+            system_color_scheme=DARK,
+            expected=DARK,
+        ),
+        ResolveCase(
+            name="system-unknown-is-light",
+            preference=SYSTEM,
+            system_color_scheme=UNKNOWN,
+            expected=LIGHT,
+        ),
     ],
-    ids=[
-        "light-over-light",
-        "light-over-dark",
-        "light-over-unknown",
-        "dark-over-light",
-        "dark-over-dark",
-        "dark-over-unknown",
-        "system-follows-light",
-        "system-follows-dark",
-        "system-unknown-is-light",
-    ],
+    ids=lambda case: case.name,
 )
-def test_resolve_color_scheme(preference, system_color_scheme, expected):
-    assert resolve_color_scheme(preference, system_color_scheme) == expected
+def test_resolve_color_scheme(case: ResolveCase):
+    assert resolve_color_scheme(case.preference, case.system_color_scheme) == case.expected
 
 
 @pytest.mark.parametrize(("text", "color_scheme"), [("light", LIGHT), ("dark", DARK)])

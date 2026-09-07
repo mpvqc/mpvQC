@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
+
 import pytest
 from PySide6.QtCore import QLocale
 
@@ -74,15 +76,21 @@ def test_missing_language_uses_current_system_language_only_when_needed(qsetting
     assert calls == ["de_DE", "he_IL", "he_IL", "he_IL"]
 
 
+class StoredCase(NamedTuple):
+    name: str
+    stored: str
+
+
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("", id="empty"),
-        pytest.param("@Invalid()", id="invalid"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="invalid", stored="@Invalid()"),
     ],
+    ids=lambda case: case.name,
 )
-def test_a_present_empty_language_stays_empty_without_rewriting(read_existing_settings, make_spy, stored):
-    store = read_existing_settings(f"[Common]\nlanguage={stored}\n")
+def test_a_present_empty_language_stays_empty_without_rewriting(read_existing_settings, make_spy, case: StoredCase):
+    store = read_existing_settings(f"[Common]\nlanguage={case.stored}\n")
     original = store.value("Common/language")
     service = I18nSettingsService(store)
     spy = make_spy(service.language_changed)

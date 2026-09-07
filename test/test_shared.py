@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pathlib import Path
+from typing import NamedTuple
 
 import pytest
 from PySide6.QtCore import QUrl
@@ -20,6 +21,12 @@ from mpvqc.shared import (
     map_urls_to_paths,
     needs_long_format,
 )
+
+
+class MillisecondFormatCase(NamedTuple):
+    expected: str
+    input_milliseconds: int
+    long_format: bool
 
 
 @pytest.mark.parametrize(
@@ -65,11 +72,11 @@ def test_format_time_to_string_short(expected, input_seconds):
 @pytest.mark.parametrize(
     ("expected", "input_milliseconds", "long_format"),
     [
-        ("00:00:00", 0 * 1000, True),
-        ("00:01:08", 68 * 1000, True),
-        ("02:46:40", 10000 * 1000, True),
-        ("00:01:08", 68 * 1000 + 999, True),
-        ("01:08", 68 * 1000, False),
+        MillisecondFormatCase(expected="00:00:00", input_milliseconds=0 * 1000, long_format=True),
+        MillisecondFormatCase(expected="00:01:08", input_milliseconds=68 * 1000, long_format=True),
+        MillisecondFormatCase(expected="02:46:40", input_milliseconds=10000 * 1000, long_format=True),
+        MillisecondFormatCase(expected="00:01:08", input_milliseconds=68 * 1000 + 999, long_format=True),
+        MillisecondFormatCase(expected="01:08", input_milliseconds=68 * 1000, long_format=False),
     ],
 )
 def test_format_milliseconds_to_string(expected, input_milliseconds, long_format):

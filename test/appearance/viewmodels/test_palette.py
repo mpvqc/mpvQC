@@ -13,6 +13,7 @@ from mpvqc.appearance.services import (
     AccentColor,
     AppearancePreference,
     AppearanceSettingsService,
+    ColorScheme,
     ColorSchemePreference,
     ColorSchemeService,
     Dark,
@@ -21,6 +22,7 @@ from mpvqc.appearance.services import (
     NoPreference,
     Palette,
     PaletteCatalogService,
+    SystemColorScheme,
     Unknown,
 )
 from mpvqc.appearance.viewmodels import (
@@ -195,24 +197,28 @@ def _assert_renders(view_model, palette: Palette, *, is_dark: bool) -> None:
     assert view_model.palette.rowSelectedText == palette.row_selected_text
 
 
+class DesktopSchemeCase(NamedTuple):
+    name: str
+    desktop_reports: SystemColorScheme
+    expected_color_scheme: ColorScheme
+
+
 @pytest.mark.parametrize(
-    ("desktop_reports", "expected_color_scheme"),
+    "case",
     [
-        (LIGHT, LIGHT),
-        (DARK, DARK),
-        (UNKNOWN, LIGHT),
+        DesktopSchemeCase(name="light", desktop_reports=LIGHT, expected_color_scheme=LIGHT),
+        DesktopSchemeCase(name="dark", desktop_reports=DARK, expected_color_scheme=DARK),
+        DesktopSchemeCase(name="unknown-is-light", desktop_reports=UNKNOWN, expected_color_scheme=LIGHT),
     ],
-    ids=["light", "dark", "unknown-is-light"],
+    ids=lambda case: case.name,
 )
-def test_initial_snapshot_renders_the_desktops_scheme(
-    make_view_model, style_hints, catalog, desktop_reports, expected_color_scheme
-):
-    style_hints.system_reports(desktop_reports)
+def test_initial_snapshot_renders_the_desktops_scheme(make_view_model, style_hints, catalog, case: DesktopSchemeCase):
+    style_hints.system_reports(case.desktop_reports)
 
     view_model = make_view_model()
 
-    palette = catalog.palette_family_for(expected_color_scheme).palette_of(_appearance_preference())
-    _assert_renders(view_model, palette, is_dark=expected_color_scheme == DARK)
+    palette = catalog.palette_family_for(case.expected_color_scheme).palette_of(_appearance_preference())
+    _assert_renders(view_model, palette, is_dark=case.expected_color_scheme == DARK)
 
 
 def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(

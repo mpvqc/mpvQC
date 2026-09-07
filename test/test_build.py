@@ -2,11 +2,27 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
+
 import pytest
 
 from mpvqc.build import determine_build_origin, get_build_info
 
 APP_ID = "io.github.mpvqc.mpvQC"
+
+
+class BuildOriginCase(NamedTuple):
+    name: str
+    channel: str
+    flatpak_id: str | None
+    expected: str
+
+
+class VersionLabelCase(NamedTuple):
+    name: str
+    is_release: bool
+    origin: str
+    expected: str
 
 
 def test_get_build_info_reads_the_bundle():
@@ -36,72 +52,74 @@ def test_get_build_info_reads_the_bundle():
 
 
 @pytest.mark.parametrize(
-    ("channel", "flatpak_id", "expected"),
+    "case",
     [
-        pytest.param(
-            "",
-            None,
-            "unofficial",
-            id="empty-channel",
+        BuildOriginCase(
+            name="empty-channel",
+            channel="",
+            flatpak_id=None,
+            expected="unofficial",
         ),
-        pytest.param(
-            "mpvqc-github",
-            None,
-            "mpvqc-github",
-            id="channel-set-outside-flatpak",
+        BuildOriginCase(
+            name="channel-set-outside-flatpak",
+            channel="mpvqc-github",
+            flatpak_id=None,
+            expected="mpvqc-github",
         ),
-        pytest.param(
-            "mpvqc-flatpak",
-            APP_ID,
-            "mpvqc-flatpak",
-            id="channel-set-with-matching-id",
+        BuildOriginCase(
+            name="channel-set-with-matching-id",
+            channel="mpvqc-flatpak",
+            flatpak_id=APP_ID,
+            expected="mpvqc-flatpak",
         ),
-        pytest.param(
-            "mpvqc-flatpak",
-            "com.example.Rebuild",
-            "unofficial",
-            id="mismatched-id",
+        BuildOriginCase(
+            name="mismatched-id",
+            channel="mpvqc-flatpak",
+            flatpak_id="com.example.Rebuild",
+            expected="unofficial",
         ),
-        pytest.param(
-            "mpvqc-flatpak",
-            "",
-            "unofficial",
-            id="empty-flatpak-id",
+        BuildOriginCase(
+            name="empty-flatpak-id",
+            channel="mpvqc-flatpak",
+            flatpak_id="",
+            expected="unofficial",
         ),
     ],
+    ids=lambda case: case.name,
 )
-def test_determine_build_origin(channel, flatpak_id, expected):
-    assert determine_build_origin(channel, APP_ID, flatpak_id) == expected
+def test_determine_build_origin(case: BuildOriginCase):
+    assert determine_build_origin(case.channel, APP_ID, case.flatpak_id) == case.expected
 
 
 @pytest.mark.parametrize(
-    ("is_release", "origin", "expected"),
+    "case",
     [
-        pytest.param(
-            True,
-            "mpvqc-github",
-            "1.0.0 (abc12345) mpvqc-github",
-            id="release-channel",
+        VersionLabelCase(
+            name="release-channel",
+            is_release=True,
+            origin="mpvqc-github",
+            expected="1.0.0 (abc12345) mpvqc-github",
         ),
-        pytest.param(
-            True,
-            "unofficial",
-            "1.0.0 (abc12345) unofficial",
-            id="release-unofficial",
+        VersionLabelCase(
+            name="release-unofficial",
+            is_release=True,
+            origin="unofficial",
+            expected="1.0.0 (abc12345) unofficial",
         ),
-        pytest.param(
-            False,
-            "unofficial",
-            "dev build (abc12345) unofficial",
-            id="dev-unofficial",
+        VersionLabelCase(
+            name="dev-unofficial",
+            is_release=False,
+            origin="unofficial",
+            expected="dev build (abc12345) unofficial",
         ),
-        pytest.param(
-            False,
-            "mpvqc-flatpak",
-            "dev build (abc12345) mpvqc-flatpak",
-            id="dev-channel",
+        VersionLabelCase(
+            name="dev-channel",
+            is_release=False,
+            origin="mpvqc-flatpak",
+            expected="dev build (abc12345) mpvqc-flatpak",
         ),
     ],
+    ids=lambda case: case.name,
 )
-def test_version_label(make_build_info, is_release: bool, origin: str, expected: str):
-    assert make_build_info(is_release=is_release, origin=origin).version_label == expected
+def test_version_label(make_build_info, case: VersionLabelCase):
+    assert make_build_info(is_release=case.is_release, origin=case.origin).version_label == case.expected

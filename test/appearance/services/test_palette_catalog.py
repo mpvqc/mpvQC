@@ -4,6 +4,7 @@
 
 import json
 from dataclasses import asdict
+from typing import NamedTuple
 
 import pytest
 from PySide6.QtGui import QColor
@@ -11,6 +12,7 @@ from PySide6.QtGui import QColor
 from mpvqc.appearance.services import (
     AccentColor,
     AppearancePreference,
+    ColorScheme,
     Dark,
     FollowSystem,
     Light,
@@ -61,28 +63,42 @@ def fake_catalog(catalog_with, make_palette_family_data):
     return catalog_with(light, dark)
 
 
-@pytest.mark.parametrize(
-    ("color_scheme", "default_accent_color"),
-    [
-        (Light(), "#l2"),
-        (Dark(), "#d1"),
-    ],
-    ids=["light", "dark"],
-)
-def test_lookup_by_color_scheme_returns_the_family_tagged_with_it(fake_catalog, color_scheme, default_accent_color):
-    assert fake_catalog.palette_family_for(color_scheme).default_accent_color == AccentColor(default_accent_color)
+class DefaultAccentCase(NamedTuple):
+    name: str
+    color_scheme: ColorScheme
+    default_accent_color: str
 
 
 @pytest.mark.parametrize(
-    ("color_scheme", "preview_color"),
+    "case",
     [
-        (Light(), "#f0f0f0"),
-        (Dark(), "#101010"),
+        DefaultAccentCase(name="light", color_scheme=Light(), default_accent_color="#l2"),
+        DefaultAccentCase(name="dark", color_scheme=Dark(), default_accent_color="#d1"),
     ],
-    ids=["light", "dark"],
+    ids=lambda case: case.name,
 )
-def test_preview_color_per_color_scheme(fake_catalog, color_scheme, preview_color):
-    assert fake_catalog.preview_color_for(color_scheme) == preview_color
+def test_lookup_by_color_scheme_returns_the_family_tagged_with_it(fake_catalog, case: DefaultAccentCase):
+    assert fake_catalog.palette_family_for(case.color_scheme).default_accent_color == AccentColor(
+        case.default_accent_color
+    )
+
+
+class PreviewColorCase(NamedTuple):
+    name: str
+    color_scheme: ColorScheme
+    preview_color: str
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        PreviewColorCase(name="light", color_scheme=Light(), preview_color="#f0f0f0"),
+        PreviewColorCase(name="dark", color_scheme=Dark(), preview_color="#101010"),
+    ],
+    ids=lambda case: case.name,
+)
+def test_preview_color_per_color_scheme(fake_catalog, case: PreviewColorCase):
+    assert fake_catalog.preview_color_for(case.color_scheme) == case.preview_color
 
 
 def test_color_scheme_tag_selects_the_palette_mapping(catalog_with, make_palette_family_data):
@@ -137,17 +153,17 @@ def test_the_first_family_tagged_with_a_scheme_wins(catalog_with, make_palette_f
 
 
 @pytest.mark.parametrize(
-    ("color_scheme", "preview_color"),
+    "case",
     [
-        (Light(), "#f5f2fa"),
-        (Dark(), "#121318"),
+        PreviewColorCase(name="light", color_scheme=Light(), preview_color="#f5f2fa"),
+        PreviewColorCase(name="dark", color_scheme=Dark(), preview_color="#121318"),
     ],
-    ids=["light", "dark"],
+    ids=lambda case: case.name,
 )
-def test_shipped_palette_families(catalog, color_scheme, preview_color):
-    palette_family = catalog.palette_family_for(color_scheme)
+def test_shipped_palette_families(catalog, case: PreviewColorCase):
+    palette_family = catalog.palette_family_for(case.color_scheme)
 
-    assert palette_family.preview_color == preview_color
+    assert palette_family.preview_color == case.preview_color
     assert len(palette_family.palettes) == 17
 
 

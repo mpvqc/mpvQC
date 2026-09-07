@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Callable
+from typing import NamedTuple
 from unittest.mock import call, patch
 
 import pytest
@@ -71,34 +72,41 @@ def test_each_backup_change_is_stored_before_its_one_signal(export_settings_serv
     assert [type(payload) for _, payload, _, _ in deliveries] == [bool, int]
 
 
+class StoredCase(NamedTuple):
+    name: str
+    stored: str | int | float | bool | list[str]
+
+
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param(42, id="number"),
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param(["a", "b"], id="comma-separated"),
+        StoredCase(name="number", stored=42),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="comma-separated", stored=["a", "b"]),
     ],
+    ids=lambda case: case.name,
 )
-def test_unreadable_backup_enabled_falls_back_to_on(export_settings_service, qsettings, stored):
-    qsettings.setValue("Backup/enabled", stored)
+def test_unreadable_backup_enabled_falls_back_to_on(export_settings_service, qsettings, case: StoredCase):
+    qsettings.setValue("Backup/enabled", case.stored)
 
     assert export_settings_service.backup_enabled
 
 
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param(["a", "b"], id="comma-separated"),
-        pytest.param(4.5, id="fractional"),
-        pytest.param(True, id="true"),
-        pytest.param(False, id="false"),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="comma-separated", stored=["a", "b"]),
+        StoredCase(name="fractional", stored=4.5),
+        StoredCase(name="true", stored=True),
+        StoredCase(name="false", stored=False),
     ],
+    ids=lambda case: case.name,
 )
-def test_unreadable_backup_interval_falls_back_to_one_minute(export_settings_service, qsettings, stored):
-    qsettings.setValue("Backup/interval", stored)
+def test_unreadable_backup_interval_falls_back_to_one_minute(export_settings_service, qsettings, case: StoredCase):
+    qsettings.setValue("Backup/interval", case.stored)
 
     assert export_settings_service.backup_interval == 60
     assert type(export_settings_service.backup_interval) is int
@@ -128,17 +136,23 @@ def test_a_cleared_nickname_stays_empty(export_settings_service, ini_section, mo
     assert not ini_section("Export")["nickname"]
 
 
+class EncodingCase(NamedTuple):
+    name: str
+    encoded: str
+
+
 @pytest.mark.parametrize(
-    "encoded",
+    "case",
     [
-        pytest.param("", id="empty"),
-        pytest.param("@Invalid()", id="invalid"),
+        EncodingCase(name="empty", encoded=""),
+        EncodingCase(name="invalid", encoded="@Invalid()"),
     ],
+    ids=lambda case: case.name,
 )
-def test_an_earlier_run_with_a_cleared_nickname_stays_empty(existing_settings_service, monkeypatch, encoded):
+def test_an_earlier_run_with_a_cleared_nickname_stays_empty(existing_settings_service, monkeypatch, case: EncodingCase):
     monkeypatch.setenv("USERNAME", "os-user")
 
-    nickname = existing_settings_service(f"[Export]\nnickname={encoded}\n").nickname
+    nickname = existing_settings_service(f"[Export]\nnickname={case.encoded}\n").nickname
     assert isinstance(nickname, str)
     assert not nickname
 
@@ -287,22 +301,23 @@ def test_a_settings_file_from_an_earlier_run_reads_back_unchanged(existing_setti
 
 
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param("1", id="number"),
-        pytest.param("@Invalid()", id="invalid"),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="number", stored="1"),
+        StoredCase(name="invalid", stored="@Invalid()"),
     ],
+    ids=lambda case: case.name,
 )
-def test_an_earlier_run_with_unreadable_headers_keeps_defaults(existing_settings_service, stored):
+def test_an_earlier_run_with_unreadable_headers_keeps_defaults(existing_settings_service, case: StoredCase):
     service = existing_settings_service(f"""
         [Export]
-        writeHeaderDate={stored}
-        writeHeaderGenerator={stored}
-        writeHeaderNickname={stored}
-        writeHeaderVideoPath={stored}
-        writeHeaderSubtitles={stored}
+        writeHeaderDate={case.stored}
+        writeHeaderGenerator={case.stored}
+        writeHeaderNickname={case.stored}
+        writeHeaderVideoPath={case.stored}
+        writeHeaderSubtitles={case.stored}
     """)
 
     assert service.write_header_date is True
@@ -313,28 +328,32 @@ def test_an_earlier_run_with_unreadable_headers_keeps_defaults(existing_settings
 
 
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param("2", id="number"),
-        pytest.param("1.0", id="fractional"),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="number", stored="2"),
+        StoredCase(name="fractional", stored="1.0"),
     ],
+    ids=lambda case: case.name,
 )
-def test_an_earlier_run_storing_an_unreadable_backup_enabled_falls_back_to_on(existing_settings_service, stored):
-    assert existing_settings_service(f"[Backup]\nenabled={stored}\n").backup_enabled
+def test_an_earlier_run_storing_an_unreadable_backup_enabled_falls_back_to_on(
+    existing_settings_service, case: StoredCase
+):
+    assert existing_settings_service(f"[Backup]\nenabled={case.stored}\n").backup_enabled
 
 
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param("true", id="boolean"),
-        pytest.param("4.5", id="fractional"),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="boolean", stored="true"),
+        StoredCase(name="fractional", stored="4.5"),
     ],
+    ids=lambda case: case.name,
 )
 def test_an_earlier_run_storing_an_unreadable_backup_interval_falls_back_to_one_minute(
-    existing_settings_service, stored
+    existing_settings_service, case: StoredCase
 ):
-    assert existing_settings_service(f"[Backup]\ninterval={stored}\n").backup_interval == 60
+    assert existing_settings_service(f"[Backup]\ninterval={case.stored}\n").backup_interval == 60

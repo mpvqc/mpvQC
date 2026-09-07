@@ -73,26 +73,10 @@ class PrimaryLabelCase(NamedTuple):
 
 
 PRIMARY_LABEL_CASES = [
-    PrimaryLabelCase(
-        name="close-only wizard -> Close",
-        plan=ERRORS_ONLY,
-        expected="Close",
-    ),
-    PrimaryLabelCase(
-        name="last step, no content -> Confirm",
-        plan=VIDEO_ONLY,
-        expected="Confirm",
-    ),
-    PrimaryLabelCase(
-        name="last step, content -> Confirm import",
-        plan=VIDEO_WITH_COMMENTS,
-        expected="Confirm import",
-    ),
-    PrimaryLabelCase(
-        name="steps remain -> Next",
-        plan=ERRORS_THEN_VIDEO,
-        expected="Next",
-    ),
+    PrimaryLabelCase(name="close-only wizard -> Close", plan=ERRORS_ONLY, expected="Close"),
+    PrimaryLabelCase(name="last step, no content -> Confirm", plan=VIDEO_ONLY, expected="Confirm"),
+    PrimaryLabelCase(name="last step, content -> Confirm import", plan=VIDEO_WITH_COMMENTS, expected="Confirm import"),
+    PrimaryLabelCase(name="steps remain -> Next", plan=ERRORS_THEN_VIDEO, expected="Next"),
 ]
 
 

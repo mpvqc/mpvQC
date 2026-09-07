@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass, fields
+from dataclasses import fields
 from typing import NamedTuple
 
 import pytest
@@ -41,7 +41,7 @@ def test_the_notifier_cases_cover_every_state_field():
 
 
 @pytest.mark.parametrize("case", NOTIFIER_CASES, ids=lambda case: case.field)
-def test_every_state_field_has_a_notifier(player_service, push_property, make_spy, case):
+def test_every_state_field_has_a_notifier(player_service, push_property, make_spy, case: NotifierCase):
     spy = make_spy(getattr(player_service, f"{case.field}_changed"))
 
     push_property(case.property_name, case.raw)
@@ -244,12 +244,12 @@ class NewVideoCase(NamedTuple):
 @pytest.mark.parametrize(
     "case",
     [
-        NewVideoCase("different resolution", 1280, 720),
-        NewVideoCase("same resolution", 1920, 1080),
+        NewVideoCase(name="different resolution", width=1280, height=720),
+        NewVideoCase(name="same resolution", width=1920, height=1080),
     ],
     ids=lambda case: case.name,
 )
-def test_video_dimensions_emitted_again_after_new_video(player_service, push_property, make_spy, case):
+def test_video_dimensions_emitted_again_after_new_video(player_service, push_property, make_spy, case: NewVideoCase):
     push_property("path", "/movies/a.mkv")
     push_property("width", 1920)
     push_property("height", 1080)
@@ -272,25 +272,24 @@ def test_property_updates_hop_through_the_marshal(qt_app, player_service, player
     assert player_service.path == "/movies/a.mkv"
 
 
-@dataclass
-class TrackCountTestCase:
-    description: str
-    track_list: list[dict]
+class TrackCountTestCase(NamedTuple):
+    name: str
+    track_list: list[dict[str, str | bool]]
     expected_audio_count: int
     expected_subtitle_count: int
 
 
 @pytest.mark.parametrize(
-    "test_case",
+    "case",
     [
         TrackCountTestCase(
-            description="empty_track_list",
+            name="empty_track_list",
             track_list=[],
             expected_audio_count=0,
             expected_subtitle_count=0,
         ),
         TrackCountTestCase(
-            description="single_audio_track",
+            name="single_audio_track",
             track_list=[
                 {"type": "audio", "external": False, "external-filename": ""},
             ],
@@ -298,7 +297,7 @@ class TrackCountTestCase:
             expected_subtitle_count=0,
         ),
         TrackCountTestCase(
-            description="single_subtitle_track",
+            name="single_subtitle_track",
             track_list=[
                 {"type": "sub", "external": False, "external-filename": ""},
             ],
@@ -306,7 +305,7 @@ class TrackCountTestCase:
             expected_subtitle_count=1,
         ),
         TrackCountTestCase(
-            description="multiple_audio_tracks",
+            name="multiple_audio_tracks",
             track_list=[
                 {"type": "audio", "external": False, "external-filename": ""},
                 {"type": "audio", "external": False, "external-filename": ""},
@@ -316,7 +315,7 @@ class TrackCountTestCase:
             expected_subtitle_count=0,
         ),
         TrackCountTestCase(
-            description="multiple_subtitle_tracks",
+            name="multiple_subtitle_tracks",
             track_list=[
                 {"type": "sub", "external": False, "external-filename": ""},
                 {"type": "sub", "external": True, "external-filename": "/path/sub.srt"},
@@ -325,7 +324,7 @@ class TrackCountTestCase:
             expected_subtitle_count=2,
         ),
         TrackCountTestCase(
-            description="mixed_tracks",
+            name="mixed_tracks",
             track_list=[
                 {"type": "video", "external": False, "external-filename": ""},
                 {"type": "audio", "external": False, "external-filename": ""},
@@ -338,13 +337,13 @@ class TrackCountTestCase:
             expected_subtitle_count=3,
         ),
     ],
-    ids=lambda tc: tc.description,
+    ids=lambda case: case.name,
 )
-def test_track_list_changed_updates_counts(player_service, push_property, test_case):
-    push_property("track-list", test_case.track_list)
+def test_track_list_changed_updates_counts(player_service, push_property, case: TrackCountTestCase):
+    push_property("track-list", case.track_list)
 
-    assert player_service.audio_track_count == test_case.expected_audio_count
-    assert player_service.subtitle_track_count == test_case.expected_subtitle_count
+    assert player_service.audio_track_count == case.expected_audio_count
+    assert player_service.subtitle_track_count == case.expected_subtitle_count
 
 
 def test_track_list_changed_emits_audio_signal(player_service, push_property, make_spy):

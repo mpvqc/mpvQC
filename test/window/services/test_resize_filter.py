@@ -29,22 +29,22 @@ class EdgeCase(NamedTuple):
 
 
 EDGE_CASES = [
-    EdgeCase("interior center", 400, 300, NO_EDGES),
-    EdgeCase("interior boundary just inside content", DROP_SHADOW_MARGIN, 300, NO_EDGES),
-    EdgeCase("deep shadow outside the band", 5, 5, NO_EDGES),
-    EdgeCase("left band outer boundary", 12, 300, Qt.Edge.LeftEdge),
-    EdgeCase("left band inner boundary", 19, 300, Qt.Edge.LeftEdge),
-    EdgeCase("just outside left band", 11, 300, NO_EDGES),
-    EdgeCase("right band outer boundary", 780, 300, Qt.Edge.RightEdge),
-    EdgeCase("right band inner boundary", 787, 300, Qt.Edge.RightEdge),
-    EdgeCase("just outside right band", 788, 300, NO_EDGES),
-    EdgeCase("top band", 400, 12, Qt.Edge.TopEdge),
-    EdgeCase("bottom band", 400, 580, Qt.Edge.BottomEdge),
-    EdgeCase("just outside bottom band", 400, 588, NO_EDGES),
-    EdgeCase("top left corner", 12, 12, Qt.Edge.TopEdge | Qt.Edge.LeftEdge),
-    EdgeCase("top right corner", 787, 12, Qt.Edge.TopEdge | Qt.Edge.RightEdge),
-    EdgeCase("bottom left corner", 12, 587, Qt.Edge.BottomEdge | Qt.Edge.LeftEdge),
-    EdgeCase("bottom right corner", 787, 587, Qt.Edge.BottomEdge | Qt.Edge.RightEdge),
+    EdgeCase(name="interior center", x=400, y=300, expected=NO_EDGES),
+    EdgeCase(name="interior boundary just inside content", x=DROP_SHADOW_MARGIN, y=300, expected=NO_EDGES),
+    EdgeCase(name="deep shadow outside the band", x=5, y=5, expected=NO_EDGES),
+    EdgeCase(name="left band outer boundary", x=12, y=300, expected=Qt.Edge.LeftEdge),
+    EdgeCase(name="left band inner boundary", x=19, y=300, expected=Qt.Edge.LeftEdge),
+    EdgeCase(name="just outside left band", x=11, y=300, expected=NO_EDGES),
+    EdgeCase(name="right band outer boundary", x=780, y=300, expected=Qt.Edge.RightEdge),
+    EdgeCase(name="right band inner boundary", x=787, y=300, expected=Qt.Edge.RightEdge),
+    EdgeCase(name="just outside right band", x=788, y=300, expected=NO_EDGES),
+    EdgeCase(name="top band", x=400, y=12, expected=Qt.Edge.TopEdge),
+    EdgeCase(name="bottom band", x=400, y=580, expected=Qt.Edge.BottomEdge),
+    EdgeCase(name="just outside bottom band", x=400, y=588, expected=NO_EDGES),
+    EdgeCase(name="top left corner", x=12, y=12, expected=Qt.Edge.TopEdge | Qt.Edge.LeftEdge),
+    EdgeCase(name="top right corner", x=787, y=12, expected=Qt.Edge.TopEdge | Qt.Edge.RightEdge),
+    EdgeCase(name="bottom left corner", x=12, y=587, expected=Qt.Edge.BottomEdge | Qt.Edge.LeftEdge),
+    EdgeCase(name="bottom right corner", x=787, y=587, expected=Qt.Edge.BottomEdge | Qt.Edge.RightEdge),
 ]
 
 
@@ -60,15 +60,51 @@ class CursorCase(NamedTuple):
 
 
 CURSOR_CASES = [
-    CursorCase("top left", Qt.Edge.TopEdge | Qt.Edge.LeftEdge, Qt.CursorShape.SizeFDiagCursor),
-    CursorCase("bottom right", Qt.Edge.BottomEdge | Qt.Edge.RightEdge, Qt.CursorShape.SizeFDiagCursor),
-    CursorCase("top right", Qt.Edge.TopEdge | Qt.Edge.RightEdge, Qt.CursorShape.SizeBDiagCursor),
-    CursorCase("bottom left", Qt.Edge.BottomEdge | Qt.Edge.LeftEdge, Qt.CursorShape.SizeBDiagCursor),
-    CursorCase("top", Qt.Edge.TopEdge, Qt.CursorShape.SizeVerCursor),
-    CursorCase("bottom", Qt.Edge.BottomEdge, Qt.CursorShape.SizeVerCursor),
-    CursorCase("left", Qt.Edge.LeftEdge, Qt.CursorShape.SizeHorCursor),
-    CursorCase("right", Qt.Edge.RightEdge, Qt.CursorShape.SizeHorCursor),
-    CursorCase("no edges", NO_EDGES, None),
+    CursorCase(
+        name="top left",
+        edges=Qt.Edge.TopEdge | Qt.Edge.LeftEdge,
+        expected=Qt.CursorShape.SizeFDiagCursor,
+    ),
+    CursorCase(
+        name="bottom right",
+        edges=Qt.Edge.BottomEdge | Qt.Edge.RightEdge,
+        expected=Qt.CursorShape.SizeFDiagCursor,
+    ),
+    CursorCase(
+        name="top right",
+        edges=Qt.Edge.TopEdge | Qt.Edge.RightEdge,
+        expected=Qt.CursorShape.SizeBDiagCursor,
+    ),
+    CursorCase(
+        name="bottom left",
+        edges=Qt.Edge.BottomEdge | Qt.Edge.LeftEdge,
+        expected=Qt.CursorShape.SizeBDiagCursor,
+    ),
+    CursorCase(
+        name="top",
+        edges=Qt.Edge.TopEdge,
+        expected=Qt.CursorShape.SizeVerCursor,
+    ),
+    CursorCase(
+        name="bottom",
+        edges=Qt.Edge.BottomEdge,
+        expected=Qt.CursorShape.SizeVerCursor,
+    ),
+    CursorCase(
+        name="left",
+        edges=Qt.Edge.LeftEdge,
+        expected=Qt.CursorShape.SizeHorCursor,
+    ),
+    CursorCase(
+        name="right",
+        edges=Qt.Edge.RightEdge,
+        expected=Qt.CursorShape.SizeHorCursor,
+    ),
+    CursorCase(
+        name="no edges",
+        edges=NO_EDGES,
+        expected=None,
+    ),
 ]
 
 

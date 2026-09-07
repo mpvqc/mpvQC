@@ -4,7 +4,7 @@
 
 import contextlib
 import sys
-from dataclasses import dataclass
+from typing import NamedTuple
 
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent
@@ -83,8 +83,7 @@ def _apply_action(action: str, window_filter, window) -> None:
         raise ValueError(msg)
 
 
-@dataclass(frozen=True)
-class RevealTestCase:
+class RevealTestCase(NamedTuple):
     name: str
     is_main: bool
     actions: tuple[str, ...]
