@@ -26,18 +26,30 @@ class PresentCase(NamedTuple):
 
 
 PRESENT_CASES = [
-    PresentCase(name="server error", outcome=ServerError(code=500), expected_title="Server Error"),
-    PresentCase(name="server not reachable", outcome=ServerNotReachable(), expected_title="Server Not Reachable"),
+    PresentCase(
+        name="server error",
+        outcome=ServerError(code=500),
+        expected_title="Server Error",
+    ),
+    PresentCase(
+        name="server not reachable",
+        outcome=ServerNotReachable(),
+        expected_title="Server Not Reachable",
+    ),
     PresentCase(
         name="new version available",
         outcome=NewVersionAvailable(version="9.9.9"),
         expected_title="New Version Available",
     ),
-    PresentCase(name="up to date", outcome=UpToDate(), expected_title="👌"),
+    PresentCase(
+        name="up to date",
+        outcome=UpToDate(),
+        expected_title="👌",
+    ),
 ]
 
 
-@pytest.mark.parametrize("case", PRESENT_CASES, ids=lambda c: c.name)
+@pytest.mark.parametrize("case", PRESENT_CASES, ids=lambda case: case.name)
 def test_present_maps_outcome_to_title(case: PresentCase) -> None:
     title, text = present_outcome(case.outcome)
 

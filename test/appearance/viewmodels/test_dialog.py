@@ -261,12 +261,19 @@ def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, app
     assert accent_spy.count() == 0
 
 
+class PreferenceWriteCase(NamedTuple):
+    text: str
+    preference: ColorSchemePreference
+    expected_index: int
+    expected_accent_count: int
+
+
 @pytest.mark.parametrize(
     ("text", "preference", "expected_index", "expected_accent_count"),
     [
-        ("system", SYSTEM, 0, 0),
-        ("light", LIGHT, 1, 2),
-        ("dark", DARK, 2, 3),
+        PreferenceWriteCase(text="system", preference=SYSTEM, expected_index=0, expected_accent_count=0),
+        PreferenceWriteCase(text="light", preference=LIGHT, expected_index=1, expected_accent_count=2),
+        PreferenceWriteCase(text="dark", preference=DARK, expected_index=2, expected_accent_count=3),
     ],
 )
 def test_set_color_scheme_preference_writes_the_setting(

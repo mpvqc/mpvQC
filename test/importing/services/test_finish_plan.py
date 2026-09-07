@@ -115,9 +115,9 @@ class UnresolvedCase(NamedTuple):
 
 
 UNRESOLVED_WITHOUT_ANSWER_CASES = [
-    UnresolvedCase("session", ASKS_ABOUT_SESSION),
-    UnresolvedCase("video", ASKS_ABOUT_VIDEO),
-    UnresolvedCase("subtitles", ASKS_ABOUT_SUBTITLES),
+    UnresolvedCase(name="session", plan=ASKS_ABOUT_SESSION),
+    UnresolvedCase(name="video", plan=ASKS_ABOUT_VIDEO),
+    UnresolvedCase(name="subtitles", plan=ASKS_ABOUT_SUBTITLES),
 ]
 
 

@@ -1,16 +1,15 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-from dataclasses import dataclass
 from pathlib import Path
+from typing import NamedTuple
 
 import pytest
 
 
-@dataclass
-class ExternalSubtitleTestCase:
-    description: str
-    track_list_data: list[dict]
+class ExternalSubtitleTestCase(NamedTuple):
+    name: str
+    track_list_data: list[dict[str, str | bool]]
     expected_paths: tuple[str, ...]
 
 
@@ -21,15 +20,15 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
 
 
 @pytest.mark.parametrize(
-    "test_case",
+    "case",
     [
         ExternalSubtitleTestCase(
-            description="no_subtitles",
+            name="no_subtitles",
             track_list_data=[],
             expected_paths=(),
         ),
         ExternalSubtitleTestCase(
-            description="single_external_subtitle",
+            name="single_external_subtitle",
             track_list_data=[
                 {
                     "type": "sub",
@@ -40,7 +39,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
             expected_paths=(SUB_1,),
         ),
         ExternalSubtitleTestCase(
-            description="multiple_external_subtitles",
+            name="multiple_external_subtitles",
             track_list_data=[
                 {
                     "type": "sub",
@@ -61,7 +60,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
             expected_paths=(SUB_1, SUB_2, SUB_3),
         ),
         ExternalSubtitleTestCase(
-            description="mixed_external_and_internal_subtitles",
+            name="mixed_external_and_internal_subtitles",
             track_list_data=[
                 {
                     "type": "sub",
@@ -82,7 +81,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
             expected_paths=(SUB_1, SUB_2),
         ),
         ExternalSubtitleTestCase(
-            description="mixed_subtitle_and_audio_tracks",
+            name="mixed_subtitle_and_audio_tracks",
             track_list_data=[
                 {
                     "type": "sub",
@@ -103,7 +102,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
             expected_paths=(SUB_1, SUB_2),
         ),
         ExternalSubtitleTestCase(
-            description="duplicate_subtitles",
+            name="duplicate_subtitles",
             track_list_data=[
                 {
                     "type": "sub",
@@ -119,7 +118,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
             expected_paths=(SUB_1,),
         ),
         ExternalSubtitleTestCase(
-            description="no_external_only_internal",
+            name="no_external_only_internal",
             track_list_data=[
                 {
                     "type": "sub",
@@ -135,11 +134,11 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
             expected_paths=(),
         ),
     ],
-    ids=lambda tc: tc.description,
+    ids=lambda case: case.name,
 )
-def test_external_subtitles(player_service, push_property, test_case):
-    push_property("track-list", test_case.track_list_data)
+def test_external_subtitles(player_service, push_property, case: ExternalSubtitleTestCase):
+    push_property("track-list", case.track_list_data)
 
     result = player_service.external_subtitles
 
-    assert result == test_case.expected_paths
+    assert result == case.expected_paths

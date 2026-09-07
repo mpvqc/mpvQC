@@ -29,14 +29,17 @@ def validator() -> Draft202012Validator:
 
 class ConformanceCase(NamedTuple):
     name: str
-    settings: dict
+    settings: dict[str, str | bool | list[str] | list[Comment]]
 
 
 CONFORMANCE_CASES = [
-    ConformanceCase("minimal document", {}),
     ConformanceCase(
-        "full document",
-        {
+        name="minimal document",
+        settings={},
+    ),
+    ConformanceCase(
+        name="full document",
+        settings={
             "video": "/path/to/video.mkv",
             "nickname": "lorem",
             "subtitles": ["/path/to/video.de.ass", "/path/to/video.en.srt"],
@@ -56,7 +59,7 @@ CONFORMANCE_CASES = [
 
 
 @pytest.mark.parametrize("case", CONFORMANCE_CASES, ids=lambda case: case.name)
-def test_rendered_documents_validate_against_schema(make_snapshot, validator, case):
+def test_rendered_documents_validate_against_schema(make_snapshot, validator, case: ConformanceCase):
     snapshot = make_snapshot(generator="mpvQC 0.9.0", **case.settings)
 
     document = json.loads(render_v1(snapshot))
@@ -66,41 +69,67 @@ def test_rendered_documents_validate_against_schema(make_snapshot, validator, ca
 
 class SchemaViolationCase(NamedTuple):
     name: str
-    document: dict
+    document: dict[str, str | int | list[str] | list[dict[str, str | int]]]
 
 
 SCHEMA_VIOLATIONS = [
-    SchemaViolationCase("missing version", {"comments": []}),
-    SchemaViolationCase("missing comments", {"version": 1}),
-    SchemaViolationCase("unknown version", {"version": 2, "comments": []}),
-    SchemaViolationCase("unknown top-level field", {"version": 1, "comments": [], "frame": 25}),
     SchemaViolationCase(
-        "foreign $schema url", {"$schema": "https://example.com/v1.json", "version": 1, "comments": []}
-    ),
-    SchemaViolationCase("empty subtitles array", {"version": 1, "comments": [], "subtitles": []}),
-    SchemaViolationCase(
-        "created_at with offset", {"version": 1, "comments": [], "created_at": "2026-06-06T10:00:00+02:00"}
+        name="missing version",
+        document={"comments": []},
     ),
     SchemaViolationCase(
-        "three-digit hours", {"version": 1, "comments": [{"time": "100:00:00.000", "type": "T", "text": ""}]}
+        name="missing comments",
+        document={"version": 1},
     ),
     SchemaViolationCase(
-        "centisecond time", {"version": 1, "comments": [{"time": "00:00:01.34", "type": "T", "text": ""}]}
+        name="unknown version",
+        document={"version": 2, "comments": []},
     ),
     SchemaViolationCase(
-        "unknown comment field",
-        {"version": 1, "comments": [{"time": "00:00:01.000", "type": "T", "text": "", "frame": 25}]},
+        name="unknown top-level field",
+        document={"version": 1, "comments": [], "frame": 25},
     ),
-    SchemaViolationCase("comment missing text", {"version": 1, "comments": [{"time": "00:00:01.000", "type": "T"}]}),
     SchemaViolationCase(
-        "text with newline", {"version": 1, "comments": [{"time": "00:00:01.000", "type": "T", "text": "a\nb"}]}
+        name="foreign $schema url",
+        document={"$schema": "https://example.com/v1.json", "version": 1, "comments": []},
     ),
-    SchemaViolationCase("empty type", {"version": 1, "comments": [{"time": "00:00:01.000", "type": "", "text": ""}]}),
+    SchemaViolationCase(
+        name="empty subtitles array",
+        document={"version": 1, "comments": [], "subtitles": []},
+    ),
+    SchemaViolationCase(
+        name="created_at with offset",
+        document={"version": 1, "comments": [], "created_at": "2026-06-06T10:00:00+02:00"},
+    ),
+    SchemaViolationCase(
+        name="three-digit hours",
+        document={"version": 1, "comments": [{"time": "100:00:00.000", "type": "T", "text": ""}]},
+    ),
+    SchemaViolationCase(
+        name="centisecond time",
+        document={"version": 1, "comments": [{"time": "00:00:01.34", "type": "T", "text": ""}]},
+    ),
+    SchemaViolationCase(
+        name="unknown comment field",
+        document={"version": 1, "comments": [{"time": "00:00:01.000", "type": "T", "text": "", "frame": 25}]},
+    ),
+    SchemaViolationCase(
+        name="comment missing text",
+        document={"version": 1, "comments": [{"time": "00:00:01.000", "type": "T"}]},
+    ),
+    SchemaViolationCase(
+        name="text with newline",
+        document={"version": 1, "comments": [{"time": "00:00:01.000", "type": "T", "text": "a\nb"}]},
+    ),
+    SchemaViolationCase(
+        name="empty type",
+        document={"version": 1, "comments": [{"time": "00:00:01.000", "type": "", "text": ""}]},
+    ),
 ]
 
 
 @pytest.mark.parametrize("case", SCHEMA_VIOLATIONS, ids=lambda case: case.name)
-def test_schema_rejects_contract_violations(validator, case):
+def test_schema_rejects_contract_violations(validator, case: SchemaViolationCase):
     with pytest.raises(ValidationError):
         validator.validate(case.document)
 

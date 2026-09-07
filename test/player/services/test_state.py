@@ -28,14 +28,62 @@ class ReduceCase(NamedTuple):
 
 
 SCALAR_CASES = [
-    ReduceCase("duration", PlayerState(), "duration", 120.5, PlayerState(duration=120.5)),
-    ReduceCase("duration zero keeps default", PlayerState(), "duration", 0.0, PlayerState()),
-    ReduceCase("percent-pos stores int", PlayerState(), "percent-pos", 51, PlayerState(percent_pos=51)),
-    ReduceCase("time-pos stores int", PlayerState(), "time-pos", 66, PlayerState(time_pos=66)),
-    ReduceCase("time-remaining stores int", PlayerState(), "time-remaining", 30, PlayerState(time_remaining=30)),
-    ReduceCase("filename", PlayerState(), "filename", "video.mp4", PlayerState(filename="video.mp4")),
-    ReduceCase("height", PlayerState(), "height", 1080, PlayerState(height=1080)),
-    ReduceCase("width", PlayerState(), "width", 1920, PlayerState(width=1920)),
+    ReduceCase(
+        name="duration",
+        before=PlayerState(),
+        prop="duration",
+        raw=120.5,
+        after=PlayerState(duration=120.5),
+    ),
+    ReduceCase(
+        name="duration zero keeps default",
+        before=PlayerState(),
+        prop="duration",
+        raw=0.0,
+        after=PlayerState(),
+    ),
+    ReduceCase(
+        name="percent-pos stores int",
+        before=PlayerState(),
+        prop="percent-pos",
+        raw=51,
+        after=PlayerState(percent_pos=51),
+    ),
+    ReduceCase(
+        name="time-pos stores int",
+        before=PlayerState(),
+        prop="time-pos",
+        raw=66,
+        after=PlayerState(time_pos=66),
+    ),
+    ReduceCase(
+        name="time-remaining stores int",
+        before=PlayerState(),
+        prop="time-remaining",
+        raw=30,
+        after=PlayerState(time_remaining=30),
+    ),
+    ReduceCase(
+        name="filename",
+        before=PlayerState(),
+        prop="filename",
+        raw="video.mp4",
+        after=PlayerState(filename="video.mp4"),
+    ),
+    ReduceCase(
+        name="height",
+        before=PlayerState(),
+        prop="height",
+        raw=1080,
+        after=PlayerState(height=1080),
+    ),
+    ReduceCase(
+        name="width",
+        before=PlayerState(),
+        prop="width",
+        raw=1920,
+        after=PlayerState(width=1920),
+    ),
 ]
 
 
@@ -46,32 +94,32 @@ def test_reduces_scalar_properties(case: ReduceCase):
 
 PATH_CASES = [
     ReduceCase(
-        "load marks video loaded",
-        PlayerState(),
-        "path",
-        "/movies/a.mkv",
-        PlayerState(path="/movies/a.mkv", video_loaded=True),
+        name="load marks video loaded",
+        before=PlayerState(),
+        prop="path",
+        raw="/movies/a.mkv",
+        after=PlayerState(path="/movies/a.mkv", video_loaded=True),
     ),
     ReduceCase(
-        "new path resets dimensions",
-        PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
-        "path",
-        "/movies/b.mkv",
-        PlayerState(path="/movies/b.mkv", video_loaded=True),
+        name="new path resets dimensions",
+        before=PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
+        prop="path",
+        raw="/movies/b.mkv",
+        after=PlayerState(path="/movies/b.mkv", video_loaded=True),
     ),
     ReduceCase(
-        "same path keeps dimensions",
-        PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
-        "path",
-        "/movies/a.mkv",
-        PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
+        name="same path keeps dimensions",
+        before=PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
+        prop="path",
+        raw="/movies/a.mkv",
+        after=PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
     ),
     ReduceCase(
-        "unload keeps last path",
-        PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
-        "path",
-        None,
-        PlayerState(path="/movies/a.mkv", video_loaded=False, width=1920, height=1080),
+        name="unload keeps last path",
+        before=PlayerState(path="/movies/a.mkv", video_loaded=True, width=1920, height=1080),
+        prop="path",
+        raw=None,
+        after=PlayerState(path="/movies/a.mkv", video_loaded=False, width=1920, height=1080),
     ),
 ]
 
@@ -94,44 +142,50 @@ def _external_sub(filename: str) -> dict:
 
 
 TRACK_LIST_CASES = [
-    ReduceCase("empty track list", PlayerState(), "track-list", [], PlayerState()),
     ReduceCase(
-        "audio tracks counted",
-        PlayerState(),
-        "track-list",
-        _audio(3),
-        PlayerState(audio_track_count=3),
+        name="empty track list",
+        before=PlayerState(),
+        prop="track-list",
+        raw=[],
+        after=PlayerState(),
     ),
     ReduceCase(
-        "subtitle tracks counted",
-        PlayerState(),
-        "track-list",
-        _internal_subs(2),
-        PlayerState(subtitle_track_count=2),
+        name="audio tracks counted",
+        before=PlayerState(),
+        prop="track-list",
+        raw=_audio(3),
+        after=PlayerState(audio_track_count=3),
     ),
     ReduceCase(
-        "mixed tracks counted separately",
-        PlayerState(),
-        "track-list",
-        [{"type": "video", "external": False, "external-filename": ""}, *_audio(2), *_internal_subs(1)],
-        PlayerState(audio_track_count=2, subtitle_track_count=1),
+        name="subtitle tracks counted",
+        before=PlayerState(),
+        prop="track-list",
+        raw=_internal_subs(2),
+        after=PlayerState(subtitle_track_count=2),
     ),
     ReduceCase(
-        "external subtitles collected sorted",
-        PlayerState(),
-        "track-list",
-        [_external_sub("/work/b.srt"), _external_sub("/work/a.ass"), *_internal_subs(1)],
-        PlayerState(
+        name="mixed tracks counted separately",
+        before=PlayerState(),
+        prop="track-list",
+        raw=[{"type": "video", "external": False, "external-filename": ""}, *_audio(2), *_internal_subs(1)],
+        after=PlayerState(audio_track_count=2, subtitle_track_count=1),
+    ),
+    ReduceCase(
+        name="external subtitles collected sorted",
+        before=PlayerState(),
+        prop="track-list",
+        raw=[_external_sub("/work/b.srt"), _external_sub("/work/a.ass"), *_internal_subs(1)],
+        after=PlayerState(
             subtitle_track_count=3,
             external_subtitles=(str(Path("/work/a.ass").resolve()), str(Path("/work/b.srt").resolve())),
         ),
     ),
     ReduceCase(
-        "track removal shrinks counts",
-        PlayerState(audio_track_count=2, subtitle_track_count=1),
-        "track-list",
-        _audio(1),
-        PlayerState(audio_track_count=1),
+        name="track removal shrinks counts",
+        before=PlayerState(audio_track_count=2, subtitle_track_count=1),
+        prop="track-list",
+        raw=_audio(1),
+        after=PlayerState(audio_track_count=1),
     ),
 ]
 
@@ -144,9 +198,9 @@ def test_reduces_track_list(case: ReduceCase):
 LOADED = PlayerState(path="/movies/a.mkv", video_loaded=True, duration=120.5, width=1920, height=1080)
 
 IGNORED_CASES = [
-    ReduceCase("none duration", LOADED, "duration", None, LOADED),
-    ReduceCase("none time-pos", LOADED, "time-pos", None, LOADED),
-    ReduceCase("none track-list", LOADED, "track-list", None, LOADED),
+    ReduceCase(name="none duration", before=LOADED, prop="duration", raw=None, after=LOADED),
+    ReduceCase(name="none time-pos", before=LOADED, prop="time-pos", raw=None, after=LOADED),
+    ReduceCase(name="none track-list", before=LOADED, prop="track-list", raw=None, after=LOADED),
 ]
 
 
@@ -170,13 +224,19 @@ def test_logs_and_ignores_malformed_updates(caplog: pytest.LogCaptureFixture, pr
     assert prop in caplog.text
 
 
+class DimensionsCase(NamedTuple):
+    width: int
+    height: int
+    expected: bool
+
+
 @pytest.mark.parametrize(
     ("width", "height", "expected"),
     [
-        (0, 0, False),
-        (1920, 0, False),
-        (0, 1080, False),
-        (1920, 1080, True),
+        DimensionsCase(width=0, height=0, expected=False),
+        DimensionsCase(width=1920, height=0, expected=False),
+        DimensionsCase(width=0, height=1080, expected=False),
+        DimensionsCase(width=1920, height=1080, expected=True),
     ],
 )
 def test_has_dimensions(width: int, height: int, expected: bool):
@@ -195,11 +255,36 @@ class ObserverCase(NamedTuple):
 
 
 OBSERVER_CASES = [
-    ObserverCase("rounds and dedups within a second", "time-pos", [0.2, 0.3, 0.7], [0, 1]),
-    ObserverCase("rounds and dedups within a percent", "percent-pos", [50.2, 50.7, 51.1], [50, 51]),
-    ObserverCase("non-dedup property forwards duplicates", "path", ["/a", "/a", "/b"], ["/a", "/a", "/b"]),
-    ObserverCase("forwards none through", "time-pos", [65.0, None], [65, None]),
-    ObserverCase("dedups consecutive none", "time-pos", [None, None], [None]),
+    ObserverCase(
+        name="rounds and dedups within a second",
+        prop="time-pos",
+        raws=[0.2, 0.3, 0.7],
+        forwarded=[0, 1],
+    ),
+    ObserverCase(
+        name="rounds and dedups within a percent",
+        prop="percent-pos",
+        raws=[50.2, 50.7, 51.1],
+        forwarded=[50, 51],
+    ),
+    ObserverCase(
+        name="non-dedup property forwards duplicates",
+        prop="path",
+        raws=["/a", "/a", "/b"],
+        forwarded=["/a", "/a", "/b"],
+    ),
+    ObserverCase(
+        name="forwards none through",
+        prop="time-pos",
+        raws=[65.0, None],
+        forwarded=[65, None],
+    ),
+    ObserverCase(
+        name="dedups consecutive none",
+        prop="time-pos",
+        raws=[None, None],
+        forwarded=[None],
+    ),
 ]
 
 

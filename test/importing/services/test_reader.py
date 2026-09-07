@@ -169,18 +169,18 @@ class InvalidJsonCase(NamedTuple):
 
 
 INVALID_JSON_DOCUMENTS = [
-    InvalidJsonCase("missing version", json.dumps({"comments": []})),
-    InvalidJsonCase("version as string", json.dumps({"version": "1", "comments": []})),
-    InvalidJsonCase("version as bool", json.dumps({"version": True, "comments": []})),
-    InvalidJsonCase("version as float", json.dumps({"version": 1.0, "comments": []})),
-    InvalidJsonCase("truncated json", '{"version": 1,'),
-    InvalidJsonCase("json array", "[]"),
-    InvalidJsonCase("json string", '"just a string"'),
+    InvalidJsonCase(name="missing version", content=json.dumps({"comments": []})),
+    InvalidJsonCase(name="version as string", content=json.dumps({"version": "1", "comments": []})),
+    InvalidJsonCase(name="version as bool", content=json.dumps({"version": True, "comments": []})),
+    InvalidJsonCase(name="version as float", content=json.dumps({"version": 1.0, "comments": []})),
+    InvalidJsonCase(name="truncated json", content='{"version": 1,'),
+    InvalidJsonCase(name="json array", content="[]"),
+    InvalidJsonCase(name="json string", content='"just a string"'),
 ]
 
 
 @pytest.mark.parametrize("case", INVALID_JSON_DOCUMENTS, ids=lambda case: case.name)
-def test_import_rejects_documents_with_malformed_version(tmp_path, case):
+def test_import_rejects_documents_with_malformed_version(tmp_path, case: InvalidJsonCase):
     document = tmp_path / "document.json"
     document.write_text(case.content, encoding="utf-8")
 

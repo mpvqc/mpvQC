@@ -91,19 +91,31 @@ def test_renders_keys_in_specification_order(make_snapshot):
 
 class OmissionCase(NamedTuple):
     name: str
-    settings: dict
+    settings: dict[str, bool | str | list[str] | None]
     absent_field: str
 
 
 OMITTED_WHEN_EMPTY = [
-    OmissionCase("blank author", {"write_header_nickname": True, "nickname": ""}, "author"),
-    OmissionCase("no video", {"write_header_video_path": True, "video": None}, "video"),
-    OmissionCase("no subtitles", {"write_header_subtitles": True, "subtitles": []}, "subtitles"),
+    OmissionCase(
+        name="blank author",
+        settings={"write_header_nickname": True, "nickname": ""},
+        absent_field="author",
+    ),
+    OmissionCase(
+        name="no video",
+        settings={"write_header_video_path": True, "video": None},
+        absent_field="video",
+    ),
+    OmissionCase(
+        name="no subtitles",
+        settings={"write_header_subtitles": True, "subtitles": []},
+        absent_field="subtitles",
+    ),
 ]
 
 
 @pytest.mark.parametrize("case", OMITTED_WHEN_EMPTY, ids=lambda case: case.name)
-def test_omits_field_when_toggled_on_but_empty(make_snapshot, case):
+def test_omits_field_when_toggled_on_but_empty(make_snapshot, case: OmissionCase):
     document = json.loads(render_v1(make_snapshot(**case.settings)))
 
     assert case.absent_field not in document

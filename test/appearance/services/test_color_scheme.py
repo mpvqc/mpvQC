@@ -2,15 +2,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
+
 import inject
 import pytest
 
 from mpvqc.appearance.services import (
     AppearanceSettingsService,
+    ColorScheme,
+    ColorSchemePreference,
     ColorSchemeService,
     Dark,
     FollowSystem,
     Light,
+    SystemColorScheme,
     Unknown,
 )
 
@@ -28,64 +33,109 @@ def configure_injections(common_bindings_with, appearance_settings_service):
     common_bindings_with(bind_settings)
 
 
+class SystemAnswerCase(NamedTuple):
+    name: str
+    system_color_scheme: SystemColorScheme
+    expected: ColorScheme
+
+
 @pytest.mark.parametrize(
-    ("system_color_scheme", "expected"),
+    "case",
     [
-        (LIGHT, LIGHT),
-        (DARK, DARK),
-        (UNKNOWN, LIGHT),
+        SystemAnswerCase(name="light", system_color_scheme=LIGHT, expected=LIGHT),
+        SystemAnswerCase(name="dark", system_color_scheme=DARK, expected=DARK),
+        SystemAnswerCase(name="unknown-is-light", system_color_scheme=UNKNOWN, expected=LIGHT),
     ],
-    ids=["light", "dark", "unknown-is-light"],
+    ids=lambda case: case.name,
 )
-def test_following_the_system_takes_the_system_answer(make_style_hints, system_color_scheme, expected):
-    style_hints = make_style_hints(system_color_scheme)
+def test_following_the_system_takes_the_system_answer(make_style_hints, case: SystemAnswerCase):
+    style_hints = make_style_hints(case.system_color_scheme)
 
     service = ColorSchemeService(style_hints)
 
-    assert service.color_scheme == expected
+    assert service.color_scheme == case.expected
     assert style_hints.calls == ["unset"]
 
 
+class ExplicitPreferenceCase(NamedTuple):
+    name: str
+    preference: ColorSchemePreference
+    system_color_scheme: SystemColorScheme
+    expected: ColorScheme
+    expected_call: str
+
+
 @pytest.mark.parametrize(
-    ("preference", "system_color_scheme", "expected", "expected_call"),
+    "case",
     [
-        (LIGHT, DARK, LIGHT, "set Light"),
-        (LIGHT, UNKNOWN, LIGHT, "set Light"),
-        (DARK, LIGHT, DARK, "set Dark"),
-        (DARK, UNKNOWN, DARK, "set Dark"),
+        ExplicitPreferenceCase(
+            name="light-over-dark",
+            preference=LIGHT,
+            system_color_scheme=DARK,
+            expected=LIGHT,
+            expected_call="set Light",
+        ),
+        ExplicitPreferenceCase(
+            name="light-over-unknown",
+            preference=LIGHT,
+            system_color_scheme=UNKNOWN,
+            expected=LIGHT,
+            expected_call="set Light",
+        ),
+        ExplicitPreferenceCase(
+            name="dark-over-light",
+            preference=DARK,
+            system_color_scheme=LIGHT,
+            expected=DARK,
+            expected_call="set Dark",
+        ),
+        ExplicitPreferenceCase(
+            name="dark-over-unknown",
+            preference=DARK,
+            system_color_scheme=UNKNOWN,
+            expected=DARK,
+            expected_call="set Dark",
+        ),
     ],
-    ids=["light-over-dark", "light-over-unknown", "dark-over-light", "dark-over-unknown"],
+    ids=lambda case: case.name,
 )
 def test_explicit_preference_ignores_the_system_and_pushes_into_qt(
-    appearance_settings_service, make_style_hints, preference, system_color_scheme, expected, expected_call
+    appearance_settings_service, make_style_hints, case: ExplicitPreferenceCase
 ):
-    appearance_settings_service.color_scheme_preference = preference
-    style_hints = make_style_hints(system_color_scheme)
+    appearance_settings_service.color_scheme_preference = case.preference
+    style_hints = make_style_hints(case.system_color_scheme)
 
     service = ColorSchemeService(style_hints)
 
-    assert service.color_scheme == expected
-    assert style_hints.calls == [expected_call]
+    assert service.color_scheme == case.expected
+    assert style_hints.calls == [case.expected_call]
+
+
+class SystemFlipCase(NamedTuple):
+    name: str
+    starts_at: SystemColorScheme
+    flips_to: SystemColorScheme
+    expected: ColorScheme
 
 
 @pytest.mark.parametrize(
-    ("starts_at", "flips_to", "expected"),
+    "case",
     [
-        (LIGHT, DARK, DARK),
-        (DARK, UNKNOWN, LIGHT),
+        SystemFlipCase(name="light-to-dark", starts_at=LIGHT, flips_to=DARK, expected=DARK),
+        SystemFlipCase(name="dark-to-unknown-is-light", starts_at=DARK, flips_to=UNKNOWN, expected=LIGHT),
     ],
-    ids=["light-to-dark", "dark-to-unknown-is-light"],
+    ids=lambda case: case.name,
 )
-def test_system_flip_publishes_the_new_scheme(make_spy, make_style_hints, starts_at, flips_to, expected):
-    style_hints = make_style_hints(starts_at)
+def test_system_flip_publishes_the_new_scheme(make_spy, make_style_hints, case: SystemFlipCase):
+    style_hints = make_style_hints(case.starts_at)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    style_hints.system_reports(flips_to)
+    style_hints.system_reports(case.flips_to)
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == expected
-    assert service.color_scheme == expected
+    assert spy.at(0, 0) == case.expected
+    assert service.color_scheme == case.expected
 
 
 def test_system_answer_resolving_to_the_same_scheme_publishes_nothing(make_spy, make_style_hints):

@@ -6,6 +6,7 @@ import json
 import sys
 from pathlib import Path
 from textwrap import dedent
+from typing import NamedTuple
 from unittest.mock import call, patch
 
 import pytest
@@ -54,27 +55,35 @@ def test_native_and_text_members_read_without_rewriting(import_settings_service,
     assert qsettings.value("Import/loadFoundVideo") == stored
 
 
+class UnreadableVideoSettingCase(NamedTuple):
+    name: str
+    stored: int | str | list[str] | bool | float | None
+
+
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param(42, id="out-of-range"),
-        pytest.param("42", id="text-out-of-range"),
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param(["a", "b"], id="comma-separated"),
-        pytest.param(True, id="native-bool"),
-        pytest.param("true", id="text-bool"),
-        pytest.param(0.0, id="native-float"),
-        pytest.param("0.0", id="text-float"),
-        pytest.param(None, id="none"),
+        UnreadableVideoSettingCase(name="out-of-range", stored=42),
+        UnreadableVideoSettingCase(name="text-out-of-range", stored="42"),
+        UnreadableVideoSettingCase(name="text", stored="banana"),
+        UnreadableVideoSettingCase(name="empty", stored=""),
+        UnreadableVideoSettingCase(name="comma-separated", stored=["a", "b"]),
+        UnreadableVideoSettingCase(name="native-bool", stored=True),
+        UnreadableVideoSettingCase(name="text-bool", stored="true"),
+        UnreadableVideoSettingCase(name="native-float", stored=0.0),
+        UnreadableVideoSettingCase(name="text-float", stored="0.0"),
+        UnreadableVideoSettingCase(name="none", stored=None),
     ],
+    ids=lambda case: case.name,
 )
-def test_unreadable_import_found_video_falls_back_to_ask_every_time(import_settings_service, qsettings, stored):
-    qsettings.setValue("Import/loadFoundVideo", stored)
+def test_unreadable_import_found_video_falls_back_to_ask_every_time(
+    import_settings_service, qsettings, case: UnreadableVideoSettingCase
+):
+    qsettings.setValue("Import/loadFoundVideo", case.stored)
 
     assert import_settings_service.import_found_video is LoadFoundVideo.ASK_EVERY_TIME
     assert qsettings.contains("Import/loadFoundVideo")
-    assert qsettings.value("Import/loadFoundVideo") == stored
+    assert qsettings.value("Import/loadFoundVideo") == case.stored
 
 
 def test_last_directory_video_defaults_to_the_movies_location(import_settings_service):
@@ -179,16 +188,22 @@ def test_the_previous_builds_found_video_key_is_ignored(import_settings_service,
     assert not qsettings.contains("Import/loadFoundVideo")
 
 
+class MalformedDirectoryCase(NamedTuple):
+    name: str
+    stored: str | int | None
+
+
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("/directory", id="path"),
-        pytest.param("file:///directory", id="url-text"),
-        pytest.param(42, id="number"),
-        pytest.param(None, id="none"),
+        MalformedDirectoryCase(name="path", stored="/directory"),
+        MalformedDirectoryCase(name="url-text", stored="file:///directory"),
+        MalformedDirectoryCase(name="number", stored=42),
+        MalformedDirectoryCase(name="none", stored=None),
     ],
+    ids=lambda case: case.name,
 )
-def test_malformed_directories_use_lazy_fallback_without_repair(qsettings, stored):
+def test_malformed_directories_use_lazy_fallback_without_repair(qsettings, case: MalformedDirectoryCase):
     store = qsettings
     keys = ("Import/lastDirectoryVideo", "Import/lastDirectoryDocuments", "Import/lastDirectorySubtitles")
     with patch.object(QStandardPaths, "writableLocation", side_effect=["/first"] * 3 + ["/second"] * 3) as location:
@@ -201,7 +216,7 @@ def test_malformed_directories_use_lazy_fallback_without_repair(qsettings, store
         )
         assert store.allKeys() == []
         for key in keys:
-            store.setValue(key, stored)
+            store.setValue(key, case.stored)
         assert (service.last_directory_video, service.last_directory_documents, service.last_directory_subtitles) == (
             QUrl.fromLocalFile("/second"),
             QUrl.fromLocalFile("/second"),
@@ -216,7 +231,7 @@ def test_malformed_directories_use_lazy_fallback_without_repair(qsettings, store
             ]
             * 2
         )
-    assert [store.value(key) for key in keys] == [stored] * 3
+    assert [store.value(key) for key in keys] == [case.stored] * 3
     assert all(store.contains(key) for key in keys)
 
 

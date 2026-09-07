@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
 from unittest.mock import MagicMock
 
 import inject
@@ -33,22 +34,30 @@ def configure_injections(common_bindings_with, player_mock, resize_service_mock)
     common_bindings_with(custom_bindings)
 
 
+class ResizeConnectionCase(NamedTuple):
+    name: str
+    resizes_on_video_change: bool
+    expected_connections: int
+
+
 @pytest.mark.parametrize(
-    ("resizes_on_video_change", "expected_connections"),
-    [(True, 1), (False, 0)],
-    ids=["app sizes its window", "desktop sizes it"],
+    "case",
+    [
+        ResizeConnectionCase(name="app sizes its window", resizes_on_video_change=True, expected_connections=1),
+        ResizeConnectionCase(name="desktop sizes it", resizes_on_video_change=False, expected_connections=0),
+    ],
+    ids=lambda case: case.name,
 )
 def test_video_loads_recalculate_only_when_the_app_resizes_itself(
-    resizes_on_video_change: bool,
-    expected_connections: int,
+    case: ResizeConnectionCase,
     player_mock,
     resize_service_mock,
 ):
-    resize_service_mock.resizes_on_video_change = resizes_on_video_change
+    resize_service_mock.resizes_on_video_change = case.resizes_on_video_change
 
     MpvqcResizeViewModel()
 
-    assert player_mock.video_dimensions_changed.connect.call_count == expected_connections
+    assert player_mock.video_dimensions_changed.connect.call_count == case.expected_connections
 
 
 def test_no_size_is_requested_when_the_service_declines(resize_service_mock, make_spy):

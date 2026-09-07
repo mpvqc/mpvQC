@@ -167,17 +167,23 @@ class FallbackCase(NamedTuple):
     default: object
 
 
+class StoredCase(NamedTuple):
+    name: str
+    stored: str | int | float | bool
+
+
 @pytest.mark.parametrize(
-    "stored",
+    "stored_case",
     [
-        pytest.param(42, id="out-of-range"),
-        pytest.param("42", id="text-out-of-range"),
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param("1.0", id="decimal"),
-        pytest.param(True, id="bool"),
-        pytest.param(1.5, id="float"),
+        StoredCase(name="out-of-range", stored=42),
+        StoredCase(name="text-out-of-range", stored="42"),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="decimal", stored="1.0"),
+        StoredCase(name="bool", stored=True),
+        StoredCase(name="float", stored=1.5),
     ],
+    ids=lambda case: case.name,
 )
 @pytest.mark.parametrize(
     "case",
@@ -197,25 +203,28 @@ class FallbackCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_an_unreadable_member_falls_back_to_its_default(shell_settings_service, qsettings, case: FallbackCase, stored):
-    qsettings.setValue(case.key, stored)
+def test_an_unreadable_member_falls_back_to_its_default(
+    shell_settings_service, qsettings, case: FallbackCase, stored_case: StoredCase
+):
+    qsettings.setValue(case.key, stored_case.stored)
 
     assert case.read(shell_settings_service) is case.default
 
 
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param("banana", id="text"),
-        pytest.param("", id="empty"),
-        pytest.param("1.0", id="decimal"),
-        pytest.param(True, id="true"),
-        pytest.param(False, id="false"),
-        pytest.param(1.5, id="float"),
+        StoredCase(name="text", stored="banana"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="decimal", stored="1.0"),
+        StoredCase(name="true", stored=True),
+        StoredCase(name="false", stored=False),
+        StoredCase(name="float", stored=1.5),
     ],
+    ids=lambda case: case.name,
 )
-def test_an_unreadable_layout_orientation_falls_back_to_vertical(shell_settings_service, qsettings, stored):
-    qsettings.setValue("SplitView/layoutOrientation", stored)
+def test_an_unreadable_layout_orientation_falls_back_to_vertical(shell_settings_service, qsettings, case: StoredCase):
+    qsettings.setValue("SplitView/layoutOrientation", case.stored)
 
     assert shell_settings_service.layout_orientation == VERTICAL
     assert type(shell_settings_service.layout_orientation) is int
@@ -239,19 +248,20 @@ def test_show_percentage_reads_native_and_text_booleans(shell_settings_service, 
 
 
 @pytest.mark.parametrize(
-    "stored",
+    "case",
     [
-        pytest.param(1, id="number"),
-        pytest.param(0.0, id="float"),
-        pytest.param("1", id="text-number"),
-        pytest.param("yes", id="yes"),
-        pytest.param("", id="empty"),
-        pytest.param(" true ", id="padded"),
-        pytest.param("banana", id="text"),
+        StoredCase(name="number", stored=1),
+        StoredCase(name="float", stored=0.0),
+        StoredCase(name="text-number", stored="1"),
+        StoredCase(name="yes", stored="yes"),
+        StoredCase(name="empty", stored=""),
+        StoredCase(name="padded", stored=" true "),
+        StoredCase(name="text", stored="banana"),
     ],
+    ids=lambda case: case.name,
 )
-def test_an_unreadable_percentage_falls_back_to_on(shell_settings_service, qsettings, stored):
-    qsettings.setValue("StatusBar/statusbarPercentage", stored)
+def test_an_unreadable_percentage_falls_back_to_on(shell_settings_service, qsettings, case: StoredCase):
+    qsettings.setValue("StatusBar/statusbarPercentage", case.stored)
 
     assert shell_settings_service.show_percentage is True
 

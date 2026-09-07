@@ -100,34 +100,10 @@ class _MoveReplaceCase(NamedTuple):
 
 
 _MOVE_REPLACE_CASES = [
-    _MoveReplaceCase(
-        name="up",
-        src=3,
-        dst=0,
-        destination_child=0,
-        order=["NEW", "C0", "C1", "C2", "C4"],
-    ),
-    _MoveReplaceCase(
-        name="down",
-        src=1,
-        dst=4,
-        destination_child=5,
-        order=["C0", "C2", "C3", "C4", "NEW"],
-    ),
-    _MoveReplaceCase(
-        name="adjacent up",
-        src=2,
-        dst=1,
-        destination_child=1,
-        order=["C0", "NEW", "C1", "C3", "C4"],
-    ),
-    _MoveReplaceCase(
-        name="adjacent down",
-        src=1,
-        dst=2,
-        destination_child=3,
-        order=["C0", "C2", "NEW", "C3", "C4"],
-    ),
+    _MoveReplaceCase(name="up", src=3, dst=0, destination_child=0, order=["NEW", "C0", "C1", "C2", "C4"]),
+    _MoveReplaceCase(name="down", src=1, dst=4, destination_child=5, order=["C0", "C2", "C3", "C4", "NEW"]),
+    _MoveReplaceCase(name="adjacent up", src=2, dst=1, destination_child=1, order=["C0", "NEW", "C1", "C3", "C4"]),
+    _MoveReplaceCase(name="adjacent down", src=1, dst=2, destination_child=3, order=["C0", "C2", "NEW", "C3", "C4"]),
 ]
 
 

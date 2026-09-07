@@ -2,20 +2,29 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import NamedTuple
+
 import pytest
 
 from testqml.runner import count_tests, resolve_jobs
 
 
+class ResolveJobsCase(NamedTuple):
+    requested: str
+    shard_count: int
+    platform: str
+    expected: int
+
+
 @pytest.mark.parametrize(
     ("requested", "shard_count", "platform", "expected"),
     [
-        ("4", 51, "linux", 4),
-        ("4", 2, "linux", 2),
-        ("1", 51, "linux", 1),
-        ("auto", 1, "linux", 1),
-        ("4", 51, "win32", 1),
-        ("auto", 51, "win32", 1),
+        ResolveJobsCase(requested="4", shard_count=51, platform="linux", expected=4),
+        ResolveJobsCase(requested="4", shard_count=2, platform="linux", expected=2),
+        ResolveJobsCase(requested="1", shard_count=51, platform="linux", expected=1),
+        ResolveJobsCase(requested="auto", shard_count=1, platform="linux", expected=1),
+        ResolveJobsCase(requested="4", shard_count=51, platform="win32", expected=1),
+        ResolveJobsCase(requested="auto", shard_count=51, platform="win32", expected=1),
     ],
 )
 def test_resolve_jobs(requested: str, shard_count: int, platform: str, expected: int):
