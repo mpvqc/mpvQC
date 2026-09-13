@@ -4,16 +4,12 @@
 
 from __future__ import annotations
 
-import os
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 from typing import Literal, NamedTuple, override
 
 import inject
 from PySide6.QtCore import QSettings, QUrl
-from PySide6.QtGui import QGuiApplication
 
 from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.exporting.services import ExportService, ExportSettingsService
@@ -23,7 +19,6 @@ from mpvqc.injections import bindings as original_bindings
 from mpvqc.player.services import PlayerService
 from mpvqc.shell.services import CheckOutcome, DesktopService, UpToDate, VersionCheckerService
 from mpvqc.window.services import (
-    MainWindowService,
     NoEmbeddedPlayerTracker,
     NoSurfaceHandler,
     NoWindowConfigurator,
@@ -41,22 +36,7 @@ from mpvqc.window.services import (
     windows_capabilities,
 )
 from test.player.recording import RecordingPlayerHandle
-
-
-def _temp_root() -> Path:
-    # The parallel runner hands out the directories and deletes them once the processes are gone.
-    configured = os.environ.get("MPVQC_TEST_TEMP_ROOT")
-    if configured:
-        root = Path(configured)
-        root.mkdir(parents=True, exist_ok=True)
-        return root
-    return Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
-
-
-FIXTURES_DIR = Path(__file__).parent / "fixtures"
-TEMP_ROOT = _temp_root()
-TEMP_SAVES_DIR = TEMP_ROOT / "saves"
-TEMP_SAVES_DIR.mkdir()
+from testqml import artifacts
 
 
 def _platform_capabilities(name: str) -> PlatformCapabilities:
@@ -103,9 +83,7 @@ current_platform = _CurrentPlatform()
 
 class ApplicationPathsServiceOverride(ApplicationPathsService):
     def __init__(self) -> None:
-        base = Path(tempfile.mkdtemp(prefix="paths-", dir=str(TEMP_ROOT)))
-        shutil.copytree(FIXTURES_DIR / "portable-root", base, dirs_exist_ok=True)
-        super().__init__(base)
+        super().__init__(artifacts.create_app_data_directory())
 
 
 class ExportSettingsServiceOverride(ExportSettingsService):
@@ -118,7 +96,7 @@ class ExportSettingsServiceOverride(ExportSettingsService):
 class ImportSettingsServiceOverride(ImportSettingsService):
     def __init__(self, qsettings: QSettings) -> None:
         super().__init__(qsettings)
-        self.last_directory_documents = QUrl.fromLocalFile(str(FIXTURES_DIR))
+        self.last_directory_documents = QUrl.fromLocalFile(str(artifacts.FIXTURES_DIR))
 
 
 class InstantLoadPlayerHandle(RecordingPlayerHandle):
@@ -148,7 +126,7 @@ class ExportServiceOverride(ExportService):
 
     @override
     def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:
-        return TEMP_SAVES_DIR / f"qc_proposal.{suffix}"
+        return artifacts.TEMP_SAVES_DIR / f"qc_proposal.{suffix}"
 
     @override
     def backup(self) -> None:
@@ -215,9 +193,3 @@ def configure_injections() -> None:
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)
 
     inject.configure(test_bindings, bind_in_runtime=False, clear=True, allow_override=True)
-
-
-def rebind_main_window() -> None:
-    # The Quick Test runner owns the engine; its first window hosts the TestCase.
-    test_window = QGuiApplication.topLevelWindows()[0]
-    inject.instance(MainWindowService).initialize(test_window)
