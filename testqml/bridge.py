@@ -3,14 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-import uuid
 from pathlib import Path
-from typing import NamedTuple, assert_never
-from zipfile import ZipFile
+from typing import assert_never
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QDeadlineTimer, QObject, QThreadPool, QUrl, Slot
-from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
+from PySide6.QtCore import Property, QObject, QUrl, Slot
+from PySide6.QtQml import QmlElement, QQmlEngine
 
 from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.appearance.services import (
@@ -20,9 +18,7 @@ from mpvqc.appearance.services import (
     format_color_scheme_preference,
     parse_color_scheme,
 )
-from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.comments.services import CommentsService, CommentsSettingsService
-from mpvqc.comments.viewmodels import MpvqcCommentLabelWidthCalculatorViewModel, MpvqcCommentTableTimeFormatViewModel
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.i18n.services import I18nSettingsService
 from mpvqc.importing.services import (
@@ -37,126 +33,13 @@ from mpvqc.importing.viewmodels import MpvqcImportWizardViewModel
 from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 from mpvqc.shell.services import DesktopService, ShellSettingsService
-from mpvqc.window.viewmodels import MpvqcPlatformViewModel, MpvqcWindowControlsViewModel
-from testqml import import_wizard_fixtures
-from testqml.injections import (
-    FIXTURES_DIR,
-    TEMP_ROOT,
-    TEMP_SAVES_DIR,
-    DesktopServiceOverride,
-    RecordedPlayer,
-    configure_injections,
-    current_platform,
-    rebind_main_window,
-)
+from testqml import artifacts, import_wizard_fixtures, runtime
+from testqml.injections import DesktopServiceOverride, RecordedPlayer
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 _DELAY_MS = int(os.environ.get("MPVQC_TEST_DELAY_MS", "100"))
-_BACKGROUND_JOBS_TIMEOUT_MS = 10_000
-
-
-def _create_complex_qc_document() -> Path:
-    base = TEMP_ROOT / f"complex-{uuid.uuid4().hex[:8]}"
-    base.mkdir()
-    video = base / "video.mp4"
-    sub1 = base / "track1.ass"
-    sub2 = base / "track2.ass"
-    for f in (video, sub1, sub2):
-        f.touch()
-    doc = base / "qc-complex.txt"
-    doc.write_text(
-        "[FILE]\n"
-        f"path     : {video}\n"
-        f"subtitle : {sub1}\n"
-        f"subtitle : {sub2}\n"
-        "\n"
-        "[DATA]\n"
-        "[00:00:10] [Translation] line1\n"
-        "[00:01:20] [Spelling] line2\n",
-        encoding="utf-8",
-    )
-    return doc
-
-
-def _create_video_only_qc_document() -> Path:
-    base = TEMP_ROOT / f"video-only-{uuid.uuid4().hex[:8]}"
-    base.mkdir()
-    video = base / "video_only.mp4"
-    video.touch()
-    doc = base / "qc-video-only.txt"
-    doc.write_text(
-        f"[FILE]\npath     : {video}\n\n[DATA]\n[00:00:10] [Translation] line1\n",
-        encoding="utf-8",
-    )
-    return doc
-
-
-def _create_multi_video_qc_documents() -> tuple[Path, Path]:
-    base = TEMP_ROOT / f"multi-video-{uuid.uuid4().hex[:8]}"
-    base.mkdir()
-    video_a = base / "alpha.mp4"
-    video_b = base / "beta.mp4"
-    for f in (video_a, video_b):
-        f.touch()
-    doc_a = base / "qc-alpha.txt"
-    doc_a.write_text(
-        f"[FILE]\npath     : {video_a}\n\n[DATA]\n[00:00:10] [Translation] line1\n",
-        encoding="utf-8",
-    )
-    doc_b = base / "qc-beta.txt"
-    doc_b.write_text(
-        f"[FILE]\npath     : {video_b}\n\n[DATA]\n[00:00:20] [Spelling] line2\n",
-        encoding="utf-8",
-    )
-    return doc_a, doc_b
-
-
-class _SwappedViewModel(NamedTuple):
-    module_uri: str
-    singleton_name: str
-    property_name: str
-    view_model_class: type[QObject]
-
-
-_PLATFORM_VIEW_MODEL = _SwappedViewModel(
-    "io.github.mpvqc.mpvQC.Utility",
-    "MpvqcPlatform",
-    "_viewModel",
-    MpvqcPlatformViewModel,
-)
-
-# Singleton-held view models subscribe to service signals or snapshot service
-# state when constructed, so resetState() swaps in fresh instances wired to the
-# freshly configured services.
-_SWAPPED_VIEW_MODELS = (
-    _PLATFORM_VIEW_MODEL,
-    _SwappedViewModel(
-        "io.github.mpvqc.mpvQC.Utility",
-        "MpvqcWindowUtility",
-        "_viewModel",
-        MpvqcWindowControlsViewModel,
-    ),
-    _SwappedViewModel(
-        "io.github.mpvqc.mpvQC.Utility",
-        "MpvqcAppearance",
-        "_viewModel",
-        MpvqcPaletteViewModel,
-    ),
-    _SwappedViewModel(
-        "io.github.mpvqc.mpvQC.Utility",
-        "MpvqcLabelWidthCalculator",
-        "viewModel",
-        MpvqcCommentLabelWidthCalculatorViewModel,
-    ),
-    _SwappedViewModel(
-        "io.github.mpvqc.mpvQC.Views.Table",
-        "MpvqcTableUtility",
-        "viewModel",
-        MpvqcCommentTableTimeFormatViewModel,
-    ),
-)
 
 
 @QmlElement
@@ -168,39 +51,14 @@ class MpvqcTestBridge(QObject):
     @Slot()
     def resetState(self) -> None:
         self._wizard_outcome = {"outcome": "none"}
-        configure_injections()
-        rebind_main_window()
-        self._recreate_and_replace_singleton_view_models(_SWAPPED_VIEW_MODELS)
+        # Keep the context wrapper alive through the call; inlining the lookup invalidates the engine.
+        context = QQmlEngine.contextForObject(self)
+        runtime.reset_state(context.engine())
 
     @Slot(str)
     def switchPlatform(self, name: str) -> None:
-        current_platform.switch(name)
-        self._recreate_and_replace_singleton_view_models((_PLATFORM_VIEW_MODEL,))
-
-    def _recreate_and_replace_singleton_view_models(self, entries: tuple[_SwappedViewModel, ...]) -> None:
         context = QQmlEngine.contextForObject(self)
-        engine = context.engine()
-        for entry in entries:
-            singleton = engine.singletonInstance(entry.module_uri, entry.singleton_name)
-            if not isinstance(singleton, QObject):
-                msg = f"Cannot resolve singleton {entry.singleton_name}"
-                raise TypeError(msg)
-            previous = [child for child in singleton.children() if isinstance(child, entry.view_model_class)]
-            view_model = entry.view_model_class()
-            view_model.setParent(singleton)
-            # Assign through a JS expression, not QQmlProperty.write: only a JS
-            # assignment removes the property's declarative initializer. Left in
-            # place, it re-fires when the previous view model is destroyed and
-            # stomps the fresh one with null.
-            swap_context = QQmlContext(engine.rootContext())
-            swap_context.setContextProperty("__freshViewModel", view_model)
-            expression = QQmlExpression(swap_context, singleton, f"{entry.property_name} = __freshViewModel")
-            expression.evaluate()
-            if expression.hasError():
-                msg = f"Cannot swap {entry.property_name} on {entry.singleton_name}: {expression.error()}"
-                raise RuntimeError(msg)
-            for old in previous:
-                old.deleteLater()
+        runtime.switch_platform(context.engine(), name)
 
     @Slot()
     def resetComments(self) -> None:
@@ -234,42 +92,31 @@ class MpvqcTestBridge(QObject):
 
     @Slot(str, result=QUrl)
     def importArtifact(self, name: str) -> QUrl:
-        return QUrl.fromLocalFile(str(FIXTURES_DIR / name))
+        return QUrl.fromLocalFile(str(artifacts.FIXTURES_DIR / name))
 
     @Slot(result=QUrl)
     def tempSavePath(self) -> QUrl:
-        name = f"qc_document_{uuid.uuid4().hex[:8]}.txt"
-        return QUrl.fromLocalFile(str(TEMP_SAVES_DIR / name))
+        return QUrl.fromLocalFile(str(artifacts.temp_save_path()))
 
     @Slot(QUrl, str, result=bool)
     def fileContains(self, url: QUrl, text: str) -> bool:
-        path = Path(url.toLocalFile())
-        return path.is_file() and text in path.read_text(encoding="utf-8")
+        return artifacts.file_contains(Path(url.toLocalFile()), text)
 
     @Slot()
     def waitForBackgroundJobs(self) -> None:
-        exporter = inject.instance(ExportService)
-        deadline = QDeadlineTimer(_BACKGROUND_JOBS_TIMEOUT_MS)
-        while True:
-            QThreadPool.globalInstance().waitForDone(deadline.remainingTime())
-            QCoreApplication.processEvents()
-            if exporter.is_idle:
-                return
-            if deadline.hasExpired():
-                msg = f"Background jobs still pending after {_BACKGROUND_JOBS_TIMEOUT_MS} ms"
-                raise TimeoutError(msg)
+        runtime.wait_for_background_jobs()
 
     @Slot(result=QUrl)
     def importComplexDocument(self) -> QUrl:
-        return QUrl.fromLocalFile(str(_create_complex_qc_document()))
+        return QUrl.fromLocalFile(str(artifacts.create_complex_qc_document()))
 
     @Slot(result=QUrl)
     def importVideoOnlyDocument(self) -> QUrl:
-        return QUrl.fromLocalFile(str(_create_video_only_qc_document()))
+        return QUrl.fromLocalFile(str(artifacts.create_video_only_qc_document()))
 
     @Slot(result=list)
     def importMultiVideoDocuments(self) -> list[QUrl]:
-        return [QUrl.fromLocalFile(str(p)) for p in _create_multi_video_qc_documents()]
+        return [QUrl.fromLocalFile(str(p)) for p in artifacts.create_multi_video_qc_documents()]
 
     @Slot(dict)
     def loadVideo(self, values: dict) -> None:
@@ -319,14 +166,7 @@ class MpvqcTestBridge(QObject):
     @Slot(str, result=bool)
     def backupArchiveAnyEntryContains(self, text: str) -> bool:
         backup_dir = inject.instance(ApplicationPathsService).dir_backup
-        if not backup_dir.is_dir():
-            return False
-        for archive in backup_dir.glob("*.zip"):
-            with ZipFile(archive) as zf:
-                for name in zf.namelist():
-                    if text in zf.read(name).decode("utf-8", errors="replace"):
-                        return True
-        return False
+        return artifacts.backup_archive_any_entry_contains(backup_dir, text)
 
     @Slot(result=QUrl)
     def mpvConfPath(self) -> QUrl:

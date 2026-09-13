@@ -13,7 +13,8 @@ from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
 
 import testqml.bridge  # ruff: ignore[unused-import], registers MpvqcTestBridge
 from mpvqc import startup
-from testqml.injections import TEMP_ROOT, configure_injections
+from testqml.artifacts import TEMP_ROOT
+from testqml.injections import configure_injections
 
 
 class MpvqcTestSetup(QObject):

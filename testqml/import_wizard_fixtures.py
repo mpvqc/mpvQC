@@ -21,16 +21,14 @@ from mpvqc.importing.services import (
     VideoUnresolved,
 )
 from mpvqc.shared import Comment
-from testqml.injections import TEMP_ROOT
+from testqml.artifacts import WIZARD_FIXTURES_DIR
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-_FIXTURE_ROOT = TEMP_ROOT / "wizard-fixtures"
-
 
 def _path(name: str) -> Path:
-    return _FIXTURE_ROOT / name
+    return WIZARD_FIXTURES_DIR / name
 
 
 def video_choice() -> UnfinishedPlan:
