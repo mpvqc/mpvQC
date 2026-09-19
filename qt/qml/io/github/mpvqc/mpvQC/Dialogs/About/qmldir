@@ -6,6 +6,7 @@ module io.github.mpvqc.mpvQC.Dialogs.About
 
 internal MpvqcAboutDialog MpvqcAboutDialog.qml
 internal MpvqcAboutListItem MpvqcAboutListItem.qml
+internal MpvqcAboutScrollView MpvqcAboutScrollView.qml
 internal MpvqcAboutTab MpvqcAboutTab.qml
 internal MpvqcCreditsContent MpvqcCreditsContent.qml
 internal MpvqcCreditsTab MpvqcCreditsTab.qml

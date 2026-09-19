@@ -11,7 +11,7 @@ import QtQuick.Layouts
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility
 
-ItemDelegate {
+MpvqcRoundedItemDelegate {
     id: root
 
     property string supportingText: ""

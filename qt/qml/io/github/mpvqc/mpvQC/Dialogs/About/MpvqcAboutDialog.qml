@@ -6,8 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material as M
-import QtQuick.Controls.Material.impl as MImpl
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -22,168 +20,102 @@ MpvqcDialog {
 
     readonly property alias currentIndex: _pages.currentIndex
 
-    component MpvqcNavigationButton: ToolButton {
-        id: _button
+    component MpvqcNavigationButton: TabButton {
+        id: button
 
-        readonly property color _contentColor: !enabled ? MpvqcAppearance.palette.hint : highlighted ? MpvqcAppearance.palette.accent : MpvqcAppearance.palette.foreground
-        readonly property real _collapsedWidth: leftPadding + icon.width + rightPadding
-        readonly property real _expandedWidth: _collapsedWidth + spacing + _navLabel.implicitWidth
+        implicitHeight: 48
+        padding: 12
 
-        width: highlighted ? _expandedWidth : _collapsedWidth
-        clip: true
-        leftPadding: 16
-        rightPadding: 16
-
-        contentItem: Row {
-            spacing: _button.spacing
-
-            LayoutMirroring.enabled: _button.mirrored
-
-            MpvqcIconLabel {
-                icon.source: _button.icon.source
-                icon.width: _button.icon.width
-                icon.height: _button.icon.height
-                iconColor: _button._contentColor
-
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Label {
-                id: _navLabel
-
-                text: _button.text
-                color: _button._contentColor
-                visible: _button.highlighted || _widthAnimation.running
-
-                anchors.verticalCenter: parent.verticalCenter
-            }
+        contentItem: Label {
+            text: button.text
+            font: button.font
+            color: button.checked ? MpvqcAppearance.palette.accent : MpvqcAppearance.palette.foreground
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
-        background: MImpl.Ripple {
-            implicitWidth: M.Material.touchTarget
-            implicitHeight: M.Material.touchTarget
+        background: Rectangle {
+            radius: height / 2
+            color: button.checked ? Qt.alpha(MpvqcAppearance.palette.accent, 0.15) : "transparent"
+            border.width: button.visualFocus ? 2 : 0
+            border.color: MpvqcAppearance.palette.accent
 
-            x: (parent.width - width) / 2
-            y: (parent.height - height) / 2
-            width: parent.width
-            height: Math.min(parent.height, 36)
-            clip: true
-            clipRadius: height / 2
-            pressed: _button.pressed
-            anchor: _button
-            active: _button.enabled && (_button.down || _button.visualFocus || _button.hovered || _button.highlighted)
-            color: Qt.alpha(_button._contentColor, 0.1)
-        }
-
-        Behavior on width {
-            NumberAnimation {
-                id: _widthAnimation
-
-                duration: 150
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                color: Qt.alpha(MpvqcAppearance.palette.foreground, button.down ? 0.12 : button.hovered ? 0.07 : 0)
             }
         }
     }
 
-    function showPage(index: int): void {
-        if (index === _pages.currentIndex) {
-            return;
-        }
-        if (_pageFade.running) {
-            _pageFade.complete();
-        }
-        _pages.currentIndex = index;
-        _pageFade.restart();
-    }
-
-    contentHeight: MpvqcConstants.mediumDialogContentHeight
+    contentHeight: MpvqcConstants.mediumDialogContentHeight + 40
     standardButtons: Dialog.Close
 
     contentItem: ColumnLayout {
-        spacing: 40
+        spacing: 20
 
-        Row {
+        TabBar {
             id: _navigation
 
-            spacing: 10
+            spacing: 8
+            background: null
+            contentItem: ListView {
+                model: _navigation.contentModel
+                currentIndex: _navigation.currentIndex
+                orientation: ListView.Horizontal
+                spacing: _navigation.spacing
+                interactive: false
+                keyNavigationEnabled: true
+            }
 
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 16
+            Layout.fillWidth: true
 
             MpvqcNavigationButton {
-                id: _aboutButton
                 objectName: "aboutNavigationButton"
 
                 //: Label of the button displaying general application information
                 text: qsTranslate("AboutDialog", "About")
-                icon.source: MpvqcIcons.info
-                highlighted: _pages.currentIndex === 0
-
-                onClicked: root.showPage(0)
             }
 
             MpvqcNavigationButton {
-                id: _creditsButton
                 objectName: "creditsNavigationButton"
 
                 //: Label of the button displaying contributors and translators
                 text: qsTranslate("AboutDialog", "Credits")
-                icon.source: MpvqcIcons.group
-                highlighted: _pages.currentIndex === 1
-
-                onClicked: root.showPage(1)
             }
 
             MpvqcNavigationButton {
-                id: _licensesButton
                 objectName: "licensesNavigationButton"
 
                 //: Label of the button displaying third-party dependencies and their licenses
                 text: qsTranslate("AboutDialog", "Licenses")
-                icon.source: MpvqcIcons.deployedCode
-                highlighted: _pages.currentIndex === 2
-
-                onClicked: root.showPage(2)
             }
         }
 
         StackLayout {
             id: _pages
 
-            readonly property list<Item> pages: [_aboutPage, _creditsPage, _licensesPage]
-
+            currentIndex: _navigation.currentIndex
             clip: true
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             MpvqcAboutTab {
-                id: _aboutPage
                 objectName: "aboutPage"
 
                 viewModel: root.viewModel
             }
 
             MpvqcCreditsTab {
-                id: _creditsPage
                 objectName: "creditsPage"
             }
 
             MpvqcLicensesTab {
-                id: _licensesPage
                 objectName: "licensesPage"
 
                 viewModel: root.viewModel
             }
         }
-    }
-
-    OpacityAnimator {
-        id: _pageFade
-
-        target: _pages.pages[_pages.currentIndex]
-        from: 0
-        to: 1
-        duration: 100
-        easing.type: Easing.OutCubic
     }
 }

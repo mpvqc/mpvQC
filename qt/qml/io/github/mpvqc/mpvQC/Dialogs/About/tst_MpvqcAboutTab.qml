@@ -45,13 +45,13 @@ TestCase {
         compare(opened[opened.length - 1], "https://mpvqc.github.io");
     }
 
-    function test_clickingCopyRowFlipsIconToConfirm(): void {
+    function test_clickingCopyButtonFlipsIconToConfirm(): void {
         const tab = makeTab();
-        const copyRow = find(tab, "copyVersionRow");
+        const copyButton = find(tab, "copyVersionButton");
 
-        compare(copyRow.icon.source, MpvqcIcons.contentCopy);
-        mouseClick(copyRow);
-        compare(copyRow.icon.source, MpvqcIcons.check);
+        compare(copyButton.icon.source, MpvqcIcons.contentCopy);
+        mouseClick(copyButton);
+        compare(copyButton.icon.source, MpvqcIcons.check);
     }
 
     Component {
