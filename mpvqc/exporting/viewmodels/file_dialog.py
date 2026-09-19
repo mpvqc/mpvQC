@@ -18,20 +18,23 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcExportFileDialogViewModel(QObject):
     _exporter = inject.attr(ExportService)
 
+    def __init__(self) -> None:
+        super().__init__()
+        self._filename_proposal = map_path_to_url(self._exporter.generate_file_path_proposal("json"))
+        self._classic_filename_proposal = map_path_to_url(self._exporter.generate_file_path_proposal("txt"))
+        self._custom_filename_proposal = map_path_to_url(self._exporter.generate_file_path_proposal("txt"))
+
     @Property(QUrl, constant=True, final=True)
     def filenameProposal(self) -> QUrl:
-        path = self._exporter.generate_file_path_proposal("json")
-        return map_path_to_url(path)
+        return self._filename_proposal
 
     @Property(QUrl, constant=True, final=True)
     def classicFilenameProposal(self) -> QUrl:
-        path = self._exporter.generate_file_path_proposal("txt")
-        return map_path_to_url(path)
+        return self._classic_filename_proposal
 
     @Property(QUrl, constant=True, final=True)
     def customFilenameProposal(self) -> QUrl:
-        path = self._exporter.generate_file_path_proposal("txt")
-        return map_path_to_url(path)
+        return self._custom_filename_proposal
 
     @Slot(QUrl)
     def save(self, document: QUrl) -> None:
