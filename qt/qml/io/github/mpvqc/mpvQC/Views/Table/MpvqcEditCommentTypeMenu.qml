@@ -30,11 +30,11 @@ MpvqcPositionedMenu {
     Repeater {
         model: root.viewModel.commentTypes
 
-        delegate: MenuItem {
+        delegate: MpvqcPlainTextMenuItem {
             required property string modelData
             readonly property string commentType: modelData
 
-            text: qsTranslate("CommentTypes", commentType)
+            literalText: qsTranslate("CommentTypes", commentType)
             autoExclusive: true
             checkable: true
             checked: commentType === root.currentCommentType
@@ -49,12 +49,12 @@ MpvqcPositionedMenu {
         height: visible ? implicitHeight : 0
     }
 
-    MenuItem {
+    MpvqcPlainTextMenuItem {
         readonly property string commentType: root.currentCommentType
 
         visible: root.isCommentTypeUnknown
         height: visible ? implicitHeight : 0
-        text: qsTranslate("CommentTypes", commentType)
+        literalText: qsTranslate("CommentTypes", commentType)
         autoExclusive: true
         checkable: true
         checked: root.isCommentTypeUnknown

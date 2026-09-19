@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
@@ -37,10 +36,10 @@ MpvqcPositionedMenu {
     Repeater {
         model: root.viewModel.commentTypes
 
-        MenuItem {
+        MpvqcPlainTextMenuItem {
             required property string modelData
 
-            text: qsTranslate("CommentTypes", modelData)
+            literalText: qsTranslate("CommentTypes", modelData)
 
             onTriggered: {
                 root.deferToOnClose = () => root.commentTypeChosen(modelData);

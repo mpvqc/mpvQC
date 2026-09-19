@@ -187,7 +187,7 @@ TestCase {
         testCase.mouseClick(control, ptRow0.x, ptRow0.y);
 
         // Verify text is displayed again
-        tryCompare(control.commentList.itemAtIndex(1).commentLabel, "text", "Comment 2");
+        tryCompare(control.commentList.itemAtIndex(1).commentLabel, "text", '<span style="white-space: pre-wrap">Comment 2</span>');
     }
 
     function test_rightClick_data(): list<var> {

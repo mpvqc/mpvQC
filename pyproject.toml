@@ -355,6 +355,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcModalOverlayTracker.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcOverlayLoader.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcOverlayStub.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcPlainTextMenuItem.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcPositionedMenu.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcRadioIndicator.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Components/MpvqcSectionCard.qml",

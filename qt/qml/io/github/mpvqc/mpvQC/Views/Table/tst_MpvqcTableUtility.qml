@@ -224,6 +224,60 @@ TestCase {
                 comment: "see [note] here",
                 highlight: "[note]",
                 expected: "see <b><u>[note]</u></b> here"
+            },
+            {
+                tag: "empty-query-still-escapes-markup",
+                comment: '<img src="https://example.invalid/image.png"> &amp;',
+                highlight: "",
+                expected: '&lt;img src="https://example.invalid/image.png"&gt; &amp;amp;'
+            },
+            {
+                tag: "escapes-image-markup-without-a-match",
+                comment: '<img src="https://example.invalid/image.png"> &amp;',
+                highlight: "missing",
+                expected: '&lt;img src="https://example.invalid/image.png"&gt; &amp;amp;'
+            },
+            {
+                tag: "escapes-markup-around-a-match",
+                comment: '<img src="https://example.invalid/image.png"> needle &',
+                highlight: "needle",
+                expected: '&lt;img src="https://example.invalid/image.png"&gt; <b><u>needle</u></b> &amp;'
+            },
+            {
+                tag: "escapes-matched-ampersands-and-angle-brackets",
+                comment: "Before A&B <tag> after",
+                highlight: "a&b <tag>",
+                expected: "Before <b><u>A&amp;B &lt;tag&gt;</u></b> after"
+            },
+            {
+                tag: "matches-literal-entity-spelling",
+                comment: "&amp; &",
+                highlight: "&amp;",
+                expected: "<b><u>&amp;amp;</u></b> &amp;"
+            },
+            {
+                tag: "does-not-match-generated-entity-text",
+                comment: "& < >",
+                highlight: "amp",
+                expected: "&amp; &lt; &gt;"
+            },
+            {
+                tag: "matches-inside-literal-markup",
+                comment: "<b>B</b>",
+                highlight: "b",
+                expected: "&lt;<b><u>b</u></b>&gt;<b><u>B</u></b>&lt;/<b><u>b</u></b>&gt;"
+            },
+            {
+                tag: "preserves-whitespace-around-and-inside-matches",
+                comment: "  A\tB\n\n  A\tB  ",
+                highlight: "a\tb",
+                expected: "  <b><u>A\tB</u></b>\n\n  <b><u>A\tB</u></b>  "
+            },
+            {
+                tag: "matches-do-not-overlap",
+                comment: "aaa",
+                highlight: "aa",
+                expected: "<b><u>aa</u></b>a"
             }
         ];
     }
@@ -247,7 +301,7 @@ TestCase {
         compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
     }
 
-    function test_highlightComment_returnsCommentUnchangedForEmptyQuery(): void {
+    function test_highlightComment_doesNotHighlightForEmptyQuery(): void {
         const utility = makeUtility();
         compare(utility.highlightComment("Hello world", ""), "Hello world");
     }

@@ -77,8 +77,8 @@ Loader {
                         const commentContent = hasComment ? root.commentText : noTextFallback;
 
                         const time = `<font color="${MpvqcAppearance.palette.accent}">${MpvqcTableUtility.formatTime(root.commentTime)}</font>`;
-                        const type = `<font color="${MpvqcAppearance.palette.accent}">${qsTranslate("CommentTypes", root.commentType)}</font>`;
-                        const comment = `<font color="${commentColor}">${commentContent}</font>`;
+                        const type = `<font color="${MpvqcAppearance.palette.accent}">${MpvqcTableUtility.escapeHtml(qsTranslate("CommentTypes", root.commentType))}</font>`;
+                        const comment = `<font color="${commentColor}">${MpvqcTableUtility.escapeHtml(commentContent)}</font>`;
                         const separator = "&nbsp;&nbsp;•&nbsp;&nbsp;";
 
                         return `${time}${separator}${type}${separator}${comment}`;
