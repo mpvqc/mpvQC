@@ -9,11 +9,6 @@
         <translation>Copyright © Desarrolladores de mpvQC</translation>
     </message>
     <message>
-        <source>Website</source>
-        <extracomment>Label of the row linking to the project website</extracomment>
-        <translation>Sitio web</translation>
-    </message>
-    <message>
         <source>GNU General Public License, version 3 or later</source>
         <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
         <translation>Licencia Pública General GNU, versión 3 o posterior</translation>

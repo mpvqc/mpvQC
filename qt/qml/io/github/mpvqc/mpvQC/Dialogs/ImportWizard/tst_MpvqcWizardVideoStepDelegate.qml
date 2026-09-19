@@ -171,7 +171,9 @@ TestCase {
         const delegate = makeControl({
             selected: true
         });
-        compare(delegate.background.color, Qt.alpha(MpvqcAppearance.palette.accent, 0.16));
+        mouseMove(testCase, testCase.width - 1, testCase.height - 1);
+        tryCompare(delegate, "hovered", false);
+        tryCompare(delegate.background, "color", Qt.alpha(MpvqcAppearance.palette.accent, 0.16));
     }
 
     function test_theRowSizesItselfThroughItsImplicitHeight(): void {

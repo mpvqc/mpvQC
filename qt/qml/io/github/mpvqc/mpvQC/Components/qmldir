@@ -17,6 +17,7 @@ MpvqcOverlayLoader MpvqcOverlayLoader.qml
 MpvqcPlainTextMenuItem MpvqcPlainTextMenuItem.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml
 MpvqcRadioIndicator MpvqcRadioIndicator.qml
+MpvqcRoundedItemDelegate MpvqcRoundedItemDelegate.qml
 MpvqcSectionCard MpvqcSectionCard.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml

@@ -12,20 +12,13 @@ import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
-ScrollView {
+MpvqcAboutScrollView {
     id: root
 
     required property MpvqcAboutDialogViewModel viewModel
 
     readonly property url appUrl: "https://mpvqc.github.io"
     readonly property url licenseUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
-
-    readonly property bool isScrollBarShown: contentHeight > height
-
-    contentWidth: availableWidth
-
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: isScrollBarShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
     Flickable {
         boundsBehavior: Flickable.StopAtBounds
@@ -40,92 +33,118 @@ ScrollView {
         ColumnLayout {
             id: _column
 
-            x: root.mirrored && root.isScrollBarShown ? 20 : 0
-            width: root.availableWidth - (root.isScrollBarShown ? 20 : 0)
-            height: Math.max(implicitHeight, root.availableHeight)
-            spacing: 0
+            width: root.availableWidth
+            spacing: 16
 
-            Image {
-                source: "qrc:/data/icon.svg"
-                sourceSize.width: 96
-                sourceSize.height: 96
-                asynchronous: true
-
-                Layout.alignment: Qt.AlignHCenter
-            }
-
-            MpvqcHeader {
-                text: root.viewModel.applicationName
-                font.pointSize: 14
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 8
-            }
-
-            Label {
-                text: root.viewModel.applicationVersion
-                color: MpvqcAppearance.palette.hint
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 4
-            }
-
-            Label {
-                //: This text is part of the software license description
-                text: qsTranslate("AboutDialog", "Copyright © mpvQC Developers")
-                color: MpvqcAppearance.palette.hint
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 2
-            }
-
-            Item {
-                Layout.fillHeight: true
-                Layout.minimumHeight: 24
-            }
-
-            MpvqcAboutListItem {
-                objectName: "websiteRow"
-
-                //: Label of the row linking to the project website
-                text: qsTranslate("AboutDialog", "Website")
-                supportingText: root.appUrl
-                icon.source: MpvqcIcons.language
-                link: root.appUrl
+            MpvqcSectionCard {
+                id: _identityCard
 
                 Layout.fillWidth: true
 
-                onClicked: root.viewModel.openLink(link)
+                Image {
+                    source: "qrc:/data/icon.svg"
+                    sourceSize.width: 96
+                    sourceSize.height: 96
+                    asynchronous: true
+
+                    Layout.preferredWidth: 96
+                    Layout.preferredHeight: 96
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                MpvqcHeader {
+                    text: root.viewModel.applicationName
+                    font.pointSize: 14
+
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: 8
+                }
+
+                RowLayout {
+                    spacing: 4
+
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.fillWidth: false
+                    Layout.maximumWidth: _identityCard.width - 2 * _identityCard.padding
+
+                    Label {
+                        objectName: "applicationVersion"
+
+                        text: root.viewModel.applicationVersion
+                        color: MpvqcAppearance.palette.hint
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
+                        Layout.fillWidth: true
+                    }
+
+                    ToolButton {
+                        objectName: "copyVersionButton"
+
+                        text: qsTranslate("AboutDialog", "Copy version info to clipboard")
+                        display: AbstractButton.IconOnly
+                        icon.source: MpvqcIcons.contentCopy
+                        icon.width: 18
+                        icon.height: 18
+
+                        ToolTip.delay: MpvqcConstants.tooltipDelay
+                        ToolTip.text: text
+                        ToolTip.visible: hovered || visualFocus
+
+                        onClicked: {
+                            root.viewModel.copyVersionInfoToClipboard();
+                            icon.source = MpvqcIcons.check;
+                        }
+                    }
+                }
+
+                Label {
+                    text: qsTranslate("AboutDialog", "Powered by Python %1").arg(root.viewModel.pythonVersion)
+                    color: MpvqcAppearance.palette.hint
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+
+                    Layout.fillWidth: true
+                }
+
+                Label {
+                    //: This text is part of the software license description
+                    text: qsTranslate("AboutDialog", "Copyright © mpvQC Developers")
+                    color: MpvqcAppearance.palette.hint
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+
+                    Layout.fillWidth: true
+                }
             }
 
-            MpvqcAboutListItem {
-                objectName: "licenseRow"
-
-                //: This text is part of the software license description. This is the name of the license being used.
-                text: qsTranslate("AboutDialog", "GNU General Public License, version 3 or later")
-                //: This text is part of the software license description
-                supportingText: qsTranslate("AboutDialog", "This program comes with absolutely no warranty.")
-                icon.source: MpvqcIcons.description
-                link: root.licenseUrl
-
+            MpvqcSectionCard {
                 Layout.fillWidth: true
 
-                onClicked: root.viewModel.openLink(link)
-            }
+                MpvqcAboutListItem {
+                    objectName: "websiteRow"
 
-            MpvqcAboutListItem {
-                objectName: "copyVersionRow"
+                    text: root.appUrl
+                    icon.source: MpvqcIcons.language
+                    link: root.appUrl
 
-                text: qsTranslate("AboutDialog", "Copy version info to clipboard")
-                supportingText: qsTranslate("AboutDialog", "Powered by Python %1").arg(root.viewModel.pythonVersion)
-                icon.source: MpvqcIcons.contentCopy
-                enabled: true
+                    Layout.fillWidth: true
 
-                Layout.fillWidth: true
+                    onClicked: root.viewModel.openLink(link)
+                }
 
-                onClicked: {
-                    root.viewModel.copyVersionInfoToClipboard();
-                    icon.source = MpvqcIcons.check;
+                MpvqcAboutListItem {
+                    objectName: "licenseRow"
+
+                    //: This text is part of the software license description. This is the name of the license being used.
+                    text: qsTranslate("AboutDialog", "GNU General Public License, version 3 or later")
+                    //: This text is part of the software license description
+                    supportingText: qsTranslate("AboutDialog", "This program comes with absolutely no warranty.")
+                    icon.source: MpvqcIcons.description
+                    link: root.licenseUrl
+
+                    Layout.fillWidth: true
+
+                    onClicked: root.viewModel.openLink(link)
                 }
             }
         }

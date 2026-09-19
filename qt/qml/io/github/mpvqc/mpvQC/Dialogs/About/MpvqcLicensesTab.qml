@@ -5,13 +5,13 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
-ScrollView {
+MpvqcAboutScrollView {
     id: root
 
     required property MpvqcAboutDialogViewModel viewModel
@@ -19,21 +19,6 @@ ScrollView {
     readonly property MpvqcLicensesContent licensesContent: MpvqcLicensesContent {
         mpvVersion: root.viewModel.mpvVersion
         ffmpegVersion: root.viewModel.ffmpegVersion
-    }
-
-    readonly property bool isScrollBarShown: contentHeight > height
-
-    component MpvqcSectionTitle: Label {
-        color: MpvqcAppearance.palette.accent
-        font.pointSize: root.font.pointSize - 1
-        font.weight: Font.DemiBold
-        horizontalAlignment: Text.AlignLeft
-        leftPadding: 16
-        rightPadding: 16
-        topPadding: 16
-        bottomPadding: 8
-
-        Layout.fillWidth: true
     }
 
     component MpvqcLicensesListItem: MpvqcAboutListItem {
@@ -54,11 +39,6 @@ ScrollView {
         return mirrored ? [...parts].reverse().join(" · ") : parts.join(" · ");
     }
 
-    contentWidth: availableWidth
-
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical.policy: isScrollBarShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
     Flickable {
         boundsBehavior: Flickable.StopAtBounds
         contentHeight: _column.implicitHeight
@@ -72,52 +52,57 @@ ScrollView {
         ColumnLayout {
             id: _column
 
-            x: root.mirrored && root.isScrollBarShown ? 20 : 0
-            width: root.availableWidth - (root.isScrollBarShown ? 20 : 0)
-            spacing: 0
+            width: root.availableWidth
+            spacing: 16
 
-            MpvqcSectionTitle {
-                text: root.licensesContent.playbackTitle
-            }
+            MpvqcSectionCard {
+                title: root.licensesContent.playbackTitle
 
-            Repeater {
-                model: root.licensesContent.playbackEntries
+                Layout.fillWidth: true
 
-                MpvqcLicensesListItem {}
-            }
+                Repeater {
+                    model: root.licensesContent.playbackEntries
 
-            MpvqcSectionTitle {
-                text: root.licensesContent.librariesTitle
-            }
-
-            Repeater {
-                model: MpvqcDependencyModel {}
-
-                MpvqcAboutListItem {
-                    required property string licence
-                    required property string name
-                    required property string url
-                    required property string version
-
-                    text: name
-                    supportingText: root.joinDetails([version, licence])
-                    icon.source: MpvqcIcons.deployedCode
-                    link: url
-
-                    Layout.fillWidth: true
-
-                    onClicked: root.viewModel.openLink(link)
+                    MpvqcLicensesListItem {}
                 }
             }
 
-            MpvqcSectionTitle {
-                text: root.licensesContent.fontsAndIconsTitle
+            MpvqcSectionCard {
+                title: root.licensesContent.librariesTitle
+
+                Layout.fillWidth: true
+
+                Repeater {
+                    model: MpvqcDependencyModel {}
+
+                    MpvqcAboutListItem {
+                        required property string licence
+                        required property string name
+                        required property string url
+                        required property string version
+
+                        text: name
+                        supportingText: root.joinDetails([version, licence])
+                        icon.source: MpvqcIcons.deployedCode
+                        link: url
+
+                        Layout.fillWidth: true
+
+                        onClicked: root.viewModel.openLink(link)
+                    }
+                }
             }
 
-            Repeater {
-                model: root.licensesContent.fontsAndIconsEntries
+            MpvqcSectionCard {
+                title: root.licensesContent.fontsAndIconsTitle
 
-                MpvqcLicensesListItem {}
+                Layout.fillWidth: true
+
+                Repeater {
+                    model: root.licensesContent.fontsAndIconsEntries
+
+                    MpvqcLicensesListItem {}
+                }
             }
         }
     }

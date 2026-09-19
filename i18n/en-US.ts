@@ -23,11 +23,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Website</source>
-        <extracomment>Label of the row linking to the project website</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Powered by Python %1</source>
         <translation type="unfinished"></translation>
     </message>
