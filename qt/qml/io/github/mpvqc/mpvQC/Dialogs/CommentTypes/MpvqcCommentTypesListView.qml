@@ -163,6 +163,7 @@ ListView {
             anchors.fill: parent
 
             text: qsTranslate("CommentTypes", _delegate.modelData.display)
+            textFormat: Text.PlainText
             elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter

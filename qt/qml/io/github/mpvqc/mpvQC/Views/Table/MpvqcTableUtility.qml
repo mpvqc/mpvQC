@@ -45,13 +45,25 @@ QtObject {
 
     function highlightComment(comment: string, highlightedText: string): string {
         if (!highlightedText) {
-            return comment;
+            return escapeHtml(comment);
         }
         if (highlightedText !== _highlightCache.query || _highlightCache.regExp === null) {
             _highlightCache.query = highlightedText;
             _highlightCache.regExp = new RegExp(_escapeRegExp(highlightedText), "gi");
         }
-        return comment.replace(_highlightCache.regExp, "<b><u>$&</u></b>");
+        let result = "";
+        let end = 0;
+        comment.replace(_highlightCache.regExp, (match, offset) => {
+            result += escapeHtml(comment.slice(end, offset));
+            result += `<b><u>${escapeHtml(match)}</u></b>`;
+            end = offset + match.length;
+            return match;
+        });
+        return result + escapeHtml(comment.slice(end));
+    }
+
+    function escapeHtml(text: string): string {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     /**

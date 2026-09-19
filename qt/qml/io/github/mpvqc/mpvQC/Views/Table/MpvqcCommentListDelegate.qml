@@ -141,6 +141,7 @@ Item {
             objectName: "commentTypeLabel"
 
             text: qsTranslate("CommentTypes", root.commentType)
+            textFormat: Text.PlainText
             horizontalAlignment: Text.AlignLeft
             elide: Text.ElideRight
 
@@ -161,8 +162,8 @@ Item {
             // Set by MpvqcEditCommentPopup via Binding while the inline editor is open; -1 otherwise.
             property int editorHeight: -1
 
-            text: root.searchQuery ? MpvqcTableUtility.highlightComment(root.comment, root.searchQuery) : root.comment
-            textFormat: root.searchQuery ? Text.StyledText : Text.PlainText
+            text: `<span style="white-space: pre-wrap">${MpvqcTableUtility.highlightComment(root.comment, root.searchQuery)}</span>`
+            textFormat: Text.RichText
 
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.WordWrap
