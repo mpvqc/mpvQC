@@ -18,66 +18,166 @@ MpvqcDialog {
 
     readonly property MpvqcExportBackupDialogViewModel viewModel: MpvqcExportBackupDialogViewModel {}
 
-    readonly property int minBackupInterval: 15
-    readonly property int maxBackupInterval: 5 * 60
-
     contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("BackupDialog", "Backup Settings")
     standardButtons: Dialog.Ok | Dialog.Cancel
 
-    contentItem: ColumnLayout {
+    contentItem: ScrollView {
+        id: _scroll
 
-        MpvqcSwitchRow {
-            objectName: "backupEnabledRow"
+        clip: true
+        contentWidth: availableWidth
+        contentHeight: _sections.implicitHeight
 
-            label: qsTranslate("BackupDialog", "Backup Enabled")
-            checked: root.viewModel.temporaryBackupEnabled
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            Layout.topMargin: 20
-            Layout.fillWidth: true
+        ColumnLayout {
+            id: _sections
 
-            onToggled: state => {
-                root.viewModel.temporaryBackupEnabled = state;
+            width: _scroll.availableWidth
+            spacing: 0
+
+            MpvqcSectionCard {
+                objectName: "backupEnabledCard"
+
+                title: qsTranslate("BackupDialog", "Backup Enabled")
+                titleActions: Item {
+                    // Keep the full hit area without letting the control set the title row's height.
+                    implicitWidth: _enabledSwitch.implicitWidth
+
+                    Switch {
+                        id: _enabledSwitch
+                        objectName: "backupEnabledSwitch"
+
+                        anchors.centerIn: parent
+                        checked: root.viewModel.temporaryBackupEnabled
+
+                        Accessible.name: qsTranslate("BackupDialog", "Backup Enabled")
+
+                        onToggled: root.viewModel.temporaryBackupEnabled = checked
+                    }
+                }
+
+                Layout.fillWidth: true
+                Layout.topMargin: MpvqcConstants.dialogContentTopMargin
+                Layout.bottomMargin: MpvqcConstants.dialogSectionSpacing
             }
-        }
 
-        MpvqcSpinBoxRow {
-            objectName: "backupIntervalRow"
+            Item {
+                id: _intervalFold
 
-            label: qsTranslate("BackupDialog", "Backup Interval")
-            suffix: qsTranslate("BackupDialog", "Seconds")
-            prefWidth: parent.width
+                implicitHeight: root.viewModel.temporaryBackupEnabled ? _intervalCard.implicitHeight + MpvqcConstants.dialogSectionSpacing : 0
+                clip: true
+                enabled: root.viewModel.temporaryBackupEnabled
+                opacity: root.viewModel.temporaryBackupEnabled ? 1 : 0
 
-            value: root.viewModel.temporaryBackupInterval
-            valueFrom: root.minBackupInterval
-            valueTo: root.maxBackupInterval
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
 
-            onValueModified: value => {
-                root.viewModel.temporaryBackupInterval = value;
+                MpvqcSectionCard {
+                    id: _intervalCard
+                    objectName: "backupIntervalCard"
+
+                    width: parent.width
+                    height: implicitHeight
+                    visible: _intervalFold.height > 0
+                    title: qsTranslate("BackupDialog", "Backup Interval")
+                    spacing: 0
+
+                    GridLayout {
+                        columns: 3
+                        columnSpacing: 4
+                        rowSpacing: 0
+                        uniformCellWidths: true
+
+                        Layout.fillWidth: true
+
+                        Repeater {
+                            model: [30, 60, 90, 120, 180, 300]
+
+                            delegate: MpvqcPillButton {
+                                id: _preset
+                                objectName: `backupIntervalPreset_${modelData}`
+
+                                required property int modelData
+
+                                text: Number(modelData < 120 ? modelData : modelData / 60).toLocaleString(Qt.locale(), 'f', 0) + " " + (modelData < 120 ? qsTranslate("BackupDialog", "Seconds") : qsTranslate("BackupDialog", "Minutes"))
+                                checked: root.viewModel.temporaryBackupInterval === modelData
+
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Layout.minimumWidth: 0
+                                Layout.preferredWidth: 1
+
+                                onClicked: root.viewModel.temporaryBackupInterval = modelData
+                            }
+                        }
+                    }
+                }
+
+                Behavior on implicitHeight {
+                    enabled: root.opened
+
+                    NumberAnimation {
+                        duration: 220
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                Behavior on opacity {
+                    enabled: root.opened
+
+                    NumberAnimation {
+                        duration: 220
+                    }
+                }
             }
-        }
 
-        Button {
-            objectName: "backupOpenLocationButton"
+            MpvqcSectionCard {
+                objectName: "backupLocationCard"
 
-            text: qsTranslate("BackupDialog", "Backup Location")
-            icon.source: MpvqcIcons.folderOpen
-            hoverEnabled: true
+                title: qsTranslate("BackupDialog", "Backup Location")
+                spacing: 0
 
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 40
+                Layout.fillWidth: true
 
-            ToolTip.delay: 350
-            ToolTip.text: root.viewModel.backupDirectory
-            ToolTip.visible: hovered
+                RowLayout {
+                    spacing: 12
 
-            onPressed: root.viewModel.openBackupDirectory()
-        }
+                    Layout.fillWidth: true
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+                    Label {
+                        objectName: "backupDirectoryLabel"
+
+                        textFormat: Text.PlainText
+                        color: MpvqcAppearance.palette.hint
+                        wrapMode: Text.Wrap
+
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 0
+                        Layout.preferredWidth: 1
+
+                        Component.onCompleted: text = root.viewModel.backupDirectory
+                    }
+
+                    ToolButton {
+                        objectName: "backupOpenLocationButton"
+
+                        text: qsTranslate("BackupDialog", "Backup Location")
+                        display: AbstractButton.IconOnly
+                        icon.source: MpvqcIcons.folderOpen
+
+                        Layout.alignment: Qt.AlignVCenter
+
+                        ToolTip.delay: MpvqcConstants.tooltipDelay
+                        ToolTip.text: root.viewModel.backupDirectory
+                        ToolTip.visible: hovered
+
+                        onClicked: root.viewModel.openBackupDirectory()
+                    }
+                }
+            }
         }
     }
 

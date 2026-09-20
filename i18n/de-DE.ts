@@ -109,6 +109,10 @@
         <translation>Sekunden</translation>
     </message>
     <message>
+        <source>Minutes</source>
+        <translation>Minuten</translation>
+    </message>
+    <message>
         <source>Backup Location</source>
         <translation>Speicherort für Sicherung</translation>
     </message>

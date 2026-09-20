@@ -110,6 +110,10 @@
         <translation>שניות</translation>
     </message>
     <message>
+        <source>Minutes</source>
+        <translation>דקות</translation>
+    </message>
+    <message>
         <source>Backup Location</source>
         <translation>מיקום גיבויים</translation>
     </message>
