@@ -50,42 +50,63 @@ Loader {
             objectName: "deleteConfirmationMessageBox"
 
             title: qsTranslate("MessageBoxes", "Delete Comment")
+            height: Math.min(implicitHeight, (MpvqcWindowUtility.contentFrame ?? root.Window.window.contentItem).height - 2 * MpvqcConstants.dialogEdgeMargin)
+            contentWidth: MpvqcConstants.smallDialogContentWidth
             standardButtons: Dialog.Yes | Dialog.Cancel
 
-            contentItem: ColumnLayout {
-                id: _unusedButNecessaryBecauseOfRtlLayoutInQt
+            contentItem: ScrollView {
+                id: _scroll
 
-                spacing: 10
+                contentWidth: availableWidth
+                contentHeight: _sections.implicitHeight
 
-                Label {
-                    text: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
-                    horizontalAlignment: Text.AlignLeft
-                    wrapMode: Label.WordWrap
-                    Layout.fillWidth: true
-                }
+                ColumnLayout {
+                    id: _sections
 
-                Label {
-                    textFormat: Text.StyledText
-                    horizontalAlignment: Text.AlignLeft
-                    wrapMode: Label.WordWrap
+                    width: _scroll.availableWidth
 
-                    text: {
-                        const hasComment = root.commentText.trim().length > 0;
-                        const commentColor = hasComment ? MpvqcAppearance.palette.foreground : MpvqcAppearance.palette.hint;
-                        //: This is displayed as a fallback in the delete confirmation box when the actual comment is empty.
-                        const noTextFallback = qsTranslate("MessageBoxes", "No text available");
-                        const commentContent = hasComment ? root.commentText : noTextFallback;
+                    MpvqcSectionCard {
+                        Layout.fillWidth: true
+                        Layout.topMargin: MpvqcConstants.dialogContentTopMargin
 
-                        const time = `<font color="${MpvqcAppearance.palette.accent}">${MpvqcTableUtility.formatTime(root.commentTime)}</font>`;
-                        const type = `<font color="${MpvqcAppearance.palette.accent}">${MpvqcTableUtility.escapeHtml(qsTranslate("CommentTypes", root.commentType))}</font>`;
-                        const comment = `<font color="${commentColor}">${MpvqcTableUtility.escapeHtml(commentContent)}</font>`;
-                        const separator = "&nbsp;&nbsp;•&nbsp;&nbsp;";
+                        Label {
+                            objectName: "deleteQuestion"
 
-                        return `${time}${separator}${type}${separator}${comment}`;
+                            text: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
+                            horizontalAlignment: Text.AlignLeft
+                            wrapMode: Text.Wrap
+
+                            Layout.fillWidth: true
+                            Layout.bottomMargin: 12
+                        }
+
+                        Label {
+                            objectName: "deleteMetadata"
+
+                            text: `${MpvqcTableUtility.formatTime(root.commentTime)}  •  ${qsTranslate("CommentTypes", root.commentType)}`
+                            textFormat: Text.PlainText
+                            color: MpvqcAppearance.palette.hint
+                            horizontalAlignment: Text.AlignLeft
+                            wrapMode: Text.Wrap
+
+                            Layout.fillWidth: true
+                        }
+
+                        Label {
+                            objectName: "deletePreview"
+
+                            readonly property bool hasComment: root.commentText.trim().length > 0
+
+                            //: This is displayed as a fallback in the delete confirmation box when the actual comment is empty.
+                            text: hasComment ? root.commentText : qsTranslate("MessageBoxes", "No text available")
+                            textFormat: Text.PlainText
+                            color: hasComment ? MpvqcAppearance.palette.foreground : MpvqcAppearance.palette.hint
+                            horizontalAlignment: Text.AlignLeft
+                            wrapMode: Text.Wrap
+
+                            Layout.fillWidth: true
+                        }
                     }
-
-                    Layout.fillWidth: true
-                    Layout.topMargin: 20
                 }
             }
 
