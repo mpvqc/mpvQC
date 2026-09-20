@@ -51,7 +51,7 @@ MpvqcDialog {
                 title: qsTranslate("AppearanceDialog", "Color scheme")
 
                 Layout.fillWidth: true
-                Layout.topMargin: root._sectionSpacing
+                Layout.topMargin: MpvqcConstants.dialogContentTopMargin
 
                 Item {
                     objectName: "colorSchemePreferencePicker"
