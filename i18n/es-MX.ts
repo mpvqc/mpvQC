@@ -109,6 +109,10 @@
         <translation>Segundos</translation>
     </message>
     <message>
+        <source>Minutes</source>
+        <translation>Minutos</translation>
+    </message>
+    <message>
         <source>Backup Location</source>
         <translation>Ubicación de la copia de seguridad</translation>
     </message>

@@ -109,6 +109,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Minutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Backup Location</source>
         <translation type="unfinished"></translation>
     </message>

@@ -73,6 +73,11 @@ TestCase {
                 dialog: "appearanceDialog"
             },
             {
+                tag: "backup",
+                menuItem: "openBackupSettingsDialogMenuItem",
+                dialog: "backupDialog"
+            },
+            {
                 tag: "export",
                 menuItem: "openExportSettingsDialogMenuItem",
                 dialog: "exportSettingsDialog"
@@ -270,34 +275,52 @@ TestCase {
         tryVerify(() => splitView.orientation === data.expected);
     }
 
-    function test_backupDialog_drivesAllSettingsAndOpensFolder(): void {
-        const control = it.makeControl();
-
-        const initialEnabled = it.settings.backupEnabled();
-        const initialInterval = it.settings.backupInterval();
-        const newEnabled = !initialEnabled;
-        const newInterval = initialInterval + 30;
-
+    function openBackupSettings(control: Item): QtObject {
         it.menu.trigger(control, "optionsMenu", "openBackupSettingsDialogMenuItem");
         const dialog = it.find.openedDialog(control, "backupDialog");
+        verify(waitForPolish(dialog.contentItem.Window.window));
+        return dialog;
+    }
 
-        const switchRow = findChild(dialog, "backupEnabledRow");
-        verify(switchRow, "backupEnabledRow not found");
-        switchRow.checked = newEnabled;
+    function backupControl(dialog: QtObject, name: string): Item {
+        const item = it.find.visualChild(dialog, name);
+        verify(item, `${name} not found`);
+        return item;
+    }
 
-        const intervalRow = findChild(dialog, "backupIntervalRow");
-        verify(intervalRow, "backupIntervalRow not found");
-        intervalRow.value = newInterval;
+    function test_backupDialog_drivesAllSettingsAndOpensFolder(): void {
+        const control = it.makeControl();
+        const initialEnabled = it.settings.backupEnabled();
+        const initialInterval = it.settings.backupInterval();
+        let dialog = openBackupSettings(control);
+        const toggle = backupControl(dialog, "backupEnabledSwitch");
+        if (!toggle.checked) {
+            mouseClick(toggle);
+        }
+        const preset = backupControl(dialog, "backupIntervalPreset_180");
+        mouseClick(preset);
+        tryCompare(preset, "checked", true);
+        mouseClick(toggle);
+        tryCompare(preset, "enabled", false);
+        compare(it.settings.backupEnabled(), initialEnabled);
+        compare(it.settings.backupInterval(), initialInterval);
 
-        const locationButton = findChild(dialog, "backupOpenLocationButton");
-        verify(locationButton, "backupOpenLocationButton not found");
-        mouseClick(locationButton);
+        const locationButton = backupControl(dialog, "backupOpenLocationButton");
+        locationButton.forceActiveFocus(Qt.TabFocusReason);
+        keyClick(Qt.Key_Space);
         tryVerify(() => it.bridge.openedDesktopUrls().includes(it.bridge.backupFolderUrl().toString()));
+        mouseClick(dialog.standardButton(Dialog.Ok));
+        it.expect.dialogClosed(control, "backupDialog");
+        compare(it.settings.backupEnabled(), false);
+        compare(it.settings.backupInterval(), 180);
 
-        it.dialog.accept(dialog);
-
-        tryVerify(() => it.settings.backupEnabled() === newEnabled);
-        tryVerify(() => it.settings.backupInterval() === newInterval);
+        dialog = openBackupSettings(control);
+        const restored = backupControl(dialog, "backupIntervalPreset_180");
+        compare(restored.checked, true);
+        compare(restored.enabled, false);
+        mouseClick(backupControl(dialog, "backupEnabledSwitch"));
+        tryCompare(restored, "enabled", true);
+        compare(restored.checked, true);
     }
 
     function test_backupDialog_reject_discardsSettings(): void {
@@ -306,21 +329,35 @@ TestCase {
         const initialEnabled = it.settings.backupEnabled();
         const initialInterval = it.settings.backupInterval();
 
-        it.menu.trigger(control, "optionsMenu", "openBackupSettingsDialogMenuItem");
-        const dialog = it.find.openedDialog(control, "backupDialog");
+        for (const action of [Dialog.Cancel, Dialog.NoButton]) {
+            const dialog = openBackupSettings(control);
+            const toggle = backupControl(dialog, "backupEnabledSwitch");
+            compare(toggle.checked, initialEnabled);
+            if (!toggle.checked) {
+                mouseClick(toggle);
+            }
+            mouseClick(backupControl(dialog, "backupIntervalPreset_300"));
+            mouseClick(toggle);
+            if (action === Dialog.Cancel) {
+                mouseClick(dialog.standardButton(Dialog.Cancel));
+            } else {
+                keyClick(Qt.Key_Escape);
+            }
+            it.expect.dialogClosed(control, "backupDialog");
+            compare(it.settings.backupEnabled(), initialEnabled);
+            compare(it.settings.backupInterval(), initialInterval);
+        }
+    }
 
-        const switchRow = findChild(dialog, "backupEnabledRow");
-        verify(switchRow, "backupEnabledRow not found");
-        switchRow.checked = !initialEnabled;
-
-        const intervalRow = findChild(dialog, "backupIntervalRow");
-        verify(intervalRow, "backupIntervalRow not found");
-        intervalRow.value = initialInterval + 30;
-
-        it.dialog.reject(dialog);
-
-        verify(it.settings.backupEnabled() === initialEnabled, "backup enabled should be unchanged after reject");
-        verify(it.settings.backupInterval() === initialInterval, "backup interval should be unchanged after reject");
+    function test_backupDialog_unmatchedIntervalSurvivesUnrelatedChanges(): void {
+        const control = it.makeControl();
+        const initialInterval = it.settings.backupInterval();
+        verify(![30, 60, 90, 120, 180, 300].includes(initialInterval));
+        const dialog = openBackupSettings(control);
+        mouseClick(backupControl(dialog, "backupEnabledSwitch"));
+        mouseClick(dialog.standardButton(Dialog.Ok));
+        it.expect.dialogClosed(control, "backupDialog");
+        compare(it.settings.backupInterval(), initialInterval);
     }
 
     function savedExportValues() {
