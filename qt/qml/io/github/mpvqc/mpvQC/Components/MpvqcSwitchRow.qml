@@ -14,18 +14,31 @@ RowLayout {
     property alias label: _labelWithToolTip.text
     property alias labelToolTip: _labelWithToolTip.toolTip
 
+    property bool edgeAligned: false
+
     signal toggled(checked: bool)
+
+    Layout.minimumHeight: root.edgeAligned ? 48 : 0
 
     MpvqcLabelWithToolTip {
         id: _labelWithToolTip
 
-        Layout.fillWidth: true
-        Layout.preferredWidth: 0
+        horizontalAlignment: root.edgeAligned ? Text.AlignLeft : Text.AlignRight
+
+        Layout.fillWidth: !root.edgeAligned
+        Layout.preferredWidth: root.edgeAligned ? implicitWidth : 0
+        Layout.maximumWidth: root.edgeAligned ? Math.max(0, root.width - _switch.implicitWidth - 2 * root.spacing) : Number.POSITIVE_INFINITY
     }
 
     Item {
+        visible: root.edgeAligned
+
         Layout.fillWidth: true
-        Layout.preferredWidth: 0
+    }
+
+    Item {
+        Layout.fillWidth: !root.edgeAligned
+        Layout.preferredWidth: root.edgeAligned ? _switch.implicitWidth : 0
         Layout.preferredHeight: _switch.height
 
         Switch {

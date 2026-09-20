@@ -14,6 +14,10 @@ MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
 MpvqcModalOverlayTracker MpvqcModalOverlayTracker.qml
 MpvqcOverlayLoader MpvqcOverlayLoader.qml
+MpvqcPillButton MpvqcPillButton.qml
+MpvqcPillButtonBackground MpvqcPillButtonBackground.qml
+MpvqcPillButtonLabel MpvqcPillButtonLabel.qml
+MpvqcPillTabButton MpvqcPillTabButton.qml
 MpvqcPlainTextMenuItem MpvqcPlainTextMenuItem.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml
 MpvqcRadioIndicator MpvqcRadioIndicator.qml

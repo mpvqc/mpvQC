@@ -17,7 +17,11 @@ QtObject {
     readonly property int smallDialogContentWidth: 370
     readonly property int mediumDialogContentWidth: 500
     readonly property int smallDialogContentHeight: 450
-    readonly property int mediumDialogContentHeight: 540
+    readonly property int mediumDialogContentHeight: 580
+    readonly property int dialogEdgeMargin: 12
+    readonly property int dialogContentTopMargin: 12
+    readonly property int dialogSectionSpacing: 16
+    readonly property int sectionCardTitleSpacing: 12
 
     readonly property int listRowHeight: 44
     readonly property int listRowVerticalPadding: 10

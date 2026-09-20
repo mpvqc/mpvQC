@@ -15,9 +15,11 @@ Item {
 
     property alias title: _title.text
     property alias titleActions: _titleActions.data
-    default property alias content: _content.data
+    property alias spacing: _body.spacing
+    default property alias content: _body.data
 
     property int padding: 20
+    property int titleBottomMargin: MpvqcConstants.sectionCardTitleSpacing
 
     implicitHeight: _content.implicitHeight + 2 * root.padding
 
@@ -36,12 +38,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: root.padding
+        spacing: 0
 
         RowLayout {
             visible: _title.text !== ""
 
             Layout.fillWidth: true
-            Layout.bottomMargin: 6
+            Layout.bottomMargin: _body.hasVisibleContent ? root.titleBottomMargin : 0
 
             Label {
                 id: _title
@@ -49,6 +52,7 @@ Item {
 
                 font.weight: Font.DemiBold
                 horizontalAlignment: Text.AlignLeft
+                wrapMode: Text.Wrap
 
                 Layout.fillWidth: true
             }
@@ -58,6 +62,16 @@ Item {
 
                 visible: _titleActions.children.length > 0
             }
+        }
+
+        ColumnLayout {
+            id: _body
+
+            readonly property bool hasVisibleContent: children.some(child => child.visible)
+
+            Layout.fillWidth: true
+            Layout.minimumHeight: 0
+            Layout.maximumHeight: hasVisibleContent ? Number.POSITIVE_INFINITY : 0
         }
     }
 }
