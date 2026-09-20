@@ -76,6 +76,11 @@ TestCase {
                 tag: "export",
                 menuItem: "openExportSettingsDialogMenuItem",
                 dialog: "exportSettingsDialog"
+            },
+            {
+                tag: "import",
+                menuItem: "openImportSettingsDialogMenuItem",
+                dialog: "importSettingsDialog"
             }
         ];
     }
@@ -534,40 +539,42 @@ TestCase {
         compare(it.settings.nickname(), "ScrollTester");
     }
 
+    function openImportSettings(control: Item): QtObject {
+        it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "importSettingsDialog");
+        verify(waitForPolish(dialog.contentItem.Window.window), "import dialog layout should settle");
+        return dialog;
+    }
+
     function test_importSettingsDialog_changeOption_persistsOnAccept(): void {
         const control = it.makeControl();
         const initial = it.settings.loadFoundVideo();
+        const dialog = openImportSettings(control);
+        const edited = initial === 0 ? 2 : 0;
+        const choice = it.find.visualChild(dialog, `loadFoundVideoChoice_${edited}`);
+        verify(choice, "import choice not found");
+        mouseClick(choice);
+        verify(choice.checked);
+        compare(it.settings.loadFoundVideo(), initial, "selection must remain staged until OK");
 
-        it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
-        const dialog = it.find.openedDialog(control, "importSettingsDialog");
-
-        const comboBox = findChild(dialog, "loadFoundVideoComboBox");
-        verify(comboBox, "loadFoundVideoComboBox not found");
-        const newIndex = comboBox.currentIndex === 0 ? comboBox.count - 1 : 0;
-        verify(newIndex !== comboBox.currentIndex, "expected to pick a different option");
-        comboBox.activated(newIndex);
-
-        it.dialog.accept(dialog);
-        tryVerify(() => it.settings.loadFoundVideo() === newIndex);
-        verify(it.settings.loadFoundVideo() !== initial, "setting should differ from initial value");
+        mouseClick(dialog.standardButton(Dialog.Ok));
+        it.expect.dialogClosed(control, "importSettingsDialog");
+        compare(it.settings.loadFoundVideo(), edited);
     }
 
     function test_importSettingsDialog_reject_discardsSettings(): void {
         const control = it.makeControl();
         const initial = it.settings.loadFoundVideo();
+        const dialog = openImportSettings(control);
+        const edited = initial === 0 ? 2 : 0;
+        const choice = it.find.visualChild(dialog, `loadFoundVideoChoice_${edited}`);
+        verify(choice, "import choice not found");
+        mouseClick(choice);
+        verify(choice.checked);
 
-        it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
-        const dialog = it.find.openedDialog(control, "importSettingsDialog");
-
-        const comboBox = findChild(dialog, "loadFoundVideoComboBox");
-        verify(comboBox, "loadFoundVideoComboBox not found");
-        const newIndex = comboBox.currentIndex === 0 ? comboBox.count - 1 : 0;
-        verify(newIndex !== comboBox.currentIndex, "expected to pick a different option");
-        comboBox.activated(newIndex);
-
-        it.dialog.reject(dialog);
-
-        verify(it.settings.loadFoundVideo() === initial, "load found video should be unchanged after reject");
+        mouseClick(dialog.standardButton(Dialog.Cancel));
+        it.expect.dialogClosed(control, "importSettingsDialog");
+        compare(it.settings.loadFoundVideo(), initial);
     }
 
     function test_editMpvDialog_resetEditAcceptAndLinkActivation(): void {

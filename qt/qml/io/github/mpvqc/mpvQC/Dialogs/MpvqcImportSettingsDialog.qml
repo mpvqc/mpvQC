@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -16,50 +18,54 @@ MpvqcDialog {
 
     readonly property MpvqcImportSettingsDialogViewModel viewModel: MpvqcImportSettingsDialogViewModel {}
 
-    contentHeight: MpvqcConstants.smallDialogContentHeight
+    component ChoiceButton: MpvqcPillButton {
+        id: choice
+        objectName: `loadFoundVideoChoice_${value}`
 
+        required property int value
+        checked: root.viewModel.loadFoundVideo === choice.value
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumWidth: 0
+        Layout.preferredWidth: 1
+
+        onClicked: root.viewModel.loadFoundVideo = choice.value
+    }
+
+    width: Math.min(contentWidth + leftPadding + rightPadding, Math.max(0, (Overlay.overlay?.width ?? 0) - 2 * margins))
+    contentWidth: MpvqcConstants.smallDialogContentWidth
+    contentHeight: MpvqcConstants.smallDialogContentHeight
+    margins: MpvqcConstants.dialogEdgeMargin
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
     standardButtons: Dialog.Ok | Dialog.Cancel
 
-    contentItem: ColumnLayout {
-        spacing: 10
+    contentItem: Item {
+        MpvqcSectionCard {
+            y: MpvqcConstants.dialogContentTopMargin
+            width: parent.width
+            title: qsTranslate("ImportSettingsDialog", "Open video if found")
 
-        RowLayout {
-            spacing: 30
+            RowLayout {
+                spacing: 4
 
-            Layout.topMargin: 20
+                Layout.fillWidth: true
 
-            Label {
-                text: qsTranslate("ImportSettingsDialog", "Open video if found")
-                horizontalAlignment: Text.AlignRight
-                wrapMode: Text.Wrap
-
-                Layout.preferredWidth: 165
-            }
-
-            ComboBox {
-                objectName: "loadFoundVideoComboBox"
-
-                textRole: "text"
-                valueRole: "value"
-
-                model: root.viewModel.options
-
-                Layout.preferredWidth: 165
-
-                onActivated: value => {
-                    root.viewModel.loadFoundVideo = value;
+                ChoiceButton {
+                    value: root.viewModel.options[0].value
+                    text: root.viewModel.options[0].text
                 }
 
-                Component.onCompleted: {
-                    currentIndex = indexOfValue(root.viewModel.loadFoundVideo);
+                ChoiceButton {
+                    value: root.viewModel.options[1].value
+                    text: root.viewModel.options[1].text
+                }
+
+                ChoiceButton {
+                    value: root.viewModel.options[2].value
+                    text: root.viewModel.options[2].text
                 }
             }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
         }
     }
 
