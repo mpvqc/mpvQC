@@ -5,7 +5,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import QtTest
+
+import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
     id: testCase
@@ -292,6 +295,52 @@ TestCase {
         keyPress(Qt.Key_Delete);
         _wait.messageBoxOpened(control);
         _expect.hasMessageBoxOpen(control);
+    }
+
+    function test_deleteLongPreviewScrollsAboveButtons(): void {
+        const text = "Full comment preview. ".repeat(100);
+        _helpers.bridge.importComments([
+            {
+                time: 6000,
+                commentType: "Comment Type 1",
+                comment: text
+            }
+        ]);
+        control.commentList.currentIndex = control.commentCount - 1;
+        control.forceActiveFocus();
+        keyPress(Qt.Key_Delete);
+        _wait.messageBoxOpened(control);
+
+        const box = findChild(control, "deleteConfirmationMessageBox") as Dialog;
+        const scroll = box.contentItem as ScrollView;
+        const preview = findChild(box, "deletePreview") as Label;
+        verify(scroll);
+        verify(preview);
+        waitForRendering(scroll);
+        const card = findChild(scroll, "cardBackground");
+        verify(card);
+        compare(card.mapToItem(scroll, 0, 0).y, MpvqcConstants.dialogContentTopMargin);
+        verify(box.height <= control.Window.window.height);
+        verify(scroll.height > 0);
+        compare(preview.text, text);
+        verify(!preview.truncated);
+
+        const flickable = scroll.contentItem as Flickable;
+        verify(flickable);
+        verify(flickable.contentHeight > flickable.height);
+        mouseWheel(scroll, scroll.width / 2, scroll.height / 2, 0, -12000);
+        tryVerify(() => flickable.atYEnd);
+        tryVerify(() => {
+            const bottom = preview.mapToItem(scroll, 0, preview.height).y;
+            return bottom > 0 && bottom <= scroll.height;
+        });
+        for (const button of [box.standardButton(Dialog.Yes), box.standardButton(Dialog.Cancel)]) {
+            verify(button.visible && button.enabled);
+            verify(button.width > 0 && button.height > 0);
+            verify(button.mapToItem(scroll, 0, 0).y >= scroll.height);
+            const position = button.mapToItem(control.Window.window.contentItem, 0, 0);
+            verify(position.y >= 0 && position.y + button.height <= control.Window.window.height);
+        }
     }
 
     function test_importClosesMessageBox(): void {
