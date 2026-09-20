@@ -24,6 +24,10 @@ TestCase {
         it.resetState();
     }
 
+    function cleanup(): void {
+        testCase.Window.window.height = 720;
+    }
+
     function openNewCommentMenu(control: Item): QtObject {
         const tableView = findChild(control, "tableView");
         verify(tableView, "tableView not found");
@@ -67,6 +71,11 @@ TestCase {
                 tag: "appearance",
                 menuItem: "openAppearanceDialogMenuItem",
                 dialog: "appearanceDialog"
+            },
+            {
+                tag: "export",
+                menuItem: "openExportSettingsDialogMenuItem",
+                dialog: "exportSettingsDialog"
             }
         ];
     }
@@ -309,64 +318,220 @@ TestCase {
         verify(it.settings.backupInterval() === initialInterval, "backup interval should be unchanged after reject");
     }
 
-    function test_exportSettingsDialog_drivesAllSettings(): void {
-        const control = it.makeControl();
-
-        const initial = {
+    function savedExportValues() {
+        return {
             nickname: it.settings.nickname(),
-            date: it.settings.writeHeaderDate(),
-            generator: it.settings.writeHeaderGenerator(),
-            nicknameHeader: it.settings.writeHeaderNickname(),
-            videoPath: it.settings.writeHeaderVideoPath(),
-            subtitles: it.settings.writeHeaderSubtitles()
+            flags: [it.settings.writeHeaderDate(), it.settings.writeHeaderGenerator(), it.settings.writeHeaderNickname(), it.settings.writeHeaderVideoPath(), it.settings.writeHeaderSubtitles()]
         };
-        const newNickname = initial.nickname + "-edited";
-
-        it.menu.trigger(control, "optionsMenu", "openExportSettingsDialogMenuItem");
-        const dialog = it.find.openedDialog(control, "exportSettingsDialog");
-
-        const nicknameRow = findChild(dialog, "exportNicknameRow");
-        verify(nicknameRow, "exportNicknameRow not found");
-        nicknameRow.input = newNickname;
-
-        const switchRows = ["exportWriteDateRow", "exportWriteGeneratorRow", "exportWriteNicknameRow", "exportWriteVideoPathRow", "exportWriteSubtitlesRow"];
-        for (const name of switchRows) {
-            const row = findChild(dialog, name);
-            verify(row, `${name} not found`);
-            row.checked = !row.checked;
-        }
-
-        it.dialog.accept(dialog);
-
-        tryVerify(() => it.settings.nickname() === newNickname);
-        tryVerify(() => it.settings.writeHeaderDate() === !initial.date);
-        tryVerify(() => it.settings.writeHeaderGenerator() === !initial.generator);
-        tryVerify(() => it.settings.writeHeaderNickname() === !initial.nicknameHeader);
-        tryVerify(() => it.settings.writeHeaderVideoPath() === !initial.videoPath);
-        tryVerify(() => it.settings.writeHeaderSubtitles() === !initial.subtitles);
     }
 
-    function test_exportSettingsDialog_reject_discardsSettings(): void {
-        const control = it.makeControl();
-
-        const initialNickname = it.settings.nickname();
-        const initialDate = it.settings.writeHeaderDate();
-
+    function openExportSettings(control: Item): QtObject {
         it.menu.trigger(control, "optionsMenu", "openExportSettingsDialogMenuItem");
         const dialog = it.find.openedDialog(control, "exportSettingsDialog");
+        verify(waitForPolish(dialog.contentItem.Window.window), "export dialog layout should settle");
+        const field = findChild(dialog, "exportNicknameField");
+        verify(field, "exportNicknameField not found");
+        tryCompare(field, "activeFocus", true);
+        return dialog;
+    }
 
-        const nicknameRow = findChild(dialog, "exportNicknameRow");
-        verify(nicknameRow, "exportNicknameRow not found");
-        nicknameRow.input = initialNickname + "-edited";
+    function editExportNickname(dialog: QtObject, nickname: string): void {
+        const field = findChild(dialog, "exportNicknameField");
+        verify(field, "exportNicknameField not found");
+        verify(field.enabled && !field.readOnly, "nickname must stay editable");
+        mouseClick(field);
+        keyClick(Qt.Key_A, Qt.ControlModifier);
+        for (const character of nickname) {
+            keyClick(character);
+        }
+        compare(field.text, nickname);
+    }
 
-        const dateRow = findChild(dialog, "exportWriteDateRow");
-        verify(dateRow, "exportWriteDateRow not found");
-        dateRow.checked = !initialDate;
+    function test_exportSettingsDialog_savesAndReopensAllSettings(): void {
+        const control = it.makeControl();
+        const initial = savedExportValues();
+        const edited = {
+            nickname: "  Export Tester  ",
+            flags: initial.flags.map(value => !value)
+        };
+        let dialog = openExportSettings(control);
+        editExportNickname(dialog, edited.nickname);
+        for (const row of exportOptionRows(dialog)) {
+            const before = row.checked;
+            mouseClick(row.toggle);
+            tryCompare(row, "checked", !before);
+        }
+        const nicknameHeader = findChild(dialog, "exportWriteNicknameRow");
+        mouseClick(nicknameHeader.toggle);
+        tryCompare(nicknameHeader, "checked", false);
+        compare(findChild(dialog, "exportNicknameField").text, edited.nickname, "disabling the header must preserve nickname whitespace");
+        edited.nickname = "  Still Editable  ";
+        editExportNickname(dialog, edited.nickname);
+        mouseClick(nicknameHeader.toggle);
+        compare(savedExportValues(), initial, "edits must remain temporary");
 
-        it.dialog.reject(dialog);
+        mouseClick(dialog.standardButton(Dialog.Ok));
+        it.expect.dialogClosed(control, "exportSettingsDialog");
+        compare(savedExportValues(), edited);
 
-        verify(it.settings.nickname() === initialNickname, "nickname should be unchanged after reject");
-        verify(it.settings.writeHeaderDate() === initialDate, "write header date should be unchanged after reject");
+        dialog = openExportSettings(control);
+        compare(findChild(dialog, "exportNicknameField").text, edited.nickname);
+        compare(exportOptionRows(dialog).map(row => row.checked), edited.flags);
+        mouseClick(dialog.standardButton(Dialog.Cancel));
+        it.expect.dialogClosed(control, "exportSettingsDialog");
+    }
+
+    function test_exportSettingsDialog_cancelAndEscapeDiscardAllSettings(): void {
+        const control = it.makeControl();
+        const initial = savedExportValues();
+        for (const action of [Dialog.Cancel, Dialog.NoButton]) {
+            const dialog = openExportSettings(control);
+            compare(findChild(dialog, "exportNicknameField").text, initial.nickname);
+            compare(exportOptionRows(dialog).map(row => row.checked), initial.flags);
+            editExportNickname(dialog, "Discard Me");
+            for (const row of exportOptionRows(dialog)) {
+                const before = row.checked;
+                mouseClick(row.toggle);
+                tryCompare(row, "checked", !before);
+            }
+            if (action === Dialog.Cancel) {
+                mouseClick(dialog.standardButton(Dialog.Cancel));
+            } else {
+                keyClick(Qt.Key_Escape);
+            }
+            it.expect.dialogClosed(control, "exportSettingsDialog");
+            compare(savedExportValues(), initial);
+        }
+        const reopened = openExportSettings(control);
+        compare(findChild(reopened, "exportNicknameField").text, initial.nickname);
+        compare(exportOptionRows(reopened).map(row => row.checked), initial.flags);
+    }
+
+    function exportOptionRows(dialog: QtObject): list<var> {
+        return ["exportWriteDateRow", "exportWriteGeneratorRow", "exportWriteNicknameRow", "exportWriteVideoPathRow", "exportWriteSubtitlesRow"].map(name => {
+            const row = findChild(dialog, name);
+            verify(row, `${name} not found`);
+            return row;
+        });
+    }
+
+    function visibleLabel(item: Item): Label {
+        if (item instanceof Label && item.visible) {
+            return item;
+        }
+        for (const child of item.children) {
+            const label = visibleLabel(child);
+            if (label) {
+                return label;
+            }
+        }
+        return null;
+    }
+
+    function test_exportSettingsDialog_leadingLabelsAndTrailingSwitches_data() {
+        return [
+            {
+                tag: "empty-nickname",
+                nickname: ""
+            },
+            {
+                tag: "latin-nickname",
+                nickname: "Nickname"
+            },
+            {
+                tag: "hebrew-nickname",
+                nickname: "כינוי"
+            },
+        ];
+    }
+
+    function test_exportSettingsDialog_leadingLabelsAndTrailingSwitches(data): void {
+        const control = it.makeControl();
+        const dialog = openExportSettings(control);
+        const field = findChild(dialog, "exportNicknameField");
+        field.text = data.nickname;
+        dialog.contentItem.LayoutMirroring.childrenInherit = true;
+        for (const mirrored of [false, true, false]) {
+            dialog.contentItem.LayoutMirroring.enabled = mirrored;
+            verify(waitForPolish(dialog.contentItem.Window.window), "export dialog layout should settle after mirroring");
+            tryCompare(field, "effectiveHorizontalAlignment", mirrored ? Text.AlignRight : Text.AlignLeft);
+            tryVerify(() => {
+                const start = field.positionToRectangle(0).x;
+                const end = field.positionToRectangle(field.length).x;
+                const edge = mirrored ? Math.max(start, end) : Math.min(start, end);
+                // positionToRectangle() reports text-layout coordinates, without padding.
+                const expected = mirrored ? field.width - field.leftPadding - field.rightPadding : 0;
+                return Math.abs(edge - expected) <= 1;
+            }, 1000, "nickname text should render at the leading edge");
+            for (const row of exportOptionRows(dialog)) {
+                const label = visibleLabel(row);
+                verify(label, "option label should be visible");
+                tryCompare(label, "effectiveHorizontalAlignment", mirrored ? Text.AlignRight : Text.AlignLeft);
+                tryVerify(() => {
+                    const switchX = row.toggle.mapToItem(row, 0, 0).x;
+                    return Math.abs(mirrored ? switchX : row.width - switchX - row.toggle.width) <= 1;
+                }, 5000, "switch should sit at the trailing edge");
+                const labelX = label.mapToItem(row, 0, 0).x;
+                verify(Math.abs(mirrored ? row.width - labelX - label.width : labelX) <= 1, "label should sit at the leading edge");
+            }
+        }
+    }
+
+    function verticallyInside(item: Item, viewport: Item): bool {
+        const top = item.mapToItem(viewport, 0, 0).y;
+        return top >= -1 && top + item.height <= viewport.height + 1;
+    }
+
+    function verifyExportActionsVisible(dialog: QtObject): void {
+        for (const action of [Dialog.Ok, Dialog.Cancel]) {
+            const button = dialog.standardButton(action);
+            verify(button.visible && button.enabled);
+            verify(verticallyInside(button, testCase.Window.window.contentItem), "action must fit in the window");
+            verify(button.mapToItem(dialog.contentItem, 0, 0).y >= dialog.contentItem.height, "action must stay below the scrolling body");
+        }
+    }
+
+    function test_exportSettingsDialog_scrollsWithFixedActions(): void {
+        const control = it.makeControl();
+        let dialog = openExportSettings(control);
+        const naturalHeight = dialog.height;
+        compare(dialog.contentItem.height, dialog.contentItem.contentHeight, "short content should determine the body height");
+
+        testCase.Window.window.height = 360;
+        tryVerify(() => dialog.height <= testCase.Window.window.height, 5000, "dialog must fit the available window height");
+        verify(dialog.height < naturalHeight, "body must shrink with the window");
+        verifyExportActionsVisible(dialog);
+        mouseClick(dialog.standardButton(Dialog.Cancel));
+        it.expect.dialogClosed(control, "exportSettingsDialog");
+
+        dialog = openExportSettings(control);
+        dialog.contentItem.LayoutMirroring.enabled = true;
+        dialog.contentItem.LayoutMirroring.childrenInherit = true;
+        verify(waitForPolish(dialog.contentItem.Window.window), "export dialog layout should settle after mirroring");
+
+        const field = findChild(dialog, "exportNicknameField");
+        verify(field);
+        verify(verticallyInside(field, dialog.contentItem));
+        editExportNickname(dialog, "ScrollTester");
+
+        const rows = exportOptionRows(dialog);
+        for (const row of rows) {
+            for (let attempt = 0; !verticallyInside(row.toggle, dialog.contentItem) && attempt < 10; attempt++) {
+                const previousY = row.mapToItem(dialog.contentItem, 0, 0).y;
+                mouseWheel(dialog.contentItem, dialog.contentItem.width / 2, dialog.contentItem.height / 2, 0, -120);
+                tryVerify(() => row.mapToItem(dialog.contentItem, 0, 0).y < previousY);
+                tryVerify(() => !dialog.contentItem.contentItem.moving);
+            }
+            verify(verticallyInside(row.toggle, dialog.contentItem), "every switch must be reachable by scrolling");
+            const initial = row.checked;
+            mouseClick(row.toggle);
+            tryCompare(row, "checked", !initial);
+            verifyExportActionsVisible(dialog);
+        }
+
+        mouseClick(dialog.standardButton(Dialog.Ok));
+        it.expect.dialogClosed(control, "exportSettingsDialog");
+        compare(it.settings.nickname(), "ScrollTester");
     }
 
     function test_importSettingsDialog_changeOption_persistsOnAccept(): void {
