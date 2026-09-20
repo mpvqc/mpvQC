@@ -12,6 +12,7 @@ RowLayout {
     id: root
 
     property alias text: _label.text
+    property alias horizontalAlignment: _label.horizontalAlignment
     property string toolTip
 
     spacing: toolTip ? 8 : 0

@@ -89,6 +89,55 @@ TestCase {
         verify(untitled.implicitHeight < titled.implicitHeight);
     }
 
+    function test_titleGapDoesNotDependOnBodySpacing_data(): var {
+        return [
+            {
+                tag: "flush rows",
+                spacing: 0
+            },
+            {
+                tag: "default rows",
+                spacing: 5
+            },
+            {
+                tag: "spaced rows",
+                spacing: 16
+            }
+        ];
+    }
+
+    function test_titleGapDoesNotDependOnBodySpacing(data): void {
+        const control = makeControl({
+            title: "Section",
+            spacing: data.spacing
+        });
+        const title = findChild(control, "cardTitle");
+        const content = findChild(control, "cardContent");
+        verify(title);
+        verify(content);
+
+        const titleBottom = title.mapToItem(control, 0, title.height).y;
+        const contentTop = content.mapToItem(control, 0, 0).y;
+        compare(contentTop - titleBottom, MpvqcConstants.sectionCardTitleSpacing);
+    }
+
+    function test_withoutVisibleContentTheTitleHasNoTrailingGap(): void {
+        const control = makeControl({
+            title: "Section"
+        });
+        const title = findChild(control, "cardTitle");
+        const content = findChild(control, "cardContent");
+        verify(title);
+        verify(content);
+
+        const originalHeight = control.implicitHeight;
+        content.visible = false;
+        tryCompare(control, "implicitHeight", title.implicitHeight + 2 * testCase.expectedPadding);
+
+        content.visible = true;
+        tryCompare(control, "implicitHeight", originalHeight);
+    }
+
     function test_aTitleActionSitsAtTheTrailingEdgeOfTheTitleRow(): void {
         const control = makeControlWithTitleAction({
             title: "Subtitles"
