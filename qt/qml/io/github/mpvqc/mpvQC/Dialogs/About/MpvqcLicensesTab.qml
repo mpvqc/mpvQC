@@ -53,7 +53,7 @@ MpvqcAboutScrollView {
             id: _column
 
             width: root.availableWidth
-            spacing: 16
+            spacing: MpvqcConstants.dialogSectionSpacing
 
             MpvqcSectionCard {
                 title: root.licensesContent.playbackTitle

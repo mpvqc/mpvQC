@@ -8,6 +8,8 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 
+import io.github.mpvqc.mpvQC.Utility
+
 TestCase {
     id: testCase
 
@@ -18,6 +20,7 @@ TestCase {
     when: windowShown
 
     function init(): void {
+        failOnWarning(/.*(TypeError|Unable to assign).*/);
         it.resetState();
     }
 
@@ -56,6 +59,27 @@ TestCase {
         verify(swatch, `accentColorSwatch_${index} not found`);
         mouseClick(swatch);
         return swatch.accentColor;
+    }
+
+    function test_settingsDialogsHaveOneTopInset_data(): var {
+        return [
+            {
+                tag: "appearance",
+                menuItem: "openAppearanceDialogMenuItem",
+                dialog: "appearanceDialog"
+            }
+        ];
+    }
+
+    function test_settingsDialogsHaveOneTopInset(data): void {
+        const control = it.makeControl();
+        it.menu.trigger(control, "optionsMenu", data.menuItem);
+        const dialog = it.find.openedDialog(control, data.dialog);
+        verify(waitForPolish(dialog.contentItem.Window.window));
+        const card = findChild(dialog.contentItem, "cardBackground");
+        verify(card);
+        compare(card.mapToItem(dialog.contentItem, 0, 0).y, MpvqcConstants.dialogContentTopMargin);
+        it.dialog.reject(dialog);
     }
 
     function test_appearanceDialog_accept_persistsColorSchemeAndAccent(): void {

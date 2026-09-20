@@ -34,11 +34,9 @@ MpvqcAboutScrollView {
             id: _column
 
             width: root.availableWidth
-            spacing: 16
+            spacing: MpvqcConstants.dialogSectionSpacing
 
             MpvqcSectionCard {
-                id: _identityCard
-
                 Layout.fillWidth: true
 
                 Image {
@@ -60,26 +58,32 @@ MpvqcAboutScrollView {
                     Layout.topMargin: 8
                 }
 
-                RowLayout {
-                    spacing: 4
+                Item {
+                    id: _versionRow
 
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.fillWidth: false
-                    Layout.maximumWidth: _identityCard.width - 2 * _identityCard.padding
+                    implicitHeight: Math.max(_versionLabel.implicitHeight, _copyVersionButton.implicitHeight)
+
+                    Layout.fillWidth: true
 
                     Label {
+                        id: _versionLabel
                         objectName: "applicationVersion"
 
+                        anchors.centerIn: parent
+                        width: Math.min(implicitWidth, Math.max(0, _versionRow.width - 2 * (_copyVersionButton.width + 4)))
                         text: root.viewModel.applicationVersion
                         color: MpvqcAppearance.palette.hint
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-
-                        Layout.fillWidth: true
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
                     ToolButton {
+                        id: _copyVersionButton
                         objectName: "copyVersionButton"
 
+                        anchors.left: _versionLabel.right
+                        anchors.leftMargin: 4
+                        anchors.verticalCenter: _versionLabel.verticalCenter
                         text: qsTranslate("AboutDialog", "Copy version info to clipboard")
                         display: AbstractButton.IconOnly
                         icon.source: MpvqcIcons.contentCopy

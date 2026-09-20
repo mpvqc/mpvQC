@@ -7,6 +7,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import io.github.mpvqc.mpvQC.Utility
+
 TestCase {
     id: testCase
 
@@ -16,6 +18,10 @@ TestCase {
     when: windowShown
     name: "MpvqcAboutDialog"
 
+    function init(): void {
+        failOnWarning(/.*(TypeError|Unable to assign|Binding loop).*/);
+    }
+
     function makeDialog(mirrored = false): MpvqcAboutDialog {
         const dialog = createTemporaryObject(objectUnderTest, testCase);
         verify(dialog, "dialog not created");
@@ -23,7 +29,7 @@ TestCase {
         dialog.contentItem.LayoutMirroring.childrenInherit = true;
         dialog.open();
         tryVerify(() => dialog.opened);
-        waitForRendering(dialog.contentItem);
+        verify(waitForPolish(dialog.contentItem.Window.window), "dialog layout should settle");
         return dialog;
     }
 
@@ -39,6 +45,12 @@ TestCase {
         compare(dialog.currentIndex, 0);
         verify(find(dialog, "aboutNavigationButton").checked);
         verify(find(dialog, "aboutPage").visible);
+    }
+
+    function test_navigationHasOneTopInset(): void {
+        const dialog = makeDialog();
+        const button = find(dialog, "aboutNavigationButton");
+        compare(button.mapToItem(dialog.contentItem, 0, 0).y, MpvqcConstants.dialogContentTopMargin);
     }
 
     function test_clickingTabSelectsItsPage_data(): var {
@@ -76,7 +88,7 @@ TestCase {
 
         for (const index of [1, 2, 0, 2, 1, 0]) {
             mouseClick(buttons[index]);
-            waitForRendering(dialog.contentItem);
+            verify(waitForPolish(dialog.contentItem.Window.window), "dialog layout should settle after switching pages");
 
             compare(dialog.currentIndex, index);
             for (let i = 0; i < buttons.length; ++i) {
@@ -84,6 +96,19 @@ TestCase {
                 compare(Qt.rect(button.x, button.y, button.width, button.height), bounds[i]);
             }
         }
+    }
+
+    function test_longTabLabelsWrapWithoutOverlappingPages(): void {
+        const dialog = makeDialog();
+        const button = find(dialog, "aboutNavigationButton");
+        const originalHeight = button.height;
+        button.text = "AnUnbrokenTranslatedTabLabelThatMustWrapAcrossSeveralLines";
+        tryVerify(() => button.height > originalHeight);
+        verify(button.contentItem.lineCount > 1);
+        verify(waitForPolish(dialog.contentItem.Window.window));
+        const pageTop = find(dialog, "aboutPage").mapToItem(dialog.contentItem, 0, 0).y;
+        verify(button.mapToItem(dialog.contentItem, 0, button.height).y <= pageTop);
+        compare(find(dialog, "creditsNavigationButton").height, button.height);
     }
 
     function test_clickingCurrentTabIsNoop(): void {
