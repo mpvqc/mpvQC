@@ -38,9 +38,6 @@ Item {
     signal commentTypeLabelDoubleClicked(coordinates: point)
     signal commentLabelDoubleClicked
 
-    // Emitted when the delegate's height changes while its inline editor is
-    // open. The list handles this by scrolling to keep the delegate in view if
-    // needed (shrinks naturally no-op there).
     signal heightChangedWhileEditing
 
     height: Math.max(_commentLabel.height, _commentLabel.editorHeight, _playButton.height)
@@ -114,6 +111,12 @@ Item {
             id: _playButton
             objectName: "playButton"
 
+            // Painted bounds in play_arrow_rounded.svg; the rounded tip stops short of the path's x = 18.
+            readonly property real arrowPaintedLeft: 8
+            readonly property real arrowPaintedRight: 17.181
+
+            readonly property real whitespaceTowardsTime: (width - icon.width) / 2 + (mirrored ? arrowPaintedLeft : icon.width - arrowPaintedRight)
+
             focusPolicy: Qt.NoFocus
             icon.source: MpvqcIcons.playArrow
 
@@ -124,14 +127,16 @@ Item {
             id: _timeLabel
             objectName: "timeLabel"
 
+            readonly property real paddingTowardsPlayButton: 2 * root.horizontalItemPadding - _playButton.whitespaceTowardsTime
+
             text: MpvqcTableUtility.formatTime(root.time)
             horizontalAlignment: Text.AlignHCenter
 
             width: MpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
 
-            leftPadding: LayoutMirroring.enabled ? root.horizontalItemPadding : root.horizontalItemPadding * (2 / 3)
-            rightPadding: LayoutMirroring.enabled ? root.horizontalItemPadding * (2 / 3) : root.horizontalItemPadding
+            leftPadding: LayoutMirroring.enabled ? root.horizontalItemPadding : paddingTowardsPlayButton
+            rightPadding: LayoutMirroring.enabled ? paddingTowardsPlayButton : root.horizontalItemPadding
             topPadding: root.verticalItemPadding
             bottomPadding: root.verticalItemPadding
         }
@@ -145,7 +150,6 @@ Item {
             horizontalAlignment: Text.AlignLeft
             elide: Text.ElideRight
 
-            // Capped so a pathological type name cannot squeeze the comment column out.
             width: Math.min(MpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding, root.width / 3)
             height: root.height
 

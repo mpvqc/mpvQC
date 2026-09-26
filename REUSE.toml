@@ -49,6 +49,12 @@ SPDX-FileCopyrightText = "Google Inc."
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
+path = "data/icons/play_arrow_rounded.svg"
+precedence = "override"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
 path = "NOTICE.txt"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
