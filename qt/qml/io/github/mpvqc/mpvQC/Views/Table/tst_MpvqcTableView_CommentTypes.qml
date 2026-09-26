@@ -21,10 +21,6 @@ TestCase {
 
     readonly property int timeout: 2000
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
-    }
-
     function test_commentTypeMenuReceivesPythonCommentTypes(): void {
         const control = _helpers.makeRealCommentTypesControl();
 

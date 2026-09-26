@@ -22,21 +22,11 @@ TestCase {
     readonly property int timeout: 2000
 
     readonly property Component objectUnderTest: Component {
-        MpvqcTableView {
-            backupEnabled: false
-
-            height: testCase.height
-            width: testCase.width
-        }
+        AppFontHost {}
     }
 
     readonly property Component mirroredObjectUnderTest: Component {
-        MpvqcTableView {
-            backupEnabled: false
-
-            height: testCase.height
-            width: testCase.width
-
+        AppFontHost {
             LayoutMirroring.enabled: true
             LayoutMirroring.childrenInherit: true
         }
@@ -44,18 +34,23 @@ TestCase {
 
     readonly property string _pathologicalTypeName: "A".repeat(400)
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
+    // The calculator measures the application font, which the app window hands down and the test window does not.
+    component AppFontHost: Control {
+        readonly property MpvqcTableView table: contentItem as MpvqcTableView
+
+        width: testCase.width
+        height: testCase.height
+        font: MpvqcFonts.applicationFont
+
+        contentItem: MpvqcTableView {
+            backupEnabled: false
+        }
     }
 
-    function init(): void {
-        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 150;
-    }
-
-    function makeControl(component: Component, commentType: string): var {
+    function makeControl(component: Component, commentType: string): MpvqcTableView {
         _helpers.bridge.resetComments();
-        const control = createTemporaryObject(component, testCase);
-        verify(control);
+        const host = createTemporaryObject(component, testCase) as AppFontHost;
+        verify(host);
         _helpers.bridge.importComments([
             {
                 "time": 1000,
@@ -63,8 +58,8 @@ TestCase {
                 "comment": "Comment 1"
             }
         ]);
-        waitForRendering(control);
-        return control;
+        waitForRendering(host);
+        return host.table;
     }
 
     function _typeLabel(control: MpvqcTableView): Label {
@@ -93,8 +88,6 @@ TestCase {
     function test_hugeMeasuredWidthClampsToTableFraction(data: var): void {
         const control = makeControl(data.component, _pathologicalTypeName);
 
-        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 100000;
-
         const typeLabel = _typeLabel(control);
         tryCompare(typeLabel, "width", control.width / 3);
         tryVerify(() => typeLabel.truncated);
@@ -107,7 +100,7 @@ TestCase {
         const control = makeControl(objectUnderTest, "Comment Type 1");
 
         const typeLabel = _typeLabel(control);
-        compare(typeLabel.width, 150 + typeLabel.leftPadding + typeLabel.rightPadding);
+        compare(typeLabel.width, MpvqcLabelWidthCalculator.commentTypesLabelWidth + typeLabel.leftPadding + typeLabel.rightPadding);
         verify(!typeLabel.truncated);
     }
 

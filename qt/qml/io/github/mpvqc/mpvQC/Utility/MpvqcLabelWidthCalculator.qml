@@ -12,6 +12,6 @@ QtObject {
     // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
     property MpvqcCommentLabelWidthCalculatorViewModel viewModel: MpvqcCommentLabelWidthCalculatorViewModel {}
 
-    property int commentTypesLabelWidth: viewModel.commentTypesLabelWidth
-    property int timeLabelWidth: viewModel.timeLabelWidth
+    readonly property int commentTypesLabelWidth: viewModel.commentTypesLabelWidth
+    readonly property int timeLabelWidth: viewModel.timeLabelWidth
 }
