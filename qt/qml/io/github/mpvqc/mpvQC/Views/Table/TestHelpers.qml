@@ -8,7 +8,6 @@ import QtQuick
 import QtTest
 
 import io.github.mpvqc.mpvQC.Python
-import io.github.mpvqc.mpvQC.Utility
 
 QtObject {
     id: root
@@ -459,11 +458,6 @@ QtObject {
             root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
             root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.opened);
         }
-    }
-
-    function initTestCase(): void {
-        MpvqcLabelWidthCalculator.timeLabelWidth = 50;
-        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 150;
     }
 
     function makeControl(): var {

@@ -27,10 +27,6 @@ TestCase {
 
     readonly property string _longComment: "This is a very long comment that should wrap across multiple lines and force the inline editor to grow significantly larger than its initial single-line height, exercising the scroll-on-grow behaviour for the row being edited."
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
-    }
-
     function init(): void {
         control = _helpers.makeControl();
 

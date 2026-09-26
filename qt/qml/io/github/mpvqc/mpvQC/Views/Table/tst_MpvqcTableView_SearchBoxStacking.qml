@@ -30,10 +30,6 @@ TestCase {
 
     property var control: null
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
-    }
-
     function init(): void {
         control = _helpers.makeControl();
         _helpers.bridge.importComments(_fillerComments(5));
