@@ -25,10 +25,6 @@ TestCase {
 
     property var control: null
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
-    }
-
     function init(): void {
         control = _helpers.makeControl();
         control.commentList.currentIndex = 0;

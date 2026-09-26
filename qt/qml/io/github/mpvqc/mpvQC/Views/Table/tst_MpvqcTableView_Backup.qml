@@ -8,7 +8,6 @@ import QtQuick
 import QtTest
 
 import io.github.mpvqc.mpvQC.Python
-import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
     id: testCase
@@ -28,11 +27,6 @@ TestCase {
             height: testCase.height
             width: testCase.width
         }
-    }
-
-    function initTestCase(): void {
-        MpvqcLabelWidthCalculator.timeLabelWidth = 50;
-        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 150;
     }
 
     function init(): void {

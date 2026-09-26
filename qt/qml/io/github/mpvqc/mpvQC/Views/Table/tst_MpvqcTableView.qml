@@ -27,10 +27,6 @@ TestCase {
         }
     }
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
-    }
-
     function makeControl(): var {
         _helpers.bridge.resetComments();
         const control = createTemporaryObject(emptyControl, testCase);
