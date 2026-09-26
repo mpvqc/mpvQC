@@ -50,7 +50,7 @@ QtObject {
     readonly property url openInFull: Qt.resolvedUrl("qrc:/data/icons/open_in_full_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url openInNew: Qt.resolvedUrl("qrc:/data/icons/open_in_new_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url palette: Qt.resolvedUrl("qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
-    readonly property url playArrow: Qt.resolvedUrl("qrc:/data/icons/play_arrow_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
+    readonly property url playArrow: Qt.resolvedUrl("qrc:/data/icons/play_arrow_rounded.svg")
     readonly property url radioButtonChecked: Qt.resolvedUrl("qrc:/data/icons/radio_button_checked_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url radioButtonUnchecked: Qt.resolvedUrl("qrc:/data/icons/radio_button_unchecked_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url save: Qt.resolvedUrl("qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
