@@ -73,8 +73,20 @@ MpvqcDialog {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            ScrollBar.horizontal.policy: needsHorizontalScroll ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: needsVerticalScroll ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+            ScrollBar.horizontal: MpvqcScrollBar {
+                parent: _scrollView
+                x: _scrollView.leftPadding
+                y: _scrollView.height - height
+                width: _scrollView.availableWidth
+                policy: _scrollView.needsHorizontalScroll ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+            }
+            ScrollBar.vertical: MpvqcScrollBar {
+                parent: _scrollView
+                x: _scrollView.mirrored ? 0 : _scrollView.width - width
+                y: _scrollView.topPadding
+                height: _scrollView.availableHeight
+                policy: _scrollView.needsVerticalScroll ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+            }
 
             TextArea {
                 id: _textArea

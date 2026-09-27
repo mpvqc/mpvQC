@@ -12,8 +12,8 @@ import io.github.mpvqc.mpvQC.Utility
 ScrollBar {
     id: root
 
-    horizontalPadding: 6
-    verticalPadding: 2
+    horizontalPadding: vertical ? 6 : 2
+    verticalPadding: vertical ? 2 : 6
 
     contentItem: Rectangle {
         implicitWidth: 4
