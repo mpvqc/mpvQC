@@ -29,6 +29,7 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 [[annotations]]
 path = [
     ".idea/inspectionProfiles/Project_Default.xml",
+    ".python-version",
     "docs/document-format/*.json",
     "uv.lock",
 ]
