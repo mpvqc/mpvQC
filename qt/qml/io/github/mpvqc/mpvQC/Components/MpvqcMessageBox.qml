@@ -31,8 +31,21 @@ Dialog {
     contentItem: ScrollView {
         id: _scroll
 
+        readonly property bool _needsScrollBar: contentHeight > availableHeight
+
+        leftPadding: mirrored && _needsScrollBar ? 20 : 0
+        rightPadding: !mirrored && _needsScrollBar ? 20 : 0
         contentWidth: availableWidth
         contentHeight: _sections.implicitHeight
+
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical: MpvqcScrollBar {
+            parent: _scroll
+            x: _scroll.mirrored ? 0 : _scroll.width - width
+            y: _scroll.topPadding
+            height: _scroll.availableHeight
+            policy: _scroll._needsScrollBar ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
 
         ColumnLayout {
             id: _sections

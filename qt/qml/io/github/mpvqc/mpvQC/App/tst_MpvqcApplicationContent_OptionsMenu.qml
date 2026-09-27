@@ -539,7 +539,7 @@ TestCase {
         const control = it.makeControl();
         let dialog = openExportSettings(control);
         const naturalHeight = dialog.height;
-        compare(dialog.contentItem.height, dialog.contentItem.contentHeight, "short content should determine the body height");
+        verify(dialog.contentItem.height >= dialog.contentItem.contentHeight, "all settings should fit at the initial window size");
 
         testCase.Window.window.height = 360;
         tryVerify(() => dialog.height <= testCase.Window.window.height, 5000, "dialog must fit the available window height");

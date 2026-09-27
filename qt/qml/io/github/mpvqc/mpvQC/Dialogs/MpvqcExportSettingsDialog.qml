@@ -20,7 +20,7 @@ MpvqcDialog {
 
     width: Math.min(contentWidth + leftPadding + rightPadding, Math.max(0, (Overlay.overlay?.width ?? 0) - 2 * margins))
     contentWidth: MpvqcConstants.smallDialogContentWidth
-    contentHeight: Math.min(_sections.implicitHeight, Math.max(0, (Overlay.overlay?.height ?? 0) - 2 * margins - topPadding - bottomPadding - implicitHeaderHeight - implicitFooterHeight - 2 * spacing))
+    contentHeight: MpvqcConstants.mediumDialogContentHeight
     margins: MpvqcConstants.dialogEdgeMargin
     title: qsTranslate("ExportSettingsDialog", "Export Settings")
     standardButtons: Dialog.Ok | Dialog.Cancel
@@ -28,11 +28,22 @@ MpvqcDialog {
     contentItem: ScrollView {
         id: _scroll
 
+        readonly property bool _needsScrollBar: contentHeight > availableHeight
+
         clip: true
+        leftPadding: mirrored && _needsScrollBar ? 20 : 0
+        rightPadding: !mirrored && _needsScrollBar ? 20 : 0
         contentWidth: availableWidth
         contentHeight: _sections.implicitHeight
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical: MpvqcScrollBar {
+            parent: _scroll
+            x: _scroll.mirrored ? 0 : _scroll.width - width
+            y: _scroll.topPadding
+            height: _scroll.availableHeight
+            policy: _scroll._needsScrollBar ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
 
         ColumnLayout {
             id: _sections
@@ -65,7 +76,7 @@ MpvqcDialog {
             }
 
             MpvqcSectionCard {
-                title: qsTranslate("ExportSettingsDialog", "Document Header")
+                title: qsTranslate("ExportSettingsDialog", "Document header")
                 spacing: 0
 
                 Layout.fillWidth: true

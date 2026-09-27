@@ -31,7 +31,7 @@ MpvqcDialog {
         MpvqcSectionCard {
             objectName: "commentTypesAddCard"
 
-            title: qsTranslate("CommentTypesDialog", "Add Comment Type")
+            title: qsTranslate("CommentTypesDialog", "Add comment type")
 
             Layout.fillWidth: true
             Layout.topMargin: MpvqcConstants.dialogContentTopMargin

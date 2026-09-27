@@ -26,11 +26,22 @@ MpvqcDialog {
     contentItem: ScrollView {
         id: _scroll
 
+        readonly property bool _needsScrollBar: contentHeight > availableHeight
+
         clip: true
+        leftPadding: mirrored && _needsScrollBar ? 20 : 0
+        rightPadding: !mirrored && _needsScrollBar ? 20 : 0
         contentWidth: availableWidth
         contentHeight: _sections.implicitHeight
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical: MpvqcScrollBar {
+            parent: _scroll
+            x: _scroll.mirrored ? 0 : _scroll.width - width
+            y: _scroll.topPadding
+            height: _scroll.availableHeight
+            policy: _scroll._needsScrollBar ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
 
         ColumnLayout {
             id: _sections
@@ -41,7 +52,7 @@ MpvqcDialog {
             MpvqcSectionCard {
                 objectName: "backupEnabledCard"
 
-                title: qsTranslate("BackupDialog", "Backup Enabled")
+                title: qsTranslate("BackupDialog", "Backup enabled")
                 titleActions: Item {
                     // Keep the full hit area without letting the control set the title row's height.
                     implicitWidth: _enabledSwitch.implicitWidth
@@ -53,7 +64,7 @@ MpvqcDialog {
                         anchors.centerIn: parent
                         checked: root.viewModel.temporaryBackupEnabled
 
-                        Accessible.name: qsTranslate("BackupDialog", "Backup Enabled")
+                        Accessible.name: qsTranslate("BackupDialog", "Backup enabled")
 
                         onToggled: root.viewModel.temporaryBackupEnabled = checked
                     }
@@ -82,7 +93,7 @@ MpvqcDialog {
                     width: parent.width
                     height: implicitHeight
                     visible: _intervalFold.height > 0
-                    title: qsTranslate("BackupDialog", "Backup Interval")
+                    title: qsTranslate("BackupDialog", "Backup interval")
                     spacing: 0
 
                     GridLayout {
@@ -137,7 +148,7 @@ MpvqcDialog {
             MpvqcSectionCard {
                 objectName: "backupLocationCard"
 
-                title: qsTranslate("BackupDialog", "Backup Location")
+                title: qsTranslate("BackupDialog", "Backup location")
                 spacing: 0
 
                 Layout.fillWidth: true
@@ -164,7 +175,7 @@ MpvqcDialog {
                     ToolButton {
                         objectName: "backupOpenLocationButton"
 
-                        text: qsTranslate("BackupDialog", "Backup Location")
+                        text: qsTranslate("BackupDialog", "Backup location")
                         display: AbstractButton.IconOnly
                         icon.source: MpvqcIcons.folderOpen
 

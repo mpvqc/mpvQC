@@ -44,7 +44,7 @@ ColumnLayout {
             // Inherited mirroring can leave the rendered text at its old alignment.
             horizontalAlignment: root.LayoutMirroring.enabled ? Text.AlignRight : Text.AlignLeft
 
-            Accessible.name: qsTranslate("CommentTypesDialog", "Add Comment Type")
+            Accessible.name: qsTranslate("CommentTypesDialog", "Add comment type")
             ContextMenu.menu: null
             LayoutMirroring.enabled: false
             Layout.fillWidth: true

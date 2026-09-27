@@ -97,11 +97,11 @@
 <context>
     <name>BackupDialog</name>
     <message>
-        <source>Backup Enabled</source>
+        <source>Backup enabled</source>
         <translation>הפעל גיבוי אוטומטי</translation>
     </message>
     <message>
-        <source>Backup Interval</source>
+        <source>Backup interval</source>
         <translatorcomment>Interval/Frequencey are synonyms.</translatorcomment>
         <translation>תדירות גיבוי אוטומטי</translation>
     </message>
@@ -114,7 +114,7 @@
         <translation>דקות</translation>
     </message>
     <message>
-        <source>Backup Location</source>
+        <source>Backup location</source>
         <translation>מיקום גיבויים</translation>
     </message>
     <message>
@@ -202,7 +202,7 @@
         <translation>סוגי הערות</translation>
     </message>
     <message>
-        <source>Add Comment Type</source>
+        <source>Add comment type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -230,7 +230,7 @@
         <translation>כינוי</translation>
     </message>
     <message>
-        <source>Document Header</source>
+        <source>Document header</source>
         <translation>ראש המסמך</translation>
     </message>
     <message>

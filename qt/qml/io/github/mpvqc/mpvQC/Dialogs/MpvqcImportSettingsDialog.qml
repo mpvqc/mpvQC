@@ -35,7 +35,7 @@ MpvqcDialog {
 
     width: Math.min(contentWidth + leftPadding + rightPadding, Math.max(0, (Overlay.overlay?.width ?? 0) - 2 * margins))
     contentWidth: MpvqcConstants.smallDialogContentWidth
-    contentHeight: MpvqcConstants.smallDialogContentHeight
+    contentHeight: MpvqcConstants.extraSmallDialogContentHeight
     margins: MpvqcConstants.dialogEdgeMargin
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
     standardButtons: Dialog.Ok | Dialog.Cancel
