@@ -97,11 +97,11 @@
 <context>
     <name>BackupDialog</name>
     <message>
-        <source>Backup Enabled</source>
+        <source>Backup enabled</source>
         <translation>Cópia de Segurança Activada</translation>
     </message>
     <message>
-        <source>Backup Interval</source>
+        <source>Backup interval</source>
         <translation>Intervalo da Cópia de Segurança</translation>
     </message>
     <message>
@@ -113,7 +113,7 @@
         <translation>Minutos</translation>
     </message>
     <message>
-        <source>Backup Location</source>
+        <source>Backup location</source>
         <translation>Caminho da Cópia de Segurança</translation>
     </message>
     <message>
@@ -200,7 +200,7 @@
         <translation>Tipos de Comentários</translation>
     </message>
     <message>
-        <source>Add Comment Type</source>
+        <source>Add comment type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -228,7 +228,7 @@
         <translation>Nickname</translation>
     </message>
     <message>
-        <source>Document Header</source>
+        <source>Document header</source>
         <translation>Cabeçalho do Documento</translation>
     </message>
     <message>

@@ -100,7 +100,7 @@ TestCase {
         const addButton = helper.addButton(dialog);
         const error = helper.validationLabel(dialog);
         const before = list.count;
-        compare(field.Accessible.name, "Add Comment Type");
+        compare(field.Accessible.name, "Add comment type");
         verify(!addButton.enabled, "an empty field cannot be added");
         compare(error.text, "");
 

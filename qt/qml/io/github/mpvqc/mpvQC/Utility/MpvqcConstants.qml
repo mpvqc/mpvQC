@@ -16,6 +16,7 @@ QtObject {
 
     readonly property int smallDialogContentWidth: 370
     readonly property int mediumDialogContentWidth: 500
+    readonly property int extraSmallDialogContentHeight: 300
     readonly property int smallDialogContentHeight: 450
     readonly property int mediumDialogContentHeight: 580
     readonly property int dialogEdgeMargin: 12
