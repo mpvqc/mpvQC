@@ -616,7 +616,7 @@ TestCase {
         compare(it.settings.loadFoundVideo(), initial);
     }
 
-    function test_editMpvDialog_resetEditAcceptAndLinkActivation(): void {
+    function test_editMpvDialog_restoreDefaultsEditAcceptAndLinkActivation(): void {
         const control = it.makeControl();
         const sentinel = "# integration-test-mpv-marker";
 
@@ -627,9 +627,9 @@ TestCase {
         verify(textArea, "mpvConfTextArea not found");
         const fixtureText = textArea.text;
 
-        const resetButton = dialog.standardButton(Dialog.Reset);
-        verify(resetButton, "Reset standard button not found");
-        mouseClick(resetButton);
+        const restoreDefaultsButton = dialog.standardButton(Dialog.RestoreDefaults);
+        verify(restoreDefaultsButton, "Restore Defaults standard button not found");
+        mouseClick(restoreDefaultsButton);
         tryVerify(() => textArea.text !== fixtureText, 5000, "text should change after reset to defaults");
         const defaultText = textArea.text;
 
@@ -645,7 +645,7 @@ TestCase {
         tryVerify(() => it.bridge.fileContains(it.bridge.mpvConfPath(), sentinel));
     }
 
-    function test_editInputDialog_resetEditAcceptAndLinkActivation(): void {
+    function test_editInputDialog_restoreDefaultsEditAcceptAndLinkActivation(): void {
         const control = it.makeControl();
         const sentinel = "# integration-test-input-marker";
 
@@ -656,9 +656,9 @@ TestCase {
         verify(textArea, "inputConfTextArea not found");
         const fixtureText = textArea.text;
 
-        const resetButton = dialog.standardButton(Dialog.Reset);
-        verify(resetButton, "Reset standard button not found");
-        mouseClick(resetButton);
+        const restoreDefaultsButton = dialog.standardButton(Dialog.RestoreDefaults);
+        verify(restoreDefaultsButton, "Restore Defaults standard button not found");
+        mouseClick(restoreDefaultsButton);
         tryVerify(() => textArea.text !== fixtureText, 5000, "text should change after reset to defaults");
         const defaultText = textArea.text;
 
