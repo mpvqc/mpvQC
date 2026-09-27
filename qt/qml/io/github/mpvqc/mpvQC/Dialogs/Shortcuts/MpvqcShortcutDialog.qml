@@ -101,7 +101,7 @@ MpvqcDialog {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            ScrollBar.vertical: ScrollBar {
+            ScrollBar.vertical: MpvqcScrollBar {
                 id: _scrollBar
 
                 readonly property bool isShown: _listView.contentHeight > _listView.height
