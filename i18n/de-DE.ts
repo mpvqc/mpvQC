@@ -200,12 +200,21 @@
         <translation>Kommentartypen</translation>
     </message>
     <message>
-        <source>New comment type</source>
-        <translation>Neuer Kommentartyp</translation>
+        <source>Add Comment Type</source>
+        <translation>Kommentartyp hinzufügen</translation>
     </message>
     <message>
         <source>Characters &apos;{}&apos; not allowed</source>
         <translation>Die Zeichen &apos;{}&apos; sind nicht erlaubt</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <extracomment>Accessible name of the icon-only button that deletes a comment type</extracomment>
+        <translation>Löschen</translation>
     </message>
 </context>
 <context>

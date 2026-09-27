@@ -8,115 +8,157 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 
-import io.github.mpvqc.mpvQC.Python
-
 TestCase {
     id: testCase
 
-    width: 500
-    height: 600
+    name: "MpvqcCommentTypesDialog"
+    width: 600
+    height: 900
     visible: true
     when: windowShown
-    name: "MpvqcCommentTypesDialog"
 
-    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
-
-    readonly property Component _dialogComponent: Component {
-        MpvqcCommentTypesDialog {}
+    readonly property TestHelpers helper: TestHelpers {
+        testCase: testCase
     }
 
-    function makeDialog(): Dialog {
-        const dialog = createTemporaryObject(_dialogComponent, testCase);
-        verify(dialog, "dialog not created");
-        dialog.open();
-        tryVerify(() => dialog.opened);
-        waitForRendering(dialog.contentItem);
-        return dialog;
+    function init(): void {
+        failOnWarning(/.*(TypeError|Unable to assign|Binding loop).*/);
+        helper.bridge.resetState();
     }
 
-    function test_emptyDraftDisablesAdd(): void {
-        const dialog = makeDialog();
-        const field = findChild(dialog.contentItem, "commentTypeTextField");
-        const addButton = findChild(dialog.contentItem, "commentTypeAddButton");
-
-        compare(field.text, "");
-        verify(!addButton.enabled);
+    function test_addAppendsRevealsClearsAndRefocuses_data(): var {
+        return [
+            {
+                tag: "button",
+                viaButton: true
+            },
+            {
+                tag: "enter",
+                viaButton: false
+            }
+        ];
     }
 
-    function test_rejectedDraftReachesTheErrorLabel(): void {
-        const dialog = makeDialog();
-        const field = findChild(dialog.contentItem, "commentTypeTextField");
-        const error = findChild(dialog.contentItem, "commentTypeValidationLabel");
+    function test_addAppendsRevealsClearsAndRefocuses(data): void {
+        const dialog = helper.makeDialog();
+        for (let i = 1; i <= 4; i++) {
+            helper.addType(dialog, `ZZZ Filler ${i}`);
+        }
+        const list = helper.listView(dialog);
+        const field = helper.textField(dialog);
+        const addButton = helper.addButton(dialog);
+        list.positionViewAtBeginning();
+        const before = list.count;
 
-        compare(error.text, "");
-
-        field.text = "ZZZ Bracketed [ Type";
-
-        tryVerify(() => error.text !== "");
-    }
-
-    function test_addAppendsSelectsAndClears(): void {
-        const dialog = makeDialog();
-        const field = findChild(dialog.contentItem, "commentTypeTextField");
-        const addButton = findChild(dialog.contentItem, "commentTypeAddButton");
-        const listView = findChild(dialog.contentItem, "commentTypesListView");
-
-        const before = listView.count;
+        field.forceActiveFocus();
         field.text = "ZZZ Appended Type";
         tryVerify(() => addButton.enabled);
-        mouseClick(addButton);
+        if (data.viaButton) {
+            mouseClick(addButton);
+        } else {
+            keyClick(Qt.Key_Return);
+        }
 
-        tryCompare(listView, "count", before + 1);
-        compare(listView.currentIndex, listView.count - 1);
+        tryCompare(list, "count", before + 1);
         compare(field.text, "");
+        tryVerify(() => field.activeFocus);
+        compare(helper.rowPart(list, before, "commentTypeLabel").text, "ZZZ Appended Type");
+        tryVerify(() => {
+            const row = list.itemAtIndex(before);
+            return row !== null && helper.verticallyInside(row, list);
+        }, 5000, "the new row should be revealed");
     }
 
-    function test_deleteRemovesSelectedRow(): void {
-        const dialog = makeDialog();
-        const listView = findChild(dialog.contentItem, "commentTypesListView");
-        const deleteButton = findChild(dialog.contentItem, "commentTypeDeleteButton");
+    function test_deleteRemovesTheClickedRow(): void {
+        const dialog = helper.makeDialog();
+        const expected = helper.dialogDraft(dialog);
 
-        const before = listView.count;
-        verify(before > 1);
-        listView.currentIndex = 0;
-        tryVerify(() => deleteButton.enabled);
-        mouseClick(deleteButton);
+        helper.deleteRow(dialog, 3);
 
-        tryCompare(listView, "count", before - 1);
+        expected.splice(3, 1);
+        compare(helper.shownTypes(helper.listView(dialog)), expected);
     }
 
-    function test_okStaysEnabledWithInvalidDraft(): void {
-        const dialog = makeDialog();
-        const field = findChild(dialog.contentItem, "commentTypeTextField");
-        const addButton = findChild(dialog.contentItem, "commentTypeAddButton");
-        const okButton = dialog.standardButton(Dialog.Ok);
+    function test_lastTypeCannotBeDeleted(): void {
+        const dialog = helper.makeDialog();
+        const list = helper.listView(dialog);
+        while (list.count > 1) {
+            dialog.viewModel.remove(0);
+        }
+        helper.waitForDropToSettle(list);
+        const button = helper.rowPart(list, 0, "commentTypeDeleteButton");
 
-        verify(okButton.enabled);
-
-        field.text = "ZZZ Duplicated Type";
-        tryVerify(() => addButton.enabled);
-        mouseClick(addButton);
-
-        field.text = "ZZZ Duplicated Type";
-        tryVerify(() => !addButton.enabled);
-        verify(okButton.enabled);
+        verify(!button.enabled);
+        mouseClick(button);
+        compare(list.count, 1);
     }
 
-    function test_reorderKeepsSelection(): void {
-        const dialog = makeDialog();
-        const listView = findChild(dialog.contentItem, "commentTypesListView");
-        const moveUp = findChild(dialog.contentItem, "commentTypeMoveUpButton");
-        const moveDown = findChild(dialog.contentItem, "commentTypeMoveDownButton");
+    function test_invalidInputCannotBeAdded(): void {
+        const dialog = helper.makeDialog();
+        const list = helper.listView(dialog);
+        const field = helper.textField(dialog);
+        const addButton = helper.addButton(dialog);
+        const error = helper.validationLabel(dialog);
+        const before = list.count;
+        compare(field.Accessible.name, "Add Comment Type");
+        verify(!addButton.enabled, "an empty field cannot be added");
+        compare(error.text, "");
 
-        verify(listView.count > 1);
-        listView.currentIndex = 0;
+        field.forceActiveFocus();
+        field.text = "Sign [placement]";
+        tryVerify(() => error.text !== "");
+        verify(!addButton.enabled);
+        verify(dialog.standardButton(Dialog.Ok).enabled);
+        keyClick(Qt.Key_Return);
+        compare(list.count, before);
+    }
 
-        tryVerify(() => moveDown.enabled);
-        mouseClick(moveDown);
-        tryCompare(listView, "currentIndex", 1);
+    function test_unsubmittedInputIsNotAddedOnOk(): void {
+        const dialog = helper.makeDialog();
+        const saved = helper.settings.commentTypes();
+        helper.textField(dialog).text = "ZZZ Never Submitted";
+        tryVerify(() => helper.addButton(dialog).enabled);
 
-        tryVerify(() => moveUp.enabled);
-        mouseClick(moveUp);
-        tryCompare(listView, "currentIndex", 0);
+        helper.closeWith(dialog, Dialog.Ok);
+
+        compare(helper.settings.commentTypes(), saved);
+    }
+
+    function test_cancelAndEscapeDiscardTheDraft_data(): var {
+        return [
+            {
+                tag: "cancel",
+                action: Dialog.Cancel
+            },
+            {
+                tag: "escape",
+                action: Dialog.NoButton
+            }
+        ];
+    }
+
+    function test_cancelAndEscapeDiscardTheDraft(data): void {
+        const saved = helper.settings.commentTypes();
+        const dialog = helper.makeDialog();
+        helper.deleteRow(dialog, 0);
+        helper.addType(dialog, "ZZZ Discarded Type");
+        helper.dragAndDrop(helper.listView(dialog), 0, 3);
+
+        helper.closeWith(dialog, data.action);
+
+        compare(helper.settings.commentTypes(), saved);
+        compare(helper.shownTypes(helper.listView(helper.makeDialog())), saved);
+    }
+
+    function test_restoreDefaultsResetsTheDraft(): void {
+        const defaults = helper.settings.commentTypes();
+        const dialog = helper.makeDialog();
+        helper.deleteRow(dialog, 0);
+        helper.addType(dialog, "ZZZ Custom Type");
+
+        mouseClick(dialog.standardButton(Dialog.RestoreDefaults));
+
+        tryCompare(helper.listView(dialog), "count", defaults.length);
+        compare(helper.shownTypes(helper.listView(dialog)), defaults);
     }
 }

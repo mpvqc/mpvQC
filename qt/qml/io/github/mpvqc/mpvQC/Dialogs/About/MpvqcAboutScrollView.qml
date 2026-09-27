@@ -7,7 +7,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 
-import io.github.mpvqc.mpvQC.Utility
+import io.github.mpvqc.mpvQC.Components
 
 ScrollView {
     id: root
@@ -19,24 +19,11 @@ ScrollView {
     contentWidth: availableWidth
 
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    ScrollBar.vertical: ScrollBar {
-        id: scrollBar
-
+    ScrollBar.vertical: MpvqcScrollBar {
         parent: root
         x: root.mirrored ? 0 : root.width - width
         y: root.topPadding
         height: root.availableHeight
-        horizontalPadding: 6
-        verticalPadding: 2
         policy: root._needsScrollBar ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
-        contentItem: Rectangle {
-            implicitWidth: 4
-            implicitHeight: 4
-            radius: width / 2
-            color: scrollBar.pressed ? MpvqcAppearance.palette.accent : Qt.alpha(MpvqcAppearance.palette.foreground, scrollBar.hovered ? 0.5 : 0.3)
-        }
-
-        background: null
     }
 }

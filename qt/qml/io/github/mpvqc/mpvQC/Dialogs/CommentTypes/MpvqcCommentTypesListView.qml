@@ -6,187 +6,114 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material as M
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility
 
 ListView {
     id: root
     objectName: "commentTypesListView"
 
-    required property real rowHeight
+    required property var applyMove
 
-    readonly property int _animationDuration: 50
-    readonly property int _appearDuration: 180
-    readonly property int _staggerInterval: 15
+    property alias commentTypes: _reorder.model
 
-    property bool _moving: false
-    property bool _deleting: false
+    readonly property bool reordering: _reorder.busy
 
-    function ensureVisible(peekOffset: int): void {
-        const lookIndex = currentIndex + peekOffset;
-        const item = itemAtIndex(lookIndex);
-        if (!item) {
-            return;
-        }
-
-        const itemTop = item.y - contentY;
-        const itemBottom = itemTop + item.height;
-        const viewHeight = height;
-
-        const isFullyVisible = itemTop >= 0 && itemBottom <= viewHeight;
-        if (isFullyVisible) {
-            return;
-        }
-
-        const padding = 25;
-
-        if (itemTop < 0) {
-            contentY = Math.max(0, item.y - padding);
-        } else if (itemBottom > viewHeight) {
-            contentY = Math.min(contentHeight - height, item.y + item.height - height + padding);
-        }
+    readonly property bool _scrolls: contentHeight > height
+    readonly property real _scrollBarGutter: _scrolls ? 20 : 0
+    readonly property real _edgeZone: 48
+    readonly property real _maximumEdgeSpeed: 360
+    readonly property real _edgeSpeed: {
+        const pointerY = _reorder.pointerY;
+        const depth = pointerY < _edgeZone ? pointerY - _edgeZone : pointerY > height - _edgeZone ? pointerY - height + _edgeZone : 0;
+        // The pointer can leave the list while dragging.
+        const proximity = Math.max(-1, Math.min(1, depth / _edgeZone));
+        return _maximumEdgeSpeed * proximity * Math.abs(proximity);
     }
 
-    function beginRemoval(): void {
-        _deleting = true;
+    signal deleteRequested(index: int)
+
+    function cancelReorder(): void {
+        _reorder.cancel();
     }
 
-    spacing: 0
     clip: true
+    model: _reorder
+    interactive: !reordering
     boundsBehavior: Flickable.StopAtBounds
-
-    highlightFollowsCurrentItem: !_deleting
-    highlightMoveDuration: _moving ? 0 : _animationDuration
-    highlightMoveVelocity: -1
-    highlightResizeDuration: 0
-    highlightResizeVelocity: -1
-
-    populate: Transition {
-        id: _populateTransition
-
-        SequentialAnimation {
-            PropertyAction {
-                property: "opacity"
-                value: 0
-            }
-            PauseAnimation {
-                duration: _populateTransition.ViewTransition.index * root._staggerInterval
-            }
-            NumberAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: root._appearDuration
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
+    // The lifted row lives in its delegate, so no delegate may be released mid-drag.
+    cacheBuffer: Math.max(0, contentHeight)
 
     move: Transition {
-        SequentialAnimation {
-            PropertyAction {
-                target: root
-                property: "_moving"
-                value: true
-            }
-            NumberAnimation {
-                properties: "y"
-                duration: root._animationDuration
-            }
-            PropertyAction {
-                target: root
-                property: "_moving"
-                value: false
-            }
+        enabled: !_reorder.applyingMove
+
+        NumberAnimation {
+            property: "y"
+            duration: 150
+            easing.type: Easing.OutCubic
         }
     }
+
+    moveDisplaced: move
 
     remove: Transition {
-        SequentialAnimation {
-            NumberAnimation {
-                properties: "y"
-                duration: root._animationDuration
-            }
-            PropertyAction {
-                target: root
-                property: "_deleting"
-                value: false
-            }
-        }
-    }
-
-    displaced: Transition {
         NumberAnimation {
-            properties: "y"
-            duration: root._animationDuration
+            property: "opacity"
+            to: 0
+            duration: 50
         }
     }
 
-    highlight: Item {
-        Rectangle {
-            x: LayoutMirroring.enabled ? _scrollBar.visibleWidth : 0
-            width: parent.width - _scrollBar.visibleWidth
-            height: parent.height
-            color: MpvqcAppearance.palette.rowSelected
-            radius: M.Material.ExtraSmallScale
-            visible: !root._moving
-        }
-    }
-
-    delegate: ItemDelegate {
-        id: _delegate
-
-        required property var modelData
-        required property int index
-
-        readonly property color foregroundColor: MpvqcAppearance.palette.foreground
-        readonly property color stripeColor: MpvqcAppearance.listStripe
-        readonly property color backgroundColor: ListView.isCurrentItem ? (root._moving ? MpvqcAppearance.palette.rowSelected : "transparent") : index % 2 === 1 ? stripeColor : "transparent"
-
-        width: ListView.view.width
-        height: root.rowHeight
-        leftInset: LayoutMirroring.enabled ? _scrollBar.visibleWidth : 0
-        rightInset: LayoutMirroring.enabled ? 0 : _scrollBar.visibleWidth
-
-        background: Rectangle {
-            parent: _delegate.parent
-            y: _delegate.y
-            height: _delegate.height
-            color: _delegate.backgroundColor
-            radius: M.Material.ExtraSmallScale
-            opacity: _delegate.opacity
-        }
-
-        contentItem: Label {
-            padding: 15
-            anchors.fill: parent
-
-            text: qsTranslate("CommentTypes", _delegate.modelData.display)
-            textFormat: Text.PlainText
-            elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        M.Material.foreground: ListView.isCurrentItem ? MpvqcAppearance.palette.rowSelectedText : foregroundColor
-        M.Material.background: backgroundColor
-
-        onPressed: root.currentIndex = index
-    }
-
-    ScrollBar.vertical: ScrollBar {
-        id: _scrollBar
-
-        readonly property bool isShown: root.contentHeight > root.height
-        readonly property real visibleWidth: isShown ? width : 0
-
-        policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-    }
-
-    Behavior on contentY {
+    removeDisplaced: Transition {
         NumberAnimation {
-            duration: root._animationDuration
+            property: "y"
+            duration: 50
         }
+    }
+
+    ScrollBar.vertical: MpvqcScrollBar {
+        policy: root._scrolls ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+    }
+
+    MpvqcCommentTypesReorderModel {
+        id: _reorder
+
+        view: root
+        applyMove: root.applyMove
+        delegate: MpvqcCommentTypesDraggableDelegate {
+            view: root
+            reorder: _reorder
+            gutter: root._scrollBarGutter
+            deleteEnabled: root.count > 1
+
+            onDeleteRequested: index => root.deleteRequested(index)
+        }
+    }
+
+    FrameAnimation {
+        running: _reorder.dragging && root._edgeSpeed !== 0
+
+        onTriggered: {
+            const minimum = root.originY;
+            const maximum = minimum + Math.max(0, root.contentHeight - root.height);
+            // A stalled frame must not throw the list far past the pointer.
+            const step = root._edgeSpeed * Math.min(frameTime, 0.04);
+            root.contentY = Math.max(minimum, Math.min(maximum, root.contentY + step));
+        }
+    }
+
+    Rectangle {
+        objectName: "commentTypesDropIndicator"
+
+        y: _reorder.activeItem ? _reorder.activeItem.y - root.contentY : 0
+        height: MpvqcConstants.listRowHeight
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: root._scrollBarGutter
+        z: 2
+        radius: 8
+        color: Qt.alpha(MpvqcAppearance.palette.accent, 0.08)
+        visible: root.reordering
     }
 }
