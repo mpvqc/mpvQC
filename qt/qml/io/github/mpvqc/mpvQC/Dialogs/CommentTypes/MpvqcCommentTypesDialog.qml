@@ -18,67 +18,66 @@ MpvqcDialog {
 
     readonly property MpvqcCommentTypesDialogViewModel viewModel: MpvqcCommentTypesDialogViewModel {}
 
-    contentHeight: MpvqcConstants.smallDialogContentHeight
-
+    width: Math.min(contentWidth + leftPadding + rightPadding, Math.max(0, (Overlay.overlay?.width ?? 0) - 2 * margins))
+    contentWidth: MpvqcConstants.smallDialogContentWidth
+    contentHeight: MpvqcConstants.mediumDialogContentHeight
+    margins: MpvqcConstants.dialogEdgeMargin
     title: qsTranslate("CommentTypesDialog", "Comment Types")
-    standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
+    standardButtons: Dialog.RestoreDefaults | Dialog.Cancel | Dialog.Ok
 
     contentItem: ColumnLayout {
-        spacing: 10
+        spacing: MpvqcConstants.dialogSectionSpacing
 
-        MpvqcCommentTypesDraftField {
-            id: _draftField
+        MpvqcSectionCard {
+            objectName: "commentTypesAddCard"
 
-            validationError: _viewState.validationError
-            addEnabled: _viewState.isAddEnabled
+            title: qsTranslate("CommentTypesDialog", "Add Comment Type")
 
             Layout.fillWidth: true
-            Layout.topMargin: 20
+            Layout.topMargin: MpvqcConstants.dialogContentTopMargin
 
-            onAddRequested: _viewState.addType()
+            MpvqcCommentTypesDraftField {
+                id: _draftField
+
+                validationError: _viewState.validationError
+                addEnabled: _viewState.isAddEnabled
+
+                Layout.fillWidth: true
+
+                onAddRequested: _viewState.addType()
+            }
         }
 
-        RowLayout {
-            Layout.fillHeight: true
+        MpvqcSectionCard {
+            objectName: "commentTypesListCard"
+
             Layout.fillWidth: true
 
             MpvqcCommentTypesListView {
                 id: _listView
 
-                rowHeight: MpvqcConstants.listRowHeight
+                applyMove: (from, to) => root.viewModel.move(from, to)
 
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.preferredHeight: 8 * MpvqcConstants.listRowHeight
+
+                onDeleteRequested: index => _viewState.removeType(index)
+
+                Component.onCompleted: commentTypes = root.viewModel.commentTypesModel
             }
+        }
 
-            MpvqcCommentTypesActions {
-                id: _actions
-
-                moveUpEnabled: _viewState.isMoveUpEnabled
-                moveDownEnabled: _viewState.isMoveDownEnabled
-                deleteEnabled: _viewState.isDeleteEnabled
-
-                Layout.alignment: Qt.AlignTop
-
-                onMoveUpRequested: _viewState.moveUp()
-                onMoveDownRequested: _viewState.moveDown()
-                onDeleteRequested: _viewState.deleteCurrent()
-            }
+        Item {
+            Layout.fillHeight: true
         }
     }
 
-    onAboutToShow: {
-        // trigger the populate animation
-        _listView.model = root.viewModel.commentTypesModel;
-    }
-
-    onAccepted: {
-        root.viewModel.save();
-    }
-
+    onAboutToHide: _listView.cancelReorder()
+    onAccepted: root.viewModel.save()
     onReset: {
-        root.viewModel.resetToDefaults();
-        _listView.currentIndex = 0;
+        if (_viewState.canEdit) {
+            root.viewModel.resetToDefaults();
+        }
     }
 
     QtObject {
@@ -86,38 +85,22 @@ MpvqcDialog {
 
         readonly property string validationError: _draftField.text === "" ? "" : root.viewModel.validateNew(_draftField.text)
         readonly property bool isAddEnabled: _draftField.text !== "" && validationError === ""
-        readonly property bool isMoveUpEnabled: _listView.currentIndex > 0
-        readonly property bool isMoveDownEnabled: _listView.currentIndex >= 0 && _listView.currentIndex < _listView.count - 1
-        readonly property bool isDeleteEnabled: _listView.currentIndex >= 0 && _listView.count > 1
+        readonly property bool canEdit: !_listView.reordering
+
+        function removeType(index: int): void {
+            if (canEdit) {
+                root.viewModel.remove(index);
+            }
+        }
 
         function addType(): void {
-            if (!isAddEnabled) {
+            if (!isAddEnabled || !canEdit) {
                 return;
             }
-            _listView.currentIndex = root.viewModel.append(_draftField.text);
-            _listView.ensureVisible(0);
+            const index = root.viewModel.append(_draftField.text);
+            _listView.positionViewAtIndex(index, ListView.Contain);
             _draftField.clear();
             _draftField.focusInput();
-        }
-
-        function deleteCurrent(): void {
-            _listView.positionViewAtIndex(_listView.currentIndex, ListView.Contain);
-            _listView.beginRemoval();
-            root.viewModel.remove(_listView.currentIndex);
-        }
-
-        function moveUp(): void {
-            const idx = _listView.currentIndex;
-            root.viewModel.move(idx, idx - 1);
-            _listView.currentIndex = idx - 1;
-            _listView.ensureVisible(+1);
-        }
-
-        function moveDown(): void {
-            const idx = _listView.currentIndex;
-            root.viewModel.move(idx, idx + 1);
-            _listView.currentIndex = idx + 1;
-            _listView.ensureVisible(-1);
         }
     }
 }

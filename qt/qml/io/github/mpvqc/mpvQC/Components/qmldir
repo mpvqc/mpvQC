@@ -22,6 +22,7 @@ MpvqcPlainTextMenuItem MpvqcPlainTextMenuItem.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml
 MpvqcRadioIndicator MpvqcRadioIndicator.qml
 MpvqcRoundedItemDelegate MpvqcRoundedItemDelegate.qml
+MpvqcScrollBar MpvqcScrollBar.qml
 MpvqcSectionCard MpvqcSectionCard.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml

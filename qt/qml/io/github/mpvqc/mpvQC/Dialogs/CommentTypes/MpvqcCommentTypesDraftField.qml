@@ -21,16 +21,18 @@ ColumnLayout {
     signal addRequested
 
     function clear(): void {
-        _addField.text = "";
+        _addField.clear();
     }
 
     function focusInput(): void {
         _addField.forceActiveFocus();
     }
 
-    spacing: 10
+    spacing: 4
 
     RowLayout {
+        spacing: 8
+
         Layout.fillWidth: true
 
         TextField {
@@ -38,53 +40,39 @@ ColumnLayout {
             objectName: "commentTypeTextField"
 
             selectByMouse: true
-            horizontalAlignment: Text.AlignLeft
-            placeholderText: qsTranslate("CommentTypesDialog", "New comment type")
+            bottomPadding: topPadding
+            // Inherited mirroring can leave the rendered text at its old alignment.
+            horizontalAlignment: root.LayoutMirroring.enabled ? Text.AlignRight : Text.AlignLeft
 
-            Layout.fillWidth: true
+            Accessible.name: qsTranslate("CommentTypesDialog", "Add Comment Type")
             ContextMenu.menu: null
+            LayoutMirroring.enabled: false
+            Layout.fillWidth: true
+            Layout.minimumWidth: 0
 
             onAccepted: root.addRequested()
         }
 
-        ToolButton {
+        Button {
             objectName: "commentTypeAddButton"
+
+            text: qsTranslate("CommentTypesDialog", "Add")
+            flat: true
             enabled: root.addEnabled
 
-            icon {
-                width: 20
-                height: 20
-                source: MpvqcIcons.add
-            }
-
-            onPressed: root.addRequested()
+            onClicked: root.addRequested()
         }
     }
 
-    Item {
+    Label {
+        objectName: "commentTypeValidationLabel"
+
+        // Keeps its line while empty, so feedback never pushes the list down.
+        text: root.validationError
+        color: MpvqcAppearance.palette.error
+        wrapMode: Label.WordWrap
+        horizontalAlignment: Text.AlignLeft
+
         Layout.fillWidth: true
-        Layout.preferredHeight: (fontMetrics.lineSpacing * _errorLabel.lineCount) + _errorLabel.topPadding + _errorLabel.bottomPadding
-
-        Label {
-            id: _errorLabel
-            objectName: "commentTypeValidationLabel"
-
-            anchors.fill: parent
-
-            topPadding: 4
-            bottomPadding: 6
-
-            text: root.validationError
-            maximumLineCount: 3
-            color: MpvqcAppearance.palette.error
-            wrapMode: Label.WordWrap
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignTop
-
-            FontMetrics {
-                id: fontMetrics
-                font: _errorLabel.font
-            }
-        }
     }
 }

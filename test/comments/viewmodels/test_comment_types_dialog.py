@@ -59,6 +59,11 @@ def test_append_adds_item_and_returns_new_index(view_model, comment_types):
     assert view_model.commentTypesModel.stringList()[-1] == "New Type"
 
 
+def test_remove_deletes_the_row(view_model, comment_types):
+    view_model.remove(1)
+    assert view_model.commentTypesModel.stringList() == [comment_types[0], *comment_types[2:]]
+
+
 def test_move_swaps_neighbors(view_model, comment_types):
     view_model.move(2, 1)
     updated = view_model.commentTypesModel.stringList()

@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import assert_never
 
 import inject
-from PySide6.QtCore import Property, QObject, QUrl, Slot
+from PySide6.QtCore import Property, QCoreApplication, QEvent, QObject, QUrl, Slot
+from PySide6.QtGui import QWindow
 from PySide6.QtQml import QmlElement, QQmlEngine
 
 from mpvqc.appdata.services import ApplicationPathsService
@@ -105,6 +106,11 @@ class MpvqcTestBridge(QObject):
     @Slot()
     def waitForBackgroundJobs(self) -> None:
         runtime.wait_for_background_jobs()
+
+    # Qt Quick drops every pointer grab in a window it is told has lost activation.
+    @Slot(QWindow)
+    def deactivateWindow(self, window: QWindow) -> None:
+        QCoreApplication.sendEvent(window, QEvent(QEvent.Type.WindowDeactivate))
 
     @Slot(result=QUrl)
     def importComplexDocument(self) -> QUrl:

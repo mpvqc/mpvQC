@@ -200,12 +200,21 @@
         <translation>Tipos de Comentários</translation>
     </message>
     <message>
-        <source>New comment type</source>
-        <translation>Novo tipo de comentário</translation>
+        <source>Add Comment Type</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Characters &apos;{}&apos; not allowed</source>
         <translation>Caracteres &apos;{}&apos; não permitidos</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <extracomment>Accessible name of the icon-only button that deletes a comment type</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

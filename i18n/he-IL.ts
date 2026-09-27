@@ -202,12 +202,21 @@
         <translation>סוגי הערות</translation>
     </message>
     <message>
-        <source>New comment type</source>
-        <translation>סוג הערה חדש</translation>
+        <source>Add Comment Type</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Characters &apos;{}&apos; not allowed</source>
         <translation>התווים &apos;{}&apos; אינם מורשים</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <extracomment>Accessible name of the icon-only button that deletes a comment type</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

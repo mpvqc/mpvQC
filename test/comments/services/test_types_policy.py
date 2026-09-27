@@ -105,3 +105,11 @@ def test_removing_configured_type_still_in_document_does_not_emit(
 
     assert policy.displayable_comment_types == frozenset({"Translation", "Spelling"})
     assert spy.count() == 0
+
+
+def test_removing_configured_type_keeps_it_on_comments(policy, comments_settings_service, comments_service):
+    comments_service.add_row(time=0, comment_type="Spelling")
+
+    comments_settings_service.comment_types = ["Translation"]
+
+    assert comments_service.comment_at(0).comment_type == "Spelling"

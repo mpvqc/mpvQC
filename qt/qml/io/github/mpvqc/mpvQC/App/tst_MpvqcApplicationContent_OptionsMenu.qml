@@ -170,16 +170,16 @@ TestCase {
 
         const listView = findChild(dialog, "commentTypesListView");
         verify(listView, "commentTypesListView not found");
-        const deleteButton = findChild(dialog, "commentTypeDeleteButton");
-        verify(deleteButton, "commentTypeDeleteButton not found");
 
         while (listView.count > 1) {
-            tryVerify(() => deleteButton.enabled);
             const before = listView.count;
+            const deleteButton = findChild(listView.itemAtIndex(before - 1), "commentTypeDeleteButton");
+            verify(deleteButton, "commentTypeDeleteButton not found");
             mouseClick(deleteButton);
             tryVerify(() => listView.count === before - 1);
         }
-        tryVerify(() => !deleteButton.enabled);
+        const lastDeleteButton = findChild(listView.itemAtIndex(0), "commentTypeDeleteButton");
+        tryVerify(() => !lastDeleteButton.enabled);
 
         const textField = findChild(dialog, "commentTypeTextField");
         verify(textField, "commentTypeTextField not found");
@@ -200,22 +200,24 @@ TestCase {
         menu.close();
     }
 
-    function test_commentTypesDialog_resetButton_restoresDefaultsAndUpdatesNewCommentMenu(): void {
+    function test_commentTypesDialog_restoreDefaultsButton_restoresDefaultsAndUpdatesNewCommentMenu(): void {
         const control = it.makeControl();
         const defaults = it.settings.commentTypes();
         verify(defaults.length > 1, "expected multiple default comment types");
 
         it.menu.trigger(control, "optionsMenu", "openCommentTypesDialogMenuItem");
         let dialog = it.find.openedDialog(control, "commentTypesDialog");
-        mouseClick(findChild(dialog, "commentTypeDeleteButton"));
+        const listView = findChild(dialog, "commentTypesListView");
+        verify(listView, "commentTypesListView not found");
+        mouseClick(findChild(listView.itemAtIndex(0), "commentTypeDeleteButton"));
         it.dialog.accept(dialog);
         verify(it.settings.commentTypes().length < defaults.length, "precondition: settings should differ from defaults");
 
         it.menu.trigger(control, "optionsMenu", "openCommentTypesDialogMenuItem");
         dialog = it.find.openedDialog(control, "commentTypesDialog");
-        const resetButton = dialog.standardButton(Dialog.Reset);
-        verify(resetButton, "Reset standard button not found");
-        mouseClick(resetButton);
+        const restoreDefaultsButton = dialog.standardButton(Dialog.RestoreDefaults);
+        verify(restoreDefaultsButton, "Restore Defaults standard button not found");
+        mouseClick(restoreDefaultsButton);
         it.dialog.accept(dialog);
         tryVerify(() => JSON.stringify(it.settings.commentTypes()) === JSON.stringify(defaults));
 
