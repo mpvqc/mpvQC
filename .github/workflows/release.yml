@@ -16,7 +16,9 @@ defaults:
     shell: bash
 
 env:
-  PYTHON_VERSION: "3.13"
+  # Windows ships on this version. The Flatpak stays on the version its runtime provides, see build_linux.
+  PYTHON_VERSION: "3.14"
+  PYTHON_VERSION_FLATPAK: "3.13"
 
 jobs:
   verify_formatting:
@@ -35,6 +37,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Update Packages
         run: sudo apt update -y
       - name: Initialize Project
@@ -48,20 +51,25 @@ jobs:
 
   test_python_linux:
     runs-on: ubuntu-latest
-    name: Test Python (Linux)
+    name: Test Python (Linux, ${{ matrix.python-version }})
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.14"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ matrix.python-version }}
       - name: Install libmpv
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
@@ -87,6 +95,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install libmpv
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
@@ -98,20 +107,25 @@ jobs:
 
   test_qml:
     runs-on: ubuntu-latest
-    name: Test QML
+    name: Test QML (${{ matrix.python-version }})
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.14"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ matrix.python-version }}
       - name: Install libmpv
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
@@ -143,6 +157,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Initialize Project
         run: just init '--no-group dev'
       - name: Build
@@ -173,13 +188,14 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION_FLATPAK }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ env.PYTHON_VERSION_FLATPAK }}
       - name: Initialize Project
         run: just init '--no-group dev'
       - name: Build
@@ -203,6 +219,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Remove Python Sources
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -217,8 +234,7 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute just init '--no-group dev'
-          execute uv pip install "nuitka[onefile]"
+          execute just init '--no-group dev --group windows-dist'
       - name: Build Bundle
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
