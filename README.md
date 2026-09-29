@@ -27,6 +27,10 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+## Installation
+
+See the [installation and update guide](https://mpvqc.github.io/installation/) for Windows and Linux.
+
 ## Development
 
 See [docs/development.md](docs/development.md) for setup, daily commands, and project layout,
