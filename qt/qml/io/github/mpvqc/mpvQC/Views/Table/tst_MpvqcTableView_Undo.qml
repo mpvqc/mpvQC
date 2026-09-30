@@ -38,6 +38,10 @@ TestCase {
     function cleanup(): void {
         control.destroy();
         control = null;
+        _helpers.bridge.loadVideo({
+            "duration": 0,
+            "timePos": 0
+        });
     }
 
     function test_undoIsNoopWithEmptyHistory(): void {
@@ -236,6 +240,86 @@ TestCase {
 
         tryVerify(() => _helpers.bridge.comment(6).time === startTime);
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not follow the row after undoing the time change");
+    }
+
+    function test_addAndCommitTextAfterImportUndoesInOneStep_data(): list<var> {
+        return [
+            {
+                tag: "first row",
+                timePos: 0,
+                row: 0
+            },
+            {
+                tag: "middle row",
+                timePos: 2.5,
+                row: 2
+            },
+            {
+                tag: "last row",
+                timePos: 6,
+                row: 5
+            }
+        ];
+    }
+
+    function test_addAndCommitTextAfterImportUndoesInOneStep(data): void {
+        _helpers.bridge.loadVideo({
+            "duration": 10,
+            "timePos": data.timePos
+        });
+        const before = JSON.stringify(_helpers.bridge.comments());
+        const count = control.commentCount;
+
+        control.viewModel.addRow("Comment Type 1");
+        _wait.editControlOpened(control);
+        compare(control.commentList.currentIndex, data.row);
+        keyClick(Qt.Key_U);
+        keyClick(Qt.Key_N);
+        keyClick(Qt.Key_D);
+        keyClick(Qt.Key_O);
+        keyClick(Qt.Key_Space);
+        keyClick(Qt.Key_M);
+        keyClick(Qt.Key_E);
+        keyClick(Qt.Key_Return);
+        _wait.editControlClosed(control);
+        tryCompare(control, "commentCount", count + 1);
+        tryVerify(() => _helpers.bridge.comment(data.row).comment === "undo me");
+
+        control.viewModel.undo();
+        tryCompare(control, "commentCount", count);
+        compare(JSON.stringify(_helpers.bridge.comments()), before);
+
+        control.viewModel.redo();
+        tryCompare(control, "commentCount", count + 1);
+        compare(_helpers.bridge.comment(data.row).comment, "undo me");
+    }
+
+    function test_userSelectionAfterAddPreventsTextMerge(): void {
+        _helpers.bridge.loadVideo({
+            "duration": 10,
+            "timePos": 2.5
+        });
+        const count = control.commentCount;
+
+        control.viewModel.addRow("Comment Type 1");
+        _wait.editControlOpened(control);
+        keyClick(Qt.Key_Escape);
+        _wait.editControlClosed(control);
+        compare(control.commentList.currentIndex, 2);
+
+        control.commentList.currentIndex = 0;
+        waitForRendering(control);
+        control.commentList.currentIndex = 2;
+        waitForRendering(control);
+        control.viewModel.updateComment(2, "separate edit");
+        compare(_helpers.bridge.comment(2).comment, "separate edit");
+
+        control.viewModel.undo();
+        compare(control.commentCount, count + 1);
+        compare(_helpers.bridge.comment(2).comment, "");
+
+        control.viewModel.undo();
+        tryCompare(control, "commentCount", count);
     }
 
     function test_userJourneyAddEditUndoRedoRoundTrips(): void {
