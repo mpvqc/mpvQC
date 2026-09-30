@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, assert_never
 
 import inject
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, QSignalBlocker, Signal
 
 from mpvqc.session import SessionService
 
@@ -137,4 +137,7 @@ class CommentsService(QObject):
                 pass
             case _ as unreachable:
                 assert_never(unreachable)
-        self.view_action.emit(action)
+
+        # QML can report intermediate rows here; they are not user selection changes.
+        with QSignalBlocker(self._selection):
+            self.view_action.emit(action)
