@@ -47,10 +47,14 @@ Loader {
         id: _messageBoxComponent
 
         MpvqcMessageBox {
+            id: _messageBox
             objectName: "deleteConfirmationMessageBox"
 
+            // Mirrors the terms the Material style adds to the content in a Dialog's implicit height
+            readonly property real _chromeHeight: topPadding + bottomPadding + (implicitHeaderHeight > 0 ? implicitHeaderHeight + spacing : 0) + (implicitFooterHeight > 0 ? implicitFooterHeight + spacing : 0)
+            readonly property real _maxContentHeight: (MpvqcWindowUtility.contentFrame ?? root.Window.window.contentItem).height - 2 * MpvqcConstants.dialogEdgeMargin - _chromeHeight
+
             title: qsTranslate("MessageBoxes", "Delete Comment")
-            height: Math.min(implicitHeight, (MpvqcWindowUtility.contentFrame ?? root.Window.window.contentItem).height - 2 * MpvqcConstants.dialogEdgeMargin)
             contentWidth: MpvqcConstants.smallDialogContentWidth
             standardButtons: Dialog.Yes | Dialog.Cancel
 
@@ -59,15 +63,19 @@ Loader {
 
                 readonly property bool _needsScrollBar: contentHeight > availableHeight
 
-                leftPadding: mirrored && _needsScrollBar ? 20 : 0
-                rightPadding: !mirrored && _needsScrollBar ? 20 : 0
+                // Cap the implicit height, never the dialog's height: under Popup.Window Qt resizes the popup
+                // to its implicit height on every change and ignores an explicit one
+                implicitHeight: Math.min(contentHeight, _messageBox._maxContentHeight)
                 contentWidth: availableWidth
                 contentHeight: _sections.implicitHeight
 
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                 ScrollBar.vertical: MpvqcScrollBar {
                     parent: _scroll
-                    x: _scroll.mirrored ? 0 : _scroll.width - width
+                    // The scroll bar sits in the dialog's padding so it never takes width from the comment.
+                    // A narrower comment wraps taller, which changes whether the bar is needed: at a length
+                    // that fits only without the bar, the two flip forever and the application hangs
+                    x: _scroll.mirrored ? -(_messageBox.leftPadding + width) / 2 : _scroll.width + (_messageBox.rightPadding - width) / 2
                     y: _scroll.topPadding
                     height: _scroll.availableHeight
                     policy: _scroll._needsScrollBar ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff

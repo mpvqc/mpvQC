@@ -339,6 +339,33 @@ TestCase {
         }
     }
 
+    function test_deleteScrollBarLeavesPreviewWidth(): void {
+        keyPress(Qt.Key_Delete);
+        _wait.messageBoxOpened(control);
+        const widthWithoutScrollBar = (findChild(control, "deletePreview") as Label).width;
+        verify(widthWithoutScrollBar > 0);
+        keyPress(Qt.Key_Return);
+        _wait.messageBoxClosed(control);
+
+        _helpers.bridge.importComments([
+            {
+                time: 6000,
+                commentType: "Comment Type 1",
+                comment: "Full comment preview. ".repeat(100)
+            }
+        ]);
+        control.commentList.currentIndex = control.commentCount - 1;
+        control.forceActiveFocus();
+        keyPress(Qt.Key_Delete);
+        _wait.messageBoxOpened(control);
+
+        const box = findChild(control, "deleteConfirmationMessageBox") as Dialog;
+        const scroll = box.contentItem as ScrollView;
+        tryVerify(() => scroll.ScrollBar.vertical.visible);
+        waitForRendering(scroll);
+        compare((findChild(box, "deletePreview") as Label).width, widthWithoutScrollBar);
+    }
+
     function test_importClosesMessageBox(): void {
         const countAtBeginning = control.commentCount;
 
