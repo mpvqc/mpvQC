@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from mpvqc.build import get_build_info
 
 HOME_URL = "https://mpvqc.github.io"
-_UPDATE_URL = f"{HOME_URL}/api/v1/public/version"
+_UPDATE_URL = f"{HOME_URL}/api/v1/public/version.json"
 
 
 @dataclass(frozen=True)

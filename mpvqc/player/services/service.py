@@ -263,10 +263,10 @@ class PlayerService(QObject):
         self._handle.command_async("keypress", "MOUSE_BTN6")
 
     def scroll_up(self) -> None:
-        self._handle.command_async("keypress", "MOUSE_BTN3")
+        self._handle.command_async("keypress", "WHEEL_UP")
 
     def scroll_down(self) -> None:
-        self._handle.command_async("keypress", "MOUSE_BTN4")
+        self._handle.command_async("keypress", "WHEEL_DOWN")
 
     def frame_step_forward(self) -> None:
         self._handle.command_async("frame-step")

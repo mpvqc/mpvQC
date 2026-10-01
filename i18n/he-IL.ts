@@ -216,7 +216,7 @@
     <message>
         <source>Delete</source>
         <extracomment>Accessible name of the icon-only button that deletes a comment type</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete</translation>
     </message>
 </context>
 <context>
