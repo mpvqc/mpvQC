@@ -77,5 +77,5 @@
   <text x="320" y="330" text-anchor="middle" font-family="Noto Sans" font-weight="700"
         letter-spacing="3" fill="#f0eef8" font-size="42">mpvQC</text>
   <text x="320" y="358" text-anchor="middle" font-family="Noto Sans" font-weight="400"
-        letter-spacing="4" fill="#6e6c7a" font-size="16">0.9.0-beta5</text>
+        letter-spacing="4" fill="#6e6c7a" font-size="16">1.0.0</text>
 </svg>

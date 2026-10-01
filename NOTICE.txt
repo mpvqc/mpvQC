@@ -27,7 +27,7 @@ Build Scripts and Helper Code
 Noto Sans Font
   Description: User interface font family
   Homepage: https://fonts.google.com/noto/specimen/Noto+Sans
-  License: SIL Open Font License 1.1
+  License: OFL-1.1 (SIL Open Font License 1.1)
   License File: OFL-1.1.txt
 
 Google Material Icons and Symbols
@@ -41,10 +41,13 @@ Third-Party Components
 ======================
 
 This software includes or depends on the following third-party components.
-Full license texts are available in the LICENSES directory.
+The license texts named below are available in the LICENSES directory.
 
-Python Dependencies
--------------------
+Python Runtime Dependencies
+---------------------------
+
+These are the application dependencies from pyproject.toml and their transitive
+runtime dependencies. Development tools are not part of this list.
 
 inject
   Description: Python dependency injection framework
@@ -55,23 +58,55 @@ inject
 Jinja2
   Description: Template engine for Python
   Homepage: https://github.com/pallets/jinja/
+  Copyright: Copyright 2007 Pallets
   License: BSD-3-Clause
   License File: BSD-3-Clause.txt
 
-python-mpv
+MarkupSafe
+  Description: String escaping library used by Jinja2
+  Homepage: https://github.com/pallets/markupsafe/
+  Copyright: Copyright 2010 Pallets
+  License: BSD-3-Clause
+  License File: BSD-3-Clause.txt
+
+mpv (python-mpv)
   Description: Python interface to the mpv media player
   Homepage: https://github.com/jaseg/python-mpv
+  Copyright: Copyright (C) 2017-2024 Sebastian Götte <code@jaseg.net>
+  Package metadata: GPL-2.0-or-later OR LGPL-2.1-or-later
   License: GPL-2.0-or-later
   License File: GPL-2.0-or-later.txt
 
-PySide6
-  Description: Official Python bindings for Qt, including the Shiboken6 binding runtime
+PySide6-Essentials
+  Description: Official Python bindings for the essential Qt modules
   Homepage: https://wiki.qt.io/Qt_for_Python
+  Package metadata: LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
   License: LGPL-3.0-only
   License File: LGPL-3.0-only.txt
 
+shiboken6
+  Description: Binding runtime used by PySide6-Essentials
+  Homepage: https://wiki.qt.io/Qt_for_Python
+  Package metadata: LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+  License: LGPL-3.0-only
+  License File: LGPL-3.0-only.txt
+
+Where a package offers alternative licenses, "Package metadata" lists those
+options and "License" names the option used here. The license file covers that
+option.
+
 Windows Build
 -------------
+
+Zstandard and xxHash
+  Description: Native decompression code in Nuitka's onefile launcher
+  Homepage: https://github.com/facebook/zstd
+  Copyright: Copyright (c) 2016-present, Facebook, Inc. All rights reserved.
+             Copyright (c) 2012-2020, Yann Collet, Facebook, Inc.
+  License: BSD-3-Clause
+  License File: BSD-3-Clause.txt
+  Build source: Nuitka's bundled Zstandard copy
+    https://github.com/Nuitka/Nuitka/tree/4.2.2/nuitka/build/inline_copy/zstd
 
 The Windows release bundles libmpv as built and published by the
 mpv-winbuild-cmake project:
@@ -95,8 +130,11 @@ Media dependencies
 Flatpak Build
 -------------
 
-The Flatpak builds libmpv and its media dependencies from build recipes taken
-from flathub's io.mpv.Mpv:
+The Flatpak build recipes are maintained in:
+  https://github.com/mpvqc/mpvQC-flatpak
+
+The libmpv and media dependency recipes come from Flathub's io.mpv.Mpv, with
+changes for mpvQC:
   https://github.com/flathub/io.mpv.Mpv
 
 libmpv
@@ -113,7 +151,13 @@ ffmpeg
 
 Media dependencies
   Description: Further libraries built and shipped alongside libmpv, such as
-               libass, libplacebo, vapoursynth and zimg
+               libass, libplacebo, VapourSynth and zimg
+
+Kerberos
+  Description: krb5 libraries built for the bundled Qt libraries
+  Homepage: https://kerberos.org
+  Build recipe source: Flathub's io.qt.qtwebengine.BaseApp
+    https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.7/krb5
 
 
 Additional Information

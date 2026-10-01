@@ -48,6 +48,7 @@ def test_version_checker_latest(service, running_version):
         outcome = service.check_for_new_version()
 
     assert outcome == UpToDate()
+    mock_request.assert_called_once_with("https://mpvqc.github.io/api/v1/public/version.json", timeout=5)
 
 
 def test_version_checker_new_version_available(service, running_version):
