@@ -19,6 +19,8 @@ ListView {
 
     readonly property int _animationDuration: 50
     property bool _instantHighlight: false
+    property bool _layoutPending: false
+    readonly property bool _rowsSettling: _layoutPending || _displacedTransition.running
 
     signal editTimeRequested(index: int, time: int, coordinates: point)
     signal editCommentTypeRequested(index: int, commentType: string, coordinates: point)
@@ -68,6 +70,8 @@ ListView {
     }
 
     displaced: Transition {
+        id: _displacedTransition
+
         NumberAnimation {
             property: "y"
             duration: root._animationDuration
@@ -137,7 +141,7 @@ ListView {
     ScrollBar.vertical: ScrollBar {
         id: _scrollBar
 
-        readonly property bool isShown: root.contentHeight > root.height
+        property bool isShown: false
         readonly property int visibleWidth: isShown ? width : 0
 
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
@@ -150,12 +154,14 @@ ListView {
         target: root.model
 
         function onAboutToInsertRow(): void {
+            root._layoutPending = true;
             root._instantHighlight = true;
             root.currentIndex = -1;
             root._instantHighlight = false;
         }
 
         function onAboutToRemoveRow(): void {
+            root._layoutPending = true;
             root.highlightFollowsCurrentItem = false;
         }
 
@@ -168,6 +174,29 @@ ListView {
         id: _reEngageHighlightTracking
         interval: root._animationDuration
         onTriggered: root.highlightFollowsCurrentItem = true
+    }
+
+    Connections {
+        // A model change is laid out, and its transitions started, when the window polishes its items.
+        // The window emits afterAnimating right after that, so from then on the transitions tell
+        // whether the rows still move
+        target: root.Window.window
+        enabled: root._layoutPending
+
+        function onAfterAnimating(): void {
+            root._layoutPending = false;
+        }
+    }
+
+    Binding {
+        // An inserted or removed row can make the scroll bar appear or vanish, and the rows wrap
+        // differently with it. A row that changes height while a transition moves it lands where it
+        // was headed before, leaving gaps or overlaps. So the scroll bar waits until the rows settled
+        target: _scrollBar
+        property: "isShown"
+        value: root.contentHeight > root.height
+        when: !root._rowsSettling
+        restoreMode: Binding.RestoreNone
     }
 
     Binding {
