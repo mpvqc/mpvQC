@@ -32,7 +32,7 @@ Done when you have the full file list and have read every changed hunk that can 
 ### 2. Read the platform catalogue
 
 `select_platform_backend` picks one platform per run, and each branch is one platform the app supports. Read it, don't
-recall it. `CONTEXT.md` defines the platform terms the checks will use.
+recall it. `GLOSSARY.md` defines the platform terms the checks will use.
 
 Done when you can name every platform, the branch that selects it, and the platform capabilities that set it apart.
 

@@ -41,7 +41,7 @@ honest answer is _"nothing, it would just be nicer"_, you are holding an opinion
 - **Defect**: "`accent_color_preference_for` is public but has no caller outside its own file." Never done, the
   service permanently advertises a method nobody uses, and the next reader wires against it.
 - **Defect**: "'Overlay' means two different things in the glossary." Never done, every future agent that reads
-  `CONTEXT.md` picks one of the two at random.
+  `GLOSSARY.md` picks one of the two at random.
 - **Opinion**: "The appearance package has more files than the other feature packages." Never done, nothing breaks,
   degrades or misleads. It is an observation about shape.
 - **Opinion**: "`MpvqcAppearance` might deserve a better name someday." Never done, the name is exactly as good as it
@@ -80,7 +80,7 @@ list.
 - **Acceptance criteria are how you discharge test 2 of the bar.** Each one checkable by a reader who never saw the
   analysis. A criterion that needs the review report reopened to evaluate is not yet a criterion.
 - **Name the thing, not where it lives.** A symbol, a component, a command — not `label_width_calculator.py:40-41`.
-  Line numbers go stale before anyone picks the ticket up, and this is the rule `CONTEXT.md` and the ADRs already run
+  Line numbers go stale before anyone picks the ticket up, and this is the rule `GLOSSARY.md` and the ADRs already run
   on. A code snippet earns its place only where it pins a decision prose cannot — a state machine, a schema, a type
   shape — trimmed to the decision rather than left as a working demo.
 - **One fresh context window.** A ticket an agent cannot finish in one is an epic, and the work is its children.

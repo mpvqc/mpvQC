@@ -1,6 +1,6 @@
 ---
 name: writing-glossary
-description: Domain terms and the names the code gives them. Use when adding, changing, or reviewing a term in CONTEXT.md, and when a name in the code contradicts the spec or the project it refers to.
+description: Domain terms and the names the code gives them. Use when adding, changing, or reviewing a term in GLOSSARY.md, and when a name in the code contradicts the spec or the project it refers to.
 ---
 
 # Writing glossary entries
@@ -37,7 +37,7 @@ Where a word needs a qualifier, name it: "the system's color scheme", never a ba
 ## The correct term wins
 
 When a name contradicts the spec or the project it refers to — freedesktop, Qt — rename it, and record the correct
-term in `CONTEXT.md` when it is a domain term. The correct term wins however many places already carry the wrong
+term in `GLOSSARY.md` when it is a domain term. The correct term wins however many places already carry the wrong
 one: matching a name the repo got wrong spreads the mistake.
 
 ## Done when

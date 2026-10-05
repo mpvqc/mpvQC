@@ -30,8 +30,8 @@
 - Spell it "view model", two words, in all prose: docs, commit messages, tickets, comments. The closed form belongs to
   identifiers only, where a space is impossible: the `ViewModel` class suffix, the `viewmodels` role directory, the
   `viewModel` QML property.
-- In ADRs and `CONTEXT.md`, name the thing, not where it lives. Paths and file names go stale, so describe the component
-  or the command instead. Setup and workflow docs are the exception: there the path is the point.
+- In ADRs and `GLOSSARY.md`, name the thing, not where it lives. Paths and file names go stale, so describe the
+  component or the command instead. Setup and workflow docs are the exception: there the path is the point.
 
 ## Agent skills
 
@@ -47,4 +47,4 @@ The label vocabulary of each tracker, and which of those labels exist today. See
 
 ### Domain docs
 
-Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

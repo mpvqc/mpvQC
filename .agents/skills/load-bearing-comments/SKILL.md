@@ -16,14 +16,14 @@ Be strict. Most comments do not survive this.
 Both halves have to pass, or the comment goes:
 
 1. **Could the code say it?** A name, a type, a match arm, a test.
-2. **Is it already written down?** `CONTEXT.md` defines the domain terms. `docs/adr/` holds the decisions and their
+2. **Is it already written down?** `GLOSSARY.md` defines the domain terms. `docs/adr/` holds the decisions and their
    why. Read both before ruling on a comment, not just the one you remember.
 
 ## Move it rather than keep it
 
 | What the comment holds       | Where it belongs |
 | ---------------------------- | ---------------- |
-| A domain term                | `CONTEXT.md`     |
+| A domain term                | `GLOSSARY.md`     |
 | A decision and its reasoning | an ADR           |
 | Behaviour                    | a test           |
 | What a name should have said | the name         |
@@ -58,4 +58,4 @@ is true. Grep it and confirm. A false comment is worse than no comment, because 
 
 - Every comment still standing passed both halves of the test.
 - The claims they make were checked against the code, not assumed.
-- Whatever moved out landed in `CONTEXT.md`, an ADR, a test, or a better name.
+- Whatever moved out landed in `GLOSSARY.md`, an ADR, a test, or a better name.

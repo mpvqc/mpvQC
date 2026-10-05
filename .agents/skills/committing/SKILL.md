@@ -43,7 +43,7 @@ Docs go stale quietly, so check the ones your change reaches:
 
 | What you changed          | What to update                |
 | ------------------------- | ----------------------------- |
-| A domain term, new or renamed | `CONTEXT.md`              |
+| A domain term, new or renamed | `GLOSSARY.md`              |
 | An architectural decision | a new ADR under `docs/adr/`   |
 | Setup steps or commands   | `docs/development.md`         |
 | The layer split           | `docs/architecture.md`        |
