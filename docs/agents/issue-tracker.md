@@ -30,8 +30,8 @@ the private one and a lost token looks exactly like a contributor.
    - anything else at all — 404, 401, a lost scope, the repo renamed → **degraded**, go to 3
 3. **Degraded.** Write the ticket to `.scratch/` with a `Substrate: fallback` line near the top, and print one visible
    line: _"couldn't write to the private tracker, filed to `.scratch/`, re-file once it's reachable."_ Then carry on. An
-   agent mid-task cannot fix this, and a misplaced ticket beats a lost one. `what-next` finds the marker later and
-   offers to push it to `internal-tickets`.
+   agent mid-task cannot fix this, and a misplaced ticket beats a lost one. The marker is how it gets found and
+   re-filed to `internal-tickets` later.
 
 For a contributor, `.scratch/` is the terminal answer, not a fallback: file there and write no marker.
 

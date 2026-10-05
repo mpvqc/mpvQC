@@ -87,10 +87,9 @@ list.
 - **Relationships go through the API, never into the prose.** A parent is a sub-issue link, a blocker is a `blocked_by`
   edge, and `docs/agents/issue-tracker.md` has both calls. The graph moves as tickets close and get reparented, and a
   sentence in a body does not, so a body that names its own edges is wrong within a week with nothing to catch it.
-  `what-next` computes the frontier off the API for the same reason.
 - **Provenance**: one line at most, at the end of _What to build_ — _"found during an architecture review,
   2026-08-03"_. The only reason to record a source is to go back and read it, and the source is thrown away.
-- **Platform**: when the work can only be done on one OS, _What to build_ says which. `what-next` reads this.
+- **Platform**: when the work can only be done on one OS, _What to build_ says which.
 - **Footer**: on the private tracker, the body ends with the agent footer, and so does every comment you leave —
   including the closing one. `docs/agents/issue-tracker.md` has the exact line.
 - **Labels**: one readiness label, and nothing else. Area labels are not used — the body says what a ticket touches
@@ -103,8 +102,7 @@ list.
 | Work needing a human for another reason: manual testing, the Windows box, design taste     | `ready-for-human`                    |
 
 An issue **with children carries no readiness label**. An epic is not work — its readiness is whatever its children
-say, and labelling it would let one effort fill several slots in `what-next`'s capped list. That makes a _childless_
-issue with no readiness label a detectable filing bug, which `what-next` flags.
+say. That makes a _childless_ issue with no readiness label a filing bug.
 
 `needs-grilling` is the only qualifier. Add a second one only after wanting it twice: a wrong qualifier is worse than
 none, because it sends the recommendation the wrong way.
