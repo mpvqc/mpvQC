@@ -31,6 +31,7 @@ _TILING_DESKTOPS = frozenset(
         "spectrwm",
         "stumpwm",
         "sway",
+        "umbriel",
         "waymonad",
         "wlroots",
         "xmonad",
