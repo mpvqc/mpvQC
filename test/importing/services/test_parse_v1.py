@@ -90,32 +90,32 @@ INVALID_V1_DATA = [
     InvalidCase(
         name="comment entry not an object",
         data=make_data(["not a dict"]),
-        match="Expected a comment",
+        match="Expected comment 0",
     ),
     InvalidCase(
         name="comment missing text",
         data=make_data([{"time": "00:00:01.000", "type": "T"}]),
-        match="Expected a comment",
+        match="Expected comment 0",
     ),
     InvalidCase(
         name="one-digit hours",
         data=make_data([{"time": "0:00:01.000", "type": "T", "text": "t"}]),
-        match="Expected a comment",
+        match="Expected comment 0",
     ),
     InvalidCase(
         name="centisecond time",
         data=make_data([{"time": "00:00:01.00", "type": "T", "text": "t"}]),
-        match="Expected a comment",
+        match="Expected comment 0",
     ),
     InvalidCase(
         name="minutes beyond 59",
         data=make_data([{"time": "00:75:01.000", "type": "T", "text": "t"}]),
-        match="Expected a comment",
+        match="Expected comment 0",
     ),
     InvalidCase(
         name="time as number",
         data=make_data([{"time": 1000, "type": "T", "text": "t"}]),
-        match="Expected a comment",
+        match="Expected comment 0",
     ),
     InvalidCase(
         name="video not a string",

@@ -8,14 +8,14 @@ from typing import TYPE_CHECKING, assert_never, override
 
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 
-from mpvqc.importing.services import DocumentRejectionReason
+from mpvqc.importing.services import DocumentMalformed, DocumentVersionUnsupported
 
 if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
-    from mpvqc.importing.services import RejectedDocument
+    from mpvqc.importing.services import DocumentRejection, RejectedDocument
 
 
 class ErrorsModel(QAbstractListModel):
@@ -60,12 +60,12 @@ class ErrorsModel(QAbstractListModel):
         }
 
 
-def _reason_text(reason: DocumentRejectionReason) -> str:
+def _reason_text(reason: DocumentRejection) -> str:
     match reason:
-        case DocumentRejectionReason.UNSUPPORTED_VERSION:
+        case DocumentVersionUnsupported():
             #: Shown beneath a rejected document declaring a format version this mpvQC release does not know
             return QCoreApplication.translate("ImportWizardDialog", "Unsupported document format version")
-        case DocumentRejectionReason.INVALID:
+        case DocumentMalformed():
             #: Shown beneath a rejected document that does not parse as any known QC document format
             return QCoreApplication.translate("ImportWizardDialog", "Not a valid QC document")
         case _ as unreachable:

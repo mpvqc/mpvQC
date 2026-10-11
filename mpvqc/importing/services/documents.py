@@ -5,16 +5,13 @@
 from __future__ import annotations
 
 import json
-import logging
 import re
 from dataclasses import dataclass
-from enum import Enum, auto
+from itertools import starmap
 from pathlib import Path
 
 from mpvqc.comments.services import reverse_translate_comment_type
 from mpvqc.shared import Comment
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -24,9 +21,17 @@ class ParsedDocument:
     comments: tuple[Comment, ...]
 
 
-class DocumentRejectionReason(Enum):
-    INVALID = auto()
-    UNSUPPORTED_VERSION = auto()
+@dataclass(frozen=True)
+class DocumentMalformed:
+    detail: str
+
+
+@dataclass(frozen=True)
+class DocumentVersionUnsupported:
+    version: int
+
+
+type DocumentRejection = DocumentMalformed | DocumentVersionUnsupported
 
 
 _REGEX_CLASSIC_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")
@@ -35,36 +40,30 @@ _REGEX_CLASSIC_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<t
 _REGEX_V1_TIME = re.compile(r"^\d{2}:[0-5]\d:[0-5]\d\.\d{3}$")
 
 
-def parse_document(content: str) -> ParsedDocument | DocumentRejectionReason:
+def parse_document(content: str) -> ParsedDocument | DocumentRejection:
     if content.startswith("[FILE]"):
         return parse_classic(content)
 
     try:
         data = json.loads(content)
-    except (ValueError, RecursionError):
-        logger.exception("Unrecognized document format")
-        return DocumentRejectionReason.INVALID
+    except (ValueError, RecursionError) as error:
+        return DocumentMalformed(f"Neither a classic document nor JSON: {error}")
 
     if not isinstance(data, dict):
-        logger.warning("Document is JSON but not an object")
-        return DocumentRejectionReason.INVALID
+        return DocumentMalformed(f"Expected a JSON object, got: {type(data).__name__}")
+    if "version" not in data:
+        return DocumentMalformed("Missing 'version'")
 
-    match data.get("version"):
-        case bool() | float() as version:
-            logger.warning("Malformed document version %r", version)
-            return DocumentRejectionReason.INVALID
-        case 1:
-            try:
-                return parse_v1(data)
-            except ValueError:
-                logger.exception("Malformed version 1 document")
-                return DocumentRejectionReason.INVALID
-        case int(version):
-            logger.warning("Unsupported document version %d", version)
-            return DocumentRejectionReason.UNSUPPORTED_VERSION
-        case version:
-            logger.warning("Malformed document version %r", version)
-            return DocumentRejectionReason.INVALID
+    version = data["version"]
+    if type(version) is not int:
+        return DocumentMalformed(f"Expected 'version' to be an integer, got: {type(version).__name__}")
+    if version != 1:
+        return DocumentVersionUnsupported(version)
+
+    try:
+        return parse_v1(data)
+    except ValueError as error:
+        return DocumentMalformed(str(error))
 
 
 def parse_classic(content: str) -> ParsedDocument:
@@ -143,21 +142,21 @@ def _parse_v1_subtitles(data: dict) -> tuple[Path, ...]:
             return ()
         case list(subtitles) if all(isinstance(subtitle, str) for subtitle in subtitles):
             return tuple(Path(subtitle) for subtitle in subtitles)
-        case other:
-            msg = f"Expected 'subtitles' to be a list of strings, got: {other!r}"
+        case _:
+            msg = "Expected 'subtitles' to be a list of strings"
             raise ValueError(msg)
 
 
 def _parse_v1_comments(data: dict) -> tuple[Comment, ...]:
     match data.get("comments"):
         case list(comments):
-            return tuple(_parse_v1_comment(comment) for comment in comments)
+            return tuple(starmap(_parse_v1_comment, enumerate(comments)))
         case other:
             msg = f"Expected 'comments' to be a list, got: {type(other).__name__}"
             raise ValueError(msg)
 
 
-def _parse_v1_comment(entry: object) -> Comment:
+def _parse_v1_comment(index: int, entry: object) -> Comment:
     if isinstance(entry, dict):
         time = entry.get("time")
         comment_type = entry.get("type")
@@ -174,7 +173,7 @@ def _parse_v1_comment(entry: object) -> Comment:
                 comment=text,
             )
 
-    msg = f"Expected a comment with 'time', 'type' and 'text', got: {entry!r}"
+    msg = f"Expected comment {index} to have 'time', 'type' and 'text'"
     raise ValueError(msg)
 
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from mpvqc.importing.services import (
-    DocumentRejectionReason,
+    DocumentMalformed,
     ErrorsAbsent,
     ErrorsPresent,
     ImportErrors,
@@ -44,9 +44,7 @@ MERGED_SESSION = SessionMerge()
 SKIPPED_VIDEO = VideoSkip()
 SKIPPED_SUBTITLES = SubtitlesSkip()
 
-PRESENT_ERRORS = ErrorsPresent(
-    rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
-)
+PRESENT_ERRORS = ErrorsPresent(rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentMalformed("broken")),))
 UNRESOLVED_SESSION = SessionUnresolved(incoming_comment_count=1)
 UNRESOLVED_VIDEO = VideoUnresolved(candidates=(VIDEO_A_FROM_DOCUMENT,))
 UNRESOLVED_SUBTITLES = SubtitlesUnresolved(candidates=(SUB_A,))

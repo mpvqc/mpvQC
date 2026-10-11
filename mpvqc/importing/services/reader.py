@@ -6,14 +6,16 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, assert_never
 
-from .documents import DocumentRejectionReason, ParsedDocument, parse_document
+from .documents import DocumentMalformed, DocumentVersionUnsupported, ParsedDocument, parse_document
 
 if TYPE_CHECKING:
     from pathlib import Path
 
     from mpvqc.shared import Comment
+
+    from .documents import DocumentRejection
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +23,7 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class RejectedDocument:
     path: Path
-    reason: DocumentRejectionReason
+    reason: DocumentRejection
 
 
 @dataclass(frozen=True)
@@ -39,23 +41,26 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
     all_comments = []
 
     for document in documents:
+        result: ParsedDocument | DocumentRejection
         try:
             content = document.read_text(encoding="utf-8-sig")
-        except (OSError, UnicodeDecodeError):
-            logger.exception("Failed to read document: %s", document)
-            rejected_docs.append(RejectedDocument(document, DocumentRejectionReason.INVALID))
-            continue
+        except (OSError, UnicodeDecodeError) as error:
+            result = DocumentMalformed(f"Failed to read: {error}")
+        else:
+            result = parse_document(content)
 
-        match parse_document(content):
-            case DocumentRejectionReason() as reason:
-                logger.warning("Rejected document %s: %s", document, reason.name)
-                rejected_docs.append(RejectedDocument(document, reason))
+        match result:
             case ParsedDocument() as parsed:
                 if parsed.video is not None and parsed.video.is_file():
                     existing_vids.append(parsed.video)
 
                 existing_subs.extend(s for s in parsed.subtitles if s.is_file())
                 all_comments.extend(parsed.comments)
+            case DocumentMalformed() | DocumentVersionUnsupported() as rejection:
+                logger.warning("Rejected document %s: %s", document, _describe(rejection))
+                rejected_docs.append(RejectedDocument(document, rejection))
+            case _ as unreachable:
+                assert_never(unreachable)
 
     return ReadDocumentsResult(
         rejected_documents=tuple(rejected_docs),
@@ -63,3 +68,13 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
         existing_subtitles=tuple(existing_subs),
         comments=tuple(all_comments),
     )
+
+
+def _describe(rejection: DocumentRejection) -> str:
+    match rejection:
+        case DocumentMalformed(detail):
+            return detail
+        case DocumentVersionUnsupported(version):
+            return f"unsupported version {version}"
+        case _ as unreachable:
+            assert_never(unreachable)
