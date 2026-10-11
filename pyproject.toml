@@ -29,6 +29,7 @@ Repository = "https://github.com/mpvqc/mpvQC"
 
 [dependency-groups]
 dev = [
+    "hypothesis>=6.169.0",
     "jsonschema>=4.26.0",
     "materialyoucolor>=3.0.4",
     "prek>=0.5.2",
@@ -44,6 +45,9 @@ windows-dist = [
 
 [tool.uv]
 required-version = ">=0.12.0"
+
+[tool.pytest]
+markers = ["fuzz: a Hypothesis test, run deep by 'just fuzz-python'"]
 
 [tool.pyside6-project]
 files = [

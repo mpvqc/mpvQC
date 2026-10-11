@@ -139,7 +139,11 @@ prepare-tests: build-develop
 
 [group('test')]
 test-python *ARGS="build-aux test":
-    QT_QPA_PLATFORM=offscreen uv run pytest {{ ARGS }}
+    QT_QPA_PLATFORM=offscreen uv run pytest -m "not fuzz" {{ ARGS }}
+
+[group('test')]
+fuzz-python *ARGS="test":
+    QT_QPA_PLATFORM=offscreen uv run pytest -m fuzz --hypothesis-profile=fuzz {{ ARGS }}
 
 # Run all QML tests, JOBS files at a time ('1' = single process)
 [group('test')]
