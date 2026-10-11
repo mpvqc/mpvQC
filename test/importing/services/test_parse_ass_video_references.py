@@ -4,7 +4,13 @@
 
 from pathlib import Path
 
+import pytest
+from hypothesis import given
+from hypothesis import strategies as st
+
 from mpvqc.importing.services import parse_ass_video_references
+
+ass_lines = st.one_of(st.text(), st.text().map(lambda path: f"Video File:{path}"))
 
 
 def test_parse_ass_video_references_empty_content():
@@ -57,3 +63,12 @@ def test_parse_ass_video_references_requires_the_exact_prefix():
 
 def test_parse_ass_video_references_on_malformed_content_never_raises():
     assert parse_ass_video_references("not a subtitle at all\n\x00�") == ()
+
+
+@pytest.mark.fuzz
+@given(st.one_of(st.text(), st.lists(ass_lines).map("\n".join)))
+def test_parse_ass_video_references_never_raises_on_any_text(content: str):
+    references = parse_ass_video_references(content)
+
+    assert isinstance(references, tuple)
+    assert all(isinstance(reference, Path) for reference in references)
