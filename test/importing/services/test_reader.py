@@ -205,6 +205,16 @@ def test_import_rejects_malformed_v1_document(tmp_path):
     assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.INVALID),)
 
 
+def test_import_logs_rejected_document_with_its_file(tmp_path, caplog: pytest.LogCaptureFixture):
+    document = write_v1_document(tmp_path, "future.json", {"version": 999, "comments": []})
+
+    read_documents((document,))
+
+    [record] = [r for r in caplog.records if "Rejected document" in r.getMessage()]
+    assert str(document) in record.getMessage()
+    assert "UNSUPPORTED_VERSION" in record.getMessage()
+
+
 def test_import_readme_example_document(tmp_path):
     readme = DOCUMENT_FORMAT_README.read_text(encoding="utf-8")
     example = re.search(r"<!-- verified-by-tests: example-v1 -->\s*```json\n(.*?)```", readme, re.DOTALL)

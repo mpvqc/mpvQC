@@ -4,13 +4,11 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass
-from enum import Enum, auto
 from typing import TYPE_CHECKING
 
-from .documents import ParsedDocument, parse_classic, parse_v1
+from .documents import DocumentRejectionReason, ParsedDocument, parse_document
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -18,11 +16,6 @@ if TYPE_CHECKING:
     from mpvqc.shared import Comment
 
 logger = logging.getLogger(__name__)
-
-
-class DocumentRejectionReason(Enum):
-    INVALID = auto()
-    UNSUPPORTED_VERSION = auto()
 
 
 @dataclass(frozen=True)
@@ -53,8 +46,9 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
             rejected_docs.append(RejectedDocument(document, DocumentRejectionReason.INVALID))
             continue
 
-        match _parse_document(content, document):
+        match parse_document(content):
             case DocumentRejectionReason() as reason:
+                logger.warning("Rejected document %s: %s", document, reason.name)
                 rejected_docs.append(RejectedDocument(document, reason))
             case ParsedDocument() as parsed:
                 if parsed.video is not None and parsed.video.is_file():
@@ -69,35 +63,3 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
         existing_subtitles=tuple(existing_subs),
         comments=tuple(all_comments),
     )
-
-
-def _parse_document(content: str, document: Path) -> ParsedDocument | DocumentRejectionReason:
-    if content.startswith("[FILE]"):
-        return parse_classic(content)
-
-    try:
-        data = json.loads(content)
-    except json.JSONDecodeError:
-        logger.exception("Unrecognized document format: %s", document)
-        return DocumentRejectionReason.INVALID
-
-    if not isinstance(data, dict):
-        logger.warning("Document is JSON but not an object: %s", document)
-        return DocumentRejectionReason.INVALID
-
-    match data.get("version"):
-        case bool() | float() as version:
-            logger.warning("Malformed document version %r: %s", version, document)
-            return DocumentRejectionReason.INVALID
-        case 1:
-            try:
-                return parse_v1(data)
-            except ValueError:
-                logger.exception("Malformed version 1 document: %s", document)
-                return DocumentRejectionReason.INVALID
-        case int(version):
-            logger.warning("Unsupported document version %d: %s", version, document)
-            return DocumentRejectionReason.UNSUPPORTED_VERSION
-        case version:
-            logger.warning("Malformed document version %r: %s", version, document)
-            return DocumentRejectionReason.INVALID

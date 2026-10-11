@@ -4,12 +4,17 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import re
 from dataclasses import dataclass
+from enum import Enum, auto
 from pathlib import Path
 
 from mpvqc.comments.services import reverse_translate_comment_type
 from mpvqc.shared import Comment
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -19,10 +24,47 @@ class ParsedDocument:
     comments: tuple[Comment, ...]
 
 
+class DocumentRejectionReason(Enum):
+    INVALID = auto()
+    UNSUPPORTED_VERSION = auto()
+
+
 _REGEX_CLASSIC_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")
 _REGEX_CLASSIC_SUBTITLE = re.compile(r"^subtitle\s*?:(?P<subtitle>.*)$")
 _REGEX_CLASSIC_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
 _REGEX_V1_TIME = re.compile(r"^\d{2}:[0-5]\d:[0-5]\d\.\d{3}$")
+
+
+def parse_document(content: str) -> ParsedDocument | DocumentRejectionReason:
+    if content.startswith("[FILE]"):
+        return parse_classic(content)
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        logger.exception("Unrecognized document format")
+        return DocumentRejectionReason.INVALID
+
+    if not isinstance(data, dict):
+        logger.warning("Document is JSON but not an object")
+        return DocumentRejectionReason.INVALID
+
+    match data.get("version"):
+        case bool() | float() as version:
+            logger.warning("Malformed document version %r", version)
+            return DocumentRejectionReason.INVALID
+        case 1:
+            try:
+                return parse_v1(data)
+            except ValueError:
+                logger.exception("Malformed version 1 document")
+                return DocumentRejectionReason.INVALID
+        case int(version):
+            logger.warning("Unsupported document version %d", version)
+            return DocumentRejectionReason.UNSUPPORTED_VERSION
+        case version:
+            logger.warning("Malformed document version %r", version)
+            return DocumentRejectionReason.INVALID
 
 
 def parse_classic(content: str) -> ParsedDocument:
