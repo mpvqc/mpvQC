@@ -105,6 +105,32 @@ jobs:
       - name: Execute Python Tests
         run: just test-python
 
+  fuzz_python:
+    runs-on: ubuntu-latest
+    name: Fuzz Python (Linux)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+      - name: Install Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
+      - name: Initialize Project
+        run: just init
+      - name: Prepare tests
+        run: just prepare-tests
+      - name: Execute Fuzz Tests
+        run: just fuzz-python
+
   test_qml:
     runs-on: ubuntu-latest
     name: Test QML (${{ matrix.python-version }})

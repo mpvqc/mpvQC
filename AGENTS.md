@@ -12,6 +12,8 @@
 - Run linter and formatter via `just fmt`.
 - Run the QML linter via `just lint-qml`.
 - Run Python tests via `just test-python ARGS`. `ARGS` is passed to `pytest`.
+- Run tests marked `fuzz` deep via `just fuzz-python ARGS`. `ARGS` is passed to `pytest`.
+- Never call `pytest` directly. The recipes set the Qt platform and the fuzz filter.
 - Run QML tests via `just test-qml`.
 - Rebuild the test resource bundle via `just prepare-tests` after changing production QML, data, or translation files.
   `just test-python` and `just test-qml` don't rebuild it, and tests pass against a stale bundle without a warning.

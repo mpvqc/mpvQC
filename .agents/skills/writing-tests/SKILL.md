@@ -18,6 +18,9 @@ Reach for a table when the inputs vary and the assertion does not: `@pytest.mark
 `test_<name>_data()` function returning tagged rows in QML. Write cases out longhand when a table would hide what
 each one proves.
 
+A parser of untrusted input gets a never-raises `@given` test, marked `@pytest.mark.fuzz` so `just fuzz-python` runs
+it deep. Without the marker it runs shallow in `just test-python`.
+
 Every test passes on Linux and Windows.
 
 ## Python

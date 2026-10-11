@@ -11,6 +11,7 @@ from typing import Any, override
 
 import inject
 import pytest
+from hypothesis import settings
 from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, QSettings, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
@@ -25,6 +26,8 @@ from mpvqc.session import SessionService
 from mpvqc.settings import open_settings_file
 from mpvqc.shell.services import ShellSettingsService
 from test.player.recording import RecordingPlayerHandle
+
+settings.register_profile("fuzz", max_examples=10_000, deadline=None, print_blob=True)
 
 
 @pytest.fixture

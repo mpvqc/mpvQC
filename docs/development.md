@@ -39,6 +39,7 @@ Run `just` to see the current recipes and their descriptions.
 
 - `just test` rebuilds resources and runs the full Python and QML test suites.
 - `just test-python` and `just test-qml` run one side without rebuilding resources.
+- `just fuzz-python` runs the tests marked `fuzz` deep. `just test-python` and `just test` skip them.
 - `just prepare-tests` rebuilds and stages resources before targeted test runs.
 - `just fmt` formats the repository and runs Python, type, and license checks.
 - `just lint-qml` rebuilds resources and runs semantic QML checks.
