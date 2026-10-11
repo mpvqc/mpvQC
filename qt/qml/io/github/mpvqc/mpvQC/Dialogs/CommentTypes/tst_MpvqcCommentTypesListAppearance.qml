@@ -37,8 +37,8 @@ TestCase {
         for (const name of ["commentTypeDragHandle", "commentTypeLabel", "commentTypeDeleteButton"]) {
             const ordinary = helper.rowPart(list, 0, name).mapToItem(row, 0, 0);
             const liftedPoint = helper.liftedPart(list, name).mapToItem(lifted, 0, 0);
-            compare(liftedPoint.x, ordinary.x, `${name} x`);
-            compare(liftedPoint.y, ordinary.y, `${name} y`);
+            verify(helper.bridge.nearlyEqual(liftedPoint.x, ordinary.x), `${name} x should be ${ordinary.x}, not ${liftedPoint.x}`);
+            verify(helper.bridge.nearlyEqual(liftedPoint.y, ordinary.y), `${name} y should be ${ordinary.y}, not ${liftedPoint.y}`);
         }
         verify(Qt.colorEqual(helper.liftedPart(list, "commentTypeRowBase").color, MpvqcAppearance.palette.sectionCard));
         verify(Qt.colorEqual(helper.liftedPart(list, "commentTypeRowBackground").color, helper.hoverColor));

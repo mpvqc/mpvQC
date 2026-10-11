@@ -105,13 +105,25 @@ scaffolding, it lives in a `TestHelpers.qml` beside them.
 
 ### Waiting
 
-Wait on the condition with `tryCompare` or `tryVerify`. A fixed delay is either longer than the test needs or shorter
-than a loaded CI machine, and the second one is a flake.
+Wait on the condition with `tryCompare` or `tryVerify`, never with a `wait(ms)` followed by a plain `verify`. A fixed
+delay is either longer than the test needs or shorter than a loaded CI machine, and the second one is a flake.
+
+### Measured geometry
+
+A position that is scrolled, animated, mapped between items, or estimated by a view lands on fractional pixels, and
+the fraction changes between runs. Assert it through the geometry helpers on `MpvqcTestBridge`, which carry the
+shared tolerance.
+
+Read bounds at assert time. A bound captured before the drag goes stale once the view re-estimates its content
+height.
+
+Static layout constants, a width or a `MpvqcConstants` value, keep their exact `compare`.
 
 ## Done when
 
 - Every assertion sits on the test's own stack, never inside a slot or a callback.
 - Every case bag has one shape throughout: all one-liners, or all one field per line.
 - Nothing waits on a duration.
+- Every measured position goes through the bridge's tolerance helpers, with bounds read at assert time.
 - `just prepare-tests` has run, if production QML, data, or translations changed.
 - The full suite passes, not only the tests you filtered to while iterating.

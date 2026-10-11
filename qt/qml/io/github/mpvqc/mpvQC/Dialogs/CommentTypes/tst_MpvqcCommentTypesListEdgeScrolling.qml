@@ -68,7 +68,6 @@ TestCase {
             list.positionViewAtEnd();
         }
         verify(waitForRendering(list));
-        const bound = data.down ? helper.maximumScrollPosition(list) : 0;
         const last = data.down ? list.count - 1 : 0;
         const from = list.indexAt(list.width / 2, list.contentY + list.height / 2);
         const draft = helper.draftTypes(list);
@@ -87,13 +86,13 @@ TestCase {
 
         helper.waitForScrollBound(list, data.down);
         helper.verifyGrabbedAt(list, grab, pointer);
-        tryVerify(() => Math.abs(indicator.mapToItem(list, 0, 0).y - helper.slotTop(list, last)) <= 0.5, 5000, "the gap should mark the end");
+        tryVerify(() => helper.bridge.nearlyEqual(indicator.mapToItem(list, 0, 0).y, helper.slotTop(list, last)), 5000, "the gap should mark the end");
         helper.waitForShownTypes(list, helper.moved(draft, from, last));
 
         helper.drop(list, pointer);
 
         compare(helper.draftTypes(list), helper.moved(draft, from, last));
-        compare(helper.scrollPosition(list), bound);
+        verify(data.down ? helper.bridge.atScrollEnd(list) : helper.bridge.atScrollStart(list), "the drop should keep the list at the bound");
     }
 
     function test_pressNearAnEdgeKeepsTheListStill_data(): var {
@@ -116,7 +115,8 @@ TestCase {
             verify(waitForRendering(list));
         }
         const draft = helper.draftTypes(list);
-        const scroll = helper.scrollPosition(list);
+        const atOpeningEdge = () => data.down ? helper.bridge.atScrollStart(list) : helper.bridge.atScrollEnd(list);
+        verify(atOpeningEdge(), "the list should open at the edge away from the press");
         const from = list.indexAt(list.width / 2, list.contentY + (data.down ? list.height - 1 : 1));
         const start = helper.pressHandle(list, from);
         verify(data.down ? start.y > list.height - 48 : start.y < 48, "the handle should sit in the edge zone");
@@ -126,10 +126,10 @@ TestCase {
         helper.verifyScrollHoldsStill(list);
 
         verify(helper.liftedRow(list) === null, "the row lifts only past the drag threshold");
-        compare(helper.scrollPosition(list), scroll);
+        verify(atOpeningEdge(), "a press must not scroll the list");
         mouseRelease(list, start.x, start.y);
         helper.verifyScrollHoldsStill(list);
-        compare(helper.scrollPosition(list), scroll);
+        verify(atOpeningEdge(), "a release must not scroll the list");
         compare(helper.draftTypes(list), draft);
     }
 
@@ -167,7 +167,7 @@ TestCase {
         const to = list.indexAt(pointer.x, list.contentY + pointer.y);
         compare(helper.rowPart(list, to, "commentTypeLabel").text, draft[from], "the row should settle under the pointer");
         compare(helper.draftTypes(list), helper.moved(draft, from, to));
-        compare(helper.scrollPosition(list), scroll);
+        verify(helper.bridge.nearlyEqual(helper.scrollPosition(list), scroll), `the drop should keep the list at ${scroll}, not ${helper.scrollPosition(list)}`);
     }
 
     function test_shortListDoesNotScroll_data(): var {
@@ -198,10 +198,10 @@ TestCase {
 
         helper.verifyScrollHoldsStill(list);
 
-        compare(helper.scrollPosition(list), 0);
+        verify(helper.bridge.atScrollStart(list), "a short list must not scroll");
         helper.drop(list, pointer);
         compare(helper.draftTypes(list), helper.moved(draft, from, data.down ? data.count - 1 : 0));
-        compare(helper.scrollPosition(list), 0);
+        verify(helper.bridge.atScrollStart(list), "the drop must not scroll a short list");
     }
 
     function test_cancellingStopsScrolling_data(): var {
@@ -238,11 +238,10 @@ TestCase {
 
     function test_wheelScrollsAfterAnEdgeScrolledDrop(): void {
         const list = helper.makeList(false, 20);
-        const bound = helper.maximumScrollPosition(list);
         helper.dragPastEdge(list, 3, true);
 
         mouseWheel(list, list.width / 2, list.height / 2, 0, 120);
 
-        tryVerify(() => helper.scrollPosition(list) < bound, 5000, "the wheel should scroll the list again");
+        tryVerify(() => !helper.bridge.atScrollEnd(list), 5000, "the wheel should scroll the list again");
     }
 }

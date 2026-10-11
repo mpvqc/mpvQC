@@ -65,7 +65,7 @@ TestCase {
         compare(helper.rowPart(list, before, "commentTypeLabel").text, "ZZZ Appended Type");
         tryVerify(() => {
             const row = list.itemAtIndex(before);
-            return row !== null && helper.verticallyInside(row, list);
+            return row !== null && helper.bridge.verticallyInside(row, list);
         }, 5000, "the new row should be revealed");
     }
 

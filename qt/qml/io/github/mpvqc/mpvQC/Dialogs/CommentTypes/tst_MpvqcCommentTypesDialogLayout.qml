@@ -54,7 +54,7 @@ TestCase {
                 const edge = mirrored ? Math.max(start, end) : Math.min(start, end);
                 // positionToRectangle() reports text-layout coordinates, without padding.
                 const expected = mirrored ? field.width - field.leftPadding - field.rightPadding : 0;
-                return Math.abs(edge - expected) <= 1;
+                return helper.bridge.nearlyEqual(edge, expected);
             }, 1000, "draft text should render at the leading edge");
         }
     }
@@ -91,14 +91,14 @@ TestCase {
         compare(helper.validationLabel(dialog).text !== "", data.feedback);
         compare(dialog.contentHeight, MpvqcConstants.mediumDialogContentHeight);
         compare(dialog.height, heightWithoutFeedback, "feedback must not resize the dialog");
-        compare(list.mapToItem(dialog.contentItem, 0, 0).y, listTopWithoutFeedback, "feedback must not move the list");
+        verify(helper.bridge.nearlyEqual(list.mapToItem(dialog.contentItem, 0, 0).y, listTopWithoutFeedback), "feedback must not move the list");
         verify(list.height >= 8 * MpvqcConstants.listRowHeight);
-        verify(helper.verticallyInside(list, dialog.contentItem));
-        verify(helper.verticallyInside(addCard, dialog.contentItem));
-        verify(helper.verticallyInside(helper.find(dialog.contentItem, "commentTypesListCard"), dialog.contentItem));
-        verify(addCard.mapToItem(dialog.contentItem, 0, addCard.height).y <= listTopWithoutFeedback, "the add card must sit above the list");
+        verify(helper.bridge.verticallyInside(list, dialog.contentItem));
+        verify(helper.bridge.verticallyInside(addCard, dialog.contentItem));
+        verify(helper.bridge.verticallyInside(helper.find(dialog.contentItem, "commentTypesListCard"), dialog.contentItem));
+        verify(helper.bridge.verticalGap(addCard, list) >= -helper.bridge.pixelTolerance, "the add card must sit above the list");
         for (let i = 0; i < 8; i++) {
-            verify(helper.verticallyInside(helper.rowPart(list, i, "commentTypeDelegate"), list), `row ${i} must be completely visible`);
+            verify(helper.bridge.verticallyInside(helper.rowPart(list, i, "commentTypeDelegate"), list), `row ${i} must be completely visible`);
         }
     }
 }

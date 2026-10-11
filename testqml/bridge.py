@@ -3,13 +3,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+from itertools import pairwise
 from pathlib import Path
 from typing import assert_never
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QEvent, QObject, QUrl, Slot
+from PySide6.QtCore import Property, QCoreApplication, QEvent, QObject, QPointF, QUrl, Slot
 from PySide6.QtGui import QWindow
 from PySide6.QtQml import QmlElement, QQmlEngine
+from PySide6.QtQuick import QQuickItem
 
 from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.appearance.services import (
@@ -41,6 +43,12 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 _DELAY_MS = int(os.environ.get("MPVQC_TEST_DELAY_MS", "100"))
+_PIXEL_TOLERANCE = 1.0
+
+
+# QQuickFlickable is private API, so its properties are only reachable by name.
+def _flickable_value(view: QQuickItem, name: str) -> float:
+    return float(view.property(name))
 
 
 @QmlElement
@@ -111,6 +119,38 @@ class MpvqcTestBridge(QObject):
     @Slot(QWindow)
     def deactivateWindow(self, window: QWindow) -> None:
         QCoreApplication.sendEvent(window, QEvent(QEvent.Type.WindowDeactivate))
+
+    @Property(float, constant=True)
+    def pixelTolerance(self) -> float:
+        return _PIXEL_TOLERANCE
+
+    @Slot(float, float, result=bool)
+    def nearlyEqual(self, actual: float, expected: float) -> bool:
+        return abs(actual - expected) <= _PIXEL_TOLERANCE
+
+    @Slot(QQuickItem, QQuickItem, result=bool)
+    def verticallyInside(self, item: QQuickItem, viewport: QQuickItem) -> bool:
+        top = item.mapToItem(viewport, QPointF(0, 0)).y()
+        return top >= -_PIXEL_TOLERANCE and top + item.height() <= viewport.height() + _PIXEL_TOLERANCE
+
+    @Slot(QQuickItem, result=bool)
+    def atScrollStart(self, view: QQuickItem) -> bool:
+        return self.nearlyEqual(_flickable_value(view, "contentY"), _flickable_value(view, "originY"))
+
+    @Slot(QQuickItem, result=bool)
+    def atScrollEnd(self, view: QQuickItem) -> bool:
+        overflow = max(0.0, _flickable_value(view, "contentHeight") - view.height())
+        return self.nearlyEqual(_flickable_value(view, "contentY"), _flickable_value(view, "originY") + overflow)
+
+    @Slot(list, result=bool)
+    def stackedWithoutGaps(self, items: list[QQuickItem]) -> bool:
+        return all(self.nearlyEqual(self.verticalGap(upper, lower), 0) for upper, lower in pairwise(items))
+
+    @Slot(QQuickItem, QQuickItem, result=float)
+    def verticalGap(self, upper: QQuickItem, lower: QQuickItem) -> float:
+        upper_bottom = upper.mapToScene(QPointF(0, upper.height())).y()
+        lower_top = lower.mapToScene(QPointF(0, 0)).y()
+        return lower_top - upper_bottom
 
     @Slot(result=QUrl)
     def importComplexDocument(self) -> QUrl:
