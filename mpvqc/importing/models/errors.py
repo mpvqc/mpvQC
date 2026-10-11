@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, assert_never, override
 
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 
-from mpvqc.importing.services import DocumentMalformed, DocumentVersionUnsupported
+from mpvqc.importing.services import DocumentMalformed, DocumentUnreadable, DocumentVersionUnsupported
 
 if TYPE_CHECKING:
     from typing import Any
@@ -68,5 +68,14 @@ def _reason_text(reason: DocumentRejection) -> str:
         case DocumentMalformed():
             #: Shown beneath a rejected document that does not parse as any known QC document format
             return QCoreApplication.translate("ImportWizardDialog", "Not a valid QC document")
+        case DocumentUnreadable(error=PermissionError()):
+            #: Shown beneath a rejected document mpvQC is not allowed to open
+            return QCoreApplication.translate("ImportWizardDialog", "Permission denied")
+        case DocumentUnreadable(error=FileNotFoundError()):
+            #: Shown beneath a rejected document that no longer exists, e.g. deleted after it was picked
+            return QCoreApplication.translate("ImportWizardDialog", "File not found")
+        case DocumentUnreadable():
+            #: Shown beneath a rejected document that could not be read for any other reason, e.g. a network share went away
+            return QCoreApplication.translate("ImportWizardDialog", "Could not read file")
         case _ as unreachable:
             assert_never(unreachable)

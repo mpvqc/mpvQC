@@ -446,6 +446,21 @@
         <extracomment>Shown beneath a rejected document that does not parse as any known QC document format</extracomment>
         <translation>Kein gültiges QC-Dokument</translation>
     </message>
+    <message>
+        <source>Permission denied</source>
+        <extracomment>Shown beneath a rejected document mpvQC is not allowed to open</extracomment>
+        <translation>Zugriff verweigert</translation>
+    </message>
+    <message>
+        <source>File not found</source>
+        <extracomment>Shown beneath a rejected document that no longer exists, e.g. deleted after it was picked</extracomment>
+        <translation>Datei nicht gefunden</translation>
+    </message>
+    <message>
+        <source>Could not read file</source>
+        <extracomment>Shown beneath a rejected document that could not be read for any other reason, e.g. a network share went away</extracomment>
+        <translation>Datei konnte nicht gelesen werden</translation>
+    </message>
     <message numerus="yes">
         <source>%Ln QC document(s) could not be imported:</source>
         <extracomment>Header above the list of QC documents the importer rejected</extracomment>
