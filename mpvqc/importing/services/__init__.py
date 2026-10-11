@@ -18,8 +18,10 @@ from .concerns import VideoLoad as VideoLoad
 from .concerns import VideoResolved as VideoResolved
 from .concerns import VideoSkip as VideoSkip
 from .concerns import VideoUnresolved as VideoUnresolved
+from .documents import DocumentRejectionReason as DocumentRejectionReason
 from .documents import ParsedDocument as ParsedDocument
 from .documents import parse_classic as parse_classic
+from .documents import parse_document as parse_document
 from .documents import parse_v1 as parse_v1
 from .errors import ErrorsAbsent as ErrorsAbsent
 from .errors import ErrorsPresent as ErrorsPresent
@@ -36,7 +38,6 @@ from .plan import NotAsked as NotAsked
 from .plan import UnfinishedPlan as UnfinishedPlan
 from .plan import finish_plan as finish_plan
 from .plan import make_plan as make_plan
-from .reader import DocumentRejectionReason as DocumentRejectionReason
 from .reader import RejectedDocument as RejectedDocument
 from .reader import read_documents as read_documents
 from .scan import ScanResult as ScanResult
