@@ -16,6 +16,24 @@ shape.
 
 Linux development and testing target Wayland.
 
+### Nix shell (optional)
+
+On Linux with Nix, the repository's flake replaces the list above. Its shell brings Python, uv, just, libmpv, and the
+libraries the PySide6 wheel loads at runtime. Enter it from the repository root:
+
+```shell
+nix develop
+```
+
+This needs the `nix-command` and `flakes` features enabled. Every command in this guide works inside the shell,
+starting with [Setup](#setup).
+
+- The shell only supports `x86_64` Linux.
+- The shell points uv at its own Python. Switching a checkout between the host and the shell recreates the virtual
+  environment once on the first `uv` command.
+- The shell's graphics stack is Nix mesa, which doesn't cover the NVIDIA proprietary driver. On such a host, launch the
+  app and the tests through [nixGL](https://github.com/nix-community/nixGL).
+
 ## Setup
 
 From the repository root:
