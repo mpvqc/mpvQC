@@ -207,9 +207,11 @@ ListView {
     }
 
     Binding {
+        // When Qt scrolls a row into view, contentY lands on a whole pixel. A row with a fractional
+        // position then stops a fraction of a pixel past the edge, so anything short of a pixel counts
         target: root.viewModel.selection
         property: "selectedRowVisible"
-        value: root.currentItem !== null && root.currentItem.y >= root.contentY && root.currentItem.y + root.currentItem.height <= root.contentY + root.height
+        value: root.currentItem !== null && root.currentItem.y > root.contentY - 1 && root.currentItem.y + root.currentItem.height < root.contentY + root.height + 1
         restoreMode: Binding.RestoreNone
     }
 

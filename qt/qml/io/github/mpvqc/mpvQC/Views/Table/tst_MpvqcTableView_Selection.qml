@@ -491,6 +491,55 @@ TestCase {
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not scroll to follow the moved row");
     }
 
+    function test_selectedRowVisibleAtEdge_data(): list<var> {
+        return [
+            {
+                tag: "top-sub-pixel",
+                edge: "top",
+                overhang: 0.4,
+                visible: true
+            },
+            {
+                tag: "bottom-sub-pixel",
+                edge: "bottom",
+                overhang: 0.4,
+                visible: true
+            },
+            {
+                tag: "top-whole-pixel",
+                edge: "top",
+                overhang: 1,
+                visible: false
+            },
+            {
+                tag: "bottom-whole-pixel",
+                edge: "bottom",
+                overhang: 1,
+                visible: false
+            }
+        ];
+    }
+
+    function test_selectedRowVisibleAtEdge(data): void {
+        _helpers.bridge.importComments(Array.from({
+            length: 40
+        }, (_, i) => ({
+                    "time": (100 + i) * 1000,
+                    "commentType": "Comment Type 1",
+                    "comment": `Row ${i}`
+                })));
+        const list = control.commentList;
+        list.currentIndex = 20;
+        const row = list.currentItem;
+        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y), 2000, "the highlight should settle on the row");
+
+        const contentY = data.edge === "top" ? row.y + data.overhang : row.y + row.height - data.overhang - list.height;
+        list.contentY = contentY;
+
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === data.visible, 2000, `a row ${data.overhang} px past the edge should count as ${data.visible ? "visible" : "hidden"}`);
+        compare(list.contentY, contentY, "the view should stay where the test put it");
+    }
+
     function test_unknownCommentTypeAppearsInEditMenu(): void {
         _helpers.bridge.importComments([
             {
