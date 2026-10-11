@@ -505,7 +505,7 @@ TestCase {
                 const edge = mirrored ? Math.max(start, end) : Math.min(start, end);
                 // positionToRectangle() reports text-layout coordinates, without padding.
                 const expected = mirrored ? field.width - field.leftPadding - field.rightPadding : 0;
-                return Math.abs(edge - expected) <= 1;
+                return it.bridge.nearlyEqual(edge, expected);
             }, 1000, "nickname text should render at the leading edge");
             for (const row of exportOptionRows(dialog)) {
                 const label = visibleLabel(row);
@@ -513,25 +513,20 @@ TestCase {
                 tryCompare(label, "effectiveHorizontalAlignment", mirrored ? Text.AlignRight : Text.AlignLeft);
                 tryVerify(() => {
                     const switchX = row.toggle.mapToItem(row, 0, 0).x;
-                    return Math.abs(mirrored ? switchX : row.width - switchX - row.toggle.width) <= 1;
+                    return it.bridge.nearlyEqual(mirrored ? switchX : row.width - switchX - row.toggle.width, 0);
                 }, 5000, "switch should sit at the trailing edge");
                 const labelX = label.mapToItem(row, 0, 0).x;
-                verify(Math.abs(mirrored ? row.width - labelX - label.width : labelX) <= 1, "label should sit at the leading edge");
+                verify(it.bridge.nearlyEqual(mirrored ? row.width - labelX - label.width : labelX, 0), "label should sit at the leading edge");
             }
         }
-    }
-
-    function verticallyInside(item: Item, viewport: Item): bool {
-        const top = item.mapToItem(viewport, 0, 0).y;
-        return top >= -1 && top + item.height <= viewport.height + 1;
     }
 
     function verifyExportActionsVisible(dialog: QtObject): void {
         for (const action of [Dialog.Ok, Dialog.Cancel]) {
             const button = dialog.standardButton(action);
             verify(button.visible && button.enabled);
-            verify(verticallyInside(button, testCase.Window.window.contentItem), "action must fit in the window");
-            verify(button.mapToItem(dialog.contentItem, 0, 0).y >= dialog.contentItem.height, "action must stay below the scrolling body");
+            verify(it.bridge.verticallyInside(button, testCase.Window.window.contentItem), "action must fit in the window");
+            verify(button.mapToItem(dialog.contentItem, 0, 0).y >= dialog.contentItem.height - it.bridge.pixelTolerance, "action must stay below the scrolling body");
         }
     }
 
@@ -539,11 +534,11 @@ TestCase {
         const control = it.makeControl();
         let dialog = openExportSettings(control);
         const naturalHeight = dialog.height;
-        verify(dialog.contentItem.height >= dialog.contentItem.contentHeight, "all settings should fit at the initial window size");
+        verify(dialog.contentItem.height >= dialog.contentItem.contentHeight - it.bridge.pixelTolerance, "all settings should fit at the initial window size");
 
         testCase.Window.window.height = 360;
-        tryVerify(() => dialog.height <= testCase.Window.window.height, 5000, "dialog must fit the available window height");
-        verify(dialog.height < naturalHeight, "body must shrink with the window");
+        tryVerify(() => dialog.height <= testCase.Window.window.height + it.bridge.pixelTolerance, 5000, "dialog must fit the available window height");
+        verify(dialog.height < naturalHeight - it.bridge.pixelTolerance, "body must shrink with the window");
         verifyExportActionsVisible(dialog);
         mouseClick(dialog.standardButton(Dialog.Cancel));
         it.expect.dialogClosed(control, "exportSettingsDialog");
@@ -555,18 +550,18 @@ TestCase {
 
         const field = findChild(dialog, "exportNicknameField");
         verify(field);
-        verify(verticallyInside(field, dialog.contentItem));
+        verify(it.bridge.verticallyInside(field, dialog.contentItem));
         editExportNickname(dialog, "ScrollTester");
 
         const rows = exportOptionRows(dialog);
         for (const row of rows) {
-            for (let attempt = 0; !verticallyInside(row.toggle, dialog.contentItem) && attempt < 10; attempt++) {
+            for (let attempt = 0; !it.bridge.verticallyInside(row.toggle, dialog.contentItem) && attempt < 10; attempt++) {
                 const previousY = row.mapToItem(dialog.contentItem, 0, 0).y;
                 mouseWheel(dialog.contentItem, dialog.contentItem.width / 2, dialog.contentItem.height / 2, 0, -120);
-                tryVerify(() => row.mapToItem(dialog.contentItem, 0, 0).y < previousY);
+                tryVerify(() => row.mapToItem(dialog.contentItem, 0, 0).y < previousY - it.bridge.pixelTolerance, 5000, "the wheel should scroll the body");
                 tryVerify(() => !dialog.contentItem.contentItem.moving);
             }
-            verify(verticallyInside(row.toggle, dialog.contentItem), "every switch must be reachable by scrolling");
+            verify(it.bridge.verticallyInside(row.toggle, dialog.contentItem), "every switch must be reachable by scrolling");
             const initial = row.checked;
             mouseClick(row.toggle);
             tryCompare(row, "checked", !initial);

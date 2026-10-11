@@ -56,7 +56,7 @@ TestCase {
 
     function test_initialPositionIsAtBottom(): void {
         const popup = _find.searchBoxPopup(control);
-        fuzzyCompare(popup.y, _bottomY(), 1);
+        verify(_helpers.bridge.nearlyEqual(popup.y, _bottomY()), `the search box should open at ${_bottomY()}, not ${popup.y}`);
     }
 
     function test_sticksToBottomWhenParentShrinks(): void {
@@ -65,7 +65,7 @@ TestCase {
         control.height = control.height - 100;
         waitForRendering(control);
 
-        tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
+        tryVerify(() => _helpers.bridge.nearlyEqual(popup.y, _bottomY()), timeout, "the search box should stick to the bottom");
     }
 
     function test_sticksToBottomWhenParentGrows(): void {
@@ -74,7 +74,7 @@ TestCase {
         control.height = control.height + 100;
         waitForRendering(control);
 
-        tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
+        tryVerify(() => _helpers.bridge.nearlyEqual(popup.y, _bottomY()), timeout, "the search box should stick to the bottom");
     }
 
     function test_sticksToBottomThroughMultipleResizes(): void {
@@ -83,7 +83,7 @@ TestCase {
         for (const h of [300, 500, 200, 600]) {
             control.height = h;
             waitForRendering(control);
-            tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
+            tryVerify(() => _helpers.bridge.nearlyEqual(popup.y, _bottomY()), timeout, "the search box should stick to the bottom");
         }
     }
 
@@ -99,7 +99,7 @@ TestCase {
         _wait.searchBoxOpened(control);
 
         const popup = _find.searchBoxPopup(control);
-        tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
+        tryVerify(() => _helpers.bridge.nearlyEqual(popup.y, _bottomY()), timeout, "the search box should stick to the bottom");
     }
 
     function test_isDraggable(): void {
@@ -127,7 +127,7 @@ TestCase {
         control.height = draggedY + popup.height + popup.edgeMarginVertical - 10;
         waitForRendering(control);
 
-        tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
+        tryVerify(() => _helpers.bridge.nearlyEqual(popup.y, _bottomY()), timeout, "the search box should stick to the bottom");
     }
 
     // The override covers the whole box while a drag is on or a modal popup is open.

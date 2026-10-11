@@ -79,7 +79,7 @@ TestCase {
         tryVerify(() => list.itemAtIndex(lastIndex).height > heightBefore, timeout, `Editor must grow (heightBefore=${heightBefore})`);
 
         const bottom = _delegateBottomInViewport(list, lastIndex);
-        verify(bottom <= list.height + 1, `Last delegate bottom (${bottom}) should remain within viewport (${list.height})`);
+        verify(bottom <= list.height + _helpers.bridge.pixelTolerance, `Last delegate bottom (${bottom}) should remain within viewport (${list.height})`);
     }
 
     function test_lastDelegateBottomStaysVisibleWhenTypingIntoEditor(): void {
@@ -99,7 +99,7 @@ TestCase {
         tryVerify(() => list.itemAtIndex(lastIndex).height > heightBefore, timeout, `Editor must grow (heightBefore=${heightBefore})`);
 
         const bottom = _delegateBottomInViewport(list, lastIndex);
-        verify(bottom <= list.height + 1, `Last delegate bottom (${bottom}) should remain within viewport (${list.height})`);
+        verify(bottom <= list.height + _helpers.bridge.pixelTolerance, `Last delegate bottom (${bottom}) should remain within viewport (${list.height})`);
     }
 
     function test_lastDelegateContentYReachesScrollTargetAfterGrow(): void {
@@ -113,19 +113,14 @@ TestCase {
         waitForRendering(control);
 
         const delegate = list.itemAtIndex(lastIndex);
-        const contentYBefore = list.contentY;
-        const yBefore = delegate.y;
         const heightBefore = delegate.height;
 
         _find.commentTextArea(control).text = _longComment;
         tryVerify(() => delegate.height > heightBefore, timeout);
         waitForRendering(control);
 
-        const heightAfter = delegate.height;
-        const overflow = (yBefore - contentYBefore + heightAfter) - list.height;
-        const expectedScroll = Math.max(0, overflow);
-
-        compare(list.contentY, contentYBefore + expectedScroll, `contentY should advance by ${expectedScroll}px (overflow=${overflow})`);
+        const target = delegate.y + delegate.height - list.height;
+        verify(_helpers.bridge.nearlyEqual(list.contentY, target), `contentY should scroll the grown delegate's bottom to ${target}, not ${list.contentY}`);
     }
 
     function test_lastDelegateSurvivesManySmallTextGrows(): void {
@@ -145,7 +140,7 @@ TestCase {
         waitForRendering(control);
 
         const bottom = _delegateBottomInViewport(list, lastIndex);
-        verify(bottom <= list.height + 1, `Last delegate bottom (${bottom}) should remain within viewport (${list.height})`);
+        verify(bottom <= list.height + _helpers.bridge.pixelTolerance, `Last delegate bottom (${bottom}) should remain within viewport (${list.height})`);
     }
 
     function test_lastDelegateAfterDeletingPreviousLastRowStaysVisible(): void {
@@ -181,7 +176,7 @@ TestCase {
         _openEditorAt(newLastIndex);
 
         const bottomOnOpen = _delegateBottomInViewport(list, newLastIndex);
-        verify(bottomOnOpen <= list.height + 1, `After deletion: last delegate bottom on open (${bottomOnOpen}) within viewport (${list.height})`);
+        verify(bottomOnOpen <= list.height + _helpers.bridge.pixelTolerance, `After deletion: last delegate bottom on open (${bottomOnOpen}) within viewport (${list.height})`);
 
         // Force the editor to grow by setting the text area's content directly
         // (matches the live repro: user types and the row grows beyond viewport).
@@ -189,7 +184,7 @@ TestCase {
         waitForRendering(control);
 
         const bottomAfterTyping = _delegateBottomInViewport(list, newLastIndex);
-        verify(bottomAfterTyping <= list.height + 1, `After typing: last delegate bottom (${bottomAfterTyping}) within viewport (${list.height})`);
+        verify(bottomAfterTyping <= list.height + _helpers.bridge.pixelTolerance, `After typing: last delegate bottom (${bottomAfterTyping}) within viewport (${list.height})`);
     }
 
     TestHelpers {

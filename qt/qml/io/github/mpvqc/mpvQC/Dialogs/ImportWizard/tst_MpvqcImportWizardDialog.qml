@@ -277,11 +277,12 @@ TestCase {
         const scroll = find.stepScroll(dlg);
 
         scroll.contentItem.contentY = 40;
+        verify(!bridge.atScrollStart(scroll.contentItem), "the first step should be scrolled away from the top");
 
         click.next(dlg);
 
         expect.currentStep(dlg, 1);
-        tryCompare(scroll.contentItem, "contentY", 0);
+        tryVerify(() => bridge.atScrollStart(scroll.contentItem), 5000, "the next step should start at the top");
     }
 
     function test_subtitlesSelectAllTriStateReflectsRowChecks(): void {

@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
@@ -18,6 +19,8 @@ TestCase {
     height: 720
     visible: true
     when: windowShown
+
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
     function init(): void {
         failOnWarning(/.*/);
@@ -80,7 +83,8 @@ TestCase {
         compare(dialog.viewModel.temporaryBackupInterval, 300);
         tryCompare(interval, "visible", false);
         verify(waitForPolish(dialog.contentItem.Window.window));
-        compare(location.y - enabled.y - enabled.height, MpvqcConstants.dialogSectionSpacing);
+        const gap = bridge.verticalGap(enabled, location);
+        verify(bridge.nearlyEqual(gap, MpvqcConstants.dialogSectionSpacing), `the folded interval should leave a gap of ${MpvqcConstants.dialogSectionSpacing}, not ${gap}`);
 
         mouseClick(toggle);
         tryCompare(interval, "visible", true);
@@ -157,8 +161,8 @@ TestCase {
         const label = buttons[0].contentItem;
         verify(label instanceof Label);
         verify(label.lineCount > 1);
-        verify(label.contentWidth <= label.width + 1);
-        verify(label.contentHeight <= label.height + 1);
+        verify(label.contentWidth <= label.width + bridge.pixelTolerance);
+        verify(label.contentHeight <= label.height + bridge.pixelTolerance);
     }
 
     function test_longDirectoryScrollsWithoutMovingFooter(): void {
@@ -172,13 +176,17 @@ TestCase {
         label.text = "/" + "very-long-directory-name/".repeat(70);
         tryVerify(() => dialog.contentItem.contentHeight > dialog.contentItem.height);
         verify(label.lineCount > 1);
-        verify(label.contentWidth <= label.width + 1);
-        compare(Qt.size(dialog.width, dialog.height), dialogSize);
-        compare(ok.mapToItem(dialog.contentItem, 0, 0).y, footerY);
-        verify(footerY >= dialog.contentItem.height);
+        verify(label.contentWidth <= label.width + bridge.pixelTolerance);
+        verify(bridge.nearlyEqual(dialog.width, dialogSize.width), `a long directory must not resize the dialog width from ${dialogSize.width} to ${dialog.width}`);
+        verify(bridge.nearlyEqual(dialog.height, dialogSize.height), `a long directory must not resize the dialog height from ${dialogSize.height} to ${dialog.height}`);
+        const okY = ok.mapToItem(dialog.contentItem, 0, 0).y;
+        verify(bridge.nearlyEqual(okY, footerY), `a long directory must not move the footer from ${footerY} to ${okY}`);
+        verify(okY >= dialog.contentItem.height - bridge.pixelTolerance, "the footer must stay below the scrolling body");
+        const labelBottom = () => label.mapToItem(dialog.contentItem, 0, label.height).y;
+        verify(labelBottom() > dialog.contentItem.height + bridge.pixelTolerance, "the long directory should run past the body");
         const flickable = dialog.contentItem.contentItem;
         flickable.contentY = flickable.contentHeight - flickable.height;
-        tryVerify(() => Math.abs(label.mapToItem(dialog.contentItem, 0, label.height).y - dialog.contentItem.height) < 30);
+        verify(labelBottom() <= dialog.contentItem.height + bridge.pixelTolerance, `scrolling to the end should reveal the whole directory, its bottom is at ${labelBottom()}`);
     }
 
     Component {

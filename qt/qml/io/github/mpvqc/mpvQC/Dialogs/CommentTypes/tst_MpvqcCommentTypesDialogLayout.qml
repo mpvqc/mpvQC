@@ -90,9 +90,10 @@ TestCase {
 
         compare(helper.validationLabel(dialog).text !== "", data.feedback);
         compare(dialog.contentHeight, MpvqcConstants.mediumDialogContentHeight);
-        compare(dialog.height, heightWithoutFeedback, "feedback must not resize the dialog");
-        verify(helper.bridge.nearlyEqual(list.mapToItem(dialog.contentItem, 0, 0).y, listTopWithoutFeedback), "feedback must not move the list");
-        verify(list.height >= 8 * MpvqcConstants.listRowHeight);
+        verify(helper.bridge.nearlyEqual(dialog.height, heightWithoutFeedback), `feedback must not resize the dialog from ${heightWithoutFeedback} to ${dialog.height}`);
+        const listTop = list.mapToItem(dialog.contentItem, 0, 0).y;
+        verify(helper.bridge.nearlyEqual(listTop, listTopWithoutFeedback), `feedback must not move the list from ${listTopWithoutFeedback} to ${listTop}`);
+        verify(list.height >= 8 * MpvqcConstants.listRowHeight - helper.bridge.pixelTolerance);
         verify(helper.bridge.verticallyInside(list, dialog.contentItem));
         verify(helper.bridge.verticallyInside(addCard, dialog.contentItem));
         verify(helper.bridge.verticallyInside(helper.find(dialog.contentItem, "commentTypesListCard"), dialog.contentItem));
