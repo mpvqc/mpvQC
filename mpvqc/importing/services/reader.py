@@ -8,7 +8,13 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, assert_never
 
-from .documents import DocumentMalformed, DocumentVersionUnsupported, ParsedDocument, parse_document
+from .documents import (
+    DocumentMalformed,
+    DocumentUnreadable,
+    DocumentVersionUnsupported,
+    ParsedDocument,
+    parse_document,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -44,8 +50,10 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
         result: ParsedDocument | DocumentRejection
         try:
             content = document.read_text(encoding="utf-8-sig")
-        except (OSError, UnicodeDecodeError) as error:
-            result = DocumentMalformed(f"Failed to read: {error}")
+        except UnicodeDecodeError as error:
+            result = DocumentMalformed(f"Failed to decode: {error}")
+        except OSError as error:
+            result = DocumentUnreadable(error)
         else:
             result = parse_document(content)
 
@@ -56,7 +64,7 @@ def read_documents(documents: tuple[Path, ...]) -> ReadDocumentsResult:
 
                 existing_subs.extend(s for s in parsed.subtitles if s.is_file())
                 all_comments.extend(parsed.comments)
-            case DocumentMalformed() | DocumentVersionUnsupported() as rejection:
+            case DocumentMalformed() | DocumentVersionUnsupported() | DocumentUnreadable() as rejection:
                 logger.warning("Rejected document %s: %s", document, _describe(rejection))
                 rejected_docs.append(RejectedDocument(document, rejection))
             case _ as unreachable:
@@ -76,5 +84,7 @@ def _describe(rejection: DocumentRejection) -> str:
             return detail
         case DocumentVersionUnsupported(version):
             return f"unsupported version {version}"
+        case DocumentUnreadable(error):
+            return str(error)
         case _ as unreachable:
             assert_never(unreachable)

@@ -12,7 +12,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.importing.services import DocumentMalformed, DocumentVersionUnsupported, read_documents
+from mpvqc.importing.services import DocumentMalformed, DocumentUnreadable, DocumentVersionUnsupported, read_documents
 
 DOCUMENT_FORMAT_README = Path(__file__).parents[3] / "docs" / "document-format" / "README.md"
 
@@ -38,15 +38,26 @@ def test_import_invalid_documents(tmp_path):
     assert [r.path for r in result.rejected_documents] == [document_1, document_2]
 
 
-def test_import_unreadable_documents(tmp_path):
-    invalid_encoding = tmp_path / "invalid_encoding.txt"
-    invalid_encoding.write_bytes(b"[FILE]\n\xff\xfe not valid utf-8")
-    missing = tmp_path / "this_document_does_not_exist.txt"
+def test_import_rejects_document_with_invalid_encoding_as_malformed(tmp_path):
+    document = tmp_path / "invalid_encoding.txt"
+    document.write_bytes(b"[FILE]\n\xff\xfe not valid utf-8")
 
-    result = read_documents((invalid_encoding, missing))
+    result = read_documents((document,))
 
-    assert [r.path for r in result.rejected_documents] == [invalid_encoding, missing]
-    assert all(isinstance(r.reason, DocumentMalformed) for r in result.rejected_documents)
+    [rejected] = result.rejected_documents
+    assert rejected.path == document
+    assert isinstance(rejected.reason, DocumentMalformed)
+
+
+def test_import_rejects_missing_document_as_unreadable(tmp_path):
+    document = tmp_path / "this_document_does_not_exist.txt"
+
+    result = read_documents((document,))
+
+    [rejected] = result.rejected_documents
+    assert rejected.path == document
+    assert isinstance(rejected.reason, DocumentUnreadable)
+    assert isinstance(rejected.reason.error, FileNotFoundError)
 
 
 def test_import_documents_with_utf8_bom(tmp_path):
@@ -221,7 +232,7 @@ class LoggedRejectionCase(NamedTuple):
 LOGGED_REJECTIONS = [
     LoggedRejectionCase(name="unsupported version", content='{"version": 999, "comments": []}', detail="999"),
     LoggedRejectionCase(name="invalid", content='{"version": 1, "video": 42, "comments": []}', detail="'video'"),
-    LoggedRejectionCase(name="unreadable", content=None, detail="Failed to read"),
+    LoggedRejectionCase(name="unreadable", content=None, detail="[Errno 2]"),
 ]
 
 

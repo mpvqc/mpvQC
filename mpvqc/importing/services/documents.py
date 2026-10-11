@@ -31,7 +31,12 @@ class DocumentVersionUnsupported:
     version: int
 
 
-type DocumentRejection = DocumentMalformed | DocumentVersionUnsupported
+@dataclass(frozen=True)
+class DocumentUnreadable:
+    error: OSError
+
+
+type DocumentRejection = DocumentMalformed | DocumentVersionUnsupported | DocumentUnreadable
 
 
 _REGEX_CLASSIC_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")

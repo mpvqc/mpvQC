@@ -20,6 +20,7 @@ from .concerns import VideoSkip as VideoSkip
 from .concerns import VideoUnresolved as VideoUnresolved
 from .documents import DocumentMalformed as DocumentMalformed
 from .documents import DocumentRejection as DocumentRejection
+from .documents import DocumentUnreadable as DocumentUnreadable
 from .documents import DocumentVersionUnsupported as DocumentVersionUnsupported
 from .documents import ParsedDocument as ParsedDocument
 from .documents import parse_classic as parse_classic
