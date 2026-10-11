@@ -531,6 +531,8 @@ $RECYCLE.BIN/
 /docs/dev
 /io
 /repo
+/result
+/result-*
 /venv-runner
 
 # Files

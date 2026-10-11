@@ -14,6 +14,8 @@ shape.
     repository root
 - **Windows only:** [Git Bash](https://git-scm.com/downloads), because the recipes use a POSIX shell
 
+On Linux, `nix develop` gives a shell that brings all of these. Every command below works inside it.
+
 Linux development and testing target Wayland.
 
 ## Setup
