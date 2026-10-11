@@ -6,6 +6,8 @@ import json
 from typing import NamedTuple
 
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 
 from mpvqc.importing.services import DocumentRejectionReason, ParsedDocument, parse_document
 
@@ -80,3 +82,36 @@ REJECTED_DOCUMENTS = [
 def test_parse_document_rejects(case: RejectionCase):
     assert parse_document(case.content) == case.reason
 
+
+json_scalars = st.one_of(st.none(), st.booleans(), st.integers(), st.floats(), st.text())
+json_values = st.recursive(
+    json_scalars,
+    lambda children: st.one_of(st.lists(children), st.dictionaries(st.text(), children)),
+)
+v1_comment = st.fixed_dictionaries(
+    {
+        "time": st.one_of(st.from_regex(r"\d{2}:[0-5]\d:[0-5]\d\.\d{3}", fullmatch=True), json_values),
+        "type": json_values,
+        "text": json_values,
+    }
+)
+v1_like_documents = st.fixed_dictionaries(
+    {"version": st.one_of(st.just(1), json_values)},
+    optional={
+        "video": json_values,
+        "subtitles": json_values,
+        "comments": st.one_of(json_values, st.lists(st.one_of(v1_comment, json_values))),
+    },
+)
+
+
+@pytest.mark.fuzz
+@given(st.text())
+def test_parse_document_never_raises_on_any_text(content: str):
+    assert isinstance(parse_document(content), ParsedDocument | DocumentRejectionReason)
+
+
+@pytest.mark.fuzz
+@given(st.one_of(json_values, v1_like_documents).map(json.dumps))
+def test_parse_document_never_raises_on_any_json(content: str):
+    assert isinstance(parse_document(content), ParsedDocument | DocumentRejectionReason)
