@@ -55,6 +55,11 @@
 
         __EGL_VENDOR_LIBRARY_DIRS = "${pkgs.mesa}/share/glvnd/egl_vendor.d";
         LIBVA_DRIVERS_PATH = "${pkgs.mesa}/lib/dri";
+
+        # rcc stamps every resource with SOURCE_DATE_EPOCH, so the QML disk cache never sees a change
+        shellHook = ''
+          unset SOURCE_DATE_EPOCH
+        '';
       };
     };
 }
