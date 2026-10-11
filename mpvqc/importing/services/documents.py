@@ -41,7 +41,7 @@ def parse_document(content: str) -> ParsedDocument | DocumentRejectionReason:
 
     try:
         data = json.loads(content)
-    except json.JSONDecodeError:
+    except (ValueError, RecursionError):
         logger.exception("Unrecognized document format")
         return DocumentRejectionReason.INVALID
 

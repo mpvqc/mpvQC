@@ -63,9 +63,20 @@ REJECTED_DOCUMENTS = [
         content='{"version": 999}',
         reason=DocumentRejectionReason.UNSUPPORTED_VERSION,
     ),
+    RejectionCase(
+        name="deeply nested array",
+        content="[" * 100_000,
+        reason=DocumentRejectionReason.INVALID,
+    ),
+    RejectionCase(
+        name="over-long version",
+        content='{"version": ' + "1" * 5000 + "}",
+        reason=DocumentRejectionReason.INVALID,
+    ),
 ]
 
 
 @pytest.mark.parametrize("case", REJECTED_DOCUMENTS, ids=lambda case: case.name)
 def test_parse_document_rejects(case: RejectionCase):
     assert parse_document(case.content) == case.reason
+
