@@ -72,13 +72,12 @@ TestCase {
 
         compare(helper.liftedPart(list, "commentTypeLabel").text, draft[data.from]);
         const indicator = helper.find(list, "commentTypesDropIndicator");
-        tryVerify(() => Math.abs(indicator.mapToItem(list, 0, 0).y - helper.slotTop(list, data.to)) <= 0.5);
+        tryVerify(() => helper.bridge.nearlyEqual(indicator.mapToItem(list, 0, 0).y, helper.slotTop(list, data.to)), 5000, "the drop indicator should mark the target slot");
         helper.waitForShownTypes(list, expected);
-        for (let i = 0; i < expected.length; i++) {
-            if (i !== data.to) {
-                tryVerify(() => Math.abs(helper.renderedTop(list, i) - helper.slotTop(list, i)) <= 0.5, 5000, `row ${i} should rest in its preview slot`);
-            }
-        }
+        tryVerify(() => {
+            const slots = expected.map((_, i) => i === data.to ? indicator : helper.rowPart(list, i, "commentTypeRowBackground"));
+            return slots.every((slot, i) => helper.bridge.nearlyEqual(slot.mapToItem(list, 0, 0).y, helper.slotTop(list, i)));
+        }, 5000, "the rows and the drop indicator should rest in their preview slots");
         compare(helper.draftTypes(list), draft, "previewing must not reorder the draft");
 
         mouseRelease(list, end.x, end.y);

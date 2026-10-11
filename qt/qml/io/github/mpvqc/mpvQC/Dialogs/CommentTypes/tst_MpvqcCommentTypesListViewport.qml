@@ -54,7 +54,7 @@ TestCase {
         helper.drop(list, start);
 
         compare(helper.draftTypes(list), draft);
-        compare(helper.scrollPosition(list), scroll);
+        verify(helper.bridge.nearlyEqual(helper.scrollPosition(list), scroll), `the drop should keep the list at ${scroll}, not ${helper.scrollPosition(list)}`);
         verify(list.itemAtIndex(index) === row, "the row must keep its identity");
     }
 
@@ -78,9 +78,7 @@ TestCase {
         verify(helper.liftedRow(list) === null, "the row lifts only past the drag threshold");
         for (const dy of [12, 24, 40, 60]) {
             mouseMove(list, pointer.x, pointer.y + dy, -1, Qt.LeftButton);
-            const rendered = helper.liftedPart(list, "commentTypeDragHandle").mapToItem(list, grab.x, grab.y);
-            verify(Math.abs(rendered.x - pointer.x) <= 0.5, "the grab point x must follow the pointer");
-            verify(Math.abs(rendered.y - (pointer.y + dy)) <= 0.5, "the grab point y must follow the pointer");
+            helper.verifyGrabbedAt(list, grab, Qt.point(pointer.x, pointer.y + dy));
         }
         helper.drop(list, Qt.point(pointer.x, pointer.y + 60));
 

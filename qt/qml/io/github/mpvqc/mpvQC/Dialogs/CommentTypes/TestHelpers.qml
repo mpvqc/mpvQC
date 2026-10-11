@@ -121,8 +121,8 @@ QtObject {
 
     function verifyGrabbedAt(list: ListView, grab: point, pointer: point): void {
         const rendered = liftedPart(list, "commentTypeDragHandle").mapToItem(list, grab.x, grab.y);
-        testCase.verify(Math.abs(rendered.x - pointer.x) <= 0.5, "the grab point x must follow the pointer");
-        testCase.verify(Math.abs(rendered.y - pointer.y) <= 0.5, "the grab point y must follow the pointer");
+        testCase.verify(bridge.nearlyEqual(rendered.x, pointer.x), `the grab point x must follow the pointer at ${pointer.x}, not ${rendered.x}`);
+        testCase.verify(bridge.nearlyEqual(rendered.y, pointer.y), `the grab point y must follow the pointer at ${pointer.y}, not ${rendered.y}`);
     }
 
     function shownTypes(list: ListView): var {
@@ -156,17 +156,8 @@ QtObject {
         return copy;
     }
 
-    function verticallyInside(item: Item, viewport: Item): bool {
-        const top = item.mapToItem(viewport, 0, 0).y;
-        return top >= -0.5 && top + item.height <= viewport.height + 0.5;
-    }
-
     function scrollPosition(list: ListView): real {
         return list.contentY - list.originY;
-    }
-
-    function maximumScrollPosition(list: ListView): real {
-        return Math.max(0, list.contentHeight - list.height);
     }
 
     function slotTop(list: ListView, index: int): real {
@@ -187,7 +178,7 @@ QtObject {
     function verifyScrollHoldsStill(list: ListView): void {
         const scroll = scrollPosition(list);
         waitForFrames(10);
-        testCase.verify(Math.abs(scrollPosition(list) - scroll) < 1, `the list should hold still at ${scroll}, not ${scrollPosition(list)}`);
+        testCase.verify(bridge.nearlyEqual(scrollPosition(list), scroll), `the list should hold still at ${scroll}, not ${scrollPosition(list)}`);
     }
 
     function holdNearEdge(list: ListView, from: int, down: bool): point {
@@ -204,8 +195,7 @@ QtObject {
     }
 
     function waitForScrollBound(list: ListView, down: bool): void {
-        const bound = down ? maximumScrollPosition(list) : 0;
-        testCase.tryVerify(() => Math.abs(scrollPosition(list) - bound) <= 0.5, 5000, "holding near the edge should scroll to the bound");
+        testCase.tryVerify(() => down ? bridge.atScrollEnd(list) : bridge.atScrollStart(list), 5000, "holding near the edge should scroll to the bound");
     }
 
     function dragPastEdge(list: ListView, from: int, down: bool): void {
@@ -240,7 +230,7 @@ QtObject {
                 return false;
             }
             for (let i = 0; i < list.count; i++) {
-                if (list.itemAtIndex(i) && Math.abs(renderedTop(list, i) - slotTop(list, i)) > 0.5) {
+                if (list.itemAtIndex(i) && !bridge.nearlyEqual(renderedTop(list, i), slotTop(list, i))) {
                     return false;
                 }
             }
