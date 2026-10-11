@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from enum import IntEnum
+from operator import index
 from typing import TYPE_CHECKING, Protocol, overload
 
 from PySide6.QtCore import QSettings
@@ -84,7 +85,7 @@ def read_int(stored: object, default: Callable[[], int]) -> int:
     if isinstance(stored, bool):
         return default()
     if isinstance(stored, int):
-        return stored
+        return index(stored)
     if isinstance(stored, str):
         with suppress(ValueError):
             return int(stored)
