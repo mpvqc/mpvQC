@@ -22,6 +22,8 @@
           python
           # ctypes.util.find_library needs ld to find libmpv
           pkgs.binutils
+          # fc-match from the same fontconfig Qt loads, to check which host fonts it finds
+          pkgs.fontconfig
           pkgs.just
           pkgs.mpv-unwrapped
           pkgs.uv
@@ -52,6 +54,7 @@
         ];
 
         __EGL_VENDOR_LIBRARY_DIRS = "${pkgs.mesa}/share/glvnd/egl_vendor.d";
+        LIBVA_DRIVERS_PATH = "${pkgs.mesa}/lib/dri";
       };
     };
 }
