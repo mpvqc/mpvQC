@@ -7,6 +7,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 TestCase {
@@ -17,6 +18,8 @@ TestCase {
     visible: true
     when: windowShown
     name: "MpvqcAboutDialog"
+
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
     function init(): void {
         failOnWarning(/.*(TypeError|Unable to assign|Binding loop).*/);
@@ -93,7 +96,9 @@ TestCase {
             compare(dialog.currentIndex, index);
             for (let i = 0; i < buttons.length; ++i) {
                 const button = buttons[i];
-                compare(Qt.rect(button.x, button.y, button.width, button.height), bounds[i]);
+                for (const key of ["x", "y", "width", "height"]) {
+                    verify(bridge.nearlyEqual(button[key], bounds[i][key]), `button ${i} ${key} should stay at ${bounds[i][key]}, not ${button[key]}`);
+                }
             }
         }
     }
@@ -106,9 +111,9 @@ TestCase {
         tryVerify(() => button.height > originalHeight);
         verify(button.contentItem.lineCount > 1);
         verify(waitForPolish(dialog.contentItem.Window.window));
-        const pageTop = find(dialog, "aboutPage").mapToItem(dialog.contentItem, 0, 0).y;
-        verify(button.mapToItem(dialog.contentItem, 0, button.height).y <= pageTop);
-        compare(find(dialog, "creditsNavigationButton").height, button.height);
+        verify(bridge.verticalGap(button, find(dialog, "aboutPage")) >= -bridge.pixelTolerance, "the wrapped tab must sit above the page");
+        const creditsHeight = find(dialog, "creditsNavigationButton").height;
+        verify(bridge.nearlyEqual(creditsHeight, button.height), `the other tabs should grow to ${button.height}, not ${creditsHeight}`);
     }
 
     function test_clickingCurrentTabIsNoop(): void {

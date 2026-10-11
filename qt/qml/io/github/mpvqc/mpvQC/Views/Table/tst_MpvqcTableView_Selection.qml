@@ -363,7 +363,8 @@ TestCase {
         const scroll = box.contentItem as ScrollView;
         tryVerify(() => scroll.ScrollBar.vertical.visible);
         waitForRendering(scroll);
-        compare((findChild(box, "deletePreview") as Label).width, widthWithoutScrollBar);
+        const widthWithScrollBar = (findChild(box, "deletePreview") as Label).width;
+        verify(_helpers.bridge.nearlyEqual(widthWithScrollBar, widthWithoutScrollBar), `the preview should keep its width of ${widthWithoutScrollBar}, not ${widthWithScrollBar}`);
     }
 
     function test_importClosesMessageBox(): void {

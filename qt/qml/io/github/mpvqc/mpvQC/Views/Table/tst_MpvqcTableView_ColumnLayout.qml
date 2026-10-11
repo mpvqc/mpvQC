@@ -41,9 +41,6 @@ TestCase {
     readonly property real arrowPaintedLeft: 8
     readonly property real arrowPaintedRight: 17.181
 
-    // Column widths are text widths rounded up to whole pixels.
-    readonly property real tolerance: 1
-
     readonly property string shortType: "Spelling"
     readonly property string longType: "Considerably longer type"
     readonly property string pathologicalType: "A".repeat(400)
@@ -157,10 +154,6 @@ TestCase {
         return mirrored ? before.left - after.right : after.left - before.right;
     }
 
-    function _compareGap(actual: real, expected: real, what: string): void {
-        verify(Math.abs(actual - expected) <= tolerance, `${what}: expected ${expected} ± ${tolerance}, got ${actual}`);
-    }
-
     function _layouts(): list<var> {
         return [
             {
@@ -205,9 +198,12 @@ TestCase {
         const type = _textLayoutSpan(control, _typeLabel(control, row));
         const comment = _textLayoutSpan(control, _commentLabel(control, row));
 
-        _compareGap(_gap(data.mirrored, arrow, time), columnGap, "arrow → time");
-        _compareGap(_gap(data.mirrored, time, type), columnGap, "time → type");
-        _compareGap(_gap(data.mirrored, type, comment), columnGap, "type → comment");
+        const arrowToTime = _gap(data.mirrored, arrow, time);
+        const timeToType = _gap(data.mirrored, time, type);
+        const typeToComment = _gap(data.mirrored, type, comment);
+        verify(_bridge.nearlyEqual(arrowToTime, columnGap), `arrow → time should be ${columnGap}, not ${arrowToTime}`);
+        verify(_bridge.nearlyEqual(timeToType, columnGap), `time → type should be ${columnGap}, not ${timeToType}`);
+        verify(_bridge.nearlyEqual(typeToComment, columnGap), `type → comment should be ${columnGap}, not ${typeToComment}`);
     }
 
     function test_shorterTypeLeavesExtraSpace_data(): list<var> {
@@ -228,7 +224,8 @@ TestCase {
         const comment = _textLayoutSpan(control, _commentLabel(control, shortRow));
         const extra = longType.contentWidth - shortType.contentWidth;
 
-        _compareGap(_gap(data.mirrored, type, comment), columnGap + extra, "short type → comment");
+        const typeToComment = _gap(data.mirrored, type, comment);
+        verify(_bridge.nearlyEqual(typeToComment, columnGap + extra), `short type → comment should be ${columnGap + extra}, not ${typeToComment}`);
     }
 
     function test_cappedTypeColumnKeepsLeadingGaps_data(): list<var> {
@@ -247,8 +244,10 @@ TestCase {
         const time = _textLayoutSpan(control, _timeLabel(control, row));
         const type = _textLayoutSpan(control, typeLabel);
 
-        _compareGap(_gap(data.mirrored, arrow, time), columnGap, "arrow → time");
-        _compareGap(_gap(data.mirrored, time, type), columnGap, "time → capped type");
+        const arrowToTime = _gap(data.mirrored, arrow, time);
+        const timeToType = _gap(data.mirrored, time, type);
+        verify(_bridge.nearlyEqual(arrowToTime, columnGap), `arrow → time should be ${columnGap}, not ${arrowToTime}`);
+        verify(_bridge.nearlyEqual(timeToType, columnGap), `time → capped type should be ${columnGap}, not ${timeToType}`);
         verify(_commentLabel(control, row).width > 100);
     }
 

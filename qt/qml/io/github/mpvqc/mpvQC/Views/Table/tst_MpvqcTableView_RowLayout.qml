@@ -46,26 +46,20 @@ TestCase {
         return control.commentList.ScrollBar.vertical.isShown;
     }
 
-    function _rowsAreStacked(): bool {
+    function _rows(): list<Item> {
         const list = control.commentList;
-        let expectedY = 0;
-        for (let row = 0; row < list.count; row++) {
-            const item = list.itemAtIndex(row);
-            if (!item || Math.abs(item.y - expectedY) > 0.5) {
-                return false;
-            }
-            expectedY += item.height;
-        }
-        return true;
+        return Array.from({
+            length: list.count
+        }, (_, row) => list.itemAtIndex(row));
+    }
+
+    function _rowsAreStacked(): bool {
+        const rows = _rows();
+        return rows.every(row => row !== null) && _helpers.bridge.nearlyEqual(rows[0].y, 0) && _helpers.bridge.stackedWithoutGaps(rows);
     }
 
     function _rowsHeight(): real {
-        const list = control.commentList;
-        let height = 0;
-        for (let row = 0; row < list.count; row++) {
-            height += list.itemAtIndex(row).height;
-        }
-        return height;
+        return _rows().reduce((height, row) => height + row.height, 0);
     }
 
     /**
@@ -98,13 +92,11 @@ TestCase {
 
         control.viewModel.removeRow(removedRow);
         tryVerify(() => !_scrollBarShows(), 1000, "scroll bar should vanish with the removal");
-        wait(300);
-        verify(_rowsAreStacked(), "rows left gaps or overlaps after the scroll bar vanished");
+        tryVerify(() => _rowsAreStacked(), 1000, "rows left gaps or overlaps after the scroll bar vanished");
 
         control.viewModel.undo();
         tryVerify(() => _scrollBarShows(), 1000, "scroll bar should come back with the undo");
-        wait(300);
-        verify(_rowsAreStacked(), "rows left gaps or overlaps after the scroll bar came back");
+        tryVerify(() => _rowsAreStacked(), 1000, "rows left gaps or overlaps after the scroll bar came back");
     }
 
     function test_scrollBarFollowsRowThatMovesNoOtherRow(): void {

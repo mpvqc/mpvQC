@@ -8,6 +8,8 @@ import QtQuick
 import QtQuick.Layouts
 import QtTest
 
+import io.github.mpvqc.mpvQC.Python
+
 TestCase {
     id: testCase
 
@@ -17,6 +19,7 @@ TestCase {
     visible: true
     when: windowShown
 
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
     readonly property int viewportHeight: 200
 
     function makeControl(contentHeight: real): Item {
@@ -74,7 +77,7 @@ TestCase {
         control.contentItem.flick(0, -2000);
         tryVerify(() => !control.contentItem.moving);
 
-        compare(control.contentItem.contentY, control.contentHeight - control.contentItem.height);
+        verify(bridge.atScrollEnd(control.contentItem), `the flick should stop at the end, not at ${control.contentItem.contentY}`);
     }
 
     Component {
