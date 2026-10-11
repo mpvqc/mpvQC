@@ -7,7 +7,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from mpvqc.importing.services import (
-    DocumentRejectionReason,
+    DocumentMalformed,
+    DocumentVersionUnsupported,
     ErrorsAbsent,
     ErrorsPresent,
     RejectedDocument,
@@ -49,9 +50,7 @@ def video_choice() -> UnfinishedPlan:
 def all_steps() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(Comment(time=0, comment_type="Translation", comment="incoming"),),
-        errors=ErrorsPresent(
-            rejected_documents=(RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),)
-        ),
+        errors=ErrorsPresent(rejected_documents=(RejectedDocument(_path("broken.qc"), DocumentMalformed("broken")),)),
         session=SessionUnresolved(incoming_comment_count=5),
         video=VideoUnresolved(
             candidates=(
@@ -84,8 +83,8 @@ def errors_only() -> UnfinishedPlan:
         comments=(),
         errors=ErrorsPresent(
             rejected_documents=(
-                RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),
-                RejectedDocument(_path("future.json"), DocumentRejectionReason.UNSUPPORTED_VERSION),
+                RejectedDocument(_path("broken.qc"), DocumentMalformed("broken")),
+                RejectedDocument(_path("future.json"), DocumentVersionUnsupported(999)),
             )
         ),
         session=SessionMerge(),

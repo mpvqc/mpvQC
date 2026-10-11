@@ -9,7 +9,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from mpvqc.importing.services import DocumentRejectionReason, ParsedDocument, parse_document
+from mpvqc.importing.services import DocumentMalformed, DocumentVersionUnsupported, ParsedDocument, parse_document
 
 
 def test_parse_document_reads_classic_document_by_its_header():
@@ -28,59 +28,57 @@ def test_parse_document_reads_v1_document():
     assert [(c.time, c.comment) for c in result.comments] == [(20_000, "x")]
 
 
-class RejectionCase(NamedTuple):
+class InvalidCase(NamedTuple):
     name: str
     content: str
-    reason: DocumentRejectionReason
 
 
-REJECTED_DOCUMENTS = [
-    RejectionCase(
-        name="no header and no json",
-        content="erroneous_document\n",
-        reason=DocumentRejectionReason.INVALID,
-    ),
-    RejectionCase(
-        name="json array",
-        content="[]",
-        reason=DocumentRejectionReason.INVALID,
-    ),
-    RejectionCase(
-        name="missing version",
-        content='{"comments": []}',
-        reason=DocumentRejectionReason.INVALID,
-    ),
-    RejectionCase(
-        name="version as bool",
-        content='{"version": true}',
-        reason=DocumentRejectionReason.INVALID,
-    ),
-    RejectionCase(
-        name="malformed v1",
-        content='{"version": 1}',
-        reason=DocumentRejectionReason.INVALID,
-    ),
-    RejectionCase(
-        name="unsupported version",
-        content='{"version": 999}',
-        reason=DocumentRejectionReason.UNSUPPORTED_VERSION,
-    ),
-    RejectionCase(
-        name="deeply nested array",
-        content="[" * 100_000,
-        reason=DocumentRejectionReason.INVALID,
-    ),
-    RejectionCase(
-        name="over-long version",
-        content='{"version": ' + "1" * 5000 + "}",
-        reason=DocumentRejectionReason.INVALID,
-    ),
+INVALID_DOCUMENTS = [
+    InvalidCase(name="no header and no json", content="erroneous_document\n"),
+    InvalidCase(name="json array", content="[]"),
+    InvalidCase(name="missing version", content='{"comments": []}'),
+    InvalidCase(name="version as bool", content='{"version": true}'),
+    InvalidCase(name="malformed v1", content='{"version": 1}'),
+    InvalidCase(name="deeply nested array", content="[" * 100_000),
+    InvalidCase(name="over-long version", content='{"version": ' + "1" * 5000 + "}"),
 ]
 
 
-@pytest.mark.parametrize("case", REJECTED_DOCUMENTS, ids=lambda case: case.name)
-def test_parse_document_rejects(case: RejectionCase):
-    assert parse_document(case.content) == case.reason
+@pytest.mark.parametrize("case", INVALID_DOCUMENTS, ids=lambda case: case.name)
+def test_parse_document_rejects_invalid_document(case: InvalidCase):
+    assert isinstance(parse_document(case.content), DocumentMalformed)
+
+
+def test_parse_document_tells_null_version_from_missing_version():
+    result = parse_document('{"version": null}')
+
+    assert isinstance(result, DocumentMalformed)
+    assert "Missing" not in result.detail
+
+
+HUGE = "x" * 10_000
+
+
+@pytest.mark.parametrize(
+    "document",
+    [
+        {"version": 1, "subtitles": [HUGE, 42], "comments": []},
+        {"version": 1, "comments": [{"time": HUGE}]},
+    ],
+    ids=["subtitles", "comment"],
+)
+def test_parse_document_keeps_detail_short_for_large_malformed_entries(document: dict):
+    result = parse_document(json.dumps(document))
+
+    assert isinstance(result, DocumentMalformed)
+    assert HUGE not in result.detail
+
+
+def test_parse_document_rejects_unsupported_version():
+    result = parse_document('{"version": 999}')
+
+    assert isinstance(result, DocumentVersionUnsupported)
+    assert result.version == 999
 
 
 json_scalars = st.one_of(st.none(), st.booleans(), st.integers(), st.floats(), st.text())
@@ -108,10 +106,10 @@ v1_like_documents = st.fixed_dictionaries(
 @pytest.mark.fuzz
 @given(st.text())
 def test_parse_document_never_raises_on_any_text(content: str):
-    assert isinstance(parse_document(content), ParsedDocument | DocumentRejectionReason)
+    assert isinstance(parse_document(content), ParsedDocument | DocumentMalformed | DocumentVersionUnsupported)
 
 
 @pytest.mark.fuzz
 @given(st.one_of(json_values, v1_like_documents).map(json.dumps))
 def test_parse_document_never_raises_on_any_json(content: str):
-    assert isinstance(parse_document(content), ParsedDocument | DocumentRejectionReason)
+    assert isinstance(parse_document(content), ParsedDocument | DocumentMalformed | DocumentVersionUnsupported)

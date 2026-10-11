@@ -10,7 +10,8 @@ from typing import TYPE_CHECKING, NamedTuple
 import pytest
 
 from mpvqc.importing.services import (
-    DocumentRejectionReason,
+    DocumentMalformed,
+    DocumentVersionUnsupported,
     ErrorsAbsent,
     ErrorsPresent,
     FinishedPlan,
@@ -40,9 +41,9 @@ DOC_A = Path("/work/a.qc")
 DOC_B = Path("/work/b.qc")
 DOC_BROKEN = Path("/work/broken.qc")
 
-REJECTED_BROKEN = RejectedDocument(DOC_BROKEN, DocumentRejectionReason.INVALID)
-REJECTED_B_INVALID = RejectedDocument(DOC_B, DocumentRejectionReason.INVALID)
-REJECTED_B_UNSUPPORTED = RejectedDocument(DOC_B, DocumentRejectionReason.UNSUPPORTED_VERSION)
+REJECTED_BROKEN = RejectedDocument(DOC_BROKEN, DocumentMalformed("broken"))
+REJECTED_B_INVALID = RejectedDocument(DOC_B, DocumentMalformed("broken"))
+REJECTED_B_UNSUPPORTED = RejectedDocument(DOC_B, DocumentVersionUnsupported(999))
 
 VIDEO_A = Path("/movies/a.mp4")
 VIDEO_B = Path("/movies/b.mkv")

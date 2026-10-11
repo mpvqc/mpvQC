@@ -7,8 +7,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from mpvqc.importing.services import (
-    DocumentRejectionReason,
-    RejectedDocument,
+    DocumentMalformed,
+    DocumentVersionUnsupported,
     SubtitleSource,
     VideoSource,
     scan,
@@ -71,10 +71,11 @@ def test_comments_and_rejected_documents_flow_through(tmp_path: Path) -> None:
 
     result = scan(documents=(valid, broken, unsupported), videos=(), subtitles=())
 
-    assert result.rejected_documents == (
-        RejectedDocument(broken, DocumentRejectionReason.INVALID),
-        RejectedDocument(unsupported, DocumentRejectionReason.UNSUPPORTED_VERSION),
-    )
+    [rejected_broken, rejected_unsupported] = result.rejected_documents
+    assert rejected_broken.path == broken
+    assert isinstance(rejected_broken.reason, DocumentMalformed)
+    assert rejected_unsupported.path == unsupported
+    assert isinstance(rejected_unsupported.reason, DocumentVersionUnsupported)
     assert tuple(c.comment for c in result.comments) == ("one", "two", "three")
 
 

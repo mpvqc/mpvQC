@@ -5,13 +5,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import NamedTuple
 
 import pytest
 
-from mpvqc.importing.services import DocumentRejectionReason, RejectedDocument, read_documents
+from mpvqc.importing.services import DocumentMalformed, DocumentVersionUnsupported, read_documents
 
 DOCUMENT_FORMAT_README = Path(__file__).parents[3] / "docs" / "document-format" / "README.md"
 
@@ -44,9 +45,8 @@ def test_import_unreadable_documents(tmp_path):
 
     result = read_documents((invalid_encoding, missing))
 
-    rejected_paths = [r.path for r in result.rejected_documents]
-    assert invalid_encoding in rejected_paths
-    assert missing in rejected_paths
+    assert [r.path for r in result.rejected_documents] == [invalid_encoding, missing]
+    assert all(isinstance(r.reason, DocumentMalformed) for r in result.rejected_documents)
 
 
 def test_import_documents_with_utf8_bom(tmp_path):
@@ -186,7 +186,9 @@ def test_import_rejects_documents_with_malformed_version(tmp_path, case: Invalid
 
     result = read_documents((document,))
 
-    assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.INVALID),)
+    [rejected] = result.rejected_documents
+    assert rejected.path == document
+    assert isinstance(rejected.reason, DocumentMalformed)
 
 
 def test_import_unsupported_version(tmp_path):
@@ -194,7 +196,10 @@ def test_import_unsupported_version(tmp_path):
 
     result = read_documents((document,))
 
-    assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.UNSUPPORTED_VERSION),)
+    [rejected] = result.rejected_documents
+    assert rejected.path == document
+    assert isinstance(rejected.reason, DocumentVersionUnsupported)
+    assert rejected.reason.version == 999
 
 
 def test_import_rejects_malformed_v1_document(tmp_path):
@@ -202,17 +207,39 @@ def test_import_rejects_malformed_v1_document(tmp_path):
 
     result = read_documents((document,))
 
-    assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.INVALID),)
+    [rejected] = result.rejected_documents
+    assert rejected.path == document
+    assert isinstance(rejected.reason, DocumentMalformed)
 
 
-def test_import_logs_rejected_document_with_its_file(tmp_path, caplog: pytest.LogCaptureFixture):
-    document = write_v1_document(tmp_path, "future.json", {"version": 999, "comments": []})
+class LoggedRejectionCase(NamedTuple):
+    name: str
+    content: str | None
+    detail: str
+
+
+LOGGED_REJECTIONS = [
+    LoggedRejectionCase(name="unsupported version", content='{"version": 999, "comments": []}', detail="999"),
+    LoggedRejectionCase(name="invalid", content='{"version": 1, "video": 42, "comments": []}', detail="'video'"),
+    LoggedRejectionCase(name="unreadable", content=None, detail="Failed to read"),
+]
+
+
+@pytest.mark.parametrize("case", LOGGED_REJECTIONS, ids=lambda case: case.name)
+def test_import_logs_rejection_once_with_its_file_and_detail(
+    tmp_path, caplog: pytest.LogCaptureFixture, case: LoggedRejectionCase
+):
+    document = tmp_path / "document.json"
+    if case.content is not None:
+        document.write_text(case.content, encoding="utf-8")
 
     read_documents((document,))
 
-    [record] = [r for r in caplog.records if "Rejected document" in r.getMessage()]
+    [record] = [r for r in caplog.records if r.levelno >= logging.WARNING]
+    assert record.levelno == logging.WARNING
+    assert record.exc_info is None
     assert str(document) in record.getMessage()
-    assert "UNSUPPORTED_VERSION" in record.getMessage()
+    assert case.detail in record.getMessage()
 
 
 def test_import_readme_example_document(tmp_path):

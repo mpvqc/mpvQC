@@ -5,11 +5,11 @@
 from pathlib import Path
 
 from mpvqc.importing.models import ErrorsModel
-from mpvqc.importing.services import DocumentRejectionReason, RejectedDocument
+from mpvqc.importing.services import DocumentMalformed, DocumentVersionUnsupported, RejectedDocument
 
 REJECTED = (
-    RejectedDocument(Path("/work/broken.qc"), DocumentRejectionReason.INVALID),
-    RejectedDocument(Path("/work/future.json"), DocumentRejectionReason.UNSUPPORTED_VERSION),
+    RejectedDocument(Path("/work/broken.qc"), DocumentMalformed("broken")),
+    RejectedDocument(Path("/work/future.json"), DocumentVersionUnsupported(999)),
 )
 
 
