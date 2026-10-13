@@ -126,8 +126,6 @@ TestCase {
                 expectedIndex: 1,
                 expectedEditor: ""
             },
-            // "other-row-time-label" flakes roughly 1 in 10 full-suite runs
-            // (commentPopup → timePopup transition on a real compositor).
             {
                 tag: "other-row-time-label",
                 clickPoint: c => _clickHelper.topLeftOfTimeLabel(c, 1),
@@ -171,19 +169,15 @@ TestCase {
         compare(control.getItem(2, "comment"), editedValue);
         waitForRendering(control);
 
-        // Verify editing is still active even after timeout
         _expect.isEditing(control);
         _expect.hasCurrentIndex(control, 1);
-        // Verify content in editing mode is correct
         compare(_find.commentTextArea(control).text, "Comment 2");
-        // Verify text below the editing popup is empty
         compare(control.commentList.itemAtIndex(1).commentLabel.text, "");
 
         const ptRow0 = _clickHelper.topRightOfCommentLabel(control, 0);
         testCase.mouseClick(control, ptRow0.x, ptRow0.y);
 
-        // Verify text is displayed again
-        tryCompare(control.commentList.itemAtIndex(1).commentLabel, "text", '<span style="white-space: pre-wrap">Comment 2</span>');
+        tryCompare(control.commentList.itemAtIndex(1).commentLabel, "text", "Comment 2");
     }
 
     function test_rightClick_data(): list<var> {

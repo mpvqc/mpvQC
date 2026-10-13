@@ -166,8 +166,8 @@ Item {
             // Set by MpvqcEditCommentPopup via Binding while the inline editor is open; -1 otherwise.
             property int editorHeight: -1
 
-            text: `<span style="white-space: pre-wrap">${MpvqcTableUtility.highlightComment(root.comment, root.searchQuery)}</span>`
-            textFormat: Text.RichText
+            text: MpvqcTableUtility.highlightComment(root.comment, root.searchQuery)
+            textFormat: Text.StyledText
 
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.WordWrap
