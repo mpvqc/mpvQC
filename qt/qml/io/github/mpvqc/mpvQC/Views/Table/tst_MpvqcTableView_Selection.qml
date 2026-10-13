@@ -451,6 +451,47 @@ TestCase {
         _expect.hasCurrentIndex(control, 0);
     }
 
+    function test_addRowHighlightsNewRowOnFirstFrame_data(): list<var> {
+        return [
+            {
+                tag: "at-selected-row",
+                selectedRow: 0
+            },
+            {
+                tag: "above-selected-row",
+                selectedRow: 2
+            },
+        ];
+    }
+
+    function test_addRowHighlightsNewRowOnFirstFrame(data): void {
+        const list = control.commentList;
+        list.currentIndex = data.selectedRow;
+        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, list.currentItem.y), timeout, "the highlight should settle on the selected row");
+
+        const window = control.Window.window;
+        const frames = [];
+        const record = () => frames.push({
+                currentIndex: list.currentIndex,
+                highlightY: list.highlightItem.y,
+                highlightHeight: list.highlightItem.height,
+                rowY: list.currentItem.y,
+                rowHeight: list.currentItem.height
+            });
+        window.afterAnimating.connect(record);
+        try {
+            control.viewModel.addRow("Comment Type 1"); // time=0 in test env → sorts to index 0
+            tryVerify(() => frames.length > 0);
+        } finally {
+            window.afterAnimating.disconnect(record);
+        }
+
+        const frame = frames[0];
+        compare(frame.currentIndex, 0);
+        verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        verify(_helpers.bridge.nearlyEqual(frame.highlightHeight, frame.rowHeight), `the highlight should be ${frame.rowHeight} high, not ${frame.highlightHeight}`);
+    }
+
     function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
         // Mirrors the real user flow: editing a visible row's time to a value
         // that puts it far from the current viewport. The view should scroll
