@@ -14,6 +14,7 @@ QtObject {
 
     readonly property bool useLongFormat: viewModel.useLongFormat
     readonly property var _reForbidden: /[\u00AD\r\n]/gi
+    readonly property var _reStyledTextSpecial: /[&<>\s]/g
 
     readonly property var _highlightCache: ({
             query: "",
@@ -45,7 +46,7 @@ QtObject {
 
     function highlightComment(comment: string, highlightedText: string): string {
         if (!highlightedText) {
-            return escapeHtml(comment);
+            return _styledSlice(comment, 0, comment.length);
         }
         if (highlightedText !== _highlightCache.query || _highlightCache.regExp === null) {
             _highlightCache.query = highlightedText;
@@ -54,16 +55,34 @@ QtObject {
         let result = "";
         let end = 0;
         comment.replace(_highlightCache.regExp, (match, offset) => {
-            result += escapeHtml(comment.slice(end, offset));
-            result += `<b><u>${escapeHtml(match)}</u></b>`;
+            result += _styledSlice(comment, end, offset);
+            result += `<b><u>${_styledSlice(comment, offset, offset + match.length)}</u></b>`;
             end = offset + match.length;
             return match;
         });
-        return result + escapeHtml(comment.slice(end));
+        return result + _styledSlice(comment, end, comment.length);
     }
 
-    function escapeHtml(text: string): string {
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    /**
+     * Qt's styled text parser collapses raw whitespace runs and drops raw whitespace at
+     * the start and end, but keeps entities as is. A raw space survives only as the last
+     * of a run inside the comment, so only that one stays raw, which spares the parser an
+     * entity per word gap. Takes the whole comment because a run can cross a match boundary.
+     */
+    function _styledSlice(comment: string, start: int, end: int): string {
+        return comment.slice(start, end).replace(_reStyledTextSpecial, (character, offset) => {
+            switch (character) {
+            case "&":
+                return "&amp;";
+            case "<":
+                return "&lt;";
+            case ">":
+                return "&gt;";
+            }
+            const index = start + offset;
+            const endsInnerSpaceRun = character === " " && index > 0 && index < comment.length - 1 && comment[index + 1] !== " ";
+            return endsInnerSpaceRun ? " " : `&#${character.charCodeAt(0)};`;
+        });
     }
 
     /**
