@@ -59,7 +59,7 @@ ListView {
 
     highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
-    highlightResizeDuration: root.rowPopupOpen ? 0 : _animationDuration
+    highlightResizeDuration: root.rowPopupOpen || _instantHighlight ? 0 : _animationDuration
     highlightResizeVelocity: -1
 
     move: Transition {
@@ -148,18 +148,17 @@ ListView {
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
     Connections {
-        // Keep the highlight from sliding to the wrong row during structural model changes.
         target: root.model
 
         function onAboutToInsertRow(): void {
+            // No freeze: an insert is always followed by a quick selection, which lays out and
+            // snaps the highlight in the same call
             root._layoutPending = true;
-            root._instantHighlight = true;
-            root.currentIndex = -1;
-            root._instantHighlight = false;
         }
 
         function onAboutToRemoveRow(): void {
             root._layoutPending = true;
+            // Keep the highlight from sliding to the wrong row while the rows move
             root.highlightFollowsCurrentItem = false;
         }
 
@@ -217,6 +216,8 @@ ListView {
         target: root.viewModel
 
         function onQuickSelectionRequested(index: int): void {
+            // Lay out a pending insert or remove first, so currentIndex has shifted with the rows
+            root.forceLayout();
             if (root.currentIndex === index) {
                 root.positionViewAtIndex(index, ListView.Contain);
                 return;
