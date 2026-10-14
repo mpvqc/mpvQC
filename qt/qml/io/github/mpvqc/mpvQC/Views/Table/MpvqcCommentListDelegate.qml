@@ -42,7 +42,6 @@ Item {
 
     height: Math.max(_commentLabel.height, _commentLabel.editorHeight, _playButton.height)
 
-    M.Material.background: root.backgroundColor
     M.Material.foreground: root._foregroundColor
 
     onHeightChanged: {
