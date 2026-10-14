@@ -485,6 +485,42 @@ TestCase {
         verify(_helpers.bridge.nearlyEqual(frame.highlightHeight, frame.rowHeight), `the highlight should be ${frame.rowHeight} high, not ${frame.highlightHeight}`);
     }
 
+    function test_removeRowKeepsHighlightInPlaceWhileNextRowMovesUp(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+        const slotY = list.currentItem.y;
+
+        const sample = () => list.highlightItem.y;
+        const removeRow = () => control.viewModel.removeRow(2);
+        const highlightYs = _wait.framesUntil(control, sample, removeRow, recorded => recorded.length > 0 && _helpers.bridge.nearlyEqual(list.currentItem.y, slotY), "the next row should move up into the removed row's place");
+
+        _expect.hasCurrentIndex(control, 2);
+        for (const highlightY of highlightYs) {
+            verify(_helpers.bridge.nearlyEqual(highlightY, slotY), `the highlight should stay at ${slotY}, not move to ${highlightY}`);
+        }
+    }
+
+    function test_removeRowSnapsHighlightOntoRowOnceRowsSettle(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+
+        const sample = () => ({
+                    follows: list.highlightFollowsCurrentItem,
+                    highlightY: list.highlightItem.y,
+                    rowY: list.currentItem.y
+                });
+        const selectAndRemove = () => {
+            // The removal freezes the highlight before its move to the new row starts
+            list.currentIndex = 3;
+            control.viewModel.removeRow(4);
+        };
+        const frames = _wait.framesUntil(control, sample, selectAndRemove, recorded => recorded.some(frame => frame.follows), "the highlight should follow the selected row again");
+
+        for (const frame of frames.filter(frame => frame.follows)) {
+            verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        }
+    }
+
     function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
         // Mirrors the real user flow: editing a visible row's time to a value
         // that puts it far from the current viewport. The view should scroll

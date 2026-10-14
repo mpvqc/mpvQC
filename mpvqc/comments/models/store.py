@@ -10,7 +10,7 @@ from collections import Counter
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, override
 
-from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelIndex, Qt, Signal
+from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelIndex, Qt
 
 from mpvqc.comments.services import ROLE_NAMES, Role, StoreItem
 
@@ -54,12 +54,6 @@ class TypeTally:
 
 
 class CommentStore(QAbstractListModel):
-    # Emitted before beginInsertRows and beginRemoveRows, so MpvqcCommentList can settle its
-    # highlight first. Qt's own rowsAboutToBeInserted and rowsAboutToBeRemoved go off from
-    # inside those calls, where a QML handler shares the signal with the view's own update.
-    aboutToInsertRow = Signal(int)
-    aboutToRemoveRow = Signal(int)
-
     def __init__(self) -> None:
         super().__init__()
         self._rows: list[StoreItem] = []
@@ -127,14 +121,12 @@ class CommentStore(QAbstractListModel):
         return excluded_row
 
     def insert(self, row: int, item: StoreItem) -> None:
-        self.aboutToInsertRow.emit(row)
         self.beginInsertRows(QModelIndex(), row, row)
         self._rows.insert(row, item)
         self._types.add(item.comment.comment_type)
         self.endInsertRows()
 
     def remove(self, row: int) -> None:
-        self.aboutToRemoveRow.emit(row)
         self.beginRemoveRows(QModelIndex(), row, row)
         self._types.remove(self._rows[row].comment.comment_type)
         del self._rows[row]

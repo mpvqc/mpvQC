@@ -145,32 +145,32 @@ ListView {
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }
 
+    on_RowsSettlingChanged: {
+        if (!_rowsSettling) {
+            // The highlight animation resumes with the velocity it had when it froze and would
+            // overshoot the row, which has already come to rest
+            root._instantHighlight = true;
+            root.highlightFollowsCurrentItem = true;
+            root._instantHighlight = false;
+        }
+    }
+
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
     Connections {
         target: root.model
 
-        function onAboutToInsertRow(): void {
+        function onRowsInserted(): void {
             // No freeze: an insert is always followed by a quick selection, which lays out and
             // snaps the highlight in the same call
             root._layoutPending = true;
         }
 
-        function onAboutToRemoveRow(): void {
+        function onRowsAboutToBeRemoved(): void {
             root._layoutPending = true;
             // Keep the highlight from sliding to the wrong row while the rows move
             root.highlightFollowsCurrentItem = false;
         }
-
-        function onRowsRemoved(): void {
-            _reEngageHighlightTracking.restart();
-        }
-    }
-
-    Timer {
-        id: _reEngageHighlightTracking
-        interval: root._animationDuration
-        onTriggered: root.highlightFollowsCurrentItem = true
     }
 
     Connections {
