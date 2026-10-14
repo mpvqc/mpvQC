@@ -467,7 +467,7 @@ TestCase {
     function test_addRowHighlightsNewRowOnFirstFrame(data): void {
         const list = control.commentList;
         list.currentIndex = data.selectedRow;
-        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, list.currentItem.y), timeout, "the highlight should settle on the selected row");
+        _wait.highlightSettled(control);
 
         const window = control.Window.window;
         const frames = [];
@@ -536,10 +536,7 @@ TestCase {
         const pt = _clickHelper.centerOfCommentLabel(control, 1);
         testCase.mouseClick(control, pt.x, pt.y);
         _expect.hasCurrentIndex(control, 1);
-
-        const list = control.commentList;
-        const row = list.currentItem;
-        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y) && _helpers.bridge.nearlyEqual(list.highlightItem.height, row.height), timeout, "the highlight should cover the selected row");
+        _wait.highlightSettled(control);
     }
 
     function test_selectedRowVisibleAtEdge_data(): list<var> {
@@ -582,7 +579,7 @@ TestCase {
         const list = control.commentList;
         list.currentIndex = 20;
         const row = list.currentItem;
-        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y), 2000, "the highlight should settle on the row");
+        _wait.highlightSettled(control);
 
         const contentY = data.edge === "top" ? row.y + data.overhang : row.y + row.height - data.overhang - list.height;
         list.contentY = contentY;
