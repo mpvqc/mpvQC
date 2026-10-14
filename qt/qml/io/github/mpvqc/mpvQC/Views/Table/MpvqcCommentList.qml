@@ -38,9 +38,8 @@ ListView {
     }
 
     /**
-     *  Set currentIndex to a value different from `target` so a subsequent
-     *  assignment to `target` is a real change. Required to trigger Qt's
-     *  auto-scroll when the assignment would otherwise be a no-op.
+     *  Qt scrolls to the current item only when currentIndex changes, so reselecting the
+     *  current row first moves it away.
      */
     function _nudgeCurrentIndex(target: int): void {
         if (target !== 0) {
@@ -63,6 +62,7 @@ ListView {
 
     highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
+    // The inline editor grows the row while typing, and the highlight has to keep up with it
     highlightResizeDuration: root.rowPopupOpen || _instantHighlight ? 0 : _animationDuration
     highlightResizeVelocity: -1
 
@@ -133,8 +133,6 @@ ListView {
         }
 
         onHeightChangedWhileEditing: {
-            // The delegate's height changed while its inline editor is open;
-            // scroll just enough to keep its bottom in view.
             const itemBottom = y - root.contentY + height;
             const overflow = itemBottom - root.height;
             if (overflow > 0) {
@@ -168,12 +166,14 @@ ListView {
         target: root.model
 
         function onRowsInserted(): void {
+            // No freeze: an insert is always followed by a quick selection, which lays out and
+            // snaps the highlight in the same call
             root._layoutPending = true;
         }
 
         function onRowsAboutToBeRemoved(): void {
-            // Keep the highlight from sliding to the wrong row while the rows move
             root._layoutPending = true;
+            // Keep the highlight from sliding to the wrong row while the rows move
             root.highlightFollowsCurrentItem = false;
         }
     }
@@ -193,7 +193,7 @@ ListView {
     Binding {
         // An inserted or removed row can make the scroll bar appear or vanish, and the rows wrap
         // differently with it. A row that changes height while a transition moves it lands where it
-        // was headed before, leaving gaps or overlaps. So the scroll bar waits until the rows settled
+        // was headed before, leaving gaps or overlaps. So the scroll bar waits until the rows have settled
         target: _scrollBar
         property: "isShown"
         value: root.contentHeight > root.height
@@ -228,6 +228,8 @@ ListView {
                 root.positionViewAtIndex(index, ListView.Contain);
                 return;
             }
+            // The highlight animation reads its duration when the move starts, so the flag only
+            // has to last for the assignment
             root._instantHighlight = true;
             root.currentIndex = index;
             root._instantHighlight = false;
