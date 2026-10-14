@@ -492,6 +492,54 @@ TestCase {
         verify(_helpers.bridge.nearlyEqual(frame.highlightHeight, frame.rowHeight), `the highlight should be ${frame.rowHeight} high, not ${frame.highlightHeight}`);
     }
 
+    function test_removeRowKeepsHighlightInPlaceWhileNextRowMovesUp(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+        const slotY = list.currentItem.y;
+
+        const window = control.Window.window;
+        const highlightYs = [];
+        const record = () => highlightYs.push(list.highlightItem.y);
+        window.afterAnimating.connect(record);
+        try {
+            control.viewModel.removeRow(2);
+            tryVerify(() => highlightYs.length > 0 && _helpers.bridge.nearlyEqual(list.currentItem.y, slotY), timeout, "the next row should move up into the removed row's place");
+        } finally {
+            window.afterAnimating.disconnect(record);
+        }
+
+        _expect.hasCurrentIndex(control, 2);
+        for (const highlightY of highlightYs) {
+            verify(_helpers.bridge.nearlyEqual(highlightY, slotY), `the highlight should stay at ${slotY}, not move to ${highlightY}`);
+        }
+    }
+
+    function test_removeRowSnapsHighlightOntoRowOnceRowsSettle(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+
+        const window = control.Window.window;
+        const frames = [];
+        const record = () => frames.push({
+                follows: list.highlightFollowsCurrentItem,
+                highlightY: list.highlightItem.y,
+                rowY: list.currentItem.y
+            });
+        window.afterAnimating.connect(record);
+        try {
+            // The removal freezes the highlight before its move to the new row starts
+            list.currentIndex = 3;
+            control.viewModel.removeRow(4);
+            tryVerify(() => frames.some(frame => frame.follows), timeout, "the highlight should follow the selected row again");
+        } finally {
+            window.afterAnimating.disconnect(record);
+        }
+
+        for (const frame of frames.filter(frame => frame.follows)) {
+            verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        }
+    }
+
     function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
         // Mirrors the real user flow: editing a visible row's time to a value
         // that puts it far from the current viewport. The view should scroll
