@@ -85,7 +85,7 @@ Loader {
     active: false
     visible: active
 
-    onLoaded: item.open() // qmllint disable
+    onLoaded: (item as T.Popup).open()
 
     Connections {
         // A style implements Popup and Menu as separate files over T.Popup and T.Menu, so
