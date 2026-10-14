@@ -31,6 +31,8 @@ starting with [Setup](#setup).
 - The shell only supports `x86_64` Linux.
 - The shell points uv at its own Python. Switching a checkout between the host and the shell recreates the virtual
   environment once on the first `uv` command.
+- The shell exports the variables in `.env` when it starts. Restart it after editing `.env`, because `just` doesn't
+  override a variable that's already set.
 - The shell's graphics stack is Nix mesa, which doesn't cover the NVIDIA proprietary driver. On such a host, launch the
   app and the tests through [nixGL](https://github.com/nix-community/nixGL).
 

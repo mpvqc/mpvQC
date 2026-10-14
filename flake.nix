@@ -59,6 +59,13 @@
         # rcc stamps every resource with SOURCE_DATE_EPOCH, so the QML disk cache never sees a change
         shellHook = ''
           unset SOURCE_DATE_EPOCH
+
+          # just build-release deletes .env
+          if [ -f .env ]; then
+            set -a
+            source .env
+            set +a
+          fi
         '';
       };
     };
