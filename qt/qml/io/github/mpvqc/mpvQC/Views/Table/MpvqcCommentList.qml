@@ -22,6 +22,10 @@ ListView {
     property bool _layoutPending: false
     readonly property bool _rowsSettling: _layoutPending || _displacedTransition.running
 
+    // When Qt scrolls a row into view, contentY lands on a whole pixel, so a row at a fractional
+    // position can stop just past the edge. Less than a pixel past still counts as visible
+    readonly property bool _selectedRowVisible: currentItem !== null && currentItem.y > contentY - 1 && currentItem.y + currentItem.height < contentY + height + 1
+
     signal editTimeRequested(index: int, time: int, coordinates: point)
     signal editCommentTypeRequested(index: int, commentType: string, coordinates: point)
     signal editCommentRequested(index: int)
@@ -205,11 +209,12 @@ ListView {
     }
 
     Binding {
-        // When Qt scrolls a row into view, contentY lands on a whole pixel. A row with a fractional
-        // position then stops a fraction of a pixel past the edge, so anything short of a pixel counts
+        // A Binding writes its target each time its value re-evaluates; a property notifies only
+        // when it changes. Through _selectedRowVisible, Python hears each flip instead of every
+        // scroll step
         target: root.viewModel.selection
         property: "selectedRowVisible"
-        value: root.currentItem !== null && root.currentItem.y > root.contentY - 1 && root.currentItem.y + root.currentItem.height < root.contentY + root.height + 1
+        value: root._selectedRowVisible
         restoreMode: Binding.RestoreNone
     }
 
