@@ -79,6 +79,9 @@ ListView {
     }
 
     remove: Transition {
+        // With no from or to, the row animates to where it already is: it stays drawn while the
+        // rows below slide over it, instead of leaving a gap. A row removed mid-slide finishes its
+        // slide, where a PauseAnimation would jump it there
         NumberAnimation {
             property: "y"
             duration: root._animationDuration
