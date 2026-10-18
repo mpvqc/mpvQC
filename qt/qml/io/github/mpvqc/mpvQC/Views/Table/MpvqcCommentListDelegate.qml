@@ -11,10 +11,10 @@ import io.github.mpvqc.mpvQC.Utility
 Item {
     id: root
 
-    required property int index             // from model
-    required property int time              // from model
-    required property string commentType    // from model
-    required property string comment        // from model
+    required property int index
+    required property int time
+    required property string commentType
+    required property string comment
 
     required property string searchQuery
 
@@ -27,7 +27,7 @@ Item {
     readonly property int horizontalItemPadding: 14
     readonly property int verticalItemPadding: 13
 
-    property color _foregroundColor: foregroundColor // mutable for animation
+    property color _foregroundColor: foregroundColor // Behavior cannot animate a readonly property
     property bool _isPooled: false
 
     signal playButtonPressed
@@ -42,7 +42,6 @@ Item {
 
     height: Math.max(_commentLabel.height, _commentLabel.editorHeight, _playButton.height)
 
-    M.Material.background: root.backgroundColor
     M.Material.foreground: root._foregroundColor
 
     onHeightChanged: {
@@ -54,10 +53,11 @@ Item {
     ListView.onPooled: root._isPooled = true
     ListView.onReused: root._isPooled = false
 
-    // Background is reparented to ListView parent to sit behind the highlight rectangle.
-    // This enables proper layering: backgrounds → highlight → delegate content,
-    // which is essential for alternating row colors with a moving highlight animation.
+    // Lives in the list's content item at z -2, below the highlight, so row colors show under a
+    // moving highlight. It is not a child of the row, so it hides itself while the row is pooled
     Rectangle {
+        objectName: "rowBackground"
+
         y: root.y
         width: root.width
         height: root.height
@@ -166,8 +166,8 @@ Item {
             // Set by MpvqcEditCommentPopup via Binding while the inline editor is open; -1 otherwise.
             property int editorHeight: -1
 
-            text: `<span style="white-space: pre-wrap">${MpvqcTableUtility.highlightComment(root.comment, root.searchQuery)}</span>`
-            textFormat: Text.RichText
+            text: MpvqcTableUtility.highlightComment(root.comment, root.searchQuery)
+            textFormat: Text.StyledText
 
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.WordWrap

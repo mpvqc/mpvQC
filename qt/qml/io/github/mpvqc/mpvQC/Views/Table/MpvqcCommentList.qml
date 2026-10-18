@@ -22,6 +22,10 @@ ListView {
     property bool _layoutPending: false
     readonly property bool _rowsSettling: _layoutPending || _displacedTransition.running
 
+    // When Qt scrolls a row into view, contentY lands on a whole pixel, so a row at a fractional
+    // position can stop just past the edge. Less than a pixel past still counts as visible
+    readonly property bool _selectedRowVisible: currentItem !== null && currentItem.y > contentY - 1 && currentItem.y + currentItem.height < contentY + height + 1
+
     signal editTimeRequested(index: int, time: int, coordinates: point)
     signal editCommentTypeRequested(index: int, commentType: string, coordinates: point)
     signal editCommentRequested(index: int)
@@ -34,9 +38,8 @@ ListView {
     }
 
     /**
-     *  Set currentIndex to a value different from `target` so a subsequent
-     *  assignment to `target` is a real change. Required to trigger Qt's
-     *  auto-scroll when the assignment would otherwise be a no-op.
+     *  Qt scrolls to the current item only when currentIndex changes, so reselecting the
+     *  current row first moves it away.
      */
     function _nudgeCurrentIndex(target: int): void {
         if (target !== 0) {
@@ -59,7 +62,8 @@ ListView {
 
     highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
-    highlightResizeDuration: root.rowPopupOpen ? 0 : _animationDuration
+    // The inline editor grows the row while typing, and the highlight has to keep up with it
+    highlightResizeDuration: root.rowPopupOpen || _instantHighlight ? 0 : _animationDuration
     highlightResizeVelocity: -1
 
     move: Transition {
@@ -79,6 +83,9 @@ ListView {
     }
 
     remove: Transition {
+        // With no from or to, the row animates to where it already is: it stays drawn while the
+        // rows below slide over it, instead of leaving a gap. A row removed mid-slide finishes its
+        // slide, where a PauseAnimation would jump it there
         NumberAnimation {
             property: "y"
             duration: root._animationDuration
@@ -86,8 +93,6 @@ ListView {
     }
 
     highlight: Rectangle {
-        width: parent ? parent.width - _scrollBar.visibleWidth : 0
-        height: parent?.height ?? 0
         color: MpvqcAppearance.palette.rowSelected
     }
 
@@ -128,8 +133,6 @@ ListView {
         }
 
         onHeightChangedWhileEditing: {
-            // The delegate's height changed while its inline editor is open;
-            // scroll just enough to keep its bottom in view.
             const itemBottom = y - root.contentY + height;
             const overflow = itemBottom - root.height;
             if (overflow > 0) {
@@ -147,33 +150,32 @@ ListView {
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }
 
-    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
-
-    Connections {
-        // Keep the highlight from sliding to the wrong row during structural model changes.
-        target: root.model
-
-        function onAboutToInsertRow(): void {
-            root._layoutPending = true;
+    on_RowsSettlingChanged: {
+        if (!_rowsSettling) {
+            // The highlight animation resumes with the velocity it had when it froze and would
+            // overshoot the row, which has already come to rest
             root._instantHighlight = true;
-            root.currentIndex = -1;
+            root.highlightFollowsCurrentItem = true;
             root._instantHighlight = false;
-        }
-
-        function onAboutToRemoveRow(): void {
-            root._layoutPending = true;
-            root.highlightFollowsCurrentItem = false;
-        }
-
-        function onRowsRemoved(): void {
-            _reEngageHighlightTracking.restart();
         }
     }
 
-    Timer {
-        id: _reEngageHighlightTracking
-        interval: root._animationDuration
-        onTriggered: root.highlightFollowsCurrentItem = true
+    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
+
+    Connections {
+        target: root.model
+
+        function onRowsInserted(): void {
+            // No freeze: an insert is always followed by a quick selection, which lays out and
+            // snaps the highlight in the same call
+            root._layoutPending = true;
+        }
+
+        function onRowsAboutToBeRemoved(): void {
+            root._layoutPending = true;
+            // Keep the highlight from sliding to the wrong row while the rows move
+            root.highlightFollowsCurrentItem = false;
+        }
     }
 
     Connections {
@@ -191,7 +193,7 @@ ListView {
     Binding {
         // An inserted or removed row can make the scroll bar appear or vanish, and the rows wrap
         // differently with it. A row that changes height while a transition moves it lands where it
-        // was headed before, leaving gaps or overlaps. So the scroll bar waits until the rows settled
+        // was headed before, leaving gaps or overlaps. So the scroll bar waits until the rows have settled
         target: _scrollBar
         property: "isShown"
         value: root.contentHeight > root.height
@@ -207,11 +209,12 @@ ListView {
     }
 
     Binding {
-        // When Qt scrolls a row into view, contentY lands on a whole pixel. A row with a fractional
-        // position then stops a fraction of a pixel past the edge, so anything short of a pixel counts
+        // A Binding writes its target each time its value re-evaluates; a property notifies only
+        // when it changes. Through _selectedRowVisible, Python hears each flip instead of every
+        // scroll step
         target: root.viewModel.selection
         property: "selectedRowVisible"
-        value: root.currentItem !== null && root.currentItem.y > root.contentY - 1 && root.currentItem.y + root.currentItem.height < root.contentY + root.height + 1
+        value: root._selectedRowVisible
         restoreMode: Binding.RestoreNone
     }
 
@@ -219,10 +222,14 @@ ListView {
         target: root.viewModel
 
         function onQuickSelectionRequested(index: int): void {
+            // Lay out a pending insert or remove first, so currentIndex has shifted with the rows
+            root.forceLayout();
             if (root.currentIndex === index) {
                 root.positionViewAtIndex(index, ListView.Contain);
                 return;
             }
+            // The highlight animation reads its duration when the move starts, so the flag only
+            // has to last for the assignment
             root._instantHighlight = true;
             root.currentIndex = index;
             root._instantHighlight = false;

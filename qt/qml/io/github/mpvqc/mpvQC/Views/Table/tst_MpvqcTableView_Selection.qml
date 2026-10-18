@@ -451,6 +451,76 @@ TestCase {
         _expect.hasCurrentIndex(control, 0);
     }
 
+    function test_addRowHighlightsNewRowOnFirstFrame_data(): list<var> {
+        return [
+            {
+                tag: "at-selected-row",
+                selectedRow: 0
+            },
+            {
+                tag: "above-selected-row",
+                selectedRow: 2
+            },
+        ];
+    }
+
+    function test_addRowHighlightsNewRowOnFirstFrame(data): void {
+        const list = control.commentList;
+        list.currentIndex = data.selectedRow;
+        _wait.highlightSettled(control);
+
+        const sample = () => ({
+                    currentIndex: list.currentIndex,
+                    highlightY: list.highlightItem.y,
+                    highlightHeight: list.highlightItem.height,
+                    rowY: list.currentItem.y,
+                    rowHeight: list.currentItem.height
+                });
+        const addRow = () => control.viewModel.addRow("Comment Type 1"); // time=0 in test env → sorts to index 0
+        const frames = _wait.framesUntil(control, sample, addRow, recorded => recorded.length > 0, "the view should draw a frame");
+
+        const frame = frames[0];
+        compare(frame.currentIndex, 0);
+        verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        verify(_helpers.bridge.nearlyEqual(frame.highlightHeight, frame.rowHeight), `the highlight should be ${frame.rowHeight} high, not ${frame.highlightHeight}`);
+    }
+
+    function test_removeRowKeepsHighlightInPlaceWhileNextRowMovesUp(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+        const slotY = list.currentItem.y;
+
+        const sample = () => list.highlightItem.y;
+        const removeRow = () => control.viewModel.removeRow(2);
+        const highlightYs = _wait.framesUntil(control, sample, removeRow, recorded => recorded.length > 0 && _helpers.bridge.nearlyEqual(list.currentItem.y, slotY), "the next row should move up into the removed row's place");
+
+        _expect.hasCurrentIndex(control, 2);
+        for (const highlightY of highlightYs) {
+            verify(_helpers.bridge.nearlyEqual(highlightY, slotY), `the highlight should stay at ${slotY}, not move to ${highlightY}`);
+        }
+    }
+
+    function test_removeRowSnapsHighlightOntoRowOnceRowsSettle(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+
+        const sample = () => ({
+                    follows: list.highlightFollowsCurrentItem,
+                    highlightY: list.highlightItem.y,
+                    rowY: list.currentItem.y
+                });
+        const selectAndRemove = () => {
+            // The removal freezes the highlight before its move to the new row starts
+            list.currentIndex = 3;
+            control.viewModel.removeRow(4);
+        };
+        const frames = _wait.framesUntil(control, sample, selectAndRemove, recorded => recorded.some(frame => frame.follows), "the highlight should follow the selected row again");
+
+        for (const frame of frames.filter(frame => frame.follows)) {
+            verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        }
+    }
+
     function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
         // Mirrors the real user flow: editing a visible row's time to a value
         // that puts it far from the current viewport. The view should scroll
@@ -489,6 +559,13 @@ TestCase {
 
         // The moved row must follow into view at its new position.
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not scroll to follow the moved row");
+    }
+
+    function test_highlightMatchesSelectedRow(): void {
+        const pt = _clickHelper.centerOfCommentLabel(control, 1);
+        testCase.mouseClick(control, pt.x, pt.y);
+        _expect.hasCurrentIndex(control, 1);
+        _wait.highlightSettled(control);
     }
 
     function test_selectedRowVisibleAtEdge_data(): list<var> {
@@ -531,13 +608,41 @@ TestCase {
         const list = control.commentList;
         list.currentIndex = 20;
         const row = list.currentItem;
-        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y), 2000, "the highlight should settle on the row");
+        _wait.highlightSettled(control);
 
         const contentY = data.edge === "top" ? row.y + data.overhang : row.y + row.height - data.overhang - list.height;
         list.contentY = contentY;
 
         tryVerify(() => control.viewModel.selection.selectedRowVisible === data.visible, 2000, `a row ${data.overhang} px past the edge should count as ${data.visible ? "visible" : "hidden"}`);
         compare(list.contentY, contentY, "the view should stay where the test put it");
+    }
+
+    function test_selectedRowVisiblePushedOnlyWhenItFlips(): void {
+        _helpers.bridge.importComments(Array.from({
+            length: 40
+        }, (_, i) => ({
+                    "time": (100 + i) * 1000,
+                    "commentType": "Comment Type 1",
+                    "comment": `Row ${i}`
+                })));
+        const list = control.commentList;
+        list.currentIndex = 20;
+        const row = list.currentItem;
+        _wait.highlightSettled(control);
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
+
+        _helpers.bridge.recordRowVisibilityWrites();
+        const rowAtBottom = row.y + row.height - list.height;
+        const steps = 5;
+        for (let step = 1; step <= steps; step++) {
+            list.contentY = rowAtBottom + (row.y - rowAtBottom) * step / (steps + 1);
+            verify(_helpers.bridge.verticallyInside(row, list), `the row should stay in view at contentY ${list.contentY}`);
+        }
+        compare(_helpers.bridge.rowVisibilityWrites(), [], "scrolling that keeps the row in view should not reach Python");
+
+        list.contentY = row.y + row.height;
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === false);
+        compare(_helpers.bridge.rowVisibilityWrites(), [false], "scrolling the row out of view should reach Python once");
     }
 
     function test_unknownCommentTypeAppearsInEditMenu(): void {
