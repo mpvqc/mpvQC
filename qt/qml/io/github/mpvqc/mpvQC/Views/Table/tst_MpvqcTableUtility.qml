@@ -28,6 +28,17 @@ TestCase {
         return utility;
     }
 
+    function makeText(text: string, textFormat: int, width: real): var {
+        const item = createTemporaryObject(textComponent, testCase, {
+            text,
+            textFormat,
+            width
+        });
+        verify(item);
+        waitForRendering(item);
+        return item;
+    }
+
     function test_formatTime_data(): var {
         return [
             {
@@ -269,9 +280,15 @@ TestCase {
             },
             {
                 tag: "preserves-whitespace-around-and-inside-matches",
-                comment: "  A\tB\n\n  A\tB  ",
+                comment: "  A\tB \u00a0  A\tB  ",
                 highlight: "a\tb",
-                expected: "  <b><u>A\tB</u></b>\n\n  <b><u>A\tB</u></b>  "
+                expected: "&#32; <b><u>A&#9;B</u></b> &#160;&#32; <b><u>A&#9;B</u></b>&#32;&#32;"
+            },
+            {
+                tag: "match-splits-whitespace-run",
+                comment: "a   b",
+                highlight: " b",
+                expected: "a&#32;&#32;<b><u> b</u></b>"
             },
             {
                 tag: "matches-do-not-overlap",
@@ -285,6 +302,32 @@ TestCase {
     function test_highlightComment(data): void {
         const utility = makeUtility();
         compare(utility.highlightComment(data.comment, data.highlight), data.expected);
+    }
+
+    function test_highlightComment_rendersLikePlainText_data(): var {
+        return [
+            {
+                tag: "keeps-every-whitespace-character",
+                comment: "  a   b\u00a0 \u00a0c\td  ",
+                width: 1000,
+                lineCount: 1
+            },
+            {
+                tag: "breaks-only-after-whitespace-runs",
+                comment: "a   b\u00a0c  d",
+                width: 1,
+                lineCount: 3
+            }
+        ];
+    }
+
+    function test_highlightComment_rendersLikePlainText(data): void {
+        const utility = makeUtility();
+        const styled = makeText(utility.highlightComment(data.comment, ""), Text.StyledText, data.width);
+        const plain = makeText(data.comment, Text.PlainText, data.width);
+        compare(plain.lineCount, data.lineCount);
+        compare(styled.lineCount, data.lineCount);
+        compare(styled.contentWidth, plain.contentWidth);
     }
 
     function test_highlightComment_isStableAcrossRepeatedQueries(): void {
@@ -325,6 +368,14 @@ TestCase {
 
         QtObject {
             property bool useLongFormat: false
+        }
+    }
+
+    Component {
+        id: textComponent
+
+        Text {
+            wrapMode: Text.WordWrap
         }
     }
 }
