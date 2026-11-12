@@ -35,11 +35,7 @@ ListView {
         root.currentIndex = index;
     }
 
-    /**
-     *  Set currentIndex to a value different from `target` so a subsequent
-     *  assignment to `target` is a real change. Required to trigger Qt's
-     *  auto-scroll when the assignment would otherwise be a no-op.
-     */
+    // Qt scrolls to the current item only when currentIndex changes
     function _nudgeCurrentIndex(target: int): void {
         if (target !== 0) {
             root.currentIndex = target - 1;
@@ -68,6 +64,7 @@ ListView {
 
     highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
+    // The inline editor grows the row while typing, and the highlight has to keep up with it
     highlightResizeDuration: root.rowPopupOpen || _instantHighlight ? 0 : _animationDuration
     highlightResizeVelocity: -1
 
@@ -90,6 +87,8 @@ ListView {
     remove: Transition {
         id: _removeTransition
 
+        // Without from or to, the row holds still while the rows below slide over it. Unlike a
+        // PauseAnimation, a row removed mid-slide still finishes its slide
         NumberAnimation {
             property: "y"
             duration: root._animationDuration
@@ -137,8 +136,6 @@ ListView {
         }
 
         onHeightChangedWhileEditing: {
-            // The delegate's height changed while its inline editor is open;
-            // scroll just enough to keep its bottom in view.
             const itemBottom = y - root.contentY + height;
             const overflow = itemBottom - root.height;
             if (overflow > 0) {
@@ -183,9 +180,7 @@ ListView {
     }
 
     Connections {
-        // A model change is laid out, and its transitions started, when the window polishes its items.
-        // The window emits afterAnimating right after that, so from then on the transitions tell
-        // whether the rows still move
+        // The window polishes, which starts the transitions, right before it emits afterAnimating
         target: root.Window.window
         enabled: root._layoutPending
 
@@ -195,9 +190,6 @@ ListView {
     }
 
     Binding {
-        // An inserted or removed row can make the scroll bar appear or vanish, and the rows wrap
-        // differently with it. A row that changes height while a transition moves it lands where it
-        // was headed before, leaving gaps or overlaps. So the scroll bar waits until the rows settled
         target: _scrollBar
         property: "isShown"
         value: root.contentHeight > root.height
