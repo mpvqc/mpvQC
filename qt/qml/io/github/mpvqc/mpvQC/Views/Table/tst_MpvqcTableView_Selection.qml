@@ -491,6 +491,16 @@ TestCase {
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not scroll to follow the moved row");
     }
 
+    function test_highlightMatchesSelectedRow(): void {
+        const pt = _clickHelper.centerOfCommentLabel(control, 1);
+        testCase.mouseClick(control, pt.x, pt.y);
+        _expect.hasCurrentIndex(control, 1);
+
+        const list = control.commentList;
+        const row = list.currentItem;
+        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y) && _helpers.bridge.nearlyEqual(list.highlightItem.height, row.height), timeout, "the highlight should cover the selected row");
+    }
+
     function test_selectedRowVisibleAtEdge_data(): list<var> {
         return [
             {
