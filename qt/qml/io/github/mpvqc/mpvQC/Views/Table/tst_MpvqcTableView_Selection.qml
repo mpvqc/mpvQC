@@ -617,6 +617,34 @@ TestCase {
         compare(list.contentY, contentY, "the view should stay where the test put it");
     }
 
+    function test_selectedRowVisiblePushedOnlyWhenItFlips(): void {
+        _helpers.bridge.importComments(Array.from({
+            length: 40
+        }, (_, i) => ({
+                    "time": (100 + i) * 1000,
+                    "commentType": "Comment Type 1",
+                    "comment": `Row ${i}`
+                })));
+        const list = control.commentList;
+        list.currentIndex = 20;
+        const row = list.currentItem;
+        _wait.highlightSettled(control);
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
+
+        _helpers.bridge.recordRowVisibilityWrites();
+        const rowAtBottom = row.y + row.height - list.height;
+        const steps = 5;
+        for (let step = 1; step <= steps; step++) {
+            list.contentY = rowAtBottom + (row.y - rowAtBottom) * step / (steps + 1);
+            verify(_helpers.bridge.verticallyInside(row, list), `the row should stay in view at contentY ${list.contentY}`);
+        }
+        compare(_helpers.bridge.rowVisibilityWrites(), [], "scrolling that keeps the row in view should not reach Python");
+
+        list.contentY = row.y + row.height;
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === false);
+        compare(_helpers.bridge.rowVisibilityWrites(), [false], "scrolling the row out of view should reach Python once");
+    }
+
     function test_unknownCommentTypeAppearsInEditMenu(): void {
         _helpers.bridge.importComments([
             {
