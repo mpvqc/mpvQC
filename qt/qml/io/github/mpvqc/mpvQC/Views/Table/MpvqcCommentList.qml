@@ -168,6 +168,7 @@ ListView {
         }
 
         function onRowsRemoved(): void {
+            Qt.callLater(root.forceLayout);
             _reEngageHighlightTracking.restart();
         }
     }

@@ -463,6 +463,20 @@ QtObject {
             const list = control.commentList;
             root.testCase.tryVerify(() => root.bridge.nearlyEqual(list.highlightItem.y, list.currentItem.y) && root.bridge.nearlyEqual(list.highlightItem.height, list.currentItem.height), root.testCase.timeout, "the highlight should settle on the selected row");
         }
+
+        function framesUntil(control: MpvqcTableView, sample: var, action: var, until: var, message: string): list<var> {
+            const window = control.Window.window;
+            const frames = [];
+            const record = () => frames.push(sample());
+            window.afterAnimating.connect(record);
+            try {
+                action();
+                root.testCase.tryVerify(() => until(frames), root.testCase.timeout, message);
+            } finally {
+                window.afterAnimating.disconnect(record);
+            }
+            return frames;
+        }
     }
 
     function makeControl(): var {
