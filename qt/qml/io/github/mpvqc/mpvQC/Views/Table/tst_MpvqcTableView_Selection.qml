@@ -514,6 +514,25 @@ TestCase {
         verify(stalledFrames <= 1, `the removed row should give way within a frame, not stand still for ${stalledFrames}`);
     }
 
+    function test_removeLastRowLeavesNothingBehindOnFirstFrame(): void {
+        const list = control.commentList;
+        const lastRow = list.count - 1;
+        list.currentIndex = lastRow;
+        _wait.highlightSettled(control);
+        const removedRow = list.itemAtIndex(lastRow);
+        const removedCenterY = removedRow.y + removedRow.height / 2 - list.contentY;
+        verify(removedRow.y + removedRow.height < list.contentY + list.height - 2, "the list should show empty space below its rows");
+
+        const removeRow = () => control.viewModel.removeRow(lastRow);
+        _wait.framesUntil(control, () => true, removeRow, recorded => recorded.length > 0, "the view should draw a frame");
+
+        const image = grabImage(list);
+        const emptySpace = image.pixel(1, list.height - 1);
+        for (let x = 0; x < list.width; x += 2) {
+            verify(Qt.colorEqual(image.pixel(x, removedCenterY), emptySpace), `the removed last row should be gone on the first frame, but x=${x} still shows it`);
+        }
+    }
+
     function test_removeRowSnapsHighlightOntoRowOnceRowsSettle(): void {
         const list = control.commentList;
         _wait.highlightSettled(control);
