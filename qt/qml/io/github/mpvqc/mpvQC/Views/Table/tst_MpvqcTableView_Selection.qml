@@ -465,6 +465,21 @@ TestCase {
         verify(stalledFrames <= 1, `the removed row should give way within a frame, not stand still for ${stalledFrames}`);
     }
 
+    function test_removeLastRowIsNotHeldOnScreen(): void {
+        const list = control.commentList;
+        const lastRow = list.count - 1;
+        list.currentIndex = lastRow;
+        _wait.highlightSettled(control);
+
+        // A grab after the removal lands after the transition already ended, so the frames are sampled
+        const sample = () => list.remove.running;
+        const removeRow = () => control.viewModel.removeRow(lastRow);
+        const highlightOnRowAbove = () => list.currentIndex === lastRow - 1 && _helpers.bridge.nearlyEqual(list.highlightItem.y, list.currentItem.y);
+        const removeRunning = _wait.framesUntil(control, sample, removeRow, recorded => recorded.length > 0 && highlightOnRowAbove(), "the highlight should move to the row above");
+
+        verify(!removeRunning.some(running => running), `no rows slide up into a removed last row, so it should not stay on screen: ${removeRunning}`);
+    }
+
     function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
         // Mirrors the real user flow: editing a visible row's time to a value
         // that puts it far from the current viewport. The view should scroll
