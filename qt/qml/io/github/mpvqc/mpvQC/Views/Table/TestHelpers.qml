@@ -458,6 +458,11 @@ QtObject {
             root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
             root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.opened);
         }
+
+        function highlightSettled(control: MpvqcTableView): void {
+            const list = control.commentList;
+            root.testCase.tryVerify(() => root.bridge.nearlyEqual(list.highlightItem.y, list.currentItem.y) && root.bridge.nearlyEqual(list.highlightItem.height, list.currentItem.height), root.testCase.timeout, "the highlight should settle on the selected row");
+        }
     }
 
     function makeControl(): var {

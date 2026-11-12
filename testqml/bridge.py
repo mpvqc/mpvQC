@@ -20,7 +20,7 @@ from mpvqc.appearance.services import (
     format_color_scheme_preference,
     parse_color_scheme,
 )
-from mpvqc.comments.services import CommentsService, CommentsSettingsService
+from mpvqc.comments.services import CommentsService, CommentsSettingsService, SelectionCell
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.i18n.services import I18nSettingsService
 from mpvqc.importing.services import (
@@ -54,6 +54,7 @@ class MpvqcTestBridge(QObject):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._wizard_outcome: dict = {"outcome": "none"}
+        self._row_visibility_writes: list[bool] = []
 
     @Slot()
     def resetState(self) -> None:
@@ -88,6 +89,23 @@ class MpvqcTestBridge(QObject):
         inject.instance(CommentsService).import_comments(
             [Comment(time=c["time"], comment_type=c["commentType"], comment=c["comment"]) for c in comments]
         )
+
+    # The selection view model's selectedRowVisible has no notify signal, so the writes are only
+    # observable where they land.
+    @Slot()
+    def recordRowVisibilityWrites(self) -> None:
+        selection = inject.instance(CommentsService).selection
+        self._row_visibility_writes = []
+
+        def record(visible: bool) -> None:
+            self._row_visibility_writes.append(visible)
+            SelectionCell.set_row_visible(selection, visible)
+
+        selection.set_row_visible = record
+
+    @Slot(result=list)
+    def rowVisibilityWrites(self) -> list[bool]:
+        return self._row_visibility_writes
 
     @Property(bool)
     def saved(self) -> bool:
