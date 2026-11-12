@@ -48,6 +48,13 @@ ListView {
         }
     }
 
+    // The highlight animation reads its duration when the move starts
+    function _withInstantHighlight(move: var): void {
+        root._instantHighlight = true;
+        move();
+        root._instantHighlight = false;
+    }
+
     model: viewModel.model
 
     clip: true
@@ -59,7 +66,7 @@ ListView {
 
     highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
-    highlightResizeDuration: root.rowPopupOpen ? 0 : _animationDuration
+    highlightResizeDuration: root.rowPopupOpen || _instantHighlight ? 0 : _animationDuration
     highlightResizeVelocity: -1
 
     move: Transition {
@@ -145,33 +152,25 @@ ListView {
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }
 
-    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
-
-    Connections {
-        // Keep the highlight from sliding to the wrong row during structural model changes.
-        target: root.model
-
-        function onAboutToInsertRow(): void {
-            root._layoutPending = true;
-            root._instantHighlight = true;
-            root.currentIndex = -1;
-            root._instantHighlight = false;
-        }
-
-        function onAboutToRemoveRow(): void {
-            root._layoutPending = true;
-            root.highlightFollowsCurrentItem = false;
-        }
-
-        function onRowsRemoved(): void {
-            _reEngageHighlightTracking.restart();
+    on_RowsSettlingChanged: {
+        if (!_rowsSettling) {
+            root._withInstantHighlight(() => root.highlightFollowsCurrentItem = true);
         }
     }
 
-    Timer {
-        id: _reEngageHighlightTracking
-        interval: root._animationDuration
-        onTriggered: root.highlightFollowsCurrentItem = true
+    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
+
+    Connections {
+        target: root.model
+
+        function onRowsInserted(): void {
+            root._layoutPending = true;
+        }
+
+        function onRowsAboutToBeRemoved(): void {
+            root._layoutPending = true;
+            root.highlightFollowsCurrentItem = false;
+        }
     }
 
     Connections {
@@ -217,13 +216,12 @@ ListView {
         target: root.viewModel
 
         function onQuickSelectionRequested(index: int): void {
+            root.forceLayout();
             if (root.currentIndex === index) {
                 root.positionViewAtIndex(index, ListView.Contain);
                 return;
             }
-            root._instantHighlight = true;
-            root.currentIndex = index;
-            root._instantHighlight = false;
+            root._withInstantHighlight(() => root.currentIndex = index);
         }
 
         function onSelectionRequested(index: int): void {

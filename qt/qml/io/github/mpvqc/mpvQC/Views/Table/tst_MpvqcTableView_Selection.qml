@@ -451,6 +451,76 @@ TestCase {
         _expect.hasCurrentIndex(control, 0);
     }
 
+    function test_addRowHighlightsNewRowOnFirstFrame_data(): list<var> {
+        return [
+            {
+                tag: "at-selected-row",
+                selectedRow: 0
+            },
+            {
+                tag: "above-selected-row",
+                selectedRow: 2
+            },
+        ];
+    }
+
+    function test_addRowHighlightsNewRowOnFirstFrame(data): void {
+        const list = control.commentList;
+        list.currentIndex = data.selectedRow;
+        _wait.highlightSettled(control);
+
+        const sample = () => ({
+                    currentIndex: list.currentIndex,
+                    highlightY: list.highlightItem.y,
+                    highlightHeight: list.highlightItem.height,
+                    rowY: list.currentItem.y,
+                    rowHeight: list.currentItem.height
+                });
+        const addRow = () => control.viewModel.addRow("Comment Type 1"); // time=0 in test env → sorts to index 0
+        const frames = _wait.framesUntil(control, sample, addRow, recorded => recorded.length > 0, "the view should draw a frame");
+
+        const frame = frames[0];
+        compare(frame.currentIndex, 0);
+        verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        verify(_helpers.bridge.nearlyEqual(frame.highlightHeight, frame.rowHeight), `the highlight should be ${frame.rowHeight} high, not ${frame.highlightHeight}`);
+    }
+
+    function test_removeRowKeepsHighlightInPlaceWhileNextRowMovesUp(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+        const slotY = list.currentItem.y;
+
+        const sample = () => list.highlightItem.y;
+        const removeRow = () => control.viewModel.removeRow(2);
+        const highlightYs = _wait.framesUntil(control, sample, removeRow, recorded => recorded.length > 0 && _helpers.bridge.nearlyEqual(list.currentItem.y, slotY), "the next row should move up into the removed row's place");
+
+        _expect.hasCurrentIndex(control, 2);
+        for (const highlightY of highlightYs) {
+            verify(_helpers.bridge.nearlyEqual(highlightY, slotY), `the highlight should stay at ${slotY}, not move to ${highlightY}`);
+        }
+    }
+
+    function test_removeRowSnapsHighlightOntoRowOnceRowsSettle(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+
+        const sample = () => ({
+                    follows: list.highlightFollowsCurrentItem,
+                    highlightY: list.highlightItem.y,
+                    rowY: list.currentItem.y
+                });
+        const selectAndRemove = () => {
+            // The removal freezes the highlight before its move to the new row starts
+            list.currentIndex = 3;
+            control.viewModel.removeRow(4);
+        };
+        const frames = _wait.framesUntil(control, sample, selectAndRemove, recorded => recorded.some(frame => frame.follows), "the highlight should follow the selected row again");
+
+        for (const frame of frames.filter(frame => frame.follows)) {
+            verify(_helpers.bridge.nearlyEqual(frame.highlightY, frame.rowY), `the highlight should sit at ${frame.rowY}, not ${frame.highlightY}`);
+        }
+    }
+
     function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
         // Mirrors the real user flow: editing a visible row's time to a value
         // that puts it far from the current viewport. The view should scroll
@@ -495,10 +565,7 @@ TestCase {
         const pt = _clickHelper.centerOfCommentLabel(control, 1);
         testCase.mouseClick(control, pt.x, pt.y);
         _expect.hasCurrentIndex(control, 1);
-
-        const list = control.commentList;
-        const row = list.currentItem;
-        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y) && _helpers.bridge.nearlyEqual(list.highlightItem.height, row.height), timeout, "the highlight should cover the selected row");
+        _wait.highlightSettled(control);
     }
 
     function test_selectedRowVisibleAtEdge_data(): list<var> {
@@ -541,7 +608,7 @@ TestCase {
         const list = control.commentList;
         list.currentIndex = 20;
         const row = list.currentItem;
-        tryVerify(() => _helpers.bridge.nearlyEqual(list.highlightItem.y, row.y), 2000, "the highlight should settle on the row");
+        _wait.highlightSettled(control);
 
         const contentY = data.edge === "top" ? row.y + data.overhang : row.y + row.height - data.overhang - list.height;
         list.contentY = contentY;
