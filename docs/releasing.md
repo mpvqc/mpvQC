@@ -17,8 +17,8 @@ per release with the `manual-checks` skill.
 - [ ] Python dependencies updated: `just update-python-dependencies`
 - [ ] Pre-commit hooks updated: `just update-git-hook-dependencies`
 - [ ] libmpv in CI updated: `.github/actions/install-libmpv/action.yml`
-  - Visit <https://github.com/shinchiro/mpv-winbuild-cmake/releases>
-  - Find the latest `mpv-dev-x86_64-*-git-*.7z` asset
+  - Visit <https://github.com/mpv-player/mpv/releases>
+  - Find the `libmpv-*-x86_64-w64-mingw32-gpl.zip` asset of the latest stable release
   - Copy URL and SHA256 hash
   - Update the `default` values of the action's `url` and `sha256` inputs
 - [ ] mpv.conf for Linux reviewed against the mpv version the Flatpak manifest builds: `data/config/mpv-linux.conf`

@@ -10,8 +10,8 @@ shape.
 - [just](https://github.com/casey/just)
 - libmpv
   - **Linux:** install libmpv through your package manager
-  - **Windows:** download [libmpv](https://github.com/shinchiro/mpv-winbuild-cmake/releases) and place its DLL in the
-    repository root
+  - **Windows:** download the `libmpv-*-x86_64-w64-mingw32-gpl.zip` asset of the latest
+    [mpv release](https://github.com/mpv-player/mpv/releases) and place its `libmpv-2.dll` in the repository root
 - **Windows only:** [Git Bash](https://git-scm.com/downloads), because the recipes use a POSIX shell
 
 Linux development and testing target Wayland.
