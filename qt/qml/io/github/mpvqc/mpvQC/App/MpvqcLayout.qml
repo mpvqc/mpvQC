@@ -86,12 +86,6 @@ Page {
                 focus: true
                 width: _tableContainer.width
                 height: _tableContainer.height - _footer.height
-
-                onCommentCountChanged: {
-                    // force a redraw to avoid leftover alternating row color artifacts
-                    _footer.height += 1;
-                    _footer.height -= 1;
-                }
             }
 
             MpvqcFooterView {

@@ -112,6 +112,47 @@ TestCase {
         tryVerify(() => _rowsAreStacked(), 1000, "rows left gaps or overlaps after the scroll bar came back");
     }
 
+    function test_deletingLastRowLeavesNoBackgroundBelowRows_data(): list<var> {
+        return [
+            {
+                tag: "unscrolled",
+                height: 4000,
+                scrolled: false
+            },
+            {
+                tag: "scrolled",
+                height: 400,
+                scrolled: true
+            }
+        ];
+    }
+
+    function test_deletingLastRowLeavesNoBackgroundBelowRows(data): void {
+        const list = control.commentList;
+        const lastRow = list.count - 1;
+        control.height = data.height;
+        if (data.scrolled) {
+            list.positionViewAtEnd();
+            verify(list.contentY > 0, "list should scroll");
+        }
+        tryVerify(() => list.itemAtIndex(lastRow) !== null, 1000, "last row not built");
+
+        // A leftover background shows once the removed row goes to the pool, after its remove transition
+        const pooled = createTemporaryObject(_helpers.signalSpy, testCase, {
+            target: list.itemAtIndex(lastRow).ListView,
+            signalName: "pooled"
+        });
+        verify(pooled);
+
+        control.viewModel.removeRow(lastRow);
+        tryVerify(() => pooled.count === 1, 1000, "removed row not pooled");
+
+        const backgrounds = list.contentItem.children.filter(child => child.objectName === "rowBackground");
+        verify(backgrounds.length > 0, "no row backgrounds found");
+        const contentEnd = list.originY + list.contentHeight;
+        verify(!backgrounds.some(background => background.visible && background.y >= contentEnd - _helpers.bridge.pixelTolerance), "a row background stays below the rows");
+    }
+
     TestHelpers {
         id: _helpers
 
