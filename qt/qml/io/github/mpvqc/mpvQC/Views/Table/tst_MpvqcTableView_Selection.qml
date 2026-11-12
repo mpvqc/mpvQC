@@ -500,6 +500,20 @@ TestCase {
         }
     }
 
+    function test_removeRowMovesNextRowUpWithoutStalling(): void {
+        const list = control.commentList;
+        _wait.highlightSettled(control);
+        const nextRow = list.itemAtIndex(2);
+        const startY = nextRow.y;
+
+        const sample = () => nextRow.y;
+        const removeRow = () => control.viewModel.removeRow(1);
+        const nextRowYs = _wait.framesUntil(control, sample, removeRow, recorded => recorded.some(y => !_helpers.bridge.nearlyEqual(y, startY)), "the next row should move up into the removed row's place");
+
+        const stalledFrames = nextRowYs.findIndex(y => !_helpers.bridge.nearlyEqual(y, startY));
+        verify(stalledFrames <= 1, `the removed row should give way within a frame, not stand still for ${stalledFrames}`);
+    }
+
     function test_removeRowSnapsHighlightOntoRowOnceRowsSettle(): void {
         const list = control.commentList;
         _wait.highlightSettled(control);

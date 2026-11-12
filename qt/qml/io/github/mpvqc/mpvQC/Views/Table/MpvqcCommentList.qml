@@ -173,6 +173,10 @@ ListView {
             root._layoutPending = true;
             root.highlightFollowsCurrentItem = false;
         }
+
+        function onRowsRemoved(): void {
+            Qt.callLater(root.forceLayout);
+        }
     }
 
     Connections {
