@@ -8,10 +8,10 @@ description: Installs libmpv - via apt on Linux, or by downloading and extractin
 inputs:
   url:
     description: URL to download libmpv from (Windows only)
-    default: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260928/mpv-dev-x86_64-20260928-git-e470f8986e.7z
+    default: https://github.com/mpv-player/mpv/releases/download/v0.42.0/libmpv-v0.42.0-x86_64-w64-mingw32-gpl.zip
   sha256:
     description: Expected SHA256 checksum (Windows only)
-    default: 81795d759e01016f1550fd71651a1a5d59ab5c28ef31c0b6793224e9cff39459
+    default: b99e0d183024ae479d1b36a93fa262c0297dfb025b99715b98da377ffb6c2913
 
 runs:
   using: composite
@@ -27,7 +27,7 @@ runs:
           curl -L -O "${{ inputs.url }}"
           echo -n "${{ inputs.sha256 }} $ARTIFACT" > "$ARTIFACT.sha256"
           sha256sum --check "$ARTIFACT.sha256"
-          7z x "$ARTIFACT"
+          7z e "$ARTIFACT" libmpv-2.dll
         else
           echo "Unsupported runner OS: $RUNNER_OS" >&2
           exit 1

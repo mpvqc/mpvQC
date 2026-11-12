@@ -108,9 +108,9 @@ Zstandard and xxHash
   Build source: Nuitka's bundled Zstandard copy
     https://github.com/Nuitka/Nuitka/tree/4.2.2/nuitka/build/inline_copy/zstd
 
-The Windows release bundles libmpv as built and published by the
-mpv-winbuild-cmake project:
-  https://github.com/shinchiro/mpv-winbuild-cmake
+The Windows release bundles the GPL build of libmpv as built and published by
+the mpv project:
+  https://github.com/mpv-player/mpv/releases
 
 libmpv
   Description: mpv media player library
@@ -181,7 +181,7 @@ to the open-source community.
 
 Special thanks to:
   - The mpv project for the powerful media playback engine
-  - The mpv-winbuild-cmake and io.mpv.Mpv projects for the build work mpvQC relies on
+  - The io.mpv.Mpv project for the build work mpvQC relies on
   - The Qt/PySide team for the excellent cross-platform framework
   - Google for providing high-quality open-source fonts and icons
   - All Python library maintainers for their invaluable tools
