@@ -32,34 +32,52 @@ def store() -> CommentStore:
     return CommentStore()
 
 
-def test_insert_emits_the_custom_signal_before_qts_begin_signal(store):
+def test_insert_emits_only_the_row_insert_pair(store, make_spy):
     _seed(store, ["A", "B"])
-    events: list[tuple[str, int]] = []
-    store.aboutToInsertRow.connect(lambda row: events.append(("custom", row)))
-    store.rowsAboutToBeInserted.connect(lambda _parent, first, _last: events.append(("qt", first)))
+    about_to_insert_spy = make_spy(store.rowsAboutToBeInserted)
+    inserted_spy = make_spy(store.rowsInserted)
+    removed_spy = make_spy(store.rowsRemoved)
+    data_changed_spy = make_spy(store.dataChanged)
 
     store.insert(1, store.mint(_comment("C")))
 
-    assert events == [("custom", 1), ("qt", 1)]
+    assert about_to_insert_spy.count() == 1
+    assert about_to_insert_spy.at(0, 1) == 1
+    assert about_to_insert_spy.at(0, 2) == 1
+    assert inserted_spy.count() == 1
+    assert inserted_spy.at(0, 1) == 1
+    assert inserted_spy.at(0, 2) == 1
+    assert removed_spy.count() == 0
+    assert data_changed_spy.count() == 0
+    assert _comments_in(store) == ["A", "C", "B"]
 
 
-def test_remove_emits_the_custom_signal_before_qts_begin_signal(store):
+def test_remove_emits_only_the_row_remove_pair(store, make_spy):
     _seed(store, ["A", "B", "C"])
-    events: list[tuple[str, int]] = []
-    store.aboutToRemoveRow.connect(lambda row: events.append(("custom", row)))
-    store.rowsAboutToBeRemoved.connect(lambda _parent, first, _last: events.append(("qt", first)))
+    about_to_remove_spy = make_spy(store.rowsAboutToBeRemoved)
+    removed_spy = make_spy(store.rowsRemoved)
+    inserted_spy = make_spy(store.rowsInserted)
+    data_changed_spy = make_spy(store.dataChanged)
 
     store.remove(2)
 
-    assert events == [("custom", 2), ("qt", 2)]
+    assert about_to_remove_spy.count() == 1
+    assert about_to_remove_spy.at(0, 1) == 2
+    assert about_to_remove_spy.at(0, 2) == 2
+    assert removed_spy.count() == 1
+    assert removed_spy.at(0, 1) == 2
+    assert removed_spy.at(0, 2) == 2
+    assert inserted_spy.count() == 0
+    assert data_changed_spy.count() == 0
+    assert _comments_in(store) == ["A", "B"]
 
 
 @pytest.mark.parametrize("role", list(Role), ids=lambda role: role.name)
 def test_replace_data_changed_carries_exactly_the_mutated_role(store, make_spy, role):
     _seed(store, ["A", "B", "C"])
     data_changed_spy = make_spy(store.dataChanged)
-    insert_spy = make_spy(store.aboutToInsertRow)
-    remove_spy = make_spy(store.aboutToRemoveRow)
+    inserted_spy = make_spy(store.rowsInserted)
+    removed_spy = make_spy(store.rowsRemoved)
 
     store.replace(1, _comment("B2"), role)
 
@@ -67,8 +85,8 @@ def test_replace_data_changed_carries_exactly_the_mutated_role(store, make_spy, 
     assert data_changed_spy.at(0, 0).row() == 1
     assert data_changed_spy.at(0, 1).row() == 1
     assert data_changed_spy.at(0, 2) == [role]
-    assert insert_spy.count() == 0
-    assert remove_spy.count() == 0
+    assert inserted_spy.count() == 0
+    assert removed_spy.count() == 0
     assert _comments_in(store) == ["A", "B2", "C"]
 
 
@@ -76,14 +94,14 @@ def test_move_replace_when_source_equals_destination_only_changes_data(store, ma
     _seed(store, ["C0", "C1", "C2"])
     moved_spy = make_spy(store.rowsMoved)
     data_changed_spy = make_spy(store.dataChanged)
-    insert_spy = make_spy(store.aboutToInsertRow)
-    remove_spy = make_spy(store.aboutToRemoveRow)
+    inserted_spy = make_spy(store.rowsInserted)
+    removed_spy = make_spy(store.rowsRemoved)
 
     store.move_replace(1, 1, _comment("NEW"), Role.TYPE)
 
     assert moved_spy.count() == 0
-    assert insert_spy.count() == 0
-    assert remove_spy.count() == 0
+    assert inserted_spy.count() == 0
+    assert removed_spy.count() == 0
     assert data_changed_spy.count() == 1
     assert data_changed_spy.at(0, 0).row() == 1
     assert data_changed_spy.at(0, 1).row() == 1
@@ -112,8 +130,8 @@ def test_move_replace_moves_across_rows(store, make_spy, case: _MoveReplaceCase)
     _seed(store, ["C0", "C1", "C2", "C3", "C4"])
     moved_spy = make_spy(store.rowsMoved)
     data_changed_spy = make_spy(store.dataChanged)
-    insert_spy = make_spy(store.aboutToInsertRow)
-    remove_spy = make_spy(store.aboutToRemoveRow)
+    inserted_spy = make_spy(store.rowsInserted)
+    removed_spy = make_spy(store.rowsRemoved)
 
     store.move_replace(case.src, case.dst, _comment("NEW"), Role.COMMENT)
 
@@ -129,8 +147,8 @@ def test_move_replace_moves_across_rows(store, make_spy, case: _MoveReplaceCase)
     assert data_changed_spy.at(0, 1).row() == case.dst
     assert data_changed_spy.at(0, 2) == [Role.COMMENT]
 
-    assert insert_spy.count() == 0
-    assert remove_spy.count() == 0
+    assert inserted_spy.count() == 0
+    assert removed_spy.count() == 0
     assert _comments_in(store) == case.order
 
 
@@ -141,8 +159,6 @@ def test_reset_emits_a_single_model_reset_with_no_per_row_signals(store, make_sp
     inserted_spy = make_spy(store.rowsInserted)
     removed_spy = make_spy(store.rowsRemoved)
     data_changed_spy = make_spy(store.dataChanged)
-    insert_spy = make_spy(store.aboutToInsertRow)
-    remove_spy = make_spy(store.aboutToRemoveRow)
 
     store.reset([store.mint(_comment("X")), store.mint(_comment("Y"))])
 
@@ -151,8 +167,6 @@ def test_reset_emits_a_single_model_reset_with_no_per_row_signals(store, make_sp
     assert inserted_spy.count() == 0
     assert removed_spy.count() == 0
     assert data_changed_spy.count() == 0
-    assert insert_spy.count() == 0
-    assert remove_spy.count() == 0
     assert _comments_in(store) == ["X", "Y"]
 
 

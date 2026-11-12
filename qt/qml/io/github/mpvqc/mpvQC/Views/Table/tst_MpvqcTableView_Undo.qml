@@ -120,7 +120,6 @@ TestCase {
 
         control.viewModel.undo();
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
-        waitForRendering(control);
         compare(_helpers.bridge.comment(0).comment, "edited");
 
         control.viewModel.undo();
@@ -199,7 +198,6 @@ TestCase {
 
         control.viewModel.undo();
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
-        waitForRendering(control);
         compare(_helpers.bridge.comment(edit.dstRow).time, 5);
 
         control.viewModel.undo();
@@ -220,7 +218,6 @@ TestCase {
 
         control.viewModel.redo();
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
-        waitForRendering(control);
         compare(_helpers.bridge.comment(250).time, edit.originalTime);
 
         control.viewModel.redo();
@@ -433,13 +430,11 @@ TestCase {
 
         function scrollSelectionOffscreen(): void {
             const list = testCase.control.commentList;
-            for (let i = 0; i < 20; i++) {
-                if (!testCase.control.viewModel.selection.selectedRowVisible) {
-                    break;
-                }
-                testCase.mouseWheel(list, list.width / 2, list.height / 2, 0, -120, Qt.NoButton, Qt.NoModifier);
-            }
-            testCase.waitForRendering(testCase.control);
+            const row = list.currentItem;
+            // While the highlight moves, the list keeps it in view and pulls the view back
+            _helpers.wait.highlightSettled(testCase.control);
+            // Not a wheel scroll: it is animated and how far it goes depends on event timing
+            list.contentY = row.y + row.height;
             testCase.tryVerify(() => testCase.control.viewModel.selection.selectedRowVisible === false);
         }
     }
