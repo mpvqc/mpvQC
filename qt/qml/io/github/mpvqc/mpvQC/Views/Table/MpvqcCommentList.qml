@@ -81,6 +81,8 @@ ListView {
     }
 
     remove: Transition {
+        id: _removeTransition
+
         NumberAnimation {
             property: "y"
             duration: root._animationDuration
@@ -162,8 +164,9 @@ ListView {
             root._instantHighlight = false;
         }
 
-        function onAboutToRemoveRow(): void {
+        function onAboutToRemoveRow(row: int): void {
             root._layoutPending = true;
+            _removeTransition.enabled = row < root.count - 1;
             root.highlightFollowsCurrentItem = false;
         }
 
