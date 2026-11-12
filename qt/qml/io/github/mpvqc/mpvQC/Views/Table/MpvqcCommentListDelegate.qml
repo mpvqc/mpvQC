@@ -58,6 +58,8 @@ Item {
     // This enables proper layering: backgrounds → highlight → delegate content,
     // which is essential for alternating row colors with a moving highlight animation.
     Rectangle {
+        objectName: "rowBackground"
+
         y: root.y
         width: root.width
         height: root.height
