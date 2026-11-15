@@ -113,7 +113,7 @@ rev = "1.2.0"
 hooks = [
     {
         id = "qmlformat",
-        additional_dependencies = ["PySide6-Essentials==6.11.2"],
+        additional_dependencies = ["PySide6-Essentials==6.11.3"],
         files = '.*\.qml$',
         name = "format qml",
         args = ["--settings", ".config/qmlformat.ini"]
