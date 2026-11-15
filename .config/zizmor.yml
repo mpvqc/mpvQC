@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: MIT
+
+rules:
+  # Wants local actions referenced as `$/...`, which actionlint 1.7.12 rejects.
+  # Keep `./...` until actionlint accepts it.
+  self-repository:
+    disable: true

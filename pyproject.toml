@@ -38,6 +38,7 @@ dev = [
     "ruff>=0.17.5",
     "shellcheck-py>=0.11.0.1",            # actionlint checks run: scripts only when it finds shellcheck
     "types-jsonschema>=4.26.0.20261006",
+    "zizmor>=1.32.0",
 ]
 windows-dist = [
     "nuitka[onefile]>=4.2",

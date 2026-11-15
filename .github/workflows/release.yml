@@ -15,6 +15,9 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  contents: read
+
 env:
   # Windows ships on this version, and the Flatpak runtime provides it.
   PYTHON_VERSION: "3.14"
@@ -25,15 +28,19 @@ jobs:
     name: Lint & Format
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -53,15 +60,19 @@ jobs:
     name: Test Python (Linux)
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -79,15 +90,19 @@ jobs:
     name: Test Python (Windows)
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -105,15 +120,19 @@ jobs:
     name: Fuzz Python (Linux)
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -131,15 +150,19 @@ jobs:
     name: Test QML
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -161,17 +184,20 @@ jobs:
       artifact_app_name: ${{ steps.artifact_name.outputs.artifact_app_name }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -189,7 +215,7 @@ jobs:
           echo -e "\033[0;35m$ARTIFACT_NAME\033[0m"
           echo "artifact_app_name=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
       - name: Upload Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           path: build/release
           name: release-build-windows
@@ -199,17 +225,20 @@ jobs:
     name: Build Linux
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -225,15 +254,19 @@ jobs:
       - build_windows
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
-        uses: taiki-e/install-action@just
+        uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2.90.5
+        with:
+          tool: just
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           enable-cache: false
           python-version: ${{ env.PYTHON_VERSION }}
@@ -243,7 +276,7 @@ jobs:
 
           execute rm -rf mpvqc main.py
       - name: Download Build Artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-build-windows
           path: .
@@ -253,6 +286,8 @@ jobs:
 
           execute just init '--no-group dev --group windows-dist'
       - name: Build Bundle
+        env:
+          ARTIFACT_APP_NAME: ${{ needs.build_windows.outputs.artifact_app_name }}
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
@@ -376,7 +411,7 @@ jobs:
             --noinclude-dlls='qt6widgets.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
-            --onefile-tempdir-spec='{CACHE_DIR}/mpvQC/${{ needs.build_windows.outputs.artifact_app_name }}' \
+            --onefile-tempdir-spec="{CACHE_DIR}/mpvQC/$ARTIFACT_APP_NAME" \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
             --windows-console-mode=attach \
@@ -397,7 +432,7 @@ jobs:
           cp -r LICENSES deployment/mpvQC-distribution/
           cp NOTICE.txt deployment/mpvQC-distribution/
       - name: Upload Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ needs.build_windows.outputs.artifact_app_name }}-win-x86_64
           path: deployment/mpvQC-distribution
