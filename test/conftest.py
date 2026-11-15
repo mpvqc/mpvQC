@@ -11,7 +11,16 @@ from typing import TYPE_CHECKING, Any, override
 import inject
 import pytest
 from hypothesis import settings
-from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, QSettings, SignalInstance
+from PySide6.QtCore import (
+    QByteArray,
+    QCoreApplication,
+    QLocale,
+    QMetaMethod,
+    QObject,
+    QResource,
+    QSettings,
+    SignalInstance,
+)
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
@@ -79,6 +88,67 @@ def make_spy():
         return MySpy(signal)
 
     return _make
+
+
+def _declared_signal_names(recorded: QObject) -> list[str]:
+    meta_object = recorded.metaObject()
+    # found by walking up, because QObject.staticMetaObject reads None once a test's application has shut down;
+    # the stubs type superClass() as never None, yet it is None at the root and ends the walk
+    root = meta_object
+    while (parent := root.superClass()) is not None:
+        root = parent
+    return [
+        meta_object.method(index).name().toStdString()
+        for index in range(root.methodCount(), meta_object.methodCount())
+        if meta_object.method(index).methodType() == QMetaMethod.MethodType.Signal
+    ]
+
+
+class EmissionRecorder:
+    def __init__(self, recorded: QObject):
+        self._class_name = type(recorded).__name__
+        names = _declared_signal_names(recorded)
+        if not names:
+            message = f"{self._class_name} declares no signal to record"
+            raise TypeError(message)
+        for name in names:
+            if names.count(name) > 1:
+                message = f"{self._class_name} declares two signals named {name}"
+                raise TypeError(message)
+        self._spies = {name: MySpy(getattr(recorded, name)) for name in names}
+
+    def assert_exactly(self, **counts: int) -> None:
+        __tracebackhide__ = True
+        for name in counts:
+            self._require_declared(name)
+        expected = {name: count for name, count in counts.items() if count != 0}
+        fired = {name: spy.count() for name, spy in self._spies.items() if spy.count() != 0}
+        if expected != fired:
+            message = (
+                f"{self._class_name} did not emit exactly the expected signals\nexpected: {expected}\nrecorded: {fired}"
+            )
+            raise AssertionError(message)
+
+    def assert_silent(self) -> None:
+        __tracebackhide__ = True
+        self.assert_exactly()
+
+    def __getitem__(self, signal_name: str) -> MySpy:
+        __tracebackhide__ = True
+        self._require_declared(signal_name)
+        return self._spies[signal_name]
+
+    def _require_declared(self, signal_name: str) -> None:
+        __tracebackhide__ = True
+        if signal_name not in self._spies:
+            declared = ", ".join(self._spies)
+            message = f"{self._class_name} declares no signal named {signal_name!r}\ndeclared: {declared}"
+            raise AssertionError(message)
+
+
+@pytest.fixture(scope="session")
+def record_emissions() -> Callable[[QObject], EmissionRecorder]:
+    return EmissionRecorder
 
 
 class ManualJobExecutor:

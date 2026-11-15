@@ -106,9 +106,10 @@ Three kinds. A migrated view model has all three.
 
 **Derivation** — a table calling `derive_<name>_props` directly, one row per case, no view model constructed.
 
-**Wiring** — drive a real service signal in and assert the exact emission set out: the fields whose derived value
-changed, and a zero count on every field that stayed silent. Cases where a signal changes nothing observable assert
-that everything stayed silent.
+**Wiring** — drive a real service signal in and assert the exact emission set out with `record_emissions`. Name only
+the signals that fired, which are the notifies of the fields whose derived value changed; the recorder holds every
+other signal to silence. A zero count comes only from a table row whose count differs between rows, never as a
+literal in a test body. Cases where a signal changes nothing observable call `assert_silent()`.
 
 **Settled state** — one test that an observer of a notify reads fully consistent props:
 
@@ -124,5 +125,5 @@ view_model.isDarkChanged.connect(lambda _: observed.append((view_model.isDark, v
 - The public surface is the properties, their notifies, and the slots the view binds. No member exists so that
   something can push state in.
 - `self._props` is swapped before the first emission, and each notify fires exactly when its field changed.
-- The derivation is proven by a table that never constructs the view model, and the wiring by tests that name the
-  fields which stayed silent.
+- The derivation is proven by a table that never constructs the view model, and the wiring by tests that name only
+  the signals that fired.

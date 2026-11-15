@@ -77,6 +77,19 @@ A spy's `wait()` holds the GIL, so the pooled job never starts and the wait time
 Build them with the `make_spy` fixture. It asserts the connection is valid on construction; a raw `QSignalSpy` bound
 to a misspelled signal reports zero emissions and fails nothing: a silent pass.
 
+An exact emission set goes through `record_emissions`. It watches every signal the object declares, so the test names
+only the signals that fired, by their declared name, and every other signal is held to silence. A hand-kept list of
+spies watches only the signals someone listed, so a signal added later fires unseen: a silent pass.
+
+```python
+emissions = record_emissions(view_model)
+player_handle.update(percent_pos=42.0)
+emissions.assert_exactly(percentTextChanged=1)
+assert emissions["percentTextChanged"].at(invocation=0, argument=0) == "42%"
+```
+
+`assert_silent()` says nothing fired.
+
 ## QML
 
 ### Running them
