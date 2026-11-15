@@ -103,15 +103,15 @@ hooks = [
 ]
 
 [[repos]]
-repo = "https://github.com/tomas-krupa/qmlformat-hook.git"
-rev = "1.2.0"
+repo = "local"
 hooks = [
     {
         id = "qmlformat",
-        additional_dependencies = ["PySide6-Essentials==6.11.3"],
-        files = '.*\.qml$',
         name = "format qml",
-        args = ["--settings", ".config/qmlformat.ini"]
+        entry = "pyside6-qmlformat",
+        language = "system",
+        files = '\.qml$',
+        args = ["--settings", ".config/qmlformat.ini", "--inplace"],
     },
 ]
 
