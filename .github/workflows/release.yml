@@ -7,9 +7,9 @@ name: Pipeline
 on:
   push:
     branches:
-      - '**'
+      - "**"
     tags:
-      - '*'
+      - "*"
 
 defaults:
   run:
