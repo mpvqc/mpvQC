@@ -50,22 +50,6 @@ def make_view_model():
     return _make
 
 
-@pytest.fixture
-def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcWindowButtonsViewModel) -> dict:
-        return {
-            "showMinimizeButton": make_spy(view_model.showMinimizeButtonChanged),
-            "showMaximizeButton": make_spy(view_model.showMaximizeButtonChanged),
-            "showCloseButton": make_spy(view_model.showCloseButtonChanged),
-        }
-
-    return _spy
-
-
-def emissions(spies: dict) -> dict[str, int]:
-    return {name: spy.count() for name, spy in spies.items()}
-
-
 class DerivationCase(NamedTuple):
     name: str
     inputs: WindowButtonsInputs
@@ -128,39 +112,39 @@ def test_initial_snapshot_reads_the_platform_at_construction(make_view_model, wi
     assert view_model.showCloseButton
 
 
-def test_dropped_maximize_emits_the_maximize_notify_alone(make_view_model, window_button_source, spy_notifies):
+def test_dropped_maximize_emits_the_maximize_notify_alone(make_view_model, window_button_source, record_emissions):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     window_button_source.push(NO_MAXIMIZE)
 
-    assert emissions(spies) == {"showMinimizeButton": 0, "showMaximizeButton": 1, "showCloseButton": 0}
-    assert spies["showMaximizeButton"].at(0, 0) is False
+    emissions.assert_exactly(showMaximizeButtonChanged=1)
+    assert emissions["showMaximizeButtonChanged"].at(0, 0) is False
     assert view_model.showMinimizeButton
     assert not view_model.showMaximizeButton
     assert view_model.showCloseButton
 
 
-def test_losing_every_button_emits_all_three(make_view_model, window_button_source, spy_notifies):
+def test_losing_every_button_emits_all_three(make_view_model, window_button_source, record_emissions):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     window_button_source.push(NO_BUTTONS)
 
-    assert emissions(spies) == {"showMinimizeButton": 1, "showMaximizeButton": 1, "showCloseButton": 1}
-    assert spies["showMinimizeButton"].at(0, 0) is False
-    assert spies["showMaximizeButton"].at(0, 0) is False
-    assert spies["showCloseButton"].at(0, 0) is False
+    emissions.assert_exactly(showMinimizeButtonChanged=1, showMaximizeButtonChanged=1, showCloseButtonChanged=1)
+    assert emissions["showMinimizeButtonChanged"].at(0, 0) is False
+    assert emissions["showMaximizeButtonChanged"].at(0, 0) is False
+    assert emissions["showCloseButtonChanged"].at(0, 0) is False
 
 
-def test_repeated_preference_emits_nothing(make_view_model, window_button_source, spy_notifies):
+def test_repeated_preference_emits_nothing(make_view_model, window_button_source, record_emissions):
     # WindowButtonDetector drops a repeat before it pushes, so only this fake can drive one in.
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     window_button_source.push(ALL_BUTTONS)
 
-    assert emissions(spies) == {"showMinimizeButton": 0, "showMaximizeButton": 0, "showCloseButton": 0}
+    emissions.assert_silent()
 
 
 def test_props_swap_completes_before_the_first_emission(make_view_model, window_button_source):

@@ -66,27 +66,6 @@ def initialized_service(service, window) -> MainWindowService:
     return service
 
 
-@pytest.fixture
-def spy_notifies(make_spy):
-    def _spy(service: MainWindowService) -> dict:
-        return {
-            "draws_own_frame": make_spy(service.draws_own_frame_changed),
-            "drop_shadow_margin": make_spy(service.drop_shadow_margin_changed),
-            "window_geometry_width": make_spy(service.window_geometry_width_changed),
-            "window_geometry_height": make_spy(service.window_geometry_height_changed),
-            "is_fullscreen": make_spy(service.is_fullscreen_changed),
-            "is_maximized": make_spy(service.is_maximized_changed),
-            "is_main_window_focused": make_spy(service.is_main_window_focused_changed),
-            "display_zoom_factor": make_spy(service.display_zoom_factor_changed),
-        }
-
-    return _spy
-
-
-def emissions(spies: dict) -> dict[str, int]:
-    return {name: spy.count() for name, spy in spies.items()}
-
-
 class DerivationCase(NamedTuple):
     name: str
     inputs: MainWindowInputs
@@ -274,27 +253,24 @@ class InitialBroadcastCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_initialize_broadcasts_what_the_first_read_changed(case, surface, service, window, spy_notifies):
+def test_initialize_broadcasts_what_the_first_read_changed(case, surface, service, window, record_emissions):
     surface.snapshot = case.surface
-    spies = spy_notifies(service)
+    emissions = record_emissions(service)
 
     service.initialize(window)
 
     assert surface.reads == [window]
     # No window holds focus offscreen, so the first read takes focus off the zero snapshot.
-    assert emissions(spies) == {
-        "draws_own_frame": case.expected_surface_emissions,
-        "drop_shadow_margin": case.expected_surface_emissions,
-        "window_geometry_width": 1,
-        "window_geometry_height": 1,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 1,
-        "display_zoom_factor": 0,
-    }
-    assert spies["window_geometry_width"].at(0, 0) == case.expected_width
-    assert spies["window_geometry_height"].at(0, 0) == case.expected_height
-    assert spies["is_main_window_focused"].at(0, 0) is False
+    emissions.assert_exactly(
+        draws_own_frame_changed=case.expected_surface_emissions,
+        drop_shadow_margin_changed=case.expected_surface_emissions,
+        window_geometry_width_changed=1,
+        window_geometry_height_changed=1,
+        is_main_window_focused_changed=1,
+    )
+    assert emissions["window_geometry_width_changed"].at(0, 0) == case.expected_width
+    assert emissions["window_geometry_height_changed"].at(0, 0) == case.expected_height
+    assert emissions["is_main_window_focused_changed"].at(0, 0) is False
     assert service.draws_own_frame is case.surface.draws_own_frame
     assert service.drop_shadow_margin == case.surface.drop_shadow_margin
 
@@ -332,23 +308,14 @@ def test_initialize_configures_the_window_on_the_platform(window_configurator, q
     assert window_configurator.configured == [(qt_app, window)]
 
 
-def test_resize_emits_the_geometry_alone(initialized_service, window, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_resize_emits_the_geometry_alone(initialized_service, window, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     window.resize(1000, 500)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 1,
-        "window_geometry_height": 1,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["window_geometry_width"].at(0, 0) == 1000
-    assert spies["window_geometry_height"].at(0, 0) == 500
+    emissions.assert_exactly(window_geometry_width_changed=1, window_geometry_height_changed=1)
+    assert emissions["window_geometry_width_changed"].at(0, 0) == 1000
+    assert emissions["window_geometry_height_changed"].at(0, 0) == 500
 
 
 class ResizeCase(NamedTuple):
@@ -377,27 +344,22 @@ class ResizeCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_resize_re_reads_the_window_state_in_the_same_cycle(
-    case, window_state, initialized_service, window, spy_notifies
+    case, window_state, initialized_service, window, record_emissions
 ):
-    spies = spy_notifies(initialized_service)
+    emissions = record_emissions(initialized_service)
 
     window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     case.resize(window)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": case.expected_width_emissions,
-        "window_geometry_height": case.expected_height_emissions,
-        "is_fullscreen": 1,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["is_fullscreen"].at(0, 0) is True
+    emissions.assert_exactly(
+        window_geometry_width_changed=case.expected_width_emissions,
+        window_geometry_height_changed=case.expected_height_emissions,
+        is_fullscreen_changed=1,
+    )
+    assert emissions["is_fullscreen_changed"].at(0, 0) is True
 
 
-def test_nested_resize_settles_on_the_window_size_not_the_outer_signal(service, window, spy_notifies):
+def test_nested_resize_settles_on_the_window_size_not_the_outer_signal(service, window, record_emissions):
     # The Wayland inset swap resizes the window again from inside the first
     # resize's widthChanged, so the outer heightChanged still carries the size
     # from before the swap.
@@ -407,150 +369,92 @@ def test_nested_resize_settles_on_the_window_size_not_the_outer_signal(service, 
 
     window.widthChanged.connect(swap_inset)
     service.initialize(window)
-    spies = spy_notifies(service)
+    emissions = record_emissions(service)
 
     window.resize(3020, 1730)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 1,
-        "window_geometry_height": 1,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["window_geometry_width"].at(0, 0) == 2844
-    assert spies["window_geometry_height"].at(0, 0) == 1554
+    emissions.assert_exactly(window_geometry_width_changed=1, window_geometry_height_changed=1)
+    assert emissions["window_geometry_width_changed"].at(0, 0) == 2844
+    assert emissions["window_geometry_height_changed"].at(0, 0) == 1554
     assert service.window_geometry_width == 2844
     assert service.window_geometry_height == 1554
 
 
-def test_pushed_surface_emits_the_frame_the_margin_and_the_geometry(surface, initialized_service, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_pushed_surface_emits_the_frame_the_margin_and_the_geometry(surface, initialized_service, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     surface.push(OWN_FRAME)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 1,
-        "drop_shadow_margin": 1,
-        "window_geometry_width": 1,
-        "window_geometry_height": 1,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["draws_own_frame"].at(0, 0) is True
-    assert spies["drop_shadow_margin"].at(0, 0) == 88
-    assert spies["window_geometry_width"].at(0, 0) == 1280 - 2 * 88
-    assert spies["window_geometry_height"].at(0, 0) == 720 - 2 * 88
+    emissions.assert_exactly(
+        draws_own_frame_changed=1,
+        drop_shadow_margin_changed=1,
+        window_geometry_width_changed=1,
+        window_geometry_height_changed=1,
+    )
+    assert emissions["draws_own_frame_changed"].at(0, 0) is True
+    assert emissions["drop_shadow_margin_changed"].at(0, 0) == 88
+    assert emissions["window_geometry_width_changed"].at(0, 0) == 1280 - 2 * 88
+    assert emissions["window_geometry_height_changed"].at(0, 0) == 720 - 2 * 88
     assert initialized_service.draws_own_frame
     assert initialized_service.drop_shadow_margin == 88
 
 
-def test_pushed_surface_that_only_flips_the_frame_emits_the_frame_alone(surface, initialized_service, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_pushed_surface_that_only_flips_the_frame_emits_the_frame_alone(surface, initialized_service, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     surface.push(SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=0))
 
-    assert emissions(spies) == {
-        "draws_own_frame": 1,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["draws_own_frame"].at(0, 0) is True
+    emissions.assert_exactly(draws_own_frame_changed=1)
+    assert emissions["draws_own_frame_changed"].at(0, 0) is True
 
 
-def test_pushed_unchanged_surface_stays_silent(surface, initialized_service, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_pushed_unchanged_surface_stays_silent(surface, initialized_service, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     surface.push(NO_OWN_FRAME)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
+    emissions.assert_silent()
 
 
 def test_window_state_signal_emits_the_states_the_platform_reads(
-    window_state, initialized_service, window, spy_notifies
+    window_state, initialized_service, window, record_emissions
 ):
-    spies = spy_notifies(initialized_service)
+    emissions = record_emissions(initialized_service)
 
     window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
     window.windowStateChanged.emit(Qt.WindowState.WindowFullScreen)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 1,
-        "is_maximized": 1,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["is_fullscreen"].at(0, 0) is True
-    assert spies["is_maximized"].at(0, 0) is True
+    emissions.assert_exactly(is_fullscreen_changed=1, is_maximized_changed=1)
+    assert emissions["is_fullscreen_changed"].at(0, 0) is True
+    assert emissions["is_maximized_changed"].at(0, 0) is True
     assert initialized_service.is_fullscreen
     assert initialized_service.is_maximized
 
 
-def test_position_signals_re_read_the_window_state(window_state, initialized_service, window, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_position_signals_re_read_the_window_state(window_state, initialized_service, window, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     window.yChanged.emit(10)
     window_state.state = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
     window.xChanged.emit(50)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 2,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
-    assert spies["is_fullscreen"].at(0, 0) is True
-    assert spies["is_fullscreen"].at(1, 0) is False
+    emissions.assert_exactly(is_fullscreen_changed=2)
+    assert emissions["is_fullscreen_changed"].at(0, 0) is True
+    assert emissions["is_fullscreen_changed"].at(1, 0) is False
     assert not initialized_service.is_fullscreen
 
 
 def test_move_with_unchanged_state_stays_silent_but_still_reads_the_state(
-    window_state, initialized_service, window, spy_notifies
+    window_state, initialized_service, window, record_emissions
 ):
-    spies = spy_notifies(initialized_service)
+    emissions = record_emissions(initialized_service)
     reads_before = len(window_state.reads)
 
     window.xChanged.emit(50)
     window.yChanged.emit(20)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
+    emissions.assert_silent()
     assert len(window_state.reads) == reads_before + 2
 
 
@@ -606,22 +510,13 @@ class TestReentrantStateRead:
         assert service.window_geometry_height == RETIRED_HEIGHT
 
 
-def test_focus_window_signal_emits_the_focus_notify_alone(qt_app, initialized_service, window, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_focus_window_signal_emits_the_focus_notify_alone(qt_app, initialized_service, window, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     qt_app.focusWindowChanged.emit(window)
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 1,
-        "display_zoom_factor": 0,
-    }
-    assert spies["is_main_window_focused"].at(0, 0) is True
+    emissions.assert_exactly(is_main_window_focused_changed=1)
+    assert emissions["is_main_window_focused_changed"].at(0, 0) is True
     assert initialized_service.is_main_window_focused
 
 
@@ -686,21 +581,12 @@ def test_focus_folds_to_the_one_bool_the_service_reports(
     assert initialized_service.is_main_window_focused is case.expected_focused
 
 
-def test_unchanged_device_pixel_ratio_stays_silent(initialized_service, window, spy_notifies):
-    spies = spy_notifies(initialized_service)
+def test_unchanged_device_pixel_ratio_stays_silent(initialized_service, window, record_emissions):
+    emissions = record_emissions(initialized_service)
 
     QGuiApplication.sendEvent(window, QEvent(QEvent.Type.DevicePixelRatioChange))
 
-    assert emissions(spies) == {
-        "draws_own_frame": 0,
-        "drop_shadow_margin": 0,
-        "window_geometry_width": 0,
-        "window_geometry_height": 0,
-        "is_fullscreen": 0,
-        "is_maximized": 0,
-        "is_main_window_focused": 0,
-        "display_zoom_factor": 0,
-    }
+    emissions.assert_silent()
     assert initialized_service.display_zoom_factor == pytest.approx(1.0)
 
 

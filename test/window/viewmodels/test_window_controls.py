@@ -60,26 +60,6 @@ def make_view_model():
     return _make
 
 
-@pytest.fixture
-def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcWindowControlsViewModel) -> dict:
-        return {
-            "windowGeometryWidth": make_spy(view_model.windowGeometryWidthChanged),
-            "windowGeometryHeight": make_spy(view_model.windowGeometryHeightChanged),
-            "isFullscreen": make_spy(view_model.isFullscreenChanged),
-            "isMaximized": make_spy(view_model.isMaximizedChanged),
-            "drawsOwnFrame": make_spy(view_model.drawsOwnFrameChanged),
-            "dropShadowMargin": make_spy(view_model.dropShadowMarginChanged),
-            "isMainWindowFocused": make_spy(view_model.isMainWindowFocusedChanged),
-        }
-
-    return _spy
-
-
-def emissions(spies: dict) -> dict[str, int]:
-    return {name: spy.count() for name, spy in spies.items()}
-
-
 def test_properties_read_the_main_window(surface, main_window_service, window, make_view_model):
     surface.snapshot = OWN_FRAME
     main_window_service.initialize(window)
@@ -95,146 +75,100 @@ def test_properties_read_the_main_window(surface, main_window_service, window, m
     assert not view_model.isMainWindowFocused
 
 
-def test_pushed_surface_emits_frame_margin_and_geometry(surface, initialized_service, make_view_model, spy_notifies):
+def test_pushed_surface_emits_frame_margin_and_geometry(
+    surface, initialized_service, make_view_model, record_emissions
+):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     surface.push(OWN_FRAME)
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 1,
-        "windowGeometryHeight": 1,
-        "isFullscreen": 0,
-        "isMaximized": 0,
-        "drawsOwnFrame": 1,
-        "dropShadowMargin": 1,
-        "isMainWindowFocused": 0,
-    }
-    assert spies["drawsOwnFrame"].at(0, 0) is True
-    assert spies["dropShadowMargin"].at(0, 0) == 88
-    assert spies["windowGeometryWidth"].at(0, 0) == 1280 - 2 * 88
-    assert spies["windowGeometryHeight"].at(0, 0) == 720 - 2 * 88
+    emissions.assert_exactly(
+        windowGeometryWidthChanged=1, windowGeometryHeightChanged=1, drawsOwnFrameChanged=1, dropShadowMarginChanged=1
+    )
+    assert emissions["drawsOwnFrameChanged"].at(0, 0) is True
+    assert emissions["dropShadowMarginChanged"].at(0, 0) == 88
+    assert emissions["windowGeometryWidthChanged"].at(0, 0) == 1280 - 2 * 88
+    assert emissions["windowGeometryHeightChanged"].at(0, 0) == 720 - 2 * 88
 
 
 def test_margin_move_with_the_frame_already_drawn_keeps_frame_silent(
-    surface, initialized_service, make_view_model, spy_notifies
+    surface, initialized_service, make_view_model, record_emissions
 ):
     surface.push(OWN_FRAME)
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     surface.push(SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=64))
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 1,
-        "windowGeometryHeight": 1,
-        "isFullscreen": 0,
-        "isMaximized": 0,
-        "drawsOwnFrame": 0,
-        "dropShadowMargin": 1,
-        "isMainWindowFocused": 0,
-    }
-    assert spies["dropShadowMargin"].at(0, 0) == 64
+    emissions.assert_exactly(windowGeometryWidthChanged=1, windowGeometryHeightChanged=1, dropShadowMarginChanged=1)
+    assert emissions["dropShadowMarginChanged"].at(0, 0) == 64
     assert view_model.drawsOwnFrame
 
 
 def test_fullscreen_state_change_emits_the_fullscreen_notify_alone(
-    window_state, initialized_service, window, make_view_model, spy_notifies
+    window_state, initialized_service, window, make_view_model, record_emissions
 ):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     window_state.state = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     window.xChanged.emit(50)
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 0,
-        "windowGeometryHeight": 0,
-        "isFullscreen": 1,
-        "isMaximized": 0,
-        "drawsOwnFrame": 0,
-        "dropShadowMargin": 0,
-        "isMainWindowFocused": 0,
-    }
-    assert spies["isFullscreen"].at(0, 0) is True
+    emissions.assert_exactly(isFullscreenChanged=1)
+    assert emissions["isFullscreenChanged"].at(0, 0) is True
 
 
 def test_maximize_state_change_emits_the_maximize_notify_alone(
-    window_state, initialized_service, window, make_view_model, spy_notifies
+    window_state, initialized_service, window, make_view_model, record_emissions
 ):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     window_state.state = WindowStateSnapshot(is_fullscreen=False, is_maximized=True)
     window.xChanged.emit(50)
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 0,
-        "windowGeometryHeight": 0,
-        "isFullscreen": 0,
-        "isMaximized": 1,
-        "drawsOwnFrame": 0,
-        "dropShadowMargin": 0,
-        "isMainWindowFocused": 0,
-    }
-    assert spies["isMaximized"].at(0, 0) is True
+    emissions.assert_exactly(isMaximizedChanged=1)
+    assert emissions["isMaximizedChanged"].at(0, 0) is True
 
 
-def test_dropped_own_frame_emits_frame_margin_and_geometry(surface, initialized_service, make_view_model, spy_notifies):
+def test_dropped_own_frame_emits_frame_margin_and_geometry(
+    surface, initialized_service, make_view_model, record_emissions
+):
     surface.push(OWN_FRAME)
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     surface.push(NO_OWN_FRAME)
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 1,
-        "windowGeometryHeight": 1,
-        "isFullscreen": 0,
-        "isMaximized": 0,
-        "drawsOwnFrame": 1,
-        "dropShadowMargin": 1,
-        "isMainWindowFocused": 0,
-    }
-    assert spies["drawsOwnFrame"].at(0, 0) is False
-    assert spies["dropShadowMargin"].at(0, 0) == 0
-    assert spies["windowGeometryWidth"].at(0, 0) == 1280
-    assert spies["windowGeometryHeight"].at(0, 0) == 720
+    emissions.assert_exactly(
+        windowGeometryWidthChanged=1, windowGeometryHeightChanged=1, drawsOwnFrameChanged=1, dropShadowMarginChanged=1
+    )
+    assert emissions["drawsOwnFrameChanged"].at(0, 0) is False
+    assert emissions["dropShadowMarginChanged"].at(0, 0) == 0
+    assert emissions["windowGeometryWidthChanged"].at(0, 0) == 1280
+    assert emissions["windowGeometryHeightChanged"].at(0, 0) == 720
 
 
-def test_focus_change_emits_the_focus_notify_alone(qt_app, initialized_service, window, make_view_model, spy_notifies):
+def test_focus_change_emits_the_focus_notify_alone(
+    qt_app, initialized_service, window, make_view_model, record_emissions
+):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     qt_app.focusWindowChanged.emit(window)
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 0,
-        "windowGeometryHeight": 0,
-        "isFullscreen": 0,
-        "isMaximized": 0,
-        "drawsOwnFrame": 0,
-        "dropShadowMargin": 0,
-        "isMainWindowFocused": 1,
-    }
-    assert spies["isMainWindowFocused"].at(0, 0) is True
+    emissions.assert_exactly(isMainWindowFocusedChanged=1)
+    assert emissions["isMainWindowFocusedChanged"].at(0, 0) is True
 
 
-def test_display_zoom_change_emits_nothing(initialized_service, make_view_model, spy_notifies):
+def test_display_zoom_change_emits_nothing(initialized_service, make_view_model, record_emissions):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     initialized_service.display_zoom_factor_changed.emit(2.0)
 
-    assert emissions(spies) == {
-        "windowGeometryWidth": 0,
-        "windowGeometryHeight": 0,
-        "isFullscreen": 0,
-        "isMaximized": 0,
-        "drawsOwnFrame": 0,
-        "dropShadowMargin": 0,
-        "isMainWindowFocused": 0,
-    }
+    emissions.assert_silent()
 
 
 def test_observer_of_a_notify_reads_settled_state(surface, initialized_service, make_view_model):
