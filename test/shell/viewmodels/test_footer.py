@@ -38,26 +38,6 @@ def make_view_model():
     return _make
 
 
-@pytest.fixture
-def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcShellFooterViewModel) -> dict:
-        return {
-            "showPercentage": make_spy(view_model.showPercentageChanged),
-            "timeDisplayMode": make_spy(view_model.timeDisplayModeChanged),
-            "isPercentVisible": make_spy(view_model.isPercentVisibleChanged),
-            "percentText": make_spy(view_model.percentTextChanged),
-            "isTimeVisible": make_spy(view_model.isTimeVisibleChanged),
-            "timeText": make_spy(view_model.timeTextChanged),
-            "timeWidth": make_spy(view_model.timeWidthChanged),
-        }
-
-    return _spy
-
-
-def emissions(spies: dict) -> dict[str, int]:
-    return {name: spy.count() for name, spy in spies.items() if spy.count()}
-
-
 def measure_stub(text: str) -> int:
     return 10 + len(text)
 
@@ -206,94 +186,94 @@ def test_derivation(case: DerivationCase):
     assert derive_footer_props(case.inputs, measure_stub) == case.expected
 
 
-def test_video_loaded_fold(make_view_model, player_handle, spy_notifies):
+def test_video_loaded_fold(make_view_model, player_handle, record_emissions):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     player_handle.load_video("/videos/movie.mkv")
 
-    assert emissions(spies) == {"isPercentVisible": 1, "isTimeVisible": 1, "timeText": 1, "timeWidth": 1}
-    assert spies["timeText"].at(0, 0) == "00:00/00:00"
+    emissions.assert_exactly(isPercentVisibleChanged=1, isTimeVisibleChanged=1, timeTextChanged=1, timeWidthChanged=1)
+    assert emissions["timeTextChanged"].at(0, 0) == "00:00/00:00"
     assert view_model.timeWidth > 0
 
 
-def test_percent_pos_fold(make_view_model, player_handle, spy_notifies):
+def test_percent_pos_fold(make_view_model, player_handle, record_emissions):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     player_handle.update(percent_pos=42.0)
 
-    assert emissions(spies) == {"percentText": 1}
-    assert spies["percentText"].at(0, 0) == "42%"
+    emissions.assert_exactly(percentTextChanged=1)
+    assert emissions["percentTextChanged"].at(0, 0) == "42%"
 
 
-def test_time_pos_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
+def test_time_pos_fold(make_view_model, player_handle, shell_settings_service, record_emissions):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(time_pos=1.0)
     shell_settings_service.time_display_mode = TimeDisplayMode.CURRENT_TIME
     view_model = make_view_model()
     assert view_model.timeText == "00:01"
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     # 1 -> 10 permutes the same glyphs, so the width stays put on every font engine
     player_handle.update(time_pos=10.0)
 
-    assert emissions(spies) == {"timeText": 1}
-    assert spies["timeText"].at(0, 0) == "00:10"
+    emissions.assert_exactly(timeTextChanged=1)
+    assert emissions["timeTextChanged"].at(0, 0) == "00:10"
 
 
-def test_time_remaining_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
+def test_time_remaining_fold(make_view_model, player_handle, shell_settings_service, record_emissions):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(time_remaining=1.0)
     shell_settings_service.time_display_mode = TimeDisplayMode.REMAINING_TIME
     view_model = make_view_model()
     assert view_model.timeText == "-00:01"
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     # 1 -> 10 permutes the same glyphs, so the width stays put on every font engine
     player_handle.update(time_remaining=10.0)
 
-    assert emissions(spies) == {"timeText": 1}
-    assert spies["timeText"].at(0, 0) == "-00:10"
+    emissions.assert_exactly(timeTextChanged=1)
+    assert emissions["timeTextChanged"].at(0, 0) == "-00:10"
 
 
-def test_duration_fold(make_view_model, player_handle, spy_notifies):
+def test_duration_fold(make_view_model, player_handle, record_emissions):
     player_handle.load_video("/videos/movie.mkv")
     view_model = make_view_model()
     assert view_model.timeText == "00:00/00:00"
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     player_handle.update(duration=3600.0)
 
-    assert emissions(spies) == {"timeText": 1, "timeWidth": 1}
-    assert spies["timeText"].at(0, 0) == "00:00:00/01:00:00"
-    assert spies["timeWidth"].at(0, 0) == view_model.timeWidth
+    emissions.assert_exactly(timeTextChanged=1, timeWidthChanged=1)
+    assert emissions["timeTextChanged"].at(0, 0) == "00:00:00/01:00:00"
+    assert emissions["timeWidthChanged"].at(0, 0) == view_model.timeWidth
 
 
-def test_show_percentage_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
+def test_show_percentage_fold(make_view_model, player_handle, shell_settings_service, record_emissions):
     player_handle.load_video("/videos/movie.mkv")
     view_model = make_view_model()
     assert view_model.isPercentVisible
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     shell_settings_service.show_percentage = False
 
-    assert emissions(spies) == {"showPercentage": 1, "isPercentVisible": 1}
-    assert spies["isPercentVisible"].at(0, 0) is False
+    emissions.assert_exactly(showPercentageChanged=1, isPercentVisibleChanged=1)
+    assert emissions["isPercentVisibleChanged"].at(0, 0) is False
 
 
-def test_time_display_mode_fold(make_view_model, player_handle, shell_settings_service, spy_notifies):
+def test_time_display_mode_fold(make_view_model, player_handle, shell_settings_service, record_emissions):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(duration=125.0, time_pos=65.0, time_remaining=60.0)
     view_model = make_view_model()
     assert view_model.timeText == "01:05/02:05"
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     shell_settings_service.time_display_mode = TimeDisplayMode.NONE
 
-    assert emissions(spies) == {"timeDisplayMode": 1, "isTimeVisible": 1, "timeText": 1, "timeWidth": 1}
-    assert not spies["timeText"].at(0, 0)
-    assert spies["timeWidth"].at(0, 0) == 0
+    emissions.assert_exactly(timeDisplayModeChanged=1, isTimeVisibleChanged=1, timeTextChanged=1, timeWidthChanged=1)
+    assert not emissions["timeTextChanged"].at(0, 0)
+    assert emissions["timeWidthChanged"].at(0, 0) == 0
 
 
 def test_time_display_mode_property_writes_through_to_settings(make_view_model, shell_settings_service, make_spy):

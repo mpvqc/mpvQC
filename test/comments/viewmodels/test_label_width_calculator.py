@@ -43,21 +43,6 @@ def view_model() -> MpvqcCommentLabelWidthCalculatorViewModel:
     return MpvqcCommentLabelWidthCalculatorViewModel()
 
 
-@pytest.fixture
-def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcCommentLabelWidthCalculatorViewModel) -> dict:
-        return {
-            "commentTypesLabelWidth": make_spy(view_model.commentTypesLabelWidthChanged),
-            "timeLabelWidth": make_spy(view_model.timeLabelWidthChanged),
-        }
-
-    return _spy
-
-
-def emissions(spies: dict) -> dict[str, int]:
-    return {name: spy.count() for name, spy in spies.items()}
-
-
 def measure_by_length(texts: Iterable[str]) -> int:
     return max((len(text) for text in texts), default=0)
 
@@ -111,65 +96,67 @@ def test_derivation(case: DerivationCase):
     assert derive_comment_label_width_calculator_props(case.inputs, measure_by_length) == case.expected
 
 
-def test_comment_types_width_follows_displayable_types(view_model, comments_settings_service, spy_notifies):
-    spies = spy_notifies(view_model)
+def test_comment_types_width_follows_displayable_types(view_model, comments_settings_service, record_emissions):
+    emissions = record_emissions(view_model)
 
     comments_settings_service.comment_types = ["i"]
     narrow_width = view_model.commentTypesLabelWidth
     assert narrow_width > 0
-    assert spies["commentTypesLabelWidth"].count() == 1
+    assert emissions["commentTypesLabelWidthChanged"].count() == 1
 
     comments_settings_service.comment_types = ["i", "Wwwwwwwwwwwwwwwwwwww"]
     wide_width = view_model.commentTypesLabelWidth
     assert wide_width > narrow_width
-    assert spies["commentTypesLabelWidth"].count() == 2
-    assert spies["commentTypesLabelWidth"].at(invocation=1, argument=0) == wide_width
+    assert emissions["commentTypesLabelWidthChanged"].count() == 2
+    assert emissions["commentTypesLabelWidthChanged"].at(invocation=1, argument=0) == wide_width
 
     comments_settings_service.comment_types = ["i"]
     assert view_model.commentTypesLabelWidth == narrow_width
 
-    assert emissions(spies) == {"commentTypesLabelWidth": 3, "timeLabelWidth": 0}
+    emissions.assert_exactly(commentTypesLabelWidthChanged=3)
 
 
-def test_comment_types_width_recomputes_on_retranslation(qt_app, view_model, comments_settings_service, spy_notifies):
+def test_comment_types_width_recomputes_on_retranslation(
+    qt_app, view_model, comments_settings_service, record_emissions
+):
     # "Spelling" -> "Rechtschreibung" grows on every font engine; near-equal pairs tie on Windows.
     comments_settings_service.comment_types = ["Spelling"]
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
     english_width = view_model.commentTypesLabelWidth
     assert english_width > 0
 
     inject.instance(InternationalizationService).retranslate(qt_app, "de-DE")
 
     assert view_model.commentTypesLabelWidth > english_width
-    assert emissions(spies) == {"commentTypesLabelWidth": 1, "timeLabelWidth": 0}
-    assert spies["commentTypesLabelWidth"].at(invocation=0, argument=0) == view_model.commentTypesLabelWidth
+    emissions.assert_exactly(commentTypesLabelWidthChanged=1)
+    assert emissions["commentTypesLabelWidthChanged"].at(invocation=0, argument=0) == view_model.commentTypesLabelWidth
 
 
 def test_unknown_type_measures_verbatim_after_retranslation(
-    qt_app, view_model, comments_settings_service, spy_notifies
+    qt_app, view_model, comments_settings_service, record_emissions
 ):
     comments_settings_service.comment_types = ["CustomTypeXyz"]
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
     english_width = view_model.commentTypesLabelWidth
     assert english_width > 0
 
     inject.instance(InternationalizationService).retranslate(qt_app, "de-DE")
 
     assert view_model.commentTypesLabelWidth == english_width
-    assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 0}
+    emissions.assert_silent()
 
 
-def test_comment_types_width_of_same_value_does_not_emit(view_model, comments_settings_service, spy_notifies):
+def test_comment_types_width_of_same_value_does_not_emit(view_model, comments_settings_service, record_emissions):
     comments_settings_service.comment_types = ["Wwwwwwwwww"]
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     comments_settings_service.comment_types = ["Wwwwwwwwww", "i"]
 
-    assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 0}
+    emissions.assert_silent()
 
 
-def test_time_width_flips_with_format(view_model, player_handle, spy_notifies):
-    spies = spy_notifies(view_model)
+def test_time_width_flips_with_format(view_model, player_handle, record_emissions):
+    emissions = record_emissions(view_model)
     short_width = view_model.timeLabelWidth
     assert short_width > 0
 
@@ -177,13 +164,13 @@ def test_time_width_flips_with_format(view_model, player_handle, spy_notifies):
 
     long_width = view_model.timeLabelWidth
     assert long_width > short_width
-    assert spies["timeLabelWidth"].count() == 1
-    assert spies["timeLabelWidth"].at(invocation=0, argument=0) == long_width
+    assert emissions["timeLabelWidthChanged"].count() == 1
+    assert emissions["timeLabelWidthChanged"].at(invocation=0, argument=0) == long_width
 
     player_handle.update(duration=3599.0)
 
     assert view_model.timeLabelWidth == short_width
-    assert emissions(spies) == {"commentTypesLabelWidth": 0, "timeLabelWidth": 2}
+    emissions.assert_exactly(timeLabelWidthChanged=2)
 
 
 def test_props_swap_completes_before_the_comment_types_emission(view_model, comments_settings_service):

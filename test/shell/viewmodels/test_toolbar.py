@@ -48,22 +48,6 @@ def settle(view_model: MpvqcShellToolBarViewModel) -> None:
     timer.timeout.emit()
 
 
-@pytest.fixture
-def spy_notifies(make_spy):
-    def _spy(view_model: MpvqcShellToolBarViewModel) -> dict:
-        return {
-            "frameStepActive": make_spy(view_model.frameStepActiveChanged),
-            "subtitleActive": make_spy(view_model.subtitleActiveChanged),
-            "audioActive": make_spy(view_model.audioActiveChanged),
-        }
-
-    return _spy
-
-
-def emissions(spies: dict) -> dict[str, int]:
-    return {name: spy.count() for name, spy in spies.items() if spy.count()}
-
-
 class DerivationCase(NamedTuple):
     name: str
     inputs: ToolbarInputs
@@ -116,53 +100,53 @@ def test_initial_snapshot_reads_player_at_construction(make_view_model, player_h
     assert view_model.audioActive
 
 
-def test_folds_inside_one_window_settle_to_one_emission_batch(make_view_model, player_handle, spy_notifies):
+def test_folds_inside_one_window_settle_to_one_emission_batch(make_view_model, player_handle, record_emissions):
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(track_list=BOTH_TRACKS)
 
-    assert emissions(spies) == {}
+    emissions.assert_silent()
     assert not view_model.frameStepActive
 
     settle(view_model)
 
-    assert emissions(spies) == {"frameStepActive": 1, "subtitleActive": 1, "audioActive": 1}
-    assert spies["frameStepActive"].at(0, 0) is True
-    assert spies["subtitleActive"].at(0, 0) is True
-    assert spies["audioActive"].at(0, 0) is True
+    emissions.assert_exactly(frameStepActiveChanged=1, subtitleActiveChanged=1, audioActiveChanged=1)
+    assert emissions["frameStepActiveChanged"].at(0, 0) is True
+    assert emissions["subtitleActiveChanged"].at(0, 0) is True
+    assert emissions["audioActiveChanged"].at(0, 0) is True
 
 
-def test_video_switch_emits_only_settled_deltas(make_view_model, player_handle, spy_notifies):
+def test_video_switch_emits_only_settled_deltas(make_view_model, player_handle, record_emissions):
     player_handle.load_video("/videos/a.mkv")
     player_handle.update(track_list=BOTH_TRACKS)
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     player_handle.unload_video()
     player_handle.load_video("/videos/b.mkv")
     player_handle.update(track_list=[{"type": "audio"}])
 
-    assert emissions(spies) == {}
+    emissions.assert_silent()
 
     settle(view_model)
 
-    assert emissions(spies) == {"subtitleActive": 1}
-    assert spies["subtitleActive"].at(0, 0) is False
+    emissions.assert_exactly(subtitleActiveChanged=1)
+    assert emissions["subtitleActiveChanged"].at(0, 0) is False
 
 
-def test_failed_load_retracts_all_three_buttons(make_view_model, player_handle, spy_notifies):
+def test_failed_load_retracts_all_three_buttons(make_view_model, player_handle, record_emissions):
     player_handle.load_video("/videos/movie.mkv")
     player_handle.update(track_list=BOTH_TRACKS)
     view_model = make_view_model()
-    spies = spy_notifies(view_model)
+    emissions = record_emissions(view_model)
 
     player_handle.unload_video()
 
     settle(view_model)
 
-    assert emissions(spies) == {"frameStepActive": 1, "subtitleActive": 1, "audioActive": 1}
-    assert spies["frameStepActive"].at(0, 0) is False
-    assert spies["subtitleActive"].at(0, 0) is False
-    assert spies["audioActive"].at(0, 0) is False
+    emissions.assert_exactly(frameStepActiveChanged=1, subtitleActiveChanged=1, audioActiveChanged=1)
+    assert emissions["frameStepActiveChanged"].at(0, 0) is False
+    assert emissions["subtitleActiveChanged"].at(0, 0) is False
+    assert emissions["audioActiveChanged"].at(0, 0) is False
