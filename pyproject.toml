@@ -28,6 +28,7 @@ Repository = "https://github.com/mpvqc/mpvQC"
 
 [dependency-groups]
 dev = [
+    "actionlint-py>=1.7.12.25",
     "hypothesis>=6.170.15",
     "jsonschema>=4.26.0",
     "materialyoucolor>=3.0.4",
@@ -35,6 +36,7 @@ dev = [
     "pyrefly>=1.4.1",
     "pytest>=9.2.0",
     "ruff>=0.17.5",
+    "shellcheck-py>=0.11.0.1",            # actionlint checks run: scripts only when it finds shellcheck
     "types-jsonschema>=4.26.0.20261006",
 ]
 windows-dist = [

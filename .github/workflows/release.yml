@@ -187,7 +187,7 @@ jobs:
         run: |
           ARTIFACT_NAME="mpvQC-$(just --evaluate GIT_TAG)-$(just --evaluate GIT_COMMIT)"
           echo -e "\033[0;35m$ARTIFACT_NAME\033[0m"
-          echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+          echo "artifact_app_name=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
@@ -376,7 +376,7 @@ jobs:
             --noinclude-dlls='qt6widgets.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
-            --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.build_windows.outputs.artifact_app_name }} \
+            --onefile-tempdir-spec='{CACHE_DIR}/mpvQC/${{ needs.build_windows.outputs.artifact_app_name }}' \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
             --windows-console-mode=attach \
