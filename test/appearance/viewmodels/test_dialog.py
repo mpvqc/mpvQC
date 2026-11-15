@@ -198,67 +198,65 @@ def test_initial_snapshot_reads_settings_at_construction(make_view_model, appear
 
 
 def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
-    make_view_model, appearance_settings_service, make_spy
+    make_view_model, appearance_settings_service, record_emissions
 ):
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
-    preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
-    accent_spy = make_spy(view_model.accentColorIndexChanged)
-    visible_spy = make_spy(view_model.accentColorSectionVisibleChanged)
+    emissions = record_emissions(view_model)
     assert view_model.accentColorModel.rowCount() == 0
 
     appearance_settings_service.color_scheme_preference = LIGHT
 
-    assert preference_spy.count() == 1
-    assert preference_spy.at(0, 0) == 1
-    assert accent_spy.count() == 1
-    assert accent_spy.at(0, 0) == 0
-    assert visible_spy.count() == 1
-    assert visible_spy.at(0, 0) is True
+    emissions.assert_exactly(
+        colorSchemePreferenceIndexChanged=1,
+        accentColorIndexChanged=1,
+        accentColorSectionVisibleChanged=1,
+    )
+    assert emissions["colorSchemePreferenceIndexChanged"].at(0, 0) == 1
+    assert emissions["accentColorIndexChanged"].at(0, 0) == 0
+    assert emissions["accentColorSectionVisibleChanged"].at(0, 0) is True
     assert view_model.accentColorModel.rowCount() == 2
 
 
 def test_a_preference_write_between_two_schemes_keeps_the_section_open(
-    make_view_model, appearance_settings_service, make_spy
+    make_view_model, appearance_settings_service, record_emissions
 ):
     appearance_settings_service.color_scheme_preference = LIGHT
     view_model = make_view_model()
-    visible_spy = make_spy(view_model.accentColorSectionVisibleChanged)
+    emissions = record_emissions(view_model)
     assert view_model.accentColorModel.rowCount() == 2
 
     appearance_settings_service.color_scheme_preference = DARK
 
-    assert visible_spy.count() == 0
+    emissions.assert_exactly(colorSchemePreferenceIndexChanged=1, accentColorIndexChanged=1)
     assert view_model.accentColorModel.rowCount() == 3
     assert view_model.accentColorIndex == 0
 
 
 def test_an_accent_write_for_the_selected_scheme_moves_the_accent_index(
-    make_view_model, appearance_settings_service, make_spy
+    make_view_model, appearance_settings_service, record_emissions
 ):
     appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
-    preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
-    accent_spy = make_spy(view_model.accentColorIndexChanged)
+    emissions = record_emissions(view_model)
 
     appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
 
-    assert accent_spy.count() == 1
-    assert accent_spy.at(0, 0) == 2
+    emissions.assert_exactly(accentColorIndexChanged=1)
+    assert emissions["accentColorIndexChanged"].at(0, 0) == 2
     assert view_model.accentColorIndex == 2
-    assert preference_spy.count() == 0
 
 
-def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, appearance_settings_service, make_spy):
+def test_an_accent_write_for_the_other_scheme_emits_nothing(
+    make_view_model, appearance_settings_service, record_emissions
+):
     appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
-    preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
-    accent_spy = make_spy(view_model.accentColorIndexChanged)
+    emissions = record_emissions(view_model)
 
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
-    assert preference_spy.count() == 0
-    assert accent_spy.count() == 0
+    emissions.assert_silent()
 
 
 class PreferenceWriteCase(NamedTuple):
@@ -322,19 +320,15 @@ def test_props_swap_completes_before_the_first_emission(make_view_model, appeara
     assert observed == [(2, 0, True)]
 
 
-def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints, make_spy):
+def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints, make_spy, record_emissions):
     inject.instance(ColorSchemeService)
     view_model = make_view_model()
-    spies = [
-        make_spy(view_model.colorSchemePreferenceIndexChanged),
-        make_spy(view_model.accentColorIndexChanged),
-        make_spy(view_model.accentColorSectionVisibleChanged),
-    ]
+    emissions = record_emissions(view_model)
     model_spy = make_spy(view_model.accentColorModel.modelReset)
 
     style_hints.system_reports(LIGHT)
 
-    assert [spy.count() for spy in spies] == [0, 0, 0]
+    emissions.assert_silent()
     assert model_spy.count() == 0
     assert view_model.colorSchemePreferenceIndex == 0
     assert view_model.accentColorSectionVisible is False
