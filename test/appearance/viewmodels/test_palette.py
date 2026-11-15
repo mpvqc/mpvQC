@@ -177,19 +177,6 @@ def make_view_model():
     return _make
 
 
-@pytest.fixture
-def spy_on(make_spy):
-    def _spy(view_model) -> tuple:
-        return make_spy(view_model.isDarkChanged), make_spy(view_model.palette.changed)
-
-    return _spy
-
-
-def _assert_nothing_emitted(is_dark_spy, palette_spy) -> None:
-    assert is_dark_spy.count() == 0
-    assert palette_spy.count() == 0
-
-
 def _assert_renders(view_model, palette: Palette, *, is_dark: bool) -> None:
     assert view_model.isDark is is_dark
     assert view_model.palette.background == palette.background
@@ -245,15 +232,18 @@ def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(
     )
 
 
-def test_desktop_flip_pushes_the_palette_and_emits_is_dark_once(make_view_model, style_hints, catalog, spy_on):
+def test_desktop_flip_pushes_the_palette_and_emits_is_dark_once(
+    make_view_model, style_hints, catalog, record_emissions
+):
     view_model = make_view_model()
-    is_dark_spy, palette_spy = spy_on(view_model)
+    emissions = record_emissions(view_model)
+    palette_emissions = record_emissions(view_model.palette)
 
     style_hints.system_reports(LIGHT)
 
-    assert is_dark_spy.count() == 1
-    assert is_dark_spy.at(0, 0) is False
-    assert palette_spy.count() == 1
+    emissions.assert_exactly(isDarkChanged=1)
+    assert emissions["isDarkChanged"].at(0, 0) is False
+    palette_emissions.assert_exactly(changed=1)
     _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
@@ -274,50 +264,58 @@ def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
 
 
 def test_desktop_flip_under_an_explicit_preference_emits_nothing(
-    make_view_model, appearance_settings_service, style_hints, spy_on
+    make_view_model, appearance_settings_service, style_hints, record_emissions
 ):
     appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
-    is_dark_spy, palette_spy = spy_on(view_model)
+    emissions = record_emissions(view_model)
+    palette_emissions = record_emissions(view_model.palette)
 
     style_hints.system_reports(LIGHT)
 
-    _assert_nothing_emitted(is_dark_spy, palette_spy)
+    emissions.assert_silent()
+    palette_emissions.assert_silent()
 
 
 def test_preference_change_switching_the_scheme_pushes_the_palette_and_emits_is_dark_once(
-    make_view_model, appearance_settings_service, catalog, spy_on
+    make_view_model, appearance_settings_service, catalog, record_emissions
 ):
     view_model = make_view_model()
-    is_dark_spy, palette_spy = spy_on(view_model)
+    emissions = record_emissions(view_model)
+    palette_emissions = record_emissions(view_model.palette)
 
     appearance_settings_service.color_scheme_preference = LIGHT
 
-    assert is_dark_spy.count() == 1
-    assert is_dark_spy.at(0, 0) is False
-    assert palette_spy.count() == 1
+    emissions.assert_exactly(isDarkChanged=1)
+    assert emissions["isDarkChanged"].at(0, 0) is False
+    palette_emissions.assert_exactly(changed=1)
     _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
-def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, appearance_settings_service, spy_on):
+def test_preference_change_keeping_the_scheme_emits_nothing(
+    make_view_model, appearance_settings_service, record_emissions
+):
     view_model = make_view_model()
-    is_dark_spy, palette_spy = spy_on(view_model)
+    emissions = record_emissions(view_model)
+    palette_emissions = record_emissions(view_model.palette)
 
     appearance_settings_service.color_scheme_preference = DARK
 
-    _assert_nothing_emitted(is_dark_spy, palette_spy)
+    emissions.assert_silent()
+    palette_emissions.assert_silent()
 
 
 def test_accent_write_for_the_apps_scheme_pushes_the_palette_without_is_dark(
-    make_view_model, appearance_settings_service, catalog, spy_on
+    make_view_model, appearance_settings_service, catalog, record_emissions
 ):
     view_model = make_view_model()
-    is_dark_spy, palette_spy = spy_on(view_model)
+    emissions = record_emissions(view_model)
+    palette_emissions = record_emissions(view_model.palette)
 
     appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
 
-    assert is_dark_spy.count() == 0
-    assert palette_spy.count() == 1
+    emissions.assert_silent()
+    palette_emissions.assert_exactly(changed=1)
     _assert_renders(
         view_model,
         catalog.palette_family_for(DARK).palette_of(_appearance_preference(dark_accent="#d2")),
@@ -325,13 +323,17 @@ def test_accent_write_for_the_apps_scheme_pushes_the_palette_without_is_dark(
     )
 
 
-def test_accent_write_for_the_other_scheme_emits_nothing(make_view_model, appearance_settings_service, spy_on):
+def test_accent_write_for_the_other_scheme_emits_nothing(
+    make_view_model, appearance_settings_service, record_emissions
+):
     view_model = make_view_model()
-    is_dark_spy, palette_spy = spy_on(view_model)
+    emissions = record_emissions(view_model)
+    palette_emissions = record_emissions(view_model.palette)
 
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
-    _assert_nothing_emitted(is_dark_spy, palette_spy)
+    emissions.assert_silent()
+    palette_emissions.assert_silent()
 
 
 def test_props_swap_completes_before_the_first_emission(make_view_model, style_hints, catalog):
@@ -406,10 +408,10 @@ def test_every_role_reads_its_own_field(palette_object):
     assert palette_object.rowSelectedText == "row_selected_text"
 
 
-def test_a_push_renders_the_new_palette_and_emits_changed(palette_object, make_spy):
-    spy = make_spy(palette_object.changed)
+def test_a_push_renders_the_new_palette_and_emits_changed(palette_object, record_emissions):
+    emissions = record_emissions(palette_object)
 
     palette_object.set_palette(replace(SELF_NAMING, background="pushed"))
 
-    assert spy.count() == 1
+    emissions.assert_exactly(changed=1)
     assert palette_object.background == "pushed"
