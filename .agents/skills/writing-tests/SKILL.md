@@ -68,9 +68,8 @@ positional calls hide which value is which once a bag has more than one or two f
 
 When a test needs the real executor rather than `manual_executor`, wait with
 `QThreadPool.globalInstance().waitForDone()` followed by `processEvents()`. Repeat the pair once per queued job: the
-runner hands out one job at a time and delivers each result on the GUI thread before starting the next.
-
-A spy's `wait()` holds the GIL, so the pooled job never starts and the wait times out.
+runner hands out one job at a time and delivers each result on the GUI thread before starting the next. Wait on pooled
+work with that pair, not `QSignalSpy.wait()`: it holds the GIL, so the pooled job never starts and the wait times out.
 
 ### Spies
 

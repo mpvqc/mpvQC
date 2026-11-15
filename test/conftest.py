@@ -12,7 +12,6 @@ import inject
 import pytest
 from hypothesis import settings
 from PySide6.QtCore import (
-    QByteArray,
     QCoreApplication,
     QLocale,
     QMetaMethod,
@@ -65,18 +64,6 @@ class MySpy:
 
     def count(self) -> int:
         return self._qt_spy.count()
-
-    def is_valid(self) -> bool:
-        return self._qt_spy.isValid()
-
-    def signal(self) -> QByteArray:
-        return self._qt_spy.signal()
-
-    def size(self) -> int:
-        return self._qt_spy.size()
-
-    def wait(self, timeout: int) -> bool:
-        return self._qt_spy.wait(timeout)
 
     def reset(self):
         self._recreate()
