@@ -2,13 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.appdata.services import ApplicationPathsService
-from mpvqc.player.services import RawPropertyValue
+
+if TYPE_CHECKING:
+    import inject
+
+    from mpvqc.player.services import RawPropertyValue
 
 
 @pytest.fixture

@@ -2,14 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 from PySide6.QtCore import QTimer
 
 from mpvqc.player.services import PlayerService
 from mpvqc.shell.viewmodels import MpvqcShellToolBarViewModel, ToolbarInputs, ToolbarProps, derive_toolbar_props
+
+if TYPE_CHECKING:
+    import inject
 
 BOTH_TRACKS = [{"type": "audio"}, {"type": "sub"}]
 

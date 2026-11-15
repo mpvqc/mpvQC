@@ -2,12 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import inject
+from typing import TYPE_CHECKING
+
 import pytest
 from PySide6.QtCore import Qt
 
 from mpvqc.comments.viewmodels import MpvqcCommentPlaceholderViewModel
 from mpvqc.shell.services import ShellSettingsService
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture(autouse=True)

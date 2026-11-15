@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import annotations
-
 from contextlib import suppress
 from enum import IntEnum
 from operator import index

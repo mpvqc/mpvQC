@@ -4,9 +4,9 @@
 
 import gc
 import weakref
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject, Signal
 
@@ -14,6 +14,9 @@ from mpvqc.importing.services import ImportService, PendingImport
 from mpvqc.importing.viewmodels import MpvqcImportWizardRequestRelayViewModel, MpvqcImportWizardViewModel
 from test.importing.pending import record_pending
 from test.importing.plans import PRESENT_ERRORS, plan_with
+
+if TYPE_CHECKING:
+    import inject
 
 NEEDS_A_DECISION = plan_with(errors=PRESENT_ERRORS)
 

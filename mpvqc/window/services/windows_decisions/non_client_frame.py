@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Literal, Protocol
 
 from .frame_geometry import ClientRect, overhangs

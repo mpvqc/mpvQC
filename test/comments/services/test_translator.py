@@ -2,13 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import pytest
 from PySide6.QtCore import QTranslator
 
-from mpvqc.application import MpvqcApplication
 from mpvqc.comments.services import reverse_translate_comment_type, translate_comment_type
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from mpvqc.application import MpvqcApplication
 
 
 @pytest.fixture

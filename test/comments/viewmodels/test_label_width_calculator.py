@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Iterable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import inject
 import pytest
@@ -17,6 +16,9 @@ from mpvqc.comments.viewmodels import (
 )
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.player.services import PlayerService
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 @pytest.fixture(autouse=True)

@@ -2,13 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.comments.services import CommentsService
 from mpvqc.shared import Comment
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from mpvqc.comments.services import CommentsService
 
 
 class MutationCase(NamedTuple):

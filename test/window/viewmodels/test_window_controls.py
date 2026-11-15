@@ -2,15 +2,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 from PySide6.QtGui import QWindow
 
 from mpvqc.window.services import MainWindowService, PlatformService, SurfaceSnapshot, WindowStateSnapshot
 from mpvqc.window.viewmodels import MpvqcWindowControlsViewModel
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import inject
 
 NO_OWN_FRAME = SurfaceSnapshot(draws_own_frame=False, drop_shadow_margin=0)
 OWN_FRAME = SurfaceSnapshot(draws_own_frame=True, drop_shadow_margin=88)

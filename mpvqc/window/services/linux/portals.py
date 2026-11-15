@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import annotations
-
 import logging
 from functools import cached_property
 from typing import TYPE_CHECKING, Self
@@ -80,7 +78,7 @@ class SettingsPortal:
             version = self._interface.property("version")
             if version is not None:
                 return int(version)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             logger.warning("Could not determine Settings portal version")
 
         return 0

@@ -7,12 +7,11 @@ name = "mpvQC"
 version = "1.0.0"
 description = "libmpv based application for quality control of videos"
 readme = "README.md"
-requires-python = ">=3.13,<3.15"
+requires-python = ">=3.14,<3.15"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Private :: Do Not Upload",
-    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [

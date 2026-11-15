@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 from PySide6.QtCore import QSettings, Qt
@@ -13,6 +12,9 @@ from mpvqc.shell.services import (
     TimeDisplayMode,
     WindowTitleFormat,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 VERTICAL = Qt.Orientation.Vertical.value
 HORIZONTAL = Qt.Orientation.Horizontal.value

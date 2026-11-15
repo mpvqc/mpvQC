@@ -2,13 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import call, patch
 
 import pytest
 
 from mpvqc.exporting.services import ExportSettingsService
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @pytest.fixture

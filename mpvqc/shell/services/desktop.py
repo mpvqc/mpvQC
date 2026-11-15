@@ -2,8 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from PySide6.QtCore import QUrl
+from typing import TYPE_CHECKING
+
 from PySide6.QtGui import QDesktopServices
+
+if TYPE_CHECKING:
+    from PySide6.QtCore import QUrl
 
 
 class DesktopService:

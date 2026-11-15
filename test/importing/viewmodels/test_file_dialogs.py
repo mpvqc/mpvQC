@@ -2,14 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 from PySide6.QtCore import QUrl
 
 from mpvqc.importing.services import DOCUMENT_EXTENSIONS, SUBTITLE_EXTENSIONS, ImportService, ImportSettingsService
 from mpvqc.importing.viewmodels import MpvqcImportFileDialogViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

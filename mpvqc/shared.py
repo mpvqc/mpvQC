@@ -2,14 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Iterable
 from dataclasses import dataclass
 from math import ceil
 from pathlib import Path
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from PySide6.QtCore import QUrl
-from PySide6.QtGui import QFontMetricsF
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from PySide6.QtGui import QFontMetricsF
 
 MILLISECONDS_PER_SECOND: Final = 1000
 SECONDS_PER_HOUR: Final = 3600

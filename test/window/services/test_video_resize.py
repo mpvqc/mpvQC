@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 from PySide6.QtCore import Qt
 
@@ -23,6 +22,9 @@ from mpvqc.window.services import (
     linux_desktop_capabilities,
     linux_tiling_capabilities,
 )
+
+if TYPE_CHECKING:
+    import inject
 
 HEADER_HEIGHT = 40
 HANDLE_WIDTH = 6

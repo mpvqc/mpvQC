@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Iterable
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
 import inject
 import pytest
@@ -11,6 +10,9 @@ import pytest
 from mpvqc.comments.models import CommentStore
 from mpvqc.comments.services import CommentsService
 from mpvqc.shared import Comment
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 DEFAULT_COMMENTS: tuple[Comment, ...] = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),

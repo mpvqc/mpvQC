@@ -5,8 +5,6 @@
 """All calls are best-effort: queries report failure through their return value,
 setters fail silently. A broken decoration is not worth an exception."""
 
-from __future__ import annotations
-
 from ctypes import (
     POINTER,
     WINFUNCTYPE,  # pyrefly: ignore[missing-module-attribute]

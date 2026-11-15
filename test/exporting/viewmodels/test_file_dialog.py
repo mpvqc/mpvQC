@@ -2,13 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import inject
+from typing import TYPE_CHECKING
+
 import pytest
 from PySide6.QtCore import QUrl
 
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.exporting.viewmodels import MpvqcExportFileDialogViewModel
 from mpvqc.player.services import PlayerService
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture(autouse=True)

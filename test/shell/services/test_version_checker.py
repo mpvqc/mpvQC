@@ -2,14 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
 from email.message import Message
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
 import pytest
 
 from mpvqc.shell.services import NewVersionAvailable, ServerError, ServerNotReachable, UpToDate, VersionCheckerService
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 MODULE = "mpvqc.shell.services.version_checker"
 

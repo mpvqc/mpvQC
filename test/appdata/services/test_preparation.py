@@ -2,11 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from mpvqc.appdata.services import ApplicationPathsService, prepare_app_data, read_input_conf, read_mpv_conf
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture

@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.shell.services import (
@@ -17,6 +16,9 @@ from mpvqc.shell.services import (
     VersionCheckerService,
 )
 from mpvqc.shell.viewmodels import MpvqcVersionCheckMessageBoxViewModel, present_outcome
+
+if TYPE_CHECKING:
+    import inject
 
 
 class PresentCase(NamedTuple):

@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 
 from mpvqc.appearance.services import (
@@ -18,6 +17,9 @@ from mpvqc.appearance.services import (
     SystemColorScheme,
     Unknown,
 )
+
+if TYPE_CHECKING:
+    import inject
 
 SYSTEM = FollowSystem()
 LIGHT = Light()

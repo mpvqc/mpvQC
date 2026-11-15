@@ -3,9 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import json
-from collections.abc import Callable
 from pathlib import Path
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -13,6 +12,9 @@ from PySide6.QtCore import QStandardPaths
 
 from mpvqc.exporting.services import ExportService
 from mpvqc.shared import Comment
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @pytest.fixture

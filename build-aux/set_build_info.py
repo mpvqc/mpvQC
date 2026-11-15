@@ -5,8 +5,11 @@
 import argparse
 import os
 import sys
-from collections.abc import Mapping
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 BUILD_INFO_PATH = Path("data/build-info.toml")
 
