@@ -28,6 +28,8 @@ hooks = [
         id = "biome-check",
         name = "format yml",
         files = '\.ya?ml$',
+        # Biome rejects files inside its own config directory
+        exclude = '^\.config/zizmor\.yml$',
         args = ["--config-path=.config"],
     },
 ]
@@ -41,6 +43,14 @@ hooks = [
         entry = "actionlint",
         language = "system",
         files = '^\.github/workflows/.*\.ya?ml$',
+    },
+    {
+        id = "zizmor",
+        name = "audit actions",
+        entry = "zizmor",
+        language = "system",
+        files = '^\.github/(workflows/.*|actions/.*/action|dependabot)\.ya?ml$',
+        args = ["--offline", "--config", ".config/zizmor.yml"],
     },
 ]
 

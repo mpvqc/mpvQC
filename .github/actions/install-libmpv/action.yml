@@ -18,14 +18,17 @@ runs:
   steps:
     - name: Install libmpv
       shell: bash
+      env:
+        LIBMPV_URL: ${{ inputs.url }}
+        LIBMPV_SHA256: ${{ inputs.sha256 }}
       run: |
         if [[ "$RUNNER_OS" == "Linux" ]]; then
           sudo apt update -y
           sudo apt install -y libegl1 libmpv2
         elif [[ "$RUNNER_OS" == "Windows" ]]; then
-          ARTIFACT="$(basename "${{ inputs.url }}")"
-          curl -L -O "${{ inputs.url }}"
-          echo -n "${{ inputs.sha256 }} $ARTIFACT" > "$ARTIFACT.sha256"
+          ARTIFACT="$(basename "$LIBMPV_URL")"
+          curl -L -O "$LIBMPV_URL"
+          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
           sha256sum --check "$ARTIFACT.sha256"
           7z e "$ARTIFACT" libmpv-2.dll
         else
