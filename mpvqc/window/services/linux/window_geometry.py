@@ -20,8 +20,6 @@ them by hand. _QOBJECT_BASE_OFFSET is sizeof(QObject), two pointers, so it is
 correct on both 32- and 64-bit builds.
 """
 
-from __future__ import annotations
-
 import ctypes
 import logging
 from ctypes import Structure, byref, c_double, c_int, c_void_p
@@ -89,7 +87,7 @@ def _resolve_symbols() -> _WaylandSymbols | None:
         handle = gui[_HANDLE_SYMBOL]
         set_custom_margins = wayland[_SET_CUSTOM_MARGINS_SYMBOL]
         window_states = wayland[_WINDOW_STATES_SYMBOL]
-    except (OSError, AttributeError):
+    except OSError, AttributeError:
         logger.warning(
             "Wayland window-geometry symbols unavailable; content margins not applied, window states read from QWindow"
         )
@@ -110,7 +108,7 @@ def _resolve_scale_and_origin() -> Callable[..., _QScaleAndOrigin] | None:
     try:
         gui = ctypes.CDLL(_qt_lib("Qt6Gui"))
         scale_and_origin = gui[_SCALE_AND_ORIGIN_SYMBOL]
-    except (OSError, AttributeError):
+    except OSError, AttributeError:
         logger.warning("High-DPI factor symbol unavailable; content margins assume factor 1")
         return None
 

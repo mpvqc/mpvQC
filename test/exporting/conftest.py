@@ -2,12 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
 from datetime import UTC, datetime
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.appdata.services import ApplicationPathsService
@@ -15,6 +13,12 @@ from mpvqc.comments.services import CommentsService
 from mpvqc.exporting.services import ExportSettingsService, ExportSnapshot
 from mpvqc.player.services import PlayerService
 from mpvqc.session import SessionService
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+
+    import inject
 
 
 @pytest.fixture

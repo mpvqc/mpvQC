@@ -3,13 +3,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.exporting.services import ExportTemplateCatalogService
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

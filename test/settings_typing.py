@@ -5,15 +5,17 @@
 # Pyrefly checks this file through the project hook; pytest never collects it. A setting that stops reading
 # back as its declared type fails the hook here, where nothing else would notice.
 
-from typing import assert_type
+from typing import TYPE_CHECKING, assert_type
 
 from PySide6.QtCore import QUrl
 
-from mpvqc.comments.services import CommentsSettingsService
-from mpvqc.exporting.services import ExportSettingsService
-from mpvqc.i18n.services import I18nSettingsService
 from mpvqc.importing.services import ImportSettingsService, LoadFoundVideo
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode, WindowTitleFormat
+
+if TYPE_CHECKING:
+    from mpvqc.comments.services import CommentsSettingsService
+    from mpvqc.exporting.services import ExportSettingsService
+    from mpvqc.i18n.services import I18nSettingsService
 
 
 def reads_keep_their_declared_types(

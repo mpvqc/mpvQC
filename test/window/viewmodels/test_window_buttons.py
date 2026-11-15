@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 
 from mpvqc.window.services import PlatformService, WindowButtonPreference
@@ -14,6 +13,9 @@ from mpvqc.window.viewmodels import (
     WindowButtonsProps,
     derive_window_buttons_props,
 )
+
+if TYPE_CHECKING:
+    import inject
 
 ALL_BUTTONS = WindowButtonPreference(minimize=True, maximize=True, close=True)
 NO_BUTTONS = WindowButtonPreference(minimize=False, maximize=False, close=False)

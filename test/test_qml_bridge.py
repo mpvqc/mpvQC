@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 from PySide6.QtCore import QUrl
@@ -11,6 +10,9 @@ from PySide6.QtQml import QQmlComponent, QQmlEngine
 from PySide6.QtQuick import QQuickItem
 
 from testqml.bridge import MpvqcTestBridge
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @pytest.fixture(autouse=True)

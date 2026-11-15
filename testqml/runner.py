@@ -7,8 +7,6 @@
 Qt Quick Test itself has no parallel mode: a run takes a single `-input` path and walks it in order.
 """
 
-from __future__ import annotations
-
 import argparse
 import os
 import re

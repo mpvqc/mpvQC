@@ -2,13 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 
 from mpvqc.comments.services import CommentsService, Found, NoMatches, NoQuery, SearchOutcome
 from mpvqc.comments.viewmodels import MpvqcCommentSearchBoxViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 class SearchCall(NamedTuple):

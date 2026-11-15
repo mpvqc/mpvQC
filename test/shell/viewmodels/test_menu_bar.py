@@ -3,10 +3,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pathlib import Path
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 from PySide6.QtCore import Qt, QUrl
 
@@ -17,6 +16,9 @@ from mpvqc.session import SessionService
 from mpvqc.shell.enums import FileDialogKind, MessageBoxKind
 from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService
 from mpvqc.shell.viewmodels import MpvqcShellMenuBarViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 MODULE = "mpvqc.shell.viewmodels.menu_bar"
 

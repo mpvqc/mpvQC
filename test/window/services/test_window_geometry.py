@@ -5,8 +5,7 @@
 import multiprocessing
 import os
 import sys
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 from PySide6.QtCore import Qt
@@ -17,6 +16,9 @@ from mpvqc.window.services.linux import (
     native_margin,
     wayland_window_states,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 WINDOW_GEOMETRY = "mpvqc.window.services.linux.window_geometry"
 

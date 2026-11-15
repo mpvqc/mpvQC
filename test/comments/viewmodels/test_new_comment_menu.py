@@ -2,11 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import inject
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mpvqc.comments.services import CommentsSettingsService
 from mpvqc.comments.viewmodels import MpvqcCommentNewCommentMenuViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture(autouse=True)

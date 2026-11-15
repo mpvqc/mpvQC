@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
 from dataclasses import dataclass, replace
+from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
@@ -14,6 +14,9 @@ from mpvqc.appearance.services import application_font
 from mpvqc.player.services import PlayerService
 from mpvqc.shared import calculate_label_width, format_time_to_string, needs_long_format
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

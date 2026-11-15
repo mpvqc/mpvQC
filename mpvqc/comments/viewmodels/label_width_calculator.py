@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, replace
+from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
@@ -14,6 +14,9 @@ from mpvqc.appearance.services import application_font
 from mpvqc.comments.services import CommentTypesPolicyService, TimeFormatPolicyService, translate_comment_type
 from mpvqc.i18n.services import InternationalizationService
 from mpvqc.shared import calculate_label_width
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -37,7 +40,7 @@ class CommentLabelWidthCalculatorInputs:
     comment_type_labels: tuple[str, ...]
     table_long_format: bool
 
-    def with_types(self, types: frozenset[str]) -> "CommentLabelWidthCalculatorInputs":
+    def with_types(self, types: frozenset[str]) -> CommentLabelWidthCalculatorInputs:
         return replace(self, displayable_comment_types=types, comment_type_labels=_translate_comment_types(types))
 
 

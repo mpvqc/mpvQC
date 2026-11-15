@@ -2,14 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QWindow
 
 from mpvqc.window.services import QtWindowStateHandler, WindowStateSnapshot
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from PySide6.QtGui import QWindow
 
 NO_STATE = Qt.WindowState.WindowNoState
 MINIMIZED = Qt.WindowState.WindowMinimized

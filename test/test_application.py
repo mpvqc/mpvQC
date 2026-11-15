@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Generator
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import inject
@@ -15,6 +14,10 @@ from PySide6.QtQuick import QQuickWindow
 from mpvqc import application
 from mpvqc.appdata.services import ApplicationPathsService
 from mpvqc.i18n.services import I18nSettingsService, InternationalizationService
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+    from pathlib import Path
 
 
 @pytest.fixture

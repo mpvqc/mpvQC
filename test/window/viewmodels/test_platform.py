@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 
 from mpvqc.window.services import (
@@ -14,6 +13,9 @@ from mpvqc.window.services import (
     windows_capabilities,
 )
 from mpvqc.window.viewmodels import MpvqcPlatformViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

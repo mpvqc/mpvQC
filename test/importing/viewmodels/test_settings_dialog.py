@@ -2,11 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import inject
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mpvqc.importing.services import ImportSettingsService, LoadFoundVideo
 from mpvqc.importing.viewmodels import MpvqcImportSettingsDialogViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture(autouse=True)

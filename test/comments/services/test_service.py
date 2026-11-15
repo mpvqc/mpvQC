@@ -2,14 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.comments.models import CommentStore
 from mpvqc.comments.services import CommentsService
 from mpvqc.session import SessionService
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

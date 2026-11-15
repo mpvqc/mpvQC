@@ -2,13 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.exporting.services import ExportService, ExportSettingsService
 from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

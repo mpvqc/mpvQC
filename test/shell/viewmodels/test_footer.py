@@ -3,14 +3,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import replace
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-import inject
 import pytest
 
 from mpvqc.player.services import PlayerService
 from mpvqc.shell.services import ShellSettingsService, TimeDisplayMode
 from mpvqc.shell.viewmodels import FooterInputs, FooterProps, MpvqcShellFooterViewModel, derive_footer_props
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture(autouse=True)

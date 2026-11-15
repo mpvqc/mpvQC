@@ -16,9 +16,8 @@ defaults:
     shell: bash
 
 env:
-  # Windows ships on this version. The Flatpak stays on the version its runtime provides, see build_linux.
+  # Windows ships on this version, and the Flatpak runtime provides it.
   PYTHON_VERSION: "3.14"
-  PYTHON_VERSION_FLATPAK: "3.13"
 
 jobs:
   verify_formatting:
@@ -51,25 +50,21 @@ jobs:
 
   test_python_linux:
     runs-on: ubuntu-latest
-    name: Test Python (Linux, ${{ matrix.python-version }})
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.13", "3.14"]
+    name: Test Python (Linux)
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install libmpv
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
@@ -133,25 +128,21 @@ jobs:
 
   test_qml:
     runs-on: ubuntu-latest
-    name: Test QML (${{ matrix.python-version }})
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.13", "3.14"]
+    name: Test QML
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install libmpv
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
@@ -214,14 +205,14 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ env.PYTHON_VERSION_FLATPAK }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-          python-version: ${{ env.PYTHON_VERSION_FLATPAK }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Initialize Project
         run: just init '--no-group dev'
       - name: Build

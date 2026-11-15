@@ -9,8 +9,6 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, cast, override
 
 from PySide6.QtCore import QEvent, QObject, Qt, Slot

@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import pytest
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QBitmap, QPolygon, QRegion, QWindow
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class RecordingWindow(QWindow):

@@ -8,12 +8,14 @@ import re
 import sys
 from argparse import Namespace
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
-from materialyoucolor.dynamiccolor.dynamic_scheme import DynamicScheme
 from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynamicColors
 from materialyoucolor.hct import Hct
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
+
+if TYPE_CHECKING:
+    from materialyoucolor.dynamiccolor.dynamic_scheme import DynamicScheme
 
 HEX_PATTERN = re.compile(r"^#[A-Fa-f0-9]{6}$")
 

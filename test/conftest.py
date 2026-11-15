@@ -3,11 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections import deque
-from collections.abc import Callable, Generator
 from configparser import RawConfigParser, SectionProxy
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, override
+from typing import TYPE_CHECKING, Any, override
 
 import inject
 import pytest
@@ -26,6 +25,9 @@ from mpvqc.session import SessionService
 from mpvqc.settings import open_settings_file
 from mpvqc.shell.services import ShellSettingsService
 from test.player.recording import RecordingPlayerHandle
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
 
 settings.register_profile("fuzz", max_examples=10_000, deadline=None, print_blob=True)
 

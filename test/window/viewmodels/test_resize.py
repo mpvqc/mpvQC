@@ -2,15 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.player.services import PlayerService
 from mpvqc.window.services import VideoResizeService
 from mpvqc.window.viewmodels import MpvqcResizeViewModel
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

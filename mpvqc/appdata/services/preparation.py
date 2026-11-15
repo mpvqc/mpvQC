@@ -2,8 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .application_paths import ApplicationPathsService
+from typing import TYPE_CHECKING
+
 from .resource import read_input_conf, read_mpv_conf
+
+if TYPE_CHECKING:
+    from .application_paths import ApplicationPathsService
 
 
 def prepare_app_data(paths: ApplicationPathsService) -> None:

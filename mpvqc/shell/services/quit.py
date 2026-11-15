@@ -2,14 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import QEvent, QObject, QTimer, Signal
-from PySide6.QtGui import QWindow
 
 from mpvqc.player.services import PlayerService
 from mpvqc.session import SessionService
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QWindow
 
 
 class QuitService(QObject):

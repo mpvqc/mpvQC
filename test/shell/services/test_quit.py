@@ -2,15 +2,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-import inject
 import pytest
 from PySide6.QtGui import QWindow
 
 from mpvqc.player.services import PlayerService
 from mpvqc.session import SessionService
 from mpvqc.shell.services import QuitService
+
+if TYPE_CHECKING:
+    import inject
 
 
 @pytest.fixture

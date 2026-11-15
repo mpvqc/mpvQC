@@ -2,13 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from enum import IntEnum
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
 from mpvqc.shell.enums import MpvqcTimeDisplayMode, MpvqcWindowTitleFormat
 from mpvqc.shell.services import TimeDisplayMode, WindowTitleFormat
+
+if TYPE_CHECKING:
+    from enum import IntEnum
 
 
 class PinCase(NamedTuple):

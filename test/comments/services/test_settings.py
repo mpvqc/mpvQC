@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
 from mpvqc.comments.services import CommentsSettingsService, default_comment_types
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 SHIPPED_TYPES = ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"]
 

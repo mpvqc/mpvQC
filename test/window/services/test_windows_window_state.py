@@ -3,9 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import sys
-from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 from PySide6.QtCore import Qt
@@ -16,6 +15,9 @@ if sys.platform != "win32":
 
 from mpvqc.window.services.windows import WindowsWindowStateHandler
 from mpvqc.window.services.windows_decisions import WindowPlacement
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 WINDOW_STATE = "mpvqc.window.services.windows.window_state"
 PROBES = "mpvqc.window.services.windows.probes"

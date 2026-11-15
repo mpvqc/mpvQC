@@ -3,11 +3,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import json
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pytest
 
 from mpvqc.appearance.services import AppearanceSettingsService, ColorScheme, SystemColorScheme, read_palette_catalog
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @pytest.fixture

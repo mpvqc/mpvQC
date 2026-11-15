@@ -2,12 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import pytest
-from PySide6.QtGui import QGuiApplication, QWindow
 
 from mpvqc.window.services import (
     EmbeddedPlayerTracker,
@@ -30,6 +28,11 @@ from mpvqc.window.services import (
     WindowStateSnapshot,
     linux_tiling_capabilities,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from PySide6.QtGui import QGuiApplication, QWindow
 
 WINDOWED = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
 NO_OWN_FRAME = SurfaceSnapshot(draws_own_frame=False, drop_shadow_margin=0)

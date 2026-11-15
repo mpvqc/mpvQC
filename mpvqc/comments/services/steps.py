@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import annotations
-
 import bisect
 from dataclasses import dataclass, replace
 from operator import attrgetter
