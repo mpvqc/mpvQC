@@ -19,5 +19,10 @@
         "formatter": {
             "bracketSpacing": true
         }
+    },
+    "yaml": {
+        "formatter": {
+            "indentWidth": 2
+        }
     }
 }

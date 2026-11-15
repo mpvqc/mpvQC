@@ -24,6 +24,12 @@ hooks = [
         exclude = '\.config/biome\.jsonc',
         args = ["--config-path=.config"],
     },
+    {
+        id = "biome-check",
+        name = "format yml",
+        files = '\.ya?ml$',
+        args = ["--config-path=.config"],
+    },
 ]
 
 [[repos]]
@@ -37,17 +43,6 @@ hooks = [
         args = [
             "--offline",
         ]
-    },
-]
-
-[[repos]]
-repo = "https://github.com/google/yamlfmt"
-rev = "v0.21.0"
-hooks = [
-    {
-        id = "yamlfmt",
-        name = "format yml",
-        args = ["-conf", ".config/yamlfmt.yaml"],
     },
 ]
 
