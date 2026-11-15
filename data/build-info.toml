@@ -40,7 +40,7 @@ platforms = ["linux", "win32"]
 [[dependency]]
 name = "PySide6"
 package = "PySide6-Essentials"
-version = "6.11.2"
+version = "6.11.3"
 url = "https://wiki.qt.io/Qt_for_Python"
 licence = "LGPL-3.0-only"
 platforms = ["linux", "win32"]
@@ -48,7 +48,7 @@ platforms = ["linux", "win32"]
 [[dev_dependency]]
 name = "pytest"
 package = "pytest"
-version = "9.1.1"
+version = "9.2.0"
 url = "https://github.com/pytest-dev/pytest"
 licence = "MIT"
 platforms = ["linux", "win32"]
