@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 {
-    "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
+    "$schema": "https://biomejs.dev/schemas/latest/schema.json",
     "formatter": {
         "indentStyle": "space",
         "indentWidth": 4,
