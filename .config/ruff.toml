@@ -98,7 +98,7 @@ ignore = [
 ]
 
 [lint.isort]
-known-first-party = ["mpvqc", "rc_project"]
+known-first-party = ["mpvqc"]
 
 [lint.flake8-copyright]
 notice-rgx = "SPDX-FileCopyrightText: mpvQC developers"

@@ -37,7 +37,7 @@ class MpvqcTestSetup(QObject):
     def _register_resources(cls) -> None:
         if cls._resources_registered:
             return
-        resources = pathlib.Path(__file__).resolve().parent / "project.rcc"
+        resources = pathlib.Path(__file__).resolve().parents[1] / "project.rcc"
         if not QResource.registerResource(str(resources)):
             msg = f"Can not register resource file '{resources}'"
             raise FileNotFoundError(msg)

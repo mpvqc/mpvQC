@@ -11,4 +11,4 @@ instead and register it at startup with `QResource.registerResource()`, which co
   resources is the first thing the app does after path setup.
 - Every packaging path must place the bundle next to the application entry point: the build recipe, the Nuitka
   data-file flag in the Windows release workflow, and the install line in the Flatpak manifest (packaging repo).
-- The Python and QML test harnesses register their own staged bundle instead of importing a staged module.
+- The Python and QML test harnesses register the built bundle directly instead of importing a generated Python module.

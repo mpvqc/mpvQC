@@ -103,7 +103,7 @@ set-build-info:
 @clean:
     find i18n -name "*.qm" -type f -delete
     find qt/qml -name "*.qmlc" -type f -delete
-    rm -rf build io test/project.rcc testqml/project.rcc project.rcc test/rc_project.py testqml/rc_project.py rc_project.py project.json project.qrc
+    rm -rf build io project.rcc project.json project.qrc
 
 # Build release artifact (⚠️ modifies working tree)
 [group('ci')]
@@ -129,9 +129,6 @@ build-release:
 # Recompile resources
 [group('test')]
 prepare-tests: build-develop
-    rm -f test/rc_project.py testqml/rc_project.py
-    cp project.rcc test/project.rcc.tmp && mv test/project.rcc.tmp test/project.rcc
-    cp project.rcc testqml/project.rcc.tmp && mv testqml/project.rcc.tmp testqml/project.rcc
 
 # Run Python and QML tests
 [group('test')]
