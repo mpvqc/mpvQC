@@ -9,16 +9,18 @@ import pytest
 from PySide6.QtCore import Qt
 
 from mpvqc.player.services import PlayerService
-from mpvqc.shell.services import ShellSettingsService
-from mpvqc.window.services import (
-    MainWindowService,
-    PlatformCapabilities,
-    PlatformService,
+from mpvqc.shell.services import (
     ResizeResult,
+    ShellSettingsService,
     VideoResizeService,
     ViewDimensions,
     calculate_horizontal_layout_sizes,
     calculate_vertical_layout_sizes,
+)
+from mpvqc.window.services import (
+    MainWindowService,
+    PlatformCapabilities,
+    PlatformService,
     linux_desktop_capabilities,
     linux_tiling_capabilities,
 )

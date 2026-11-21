@@ -8,8 +8,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from mpvqc.player.services import PlayerService
-from mpvqc.window.services import VideoResizeService
-from mpvqc.window.viewmodels import MpvqcResizeViewModel
+from mpvqc.shell.services import VideoResizeService
+from mpvqc.shell.viewmodels import MpvqcShellVideoResizeViewModel
 
 if TYPE_CHECKING:
     import inject
@@ -57,14 +57,14 @@ def test_video_loads_recalculate_only_when_the_app_resizes_itself(
 ):
     resize_service_mock.resizes_on_video_change = case.resizes_on_video_change
 
-    MpvqcResizeViewModel()
+    MpvqcShellVideoResizeViewModel()
 
     assert player_mock.video_dimensions_changed.connect.call_count == case.expected_connections
 
 
 def test_no_size_is_requested_when_the_service_declines(resize_service_mock, make_spy):
     resize_service_mock.compute_resize.return_value = None
-    view_model = MpvqcResizeViewModel()
+    view_model = MpvqcShellVideoResizeViewModel()
 
     window_spy = make_spy(view_model.appWindowSizeRequested)
     table_spy = make_spy(view_model.splitViewTableSizeRequested)

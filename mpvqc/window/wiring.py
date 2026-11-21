@@ -12,7 +12,6 @@ def bindings(binder: inject.Binder) -> None:
     from mpvqc.window.services import (
         MainWindowService,
         PlatformService,
-        VideoResizeService,
         select_platform_backend,
     )
 
@@ -21,7 +20,6 @@ def bindings(binder: inject.Binder) -> None:
 
     binder.bind_to_constructor(MainWindowService, MainWindowService)
     binder.bind_to_constructor(PlatformService, platform_service)
-    binder.bind_to_constructor(VideoResizeService, VideoResizeService)
 
 
 def register_qml_types() -> None:
