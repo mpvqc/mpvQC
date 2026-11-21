@@ -116,9 +116,9 @@ beside the components they support.
 
 ## Build and resources
 
-Development builds generate Python QML type metadata and bundle QML with its runtime assets. The entry point registers
-the bundle before startup. Test harnesses use staged copies. Release builds remove test support before compiling
-production QML to bytecode.
+Development builds generate Python QML type metadata and bundle QML with its runtime assets. The entry point and test
+harnesses register the built bundle before startup. Release builds remove test support before compiling production QML
+to bytecode.
 
 ## See also
 

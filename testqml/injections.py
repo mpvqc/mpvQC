@@ -84,19 +84,6 @@ class ApplicationPathsServiceOverride(ApplicationPathsService):
         super().__init__(artifacts.create_app_data_directory())
 
 
-class ExportSettingsServiceOverride(ExportSettingsService):
-    def __init__(self, qsettings: QSettings) -> None:
-        super().__init__(qsettings)
-        # pyrefly: ignore [missing-override-decorator]
-        self.backup_interval = 0
-
-
-class ImportSettingsServiceOverride(ImportSettingsService):
-    def __init__(self, qsettings: QSettings) -> None:
-        super().__init__(qsettings)
-        self.last_directory_documents = QUrl.fromLocalFile(str(artifacts.FIXTURES_DIR))
-
-
 class InstantLoadPlayerHandle(RecordingPlayerHandle):
     @override
     def command(self, name: str, *args: object) -> None:
@@ -124,7 +111,7 @@ class ExportServiceOverride(ExportService):
 
     @override
     def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:
-        return artifacts.TEMP_SAVES_DIR / f"qc_proposal.{suffix}"
+        return artifacts.temp_saves_dir() / f"qc_proposal.{suffix}"
 
     @override
     def backup(self) -> None:
@@ -155,12 +142,16 @@ class DesktopServiceOverride(DesktopService):
         self.opened_urls.append(url)
 
 
-def _export_settings_service_override() -> ExportSettingsServiceOverride:
-    return ExportSettingsServiceOverride(inject.instance(QSettings))
+def _export_settings_service() -> ExportSettingsService:
+    service = ExportSettingsService(inject.instance(QSettings))
+    service.backup_interval = 0
+    return service
 
 
-def _import_settings_service_override() -> ImportSettingsServiceOverride:
-    return ImportSettingsServiceOverride(inject.instance(QSettings))
+def _import_settings_service() -> ImportSettingsService:
+    service = ImportSettingsService(inject.instance(QSettings))
+    service.last_directory_documents = QUrl.fromLocalFile(str(artifacts.FIXTURES_DIR))
+    return service
 
 
 def _recorded_player() -> RecordedPlayer:
@@ -182,8 +173,8 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
-        binder.bind_to_constructor(ExportSettingsService, _export_settings_service_override)
-        binder.bind_to_constructor(ImportSettingsService, _import_settings_service_override)
+        binder.bind_to_constructor(ExportSettingsService, _export_settings_service)
+        binder.bind_to_constructor(ImportSettingsService, _import_settings_service)
         binder.bind_to_provider(PlatformService, current_platform.service)
         binder.bind_to_constructor(RecordedPlayer, _recorded_player)
         binder.bind_to_constructor(PlayerService, _player_service)

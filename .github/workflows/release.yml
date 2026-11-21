@@ -174,8 +174,6 @@ jobs:
         run: just prepare-tests
       - name: Execute Qml Tests
         run: just test-qml 1
-        env:
-          MPVQC_TEST_DELAY_MS: 1000
 
   build_windows:
     runs-on: windows-latest

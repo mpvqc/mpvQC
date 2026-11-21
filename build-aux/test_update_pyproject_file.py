@@ -18,7 +18,6 @@ from update_pyproject_file import ProjectFileUpdater, determine_new_pyproject_li
         ("module.pyc", False),
         ("de-DE.qm", False),
         ("project.rcc", False),
-        ("rc_project.py", False),
     ],
 )
 def test_file_eligibility(tmp_path, filename, expected_included):

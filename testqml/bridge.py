@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import os
 from itertools import pairwise
 from pathlib import Path
 from typing import assert_never
@@ -37,12 +36,11 @@ from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 from mpvqc.shell.services import DesktopService, ShellSettingsService
 from testqml import artifacts, import_wizard_fixtures, runtime
-from testqml.injections import DesktopServiceOverride, RecordedPlayer
+from testqml.injections import DesktopServiceOverride, ExportServiceOverride, RecordedPlayer
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-_DELAY_MS = int(os.environ.get("MPVQC_TEST_DELAY_MS", "100"))
 _PIXEL_TOLERANCE = 1.0
 
 
@@ -90,10 +88,6 @@ class MpvqcTestBridge(QObject):
         inject.instance(CommentsService).import_comments(
             [Comment(time=c["time"], comment_type=c["commentType"], comment=c["comment"]) for c in comments]
         )
-
-    @Property(int, constant=True)
-    def delayMs(self) -> int:
-        return _DELAY_MS
 
     @Property(bool)
     def saved(self) -> bool:
@@ -207,7 +201,11 @@ class MpvqcTestBridge(QObject):
 
     @Slot(result=int)
     def backupWriteCount(self) -> int:
-        return getattr(inject.instance(ExportService), "write_count", 0)
+        exporter = inject.instance(ExportService)
+        if not isinstance(exporter, ExportServiceOverride):
+            msg = "Backup write counting requires ExportServiceOverride"
+            raise TypeError(msg)
+        return exporter.write_count
 
     @Slot(str, result=bool)
     def backupArchiveAnyEntryContains(self, text: str) -> bool:

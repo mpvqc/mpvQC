@@ -224,11 +224,11 @@ def qt_app() -> Generator[MpvqcApplication, Any]:
 
 @pytest.fixture(scope="session", autouse=True)
 def check_generated_resources():
-    resources = Path(__file__).resolve().parent / "project.rcc"
+    resources = Path(__file__).resolve().parents[1] / "project.rcc"
     if not QResource.registerResource(str(resources)):
         message = (
             f"Can not register resource file '{resources}'\n"
-            "To execute individual tests, please run 'just test-python' once before"
+            "To execute individual tests, please run 'just prepare-tests' once before"
         )
         raise FileNotFoundError(message)
 

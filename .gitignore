@@ -549,7 +549,6 @@ $RECYCLE.BIN/
 /requirements.txt
 /test.sh
 
-rc_project.py
 project.rcc
 project.rcc.tmp
 

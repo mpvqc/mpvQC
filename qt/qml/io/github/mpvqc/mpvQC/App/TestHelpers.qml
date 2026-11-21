@@ -87,17 +87,23 @@ QtObject {
 
     readonly property var dialog: QtObject {
         function accept(dialog: var): void {
-            dialog.accepted();
-            dialog.close();
-            root.bridge.waitForBackgroundJobs();
-            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
+            _finish(dialog, () => dialog.accepted());
         }
 
         function reject(dialog: var): void {
-            dialog.rejected();
+            _finish(dialog, () => dialog.rejected());
+        }
+
+        function _finish(dialog: var, emitOutcome: var): void {
+            const name = dialog.objectName;
+            emitOutcome();
             dialog.close();
+            if (name) {
+                root.testCase.tryVerify(() => !root.testCase.findChild(root.testCase, name));
+            } else {
+                root.testCase.tryVerify(() => !dialog || !(dialog.opened ?? dialog.visible));
+            }
             root.bridge.waitForBackgroundJobs();
-            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
         }
     }
 
@@ -110,7 +116,7 @@ QtObject {
             root.find.commentTextArea(control).text = text;
             root.testCase.findChild(control, "editCommentPopup").close();
             root.testCase.tryVerify(() => tableView.commentCount === before + 1);
-            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
+            root.testCase.tryVerify(() => !root.testCase.findChild(control, "editCommentPopup"));
         }
     }
 

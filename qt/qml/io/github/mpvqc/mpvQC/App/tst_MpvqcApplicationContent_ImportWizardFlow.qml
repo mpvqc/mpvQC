@@ -177,6 +177,24 @@ TestCase {
         it.expect.openedSubtitleCount(1);
     }
 
+    function test_subtitleWithVideoReference_opensWizardAndLoadsBoth(): void {
+        const control = it.makeControl();
+
+        it.imports.dropFiles(control, [it.bridge.importArtifact("subtitle_complex.ass")]);
+
+        const wizard = it.wizard.opened(control);
+        compare(wizard.viewModel.steps.length, 2, "a subtitle referencing a video should ask about the video and bring the subtitle along");
+
+        it.wizard.advance(wizard);
+        it.wizard.clickPrimary(wizard);
+
+        tryVerify(() => !wizard.opened);
+        it.bridge.waitForBackgroundJobs();
+
+        it.expect.openedVideo("video_basic.mp4");
+        it.expect.openedSubtitles(["subtitle_complex.ass"]);
+    }
+
     function test_secondDragWhileWizardOpen_isIgnored(): void {
         const control = it.makeControl();
 
