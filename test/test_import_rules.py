@@ -288,6 +288,52 @@ def check_wiring() -> list[str]:
     return violations
 
 
+def _service_graph() -> dict[str, set[str]]:
+    """Map each slice to the slices whose services its own services import."""
+    graph: dict[str, set[str]] = {slice_: set() for slice_ in SLICES}
+    for slice_ in SLICES:
+        for path in _production_files(slice_):
+            if _role_of(path) != "services":
+                continue
+            for target, _, _ in _edges(path):
+                kind, t_slice, t_role = _classify(target)
+                if kind == "slice" and t_slice is not None and t_slice != slice_ and t_role == "services":
+                    graph[slice_].add(t_slice)
+    return graph
+
+
+def _find_cycle(graph: dict[str, set[str]]) -> list[str] | None:
+    done: set[str] = set()
+
+    def visit(node: str, path: list[str]) -> list[str] | None:
+        if node in path:
+            return [*path[path.index(node) :], node]
+        if node in done:
+            return None
+        for target in sorted(graph[node]):
+            if cycle := visit(target, [*path, node]):
+                return cycle
+        done.add(node)
+        return None
+
+    for start in sorted(graph):
+        if cycle := visit(start, []):
+            return cycle
+    return None
+
+
+def check_service_graph() -> list[str]:
+    cycle = _find_cycle(_service_graph())
+    if cycle is None:
+        return []
+    ring = " -> ".join(cycle)
+    violation = (
+        f"the services of {ring} import each other in a cycle; "
+        f"a concept is missing that one of these slices should own, so move it there (ADR 0008)"
+    )
+    return [violation]
+
+
 def _fail_on(violations: list[str]) -> None:
     if violations:
         pytest.fail(f"{len(violations)} import rule violation(s):\n" + "\n".join(violations), pytrace=False)
@@ -307,6 +353,28 @@ def test_role_roots_re_export_no_held_root():
 
 def test_wiring_imports_no_mpvqc_and_no_qt_at_module_level():
     _fail_on(check_wiring())
+
+
+def test_the_service_graph_between_slices_is_acyclic():
+    _fail_on(check_service_graph())
+
+
+def test_two_slices_importing_each_others_services_form_a_cycle():
+    assert _find_cycle({"comments": {"player"}, "player": {"comments"}}) == ["comments", "player", "comments"]
+
+
+def test_three_slices_importing_services_in_a_ring_form_a_cycle():
+    graph = {"comments": {"player"}, "player": {"window"}, "window": {"comments"}}
+    assert _find_cycle(graph) == ["comments", "player", "window", "comments"]
+
+
+def test_services_reached_along_two_paths_form_no_cycle():
+    graph = {"shell": {"player", "window"}, "player": {"window"}, "window": set()}
+    assert _find_cycle(graph) is None
+
+
+def test_the_service_graph_scan_sees_edges_between_slices():
+    assert any(_service_graph().values()), "the service graph scan found no services import between slices"
 
 
 @pytest.mark.parametrize("closed", CLOSED_ROLES)
