@@ -21,4 +21,5 @@ from .toolbar import ToolbarInputs as ToolbarInputs
 from .toolbar import ToolbarProps as ToolbarProps
 from .toolbar import derive_toolbar_props as derive_toolbar_props
 from .version_check import MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionCheckMessageBoxViewModel
-from .version_check import present_outcome as present_outcome
+from .version_check import VersionCheckProps as VersionCheckProps
+from .version_check import derive_version_check_props as derive_version_check_props
