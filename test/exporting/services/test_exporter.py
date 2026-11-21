@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import errno
 import json
+import stat
 from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
@@ -82,17 +84,49 @@ def test_save_writes_v1_document(configure_mocks, service, tmp_path, make_spy, w
     assert error_spy.count() == 0
 
 
-def test_save_signals_on_write_failure(configure_mocks, service, make_spy, wait_for_jobs):
+def test_save_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
+    file = tmp_path / "missing-directory" / "document"
 
-    service.save(file_mock)
+    service.save(file)
     wait_for_jobs()
 
     assert error_spy.count() == 1
     assert error_spy.at(invocation=0, argument=1) == -1
+
+
+def test_failed_save_keeps_the_previous_document(configure_mocks, service, tmp_path, monkeypatch, wait_for_jobs):
+    configure_mocks()
+    file = tmp_path / "saved.json"
+    file.write_bytes(b"previous")
+
+    def fail_midway(self: Path, *_args: object, **_kwargs: object) -> int:
+        self.write_bytes(b"partial")
+        raise OSError(errno.ENOSPC, "disk full")
+
+    monkeypatch.setattr(Path, "write_text", fail_midway)
+
+    service.save(file)
+    wait_for_jobs()
+
+    assert file.read_bytes() == b"previous"
+    assert list(tmp_path.iterdir()) == [file]
+
+
+def test_save_refuses_a_read_only_document(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+    file = tmp_path / "saved.json"
+    file.write_bytes(b"previous")
+    file.chmod(stat.S_IREAD)
+
+    service.save(file)
+    wait_for_jobs()
+
+    assert error_spy.count() == 1
+    assert file.read_bytes() == b"previous"
+    assert list(tmp_path.iterdir()) == [file]
 
 
 def test_save_records_save(configure_mocks, service, tmp_path, session_service_mock, wait_for_jobs):
@@ -105,12 +139,11 @@ def test_save_records_save(configure_mocks, service, tmp_path, session_service_m
     session_service_mock.record_save.assert_called_once_with(file)
 
 
-def test_save_failure_does_not_record_save(configure_mocks, service, session_service_mock, wait_for_jobs):
+def test_save_failure_does_not_record_save(configure_mocks, service, tmp_path, session_service_mock, wait_for_jobs):
     configure_mocks()
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
+    file = tmp_path / "missing-directory" / "document"
 
-    service.save(file_mock)
+    service.save(file)
     wait_for_jobs()
 
     session_service_mock.record_save.assert_not_called()
@@ -129,13 +162,12 @@ def test_export_classic_writes_classic_document_without_recording(
     session_service_mock.record_save.assert_not_called()
 
 
-def test_export_classic_signals_on_write_failure(configure_mocks, service, make_spy, wait_for_jobs):
+def test_export_classic_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
+    file = tmp_path / "missing-directory" / "document"
 
-    service.export_classic(file_mock)
+    service.export_classic(file)
     wait_for_jobs()
 
     assert error_spy.count() == 1
@@ -154,6 +186,18 @@ def test_export_custom_succeeds(configure_mocks, service, tmp_path, make_spy, wa
 
     assert error_spy.count() == 0
     assert file.read_text(encoding="utf-8") == "nick: lorem"
+
+
+def test_document_is_written_as_utf8_with_unix_line_endings(configure_mocks, service, tmp_path, wait_for_jobs):
+    configure_mocks()
+    template = tmp_path / "template.jinja"
+    template.write_bytes("ä\nö".encode())
+    file = tmp_path / "export.txt"
+
+    service.export_custom(file, template)
+    wait_for_jobs()
+
+    assert file.read_bytes() == "ä\nö".encode()
 
 
 @pytest.mark.parametrize(
@@ -228,10 +272,9 @@ def test_export_custom_signals_on_write_failure(configure_mocks, service, tmp_pa
     error_spy = make_spy(service.export_error_occurred)
     template = tmp_path / "template.jinja"
     template.write_text("static", encoding="utf-8")
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
+    file = tmp_path / "missing-directory" / "document"
 
-    service.export_custom(file_mock, template)
+    service.export_custom(file, template)
     wait_for_jobs()
 
     assert error_spy.count() == 1
@@ -295,14 +338,18 @@ class UnexpectedErrorCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_unexpected_error_is_logged_and_not_signaled(
-    case, configure_mocks, service, tmp_path, make_spy, caplog, wait_for_jobs
+    case, configure_mocks, service, tmp_path, monkeypatch, make_spy, caplog, wait_for_jobs
 ):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
-    document = MagicMock()
-    document.write_text.side_effect = RuntimeError("boom")
+    template = _make_template(tmp_path)
 
-    case.invoke(service, document, _make_template(tmp_path))
+    def boom(*_args: object, **_kwargs: object) -> int:
+        raise RuntimeError
+
+    monkeypatch.setattr(Path, "write_text", boom)
+
+    case.invoke(service, tmp_path / "document", template)
     wait_for_jobs()
 
     assert error_spy.count() == 0
