@@ -5,7 +5,7 @@
 import textwrap
 
 import pytest
-from set_build_info import (  # type: ignore[missing-import]
+from set_build_info import (
     determine_channel,
     determine_offers_update_check,
     render_build_info,

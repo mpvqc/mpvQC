@@ -4,7 +4,7 @@
 
 python-version = "3.14"
 project-includes = ["../**/*.py*"]
-search-path = [".."]
+search-path = ["..", "../build-aux"]
 min-severity = "warn"
 
 [errors]
