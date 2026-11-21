@@ -36,7 +36,7 @@ from mpvqc.session import SessionService
 from mpvqc.shared import Comment
 from mpvqc.shell.services import DesktopService, ShellSettingsService
 from testqml import artifacts, import_wizard_fixtures, runtime
-from testqml.injections import DesktopServiceOverride, RecordedPlayer
+from testqml.injections import DesktopServiceOverride, ExportServiceOverride, RecordedPlayer
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -201,7 +201,11 @@ class MpvqcTestBridge(QObject):
 
     @Slot(result=int)
     def backupWriteCount(self) -> int:
-        return getattr(inject.instance(ExportService), "write_count", 0)
+        exporter = inject.instance(ExportService)
+        if not isinstance(exporter, ExportServiceOverride):
+            msg = "Backup write counting requires ExportServiceOverride"
+            raise TypeError(msg)
+        return exporter.write_count
 
     @Slot(str, result=bool)
     def backupArchiveAnyEntryContains(self, text: str) -> bool:

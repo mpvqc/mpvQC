@@ -5,43 +5,45 @@
 import argparse
 import os
 import pathlib
+import shutil
 import sys
 
-from PySide6.QtCore import QCoreApplication, QObject, QResource, Qt, Slot
+from PySide6.QtCore import QCoreApplication, QObject, QResource, Qt, QThreadPool, Slot
 from PySide6.QtQml import QQmlEngine
 from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
 
 import testqml.bridge  # ruff: ignore[unused-import], registers MpvqcTestBridge
 from mpvqc import startup
-from testqml.artifacts import TEMP_ROOT
+from testqml import artifacts
 from testqml.injections import configure_injections
 
 
 class MpvqcTestSetup(QObject):
-    _resources_registered = False
+    @Slot()
+    def applicationAvailable(self) -> None:
+        self._register_resources()
+        startup.configure_qt_application_data()
+        startup.configure_qt_settings()
+        startup.register_qml_types()
 
     @Slot(QQmlEngine)
     def qmlEngineAvailable(self, engine: QQmlEngine) -> None:
-        self._register_resources()
-
-        startup.configure_qt_application_data()
-        startup.configure_qt_settings()
-        # startup.configure_logging()
         configure_injections()
-        startup.configure_environment_variables()
-        startup.register_qml_types()
-
         engine.rootContext().setContextProperty("mpvqcTestMode", True)
 
-    @classmethod
-    def _register_resources(cls) -> None:
-        if cls._resources_registered:
-            return
+    @Slot()
+    def cleanupTestCase(self) -> None:
+        # Drain before Quick Test tears down the engine and QGuiApplication;
+        # a pool worker calling into Python during teardown segfaults.
+        if (pool := QThreadPool.globalInstance()) is not None:
+            pool.waitForDone()
+
+    @staticmethod
+    def _register_resources() -> None:
         resources = pathlib.Path(__file__).resolve().parents[1] / "project.rcc"
         if not QResource.registerResource(str(resources)):
             msg = f"Can not register resource file '{resources}'"
             raise FileNotFoundError(msg)
-        cls._resources_registered = True
 
 
 def parse_cli() -> argparse.Namespace:
@@ -82,13 +84,14 @@ def resolve_target_file(file_part: str) -> str:
 def main() -> int:
     os.environ["QT_QUICK_CONTROLS_STYLE"] = "MpvqcStyle"
     os.environ["QT_QUICK_CONTROLS_FALLBACK_STYLE"] = "Material"
-    os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
     os.environ["MPVQC_DEBUG"] = "1"
+    startup.configure_environment_variables()
 
     args = parse_cli()
     input_path = resolve_input(args)
 
-    print(f"Storing temporary test data in {TEMP_ROOT}", flush=True)
+    owns_temp_root = not os.environ.get("MPVQC_TEST_TEMP_ROOT")
+    root = artifacts.temp_root()
 
     # Always work with Qt internal file dialogs in tests (less variation -> hopefully more stable tests)
     QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_DontUseNativeDialogs)
@@ -98,14 +101,20 @@ def main() -> int:
     if args.silent:
         qt_argv += ["-silent"]
 
-    # qt_argv += ["-eventdelay", "50"]
-
     if sys.platform == "linux":
         qt_argv += ["-platform", "offscreen"]
 
     qt_argv += ["-input", input_path]
 
-    return QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=qt_argv)
+    exit_code = QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=qt_argv)
+
+    if owns_temp_root:
+        if exit_code == 0:
+            shutil.rmtree(root, ignore_errors=True)
+        else:
+            print(f"Test data of this run is in {root}", flush=True)
+
+    return exit_code
 
 
 if __name__ == "__main__":

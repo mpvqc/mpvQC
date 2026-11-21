@@ -6,12 +6,16 @@ import os
 import shutil
 import tempfile
 import uuid
+from functools import cache
 from pathlib import Path
 from zipfile import ZipFile
 
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
-def _temp_root() -> Path:
-    # The parallel runner hands out the directories and deletes them once the processes are gone.
+
+@cache
+def temp_root() -> Path:
+    # The runner hands out the directories and deletes them once the processes are gone.
     configured = os.environ.get("MPVQC_TEST_TEMP_ROOT")
     if configured:
         root = Path(configured)
@@ -20,25 +24,28 @@ def _temp_root() -> Path:
     return Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
 
 
-FIXTURES_DIR = Path(__file__).parent / "fixtures"
-TEMP_ROOT = _temp_root()
-TEMP_SAVES_DIR = TEMP_ROOT / "saves"
-TEMP_SAVES_DIR.mkdir()
-WIZARD_FIXTURES_DIR = TEMP_ROOT / "wizard-fixtures"
+def temp_saves_dir() -> Path:
+    directory = temp_root() / "saves"
+    directory.mkdir(exist_ok=True)
+    return directory
+
+
+def wizard_fixtures_dir() -> Path:
+    return temp_root() / "wizard-fixtures"
 
 
 def create_app_data_directory() -> Path:
-    base = Path(tempfile.mkdtemp(prefix="paths-", dir=str(TEMP_ROOT)))
+    base = Path(tempfile.mkdtemp(prefix="paths-", dir=str(temp_root())))
     shutil.copytree(FIXTURES_DIR / "portable-root", base, dirs_exist_ok=True)
     return base
 
 
 def temp_save_path() -> Path:
-    return TEMP_SAVES_DIR / f"qc_document_{uuid.uuid4().hex[:8]}.txt"
+    return temp_saves_dir() / f"qc_document_{uuid.uuid4().hex[:8]}.txt"
 
 
 def create_complex_qc_document() -> Path:
-    base = TEMP_ROOT / f"complex-{uuid.uuid4().hex[:8]}"
+    base = temp_root() / f"complex-{uuid.uuid4().hex[:8]}"
     base.mkdir()
     video = base / "video.mp4"
     sub1 = base / "track1.ass"
@@ -61,7 +68,7 @@ def create_complex_qc_document() -> Path:
 
 
 def create_video_only_qc_document() -> Path:
-    base = TEMP_ROOT / f"video-only-{uuid.uuid4().hex[:8]}"
+    base = temp_root() / f"video-only-{uuid.uuid4().hex[:8]}"
     base.mkdir()
     video = base / "video_only.mp4"
     video.touch()
@@ -74,7 +81,7 @@ def create_video_only_qc_document() -> Path:
 
 
 def create_multi_video_qc_documents() -> tuple[Path, Path]:
-    base = TEMP_ROOT / f"multi-video-{uuid.uuid4().hex[:8]}"
+    base = temp_root() / f"multi-video-{uuid.uuid4().hex[:8]}"
     base.mkdir()
     video_a = base / "alpha.mp4"
     video_b = base / "beta.mp4"

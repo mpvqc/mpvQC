@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -22,6 +23,7 @@ from pathlib import Path
 QML_ROOT = Path("qt/qml")
 TOTALS_PATTERN = re.compile(r"^Totals: (\d+) passed", re.MULTILINE)
 INTERRUPTED_EXIT_CODE = 130
+_TERMINATE_TIMEOUT_SECONDS = 5.0
 
 
 @dataclass(frozen=True)
@@ -31,6 +33,51 @@ class ShardResult:
     tests: int
     seconds: float
     output: str
+
+
+class ProcessTracker:
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._active: set[subprocess.Popen[str]] = set()
+        self._cancelled = False
+
+    def run(self, command: list[str], *, env: dict[str, str]) -> tuple[int, str] | None:
+        with self._lock:
+            if self._cancelled:
+                return None
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                encoding="utf-8",
+                errors="replace",
+                env=env,
+            )
+            self._active.add(process)
+        try:
+            output, _ = process.communicate()
+        finally:
+            with self._lock:
+                self._active.discard(process)
+        return process.returncode, output
+
+    def cancel_all(self) -> None:
+        with self._lock:
+            self._cancelled = True
+            running = list(self._active)
+        for process in running:
+            _terminate_process(process)
+
+
+def _terminate_process(process: subprocess.Popen[str]) -> None:
+    if process.poll() is not None:
+        return
+    process.terminate()
+    try:
+        process.wait(timeout=_TERMINATE_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait()
 
 
 def parse_cli() -> argparse.Namespace:
@@ -74,21 +121,26 @@ def count_tests(output: str) -> int:
     return sum(int(match.group(1)) for match in TOTALS_PATTERN.finditer(output))
 
 
-def run_shard(file: Path, temp_root: Path) -> ShardResult:
+def _run_passed(returncode: int, tests: int) -> bool:
+    # A run whose tests never started still reports success.
+    return returncode == 0 and tests > 0
+
+
+def run_shard(file: Path, temp_root: Path, tracker: ProcessTracker | None = None) -> ShardResult:
     started = time.monotonic()
-    process = subprocess.run(
+    active_tracker = tracker if tracker is not None else ProcessTracker()
+    outcome = active_tracker.run(
         [sys.executable, "-m", "testqml.main", "--silent", "--target", str(file)],
-        capture_output=True,
-        text=True,
-        check=False,
         env=os.environ | {"MPVQC_TEST_TEMP_ROOT": str(temp_root)},
     )
-    output = process.stdout + process.stderr
+    if outcome is None:
+        return ShardResult(file=file, passed=False, tests=0, seconds=time.monotonic() - started, output="")
+
+    returncode, output = outcome
     tests = count_tests(output)
     return ShardResult(
         file=file,
-        # A run whose tests never started still reports success.
-        passed=process.returncode == 0 and tests > 0,
+        passed=_run_passed(returncode, tests),
         tests=tests,
         seconds=time.monotonic() - started,
         output=output,
@@ -96,19 +148,52 @@ def run_shard(file: Path, temp_root: Path) -> ShardResult:
 
 
 def run_in_single_process() -> int:
-    return subprocess.run([sys.executable, "-m", "testqml.main"], check=False).returncode
+    run_root = Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
+    process = subprocess.Popen(
+        [sys.executable, "-m", "testqml.main"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf-8",
+        errors="replace",
+        env=os.environ | {"MPVQC_TEST_TEMP_ROOT": str(run_root)},
+    )
+    chunks: list[str] = []
+    try:
+        if process.stdout is not None:
+            for line in process.stdout:
+                sys.stdout.write(line)
+                sys.stdout.flush()
+                chunks.append(line)
+        returncode = process.wait()
+    except KeyboardInterrupt:
+        _terminate_process(process)
+        shutil.rmtree(run_root, ignore_errors=True)
+        print("\nInterrupted", flush=True)
+        return INTERRUPTED_EXIT_CODE
+
+    tests = count_tests("".join(chunks))
+    if _run_passed(returncode, tests):
+        shutil.rmtree(run_root, ignore_errors=True)
+        return 0
+
+    if returncode == 0 and tests == 0:
+        print("No QML tests were executed", flush=True)
+    print(f"Test data of this run is in {run_root}", flush=True)
+    return returncode if returncode != 0 else 1
 
 
 def run_in_parallel(files: list[Path], jobs: int) -> int:
     print(f"Running {len(files)} test files, {jobs} at a time", flush=True)
     started = time.monotonic()
     run_root = Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
+    tracker = ProcessTracker()
     results: list[ShardResult] = []
     interrupted = False
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
         futures: list[Future[ShardResult]] = [
-            pool.submit(run_shard, file, run_root / f"{index:02d}-{file.stem}") for index, file in enumerate(files)
+            pool.submit(run_shard, file, run_root / f"{index:02d}-{file.stem}", tracker)
+            for index, file in enumerate(files)
         ]
         try:
             for future in as_completed(futures):
@@ -120,6 +205,8 @@ def run_in_parallel(files: list[Path], jobs: int) -> int:
             interrupted = True
             for future in futures:
                 future.cancel()
+            # ThreadPoolExecutor.__exit__ waits for running workers, so terminate active shards now.
+            tracker.cancel_all()
 
     if interrupted:
         shutil.rmtree(run_root, ignore_errors=True)

@@ -20,14 +20,14 @@ from mpvqc.importing.services import (
     VideoUnresolved,
 )
 from mpvqc.shared import Comment
-from testqml.artifacts import WIZARD_FIXTURES_DIR
+from testqml import artifacts
 
 if TYPE_CHECKING:
     from pathlib import Path
 
 
 def _path(name: str) -> Path:
-    return WIZARD_FIXTURES_DIR / name
+    return artifacts.wizard_fixtures_dir() / name
 
 
 def video_choice() -> UnfinishedPlan:

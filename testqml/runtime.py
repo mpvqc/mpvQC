@@ -69,6 +69,7 @@ def reset_state(engine: QQmlEngine) -> None:
     configure_injections()
     _rebind_main_window()
     _recreate_and_replace_singleton_view_models(engine, _SWAPPED_VIEW_MODELS)
+    _resolve_singleton(engine, "io.github.mpvqc.mpvQC.Utility", "MpvqcWindowUtility").setProperty("contentFrame", None)
 
 
 def switch_platform(engine: QQmlEngine, name: str) -> None:
@@ -82,12 +83,17 @@ def _rebind_main_window() -> None:
     inject.instance(MainWindowService).initialize(test_window)
 
 
+def _resolve_singleton(engine: QQmlEngine, module_uri: str, singleton_name: str) -> QObject:
+    singleton = engine.singletonInstance(module_uri, singleton_name)
+    if not isinstance(singleton, QObject):
+        msg = f"Cannot resolve singleton {singleton_name}"
+        raise TypeError(msg)
+    return singleton
+
+
 def _recreate_and_replace_singleton_view_models(engine: QQmlEngine, entries: tuple[_SwappedViewModel, ...]) -> None:
     for entry in entries:
-        singleton = engine.singletonInstance(entry.module_uri, entry.singleton_name)
-        if not isinstance(singleton, QObject):
-            msg = f"Cannot resolve singleton {entry.singleton_name}"
-            raise TypeError(msg)
+        singleton = _resolve_singleton(engine, entry.module_uri, entry.singleton_name)
         previous = [child for child in singleton.children() if isinstance(child, entry.view_model_class)]
         view_model = entry.view_model_class()
         view_model.setParent(singleton)
