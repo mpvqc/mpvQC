@@ -44,6 +44,10 @@ def backup_archive_name(captured_at: datetime) -> str:
     return f"{captured_at:%Y-%m}.zip"
 
 
+def unreadable_backup_archive_name(captured_at: datetime) -> str:
+    return f"{captured_at:%Y-%m}_unreadable_{captured_at:%Y-%m-%d_%H-%M-%S}.zip"
+
+
 def backup_entry_name(captured_at: datetime, video_path: str | None) -> str:
     video_name = Path(video_path).name if video_path else _untitled_video_name()
     return f"{captured_at:%Y-%m-%d_%H-%M-%S}_{video_name}.json"
