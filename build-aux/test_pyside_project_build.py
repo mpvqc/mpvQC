@@ -6,7 +6,7 @@ import hashlib
 import inspect
 from typing import TYPE_CHECKING, NamedTuple
 
-import pyside_project_build  # type: ignore[missing-import]
+import pyside_project_build
 import pytest
 
 if TYPE_CHECKING:

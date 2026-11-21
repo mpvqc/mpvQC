@@ -5,7 +5,7 @@
 import textwrap
 
 import pytest
-from update_pyproject_file import ProjectFileUpdater, determine_new_pyproject_lines  # type: ignore[missing-import]
+from update_pyproject_file import ProjectFileUpdater, determine_new_pyproject_lines
 
 
 @pytest.mark.parametrize(
