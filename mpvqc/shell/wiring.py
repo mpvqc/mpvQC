@@ -12,7 +12,13 @@ def bindings(binder: inject.Binder) -> None:
     import inject
     from PySide6.QtCore import QSettings
 
-    from mpvqc.shell.services import DesktopService, QuitService, ShellSettingsService, VersionCheckerService
+    from mpvqc.shell.services import (
+        DesktopService,
+        QuitService,
+        ShellSettingsService,
+        VersionCheckerService,
+        VideoResizeService,
+    )
 
     def shell_settings_service() -> ShellSettingsService:
         return ShellSettingsService(inject.instance(QSettings))
@@ -21,6 +27,7 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(QuitService, QuitService)
     binder.bind_to_constructor(ShellSettingsService, shell_settings_service)
     binder.bind_to_constructor(VersionCheckerService, VersionCheckerService)
+    binder.bind_to_constructor(VideoResizeService, VideoResizeService)
 
 
 def register_qml_types() -> None:

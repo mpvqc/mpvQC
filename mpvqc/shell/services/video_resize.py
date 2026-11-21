@@ -8,10 +8,9 @@ import inject
 from PySide6.QtCore import Qt
 
 from mpvqc.player.services import PlayerService
-from mpvqc.shell.services import ShellSettingsService
+from mpvqc.window.services import MainWindowService, PlatformService
 
-from .main_window import MainWindowService
-from .platform import PlatformService
+from .settings import ShellSettingsService
 
 
 @dataclass(frozen=True)
