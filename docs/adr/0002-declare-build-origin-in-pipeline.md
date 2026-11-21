@@ -9,7 +9,7 @@ copied along with it.
 
 So the pipeline declares the origin at build time. Build-info carries a `channel` field that is empty in git and
 written only by the build-info stamper, from the `MPVQC_BUILD_CHANNEL` environment variable. Exactly two workflow
-steps set the variable: the tag-gated Windows release job (`mpvqc-github`) and the main-gated flatter step in the
+steps set the variable: the tag-gated Windows release job (`mpvqc-github`) and the main-gated build step in the
 Flatpak packaging repository (`mpvqc-flatpak`, carried into the build sandbox via the manifest's `secret-env`). At
 runtime the app treats the channel as an opaque string: a build reports its channel when the channel is non-empty
 and, inside Flatpak, the sandbox's `FLATPAK_ID` matches the app ID in build-info; otherwise it reports `unofficial`.
