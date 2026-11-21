@@ -52,7 +52,7 @@ ROLES = tuple(LATTICE)
 CLOSED_ROLES = ("models", "viewmodels", "views")
 
 HELPERS = {
-    "jobs": {"services", "viewmodels"},
+    "jobs": {"services"},
     "session": {"services", "viewmodels"},
     "settings": {"services"},
     "resources": {"services"},
@@ -337,7 +337,7 @@ def test_a_held_root_answers_as_the_role_root(held: str):
 
 
 @pytest.mark.parametrize("role", ROLES)
-@pytest.mark.parametrize("helper", ["jobs", "session"])
+@pytest.mark.parametrize("helper", ["session"])
 def test_only_services_and_view_models_import_their_helpers(role: str, helper: str):
     where = "mpvqc/comments/x.py:1"
     target = f"mpvqc.{helper}"
@@ -350,7 +350,7 @@ def test_only_services_and_view_models_import_their_helpers(role: str, helper: s
 
 
 @pytest.mark.parametrize("role", ROLES)
-@pytest.mark.parametrize("helper", ["settings", "resources"])
+@pytest.mark.parametrize("helper", ["jobs", "settings", "resources"])
 def test_only_services_import_service_helpers(role: str, helper: str):
     where = "mpvqc/comments/x.py:1"
     target = f"mpvqc.{helper}"

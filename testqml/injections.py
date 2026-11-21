@@ -15,7 +15,7 @@ from mpvqc.exporting.viewmodels import MpvqcExportBackupTimerViewModel
 from mpvqc.importing.services import ImportSettingsService
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.player.services import PlayerService
-from mpvqc.shell.services import CheckOutcome, DesktopService, UpToDate, VersionCheckerService
+from mpvqc.shell.services import DesktopService, UpToDate, VersionCheckerService
 from mpvqc.window.services import (
     NoEmbeddedPlayerTracker,
     NoSurfaceHandler,
@@ -129,8 +129,8 @@ class VideoResizeServiceOverride(VideoResizeService):
 
 class VersionCheckerServiceOverride(VersionCheckerService):
     @override
-    def check_for_new_version(self) -> CheckOutcome:
-        return UpToDate()
+    def check(self) -> None:
+        self.outcome_ready.emit(UpToDate())
 
 
 class DesktopServiceOverride(DesktopService):
