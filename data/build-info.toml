@@ -40,7 +40,7 @@ platforms = ["linux", "win32"]
 [[dependency]]
 name = "PySide6"
 package = "PySide6-Essentials"
-version = "6.11.3"
+version = "6.12.0"
 url = "https://wiki.qt.io/Qt_for_Python"
 licence = "LGPL-3.0-only"
 platforms = ["linux", "win32"]

@@ -16,7 +16,7 @@ classifiers = [
 ]
 dependencies = [
     "Jinja2>=3.1.6",
-    "PySide6-Essentials==6.11.3",
+    "PySide6-Essentials==6.12.0",
     "inject>=5.5.0",
     "mpv>=1.0.8",
 ]

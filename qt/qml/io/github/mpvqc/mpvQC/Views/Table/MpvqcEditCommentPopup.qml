@@ -92,6 +92,19 @@ Popup {
         }
     }
 
+    // Qt closes the popup on a left press outside, but not on a right press
+    TapHandler {
+        parent: root.Overlay.overlay
+        enabled: root.opened
+        acceptedButtons: Qt.RightButton
+
+        onPressedChanged: {
+            if (pressed) {
+                root.close();
+            }
+        }
+    }
+
     // Hide original text while editing to avoid visual duplication
     Binding {
         when: root.visible
