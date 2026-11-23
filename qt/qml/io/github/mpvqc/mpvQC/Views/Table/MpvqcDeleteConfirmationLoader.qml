@@ -52,7 +52,7 @@ Loader {
 
             // Mirrors the terms the Material style adds to the content in a Dialog's implicit height
             readonly property real _chromeHeight: topPadding + bottomPadding + (implicitHeaderHeight > 0 ? implicitHeaderHeight + spacing : 0) + (implicitFooterHeight > 0 ? implicitFooterHeight + spacing : 0)
-            readonly property real _maxContentHeight: (MpvqcWindowUtility.contentFrame ?? root.Window.window.contentItem).height - 2 * MpvqcConstants.dialogEdgeMargin - _chromeHeight
+            readonly property real _maxContentHeight: MpvqcWindowUtility.visibleFrame(root).height - 2 * MpvqcConstants.dialogEdgeMargin - _chromeHeight
 
             title: qsTranslate("MessageBoxes", "Delete Comment")
             contentWidth: MpvqcConstants.smallDialogContentWidth
