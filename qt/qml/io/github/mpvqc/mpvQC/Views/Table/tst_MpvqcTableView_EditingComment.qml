@@ -192,6 +192,10 @@ TestCase {
                 tag: "other-row",
                 clickPoint: c => _clickHelper.topRightOfCommentLabel(c, 1)
             },
+            {
+                tag: "below-the-rows",
+                clickPoint: c => Qt.point(c.width / 2, c.height - 20)
+            },
         ];
     }
 
@@ -206,6 +210,13 @@ TestCase {
         _expect.hasCurrentIndex(control, 2);
         _expect.hasContextMenuClosed(control);
         _expect.isNotEditing(control);
+    }
+
+    function test_rightClickInsideEditorKeepsEditing(): void {
+        const textArea = _find.commentTextArea(control);
+        testCase.mouseClick(textArea, textArea.width / 2, textArea.height / 2, Qt.RightButton);
+        _expect.isEditing(control);
+        _expect.isEditorShowingCommentPopup(control);
     }
 
     function test_keyEventsAreNotHandled(): void {
