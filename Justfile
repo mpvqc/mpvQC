@@ -63,6 +63,8 @@ format *ARGS:
 [group('dev')]
 update-python-dependencies:
     uv sync --upgrade
+    just clean
+    just build-develop
     just _update-dependency-versions
     bash build-aux/update-wayland-symbols.sh
 
