@@ -157,7 +157,7 @@ test-qml-debug TARGET:
 # Lint QML files
 [group('lint')]
 @lint-qml: build-develop
-    uv run pyside6-qmllint -I qt/qml -I . $(find qt/qml -type f -name '*.qml')
+    uv run pyside6-qmllint -I qt/qml -I . $(find '{{ justfile_directory() }}/qt/qml' -type f -name '*.qml')
 
 # Add language 'LOCALE' e.g. 'fr-FR' (ISO 639-1, ISO 3166-1)
 [group('i18n')]
