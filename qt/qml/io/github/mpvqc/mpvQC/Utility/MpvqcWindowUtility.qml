@@ -45,7 +45,7 @@ QtObject {
      * Resolves the visible content frame to measure against. Falls back to the
      * window's content item when no frame is registered (e.g. in tests).
      */
-    function _visibleFrame(item: Item): Item {
+    function visibleFrame(item: Item): Item {
         return contentFrame ?? item.Window.window.contentItem;
     }
 
@@ -53,7 +53,7 @@ QtObject {
      * Checks if local coordinates of an item are within the bottom region of the visible content.
      */
     function isInBottomRegion(item: Item, localX: real, localY: real, pixels: int): bool {
-        const frame = _visibleFrame(item);
+        const frame = visibleFrame(item);
         const coords = item.mapToItem(frame, localX, localY);
         return coords.y >= frame.height - pixels;
     }
@@ -62,7 +62,7 @@ QtObject {
      * Checks which visible-content edges would be violated by positioning an item at the given coordinates.
      */
     function getEdgeViolations(item: Item, localX: real, localY: real, width: real, height: real, margin: int): var {
-        const frame = _visibleFrame(item);
+        const frame = visibleFrame(item);
         const coords = item.mapToItem(frame, localX, localY);
 
         return {
