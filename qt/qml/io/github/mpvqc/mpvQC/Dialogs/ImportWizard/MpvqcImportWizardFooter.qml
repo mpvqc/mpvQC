@@ -9,7 +9,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material as M
 import QtQuick.Layouts
 
-Control {
+M.Control {
     id: root
 
     required property string primaryLabel

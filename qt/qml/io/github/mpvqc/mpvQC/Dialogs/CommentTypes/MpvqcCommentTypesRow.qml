@@ -104,7 +104,7 @@ Item {
 
                 //: Accessible name of the icon-only button that deletes a comment type
                 text: qsTranslate("CommentTypesDialog", "Delete")
-                display: AbstractButton.IconOnly
+                display: M.AbstractButton.IconOnly
                 enabled: root.deleteEnabled
                 hoverEnabled: !root.lifted
                 focusPolicy: root.lifted ? Qt.NoFocus : Qt.StrongFocus
