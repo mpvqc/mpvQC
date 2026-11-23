@@ -201,7 +201,7 @@ class MpvqcTestBridge(QObject):
         added = inject.instance(RecordedPlayer).handle.commands_named("sub-add")
         return [Path(str(command[1])).name for command in added]
 
-    @Slot(result=list)
+    @Slot(result="QStringList")
     def openedDesktopUrls(self) -> list[str]:
         desktop = inject.instance(DesktopService)
         if not isinstance(desktop, DesktopServiceOverride):
