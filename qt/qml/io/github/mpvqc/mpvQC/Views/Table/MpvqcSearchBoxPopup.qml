@@ -136,6 +136,11 @@ Popup {
             hoverEnabled: !root._modalOverlayOpen
             horizontalAlignment: Text.AlignLeft
 
+            background: Item {
+                implicitWidth: 120
+                implicitHeight: _textField.M.Material.textFieldHeight
+            }
+
             Layout.fillWidth: true
 
             ContextMenu.menu: null
@@ -147,12 +152,6 @@ Popup {
                 } else {
                     root.viewModel.search(text);
                 }
-            }
-
-            Component.onCompleted: {
-                background.fillColor = "transparent";
-                background.outlineColor = "transparent";
-                background.focusedOutlineColor = "transparent";
             }
         }
 
