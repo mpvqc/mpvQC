@@ -79,7 +79,8 @@ class MpvqcImportWizardViewModel(QObject):
     def currentStepIndex(self, value: int) -> None:
         self._move_to(self._state.jump_to(value))
 
-    @Property(list, constant=True, final=True)
+    # pyrefly: ignore [bad-argument-type]
+    @Property("QVariantList", constant=True, final=True)
     def steps(self) -> list[WizardStepViewModel]:
         return list(self._steps)
 
