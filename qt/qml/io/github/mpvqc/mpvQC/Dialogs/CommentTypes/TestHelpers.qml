@@ -14,7 +14,7 @@ import io.github.mpvqc.mpvQC.Utility
 QtObject {
     id: root
 
-    required property TestCase testCase
+    required property TestCase suite
 
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
     readonly property MpvqcTestSettings settings: MpvqcTestSettings {}
@@ -57,19 +57,19 @@ QtObject {
     }
 
     function makeDialog(mirrored = false): MpvqcCommentTypesDialog {
-        const dialog = testCase.createTemporaryObject(_dialogComponent, testCase);
-        testCase.verify(dialog, "dialog not created");
+        const dialog = suite.createTemporaryObject(_dialogComponent, suite);
+        suite.verify(dialog, "dialog not created");
         dialog.contentItem.LayoutMirroring.enabled = mirrored;
         dialog.contentItem.LayoutMirroring.childrenInherit = true;
         dialog.open();
-        testCase.tryVerify(() => dialog.opened);
-        testCase.verify(testCase.waitForPolish(dialog.contentItem.Window.window));
+        suite.tryVerify(() => dialog.opened);
+        suite.verify(suite.waitForPolish(dialog.contentItem.Window.window));
         return dialog;
     }
 
     function makeList(mirrored = false, count = 7): var {
-        const list = testCase.createTemporaryObject(_listComponent, testCase);
-        testCase.verify(list, "list not created");
+        const list = suite.createTemporaryObject(_listComponent, suite);
+        suite.verify(list, "list not created");
         list.LayoutMirroring.enabled = mirrored;
         list.LayoutMirroring.childrenInherit = true;
         for (let i = 0; i < count; i++) {
@@ -77,13 +77,13 @@ QtObject {
                 display: `Type ${i}`
             });
         }
-        testCase.verify(testCase.waitForRendering(list));
+        suite.verify(suite.waitForRendering(list));
         return list;
     }
 
     function find(parent: QtObject, name: string): var {
-        const item = testCase.findChild(parent, name);
-        testCase.verify(item, `${name} not found`);
+        const item = suite.findChild(parent, name);
+        suite.verify(item, `${name} not found`);
         return item;
     }
 
@@ -104,7 +104,7 @@ QtObject {
     }
 
     function rowPart(list: ListView, index: int, name: string): var {
-        testCase.tryVerify(() => list.itemAtIndex(index) !== null, 5000, `row ${index} not created`);
+        suite.tryVerify(() => list.itemAtIndex(index) !== null, 5000, `row ${index} not created`);
         const row = list.itemAtIndex(index);
         return row.objectName === name ? row : find(row, name);
     }
@@ -115,14 +115,14 @@ QtObject {
 
     function liftedPart(list: ListView, name: string): var {
         const row = liftedRow(list);
-        testCase.verify(row, "no row is lifted");
+        suite.verify(row, "no row is lifted");
         return find(row, name);
     }
 
     function verifyGrabbedAt(list: ListView, grab: point, pointer: point): void {
         const rendered = liftedPart(list, "commentTypeDragHandle").mapToItem(list, grab.x, grab.y);
-        testCase.verify(bridge.nearlyEqual(rendered.x, pointer.x), `the grab point x must follow the pointer at ${pointer.x}, not ${rendered.x}`);
-        testCase.verify(bridge.nearlyEqual(rendered.y, pointer.y), `the grab point y must follow the pointer at ${pointer.y}, not ${rendered.y}`);
+        suite.verify(bridge.nearlyEqual(rendered.x, pointer.x), `the grab point x must follow the pointer at ${pointer.x}, not ${rendered.x}`);
+        suite.verify(bridge.nearlyEqual(rendered.y, pointer.y), `the grab point y must follow the pointer at ${pointer.y}, not ${rendered.y}`);
     }
 
     function shownTypes(list: ListView): var {
@@ -171,14 +171,14 @@ QtObject {
     function waitForFrames(count: int): void {
         _frames.reset();
         _frames.start();
-        testCase.tryVerify(() => _frames.currentFrame >= count, 5000, `${count} frames should render`);
+        suite.tryVerify(() => _frames.currentFrame >= count, 5000, `${count} frames should render`);
         _frames.stop();
     }
 
     function verifyScrollHoldsStill(list: ListView): void {
         const scroll = scrollPosition(list);
         waitForFrames(10);
-        testCase.verify(bridge.nearlyEqual(scrollPosition(list), scroll), `the list should hold still at ${scroll}, not ${scrollPosition(list)}`);
+        suite.verify(bridge.nearlyEqual(scrollPosition(list), scroll), `the list should hold still at ${scroll}, not ${scrollPosition(list)}`);
     }
 
     function holdNearEdge(list: ListView, from: int, down: bool): point {
@@ -191,11 +191,11 @@ QtObject {
     function waitForScrollPast(list: ListView, rows: real, down = true): void {
         const start = scrollPosition(list);
         const distance = rows * MpvqcConstants.listRowHeight;
-        testCase.tryVerify(() => down ? scrollPosition(list) >= start + distance : scrollPosition(list) <= start - distance, 5000, `the list should scroll ${rows} rows`);
+        suite.tryVerify(() => down ? scrollPosition(list) >= start + distance : scrollPosition(list) <= start - distance, 5000, `the list should scroll ${rows} rows`);
     }
 
     function waitForScrollBound(list: ListView, down: bool): void {
-        testCase.tryVerify(() => down ? bridge.atScrollEnd(list) : bridge.atScrollStart(list), 5000, "holding near the edge should scroll to the bound");
+        suite.tryVerify(() => down ? bridge.atScrollEnd(list) : bridge.atScrollStart(list), 5000, "holding near the edge should scroll to the bound");
     }
 
     function dragPastEdge(list: ListView, from: int, down: bool): void {
@@ -205,12 +205,12 @@ QtObject {
     }
 
     function waitForShownTypes(list: ListView, expected: var): void {
-        testCase.tryVerify(() => JSON.stringify(shownTypes(list)) === JSON.stringify(expected), 5000, "preview order should match");
+        suite.tryVerify(() => JSON.stringify(shownTypes(list)) === JSON.stringify(expected), 5000, "preview order should match");
     }
 
     function waitForTypesInView(list: ListView, expected: var): void {
         const rowHeight = MpvqcConstants.listRowHeight;
-        testCase.tryVerify(() => {
+        suite.tryVerify(() => {
             const first = Math.floor(scrollPosition(list) / rowHeight);
             const last = Math.min(list.count - 1, Math.floor((scrollPosition(list) + list.height - 1) / rowHeight));
             for (let i = first; i <= last; i++) {
@@ -223,8 +223,8 @@ QtObject {
     }
 
     function waitForDropToSettle(list: ListView): void {
-        testCase.tryVerify(() => !list.reordering, 5000, "the lifted row should settle");
-        testCase.tryVerify(() => {
+        suite.tryVerify(() => !list.reordering, 5000, "the lifted row should settle");
+        suite.tryVerify(() => {
             const rows = list.contentItem.children.filter(child => child.objectName === "commentTypeDelegate" && child.visible);
             if (rows.length === 0 || rows.some(row => row.opacity !== 1 || row.index < 0)) {
                 return false;
@@ -241,14 +241,14 @@ QtObject {
     function pressHandle(list: ListView, index: int): point {
         const handle = rowPart(list, index, "commentTypeDragHandle");
         const point = handle.mapToItem(list, handle.width / 2, handle.height / 2);
-        testCase.mousePress(list, point.x, point.y);
+        suite.mousePress(list, point.x, point.y);
         return point;
     }
 
     function movePointer(list: ListView, x: real, fromY: real, toY: real): void {
         const steps = Math.max(2, Math.ceil(Math.abs(toY - fromY) / 8));
         for (let i = 1; i <= steps; i++) {
-            testCase.mouseMove(list, x, fromY + (toY - fromY) * i / steps, -1, Qt.LeftButton);
+            suite.mouseMove(list, x, fromY + (toY - fromY) * i / steps, -1, Qt.LeftButton);
         }
     }
 
@@ -260,7 +260,7 @@ QtObject {
     }
 
     function drop(list: ListView, at: point): void {
-        testCase.mouseRelease(list, at.x, at.y);
+        suite.mouseRelease(list, at.x, at.y);
         waitForDropToSettle(list);
     }
 
@@ -274,9 +274,9 @@ QtObject {
         const before = list.count;
         field.forceActiveFocus();
         field.text = text;
-        testCase.keyClick(Qt.Key_Return);
-        testCase.tryCompare(list, "count", before + 1);
-        testCase.verify(testCase.waitForPolish(dialog.contentItem.Window.window));
+        suite.keyClick(Qt.Key_Return);
+        suite.tryCompare(list, "count", before + 1);
+        suite.verify(suite.waitForPolish(dialog.contentItem.Window.window));
     }
 
     function addTypes(dialog: Dialog, count: int): void {
@@ -290,18 +290,18 @@ QtObject {
         const before = list.count;
         list.positionViewAtIndex(index, ListView.Contain);
         waitForDropToSettle(list);
-        testCase.mouseClick(rowPart(list, index, "commentTypeDeleteButton"));
-        testCase.tryCompare(list, "count", before - 1);
+        suite.mouseClick(rowPart(list, index, "commentTypeDeleteButton"));
+        suite.tryCompare(list, "count", before - 1);
         waitForDropToSettle(list);
     }
 
     function closeWith(dialog: Dialog, action: int): void {
         if (action === Dialog.NoButton) {
-            testCase.keyClick(Qt.Key_Escape);
+            suite.keyClick(Qt.Key_Escape);
         } else {
-            testCase.mouseClick(dialog.standardButton(action));
+            suite.mouseClick(dialog.standardButton(action));
         }
-        testCase.tryVerify(() => !dialog.visible);
+        suite.tryVerify(() => !dialog.visible);
         bridge.waitForBackgroundJobs();
     }
 }

@@ -17,7 +17,7 @@ TestCase {
     when: windowShown
 
     readonly property TestHelpers helper: TestHelpers {
-        testCase: testCase
+        suite: testCase
     }
 
     function init(): void {
