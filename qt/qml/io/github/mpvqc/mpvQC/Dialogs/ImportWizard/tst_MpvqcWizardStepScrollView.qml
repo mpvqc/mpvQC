@@ -22,13 +22,17 @@ TestCase {
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
     readonly property int viewportHeight: 200
 
-    function makeControl(contentHeight: real): Item {
+    function makeControl(contentHeight: real): MpvqcWizardStepScrollView {
         const control = createTemporaryObject(objectUnderTest, testCase, {
             scrolledHeight: contentHeight
         });
         verify(control);
         waitForRendering(control);
         return control;
+    }
+
+    function viewport(control: MpvqcWizardStepScrollView): Flickable {
+        return control.contentItem as Flickable;
     }
 
     function scrimOpacities(control: Item): var {
@@ -45,10 +49,10 @@ TestCase {
     function test_scrollToTopReturnsToTheStart(): void {
         const control = makeControl(600);
 
-        control.contentItem.contentY = 120;
+        viewport(control).contentY = 120;
         control.scrollToTop();
 
-        compare(control.contentItem.contentY, 0);
+        compare(viewport(control).contentY, 0);
     }
 
     function test_theEdgeCueIsGoneAtTheEdgeItPointsAt(): void {
@@ -57,7 +61,7 @@ TestCase {
         compare(scrimOpacities(control).top, 0);
         verify(scrimOpacities(control).bottom > 0, "overflow below should be cued");
 
-        control.contentItem.contentY = control.contentHeight - control.contentItem.height;
+        viewport(control).contentY = control.contentHeight - viewport(control).height;
         waitForRendering(control);
 
         verify(scrimOpacities(control).top > 0, "overflow above should be cued");
@@ -74,10 +78,10 @@ TestCase {
     function test_scrollingStopsAtTheEnd(): void {
         const control = makeControl(600);
 
-        control.contentItem.flick(0, -2000);
-        tryVerify(() => !control.contentItem.moving);
+        viewport(control).flick(0, -2000);
+        tryVerify(() => !viewport(control).moving);
 
-        verify(bridge.atScrollEnd(control.contentItem), `the flick should stop at the end, not at ${control.contentItem.contentY}`);
+        verify(bridge.atScrollEnd(viewport(control)), `the flick should stop at the end, not at ${viewport(control).contentY}`);
     }
 
     Component {
