@@ -7,4 +7,3 @@ module io.github.mpvqc.mpvQC.Views.Footer
 MpvqcFooterView MpvqcFooterView.qml
 
 internal MpvqcFooterContextMenu MpvqcFooterContextMenu.qml
-internal MpvqcFooterContextMenuClickGuard MpvqcFooterContextMenuClickGuard.qml

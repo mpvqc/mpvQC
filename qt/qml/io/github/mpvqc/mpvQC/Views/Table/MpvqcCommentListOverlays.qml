@@ -97,9 +97,4 @@ Item {
         onHighlightRequested: index => root.commentList.selectRow(index)
         onClosed: root.commentList.forceActiveFocus()
     }
-
-    MpvqcWindowsMenuClickGuard {
-        editLoader: _editLoader
-        contextMenuLoader: _contextMenuLoader
-    }
 }

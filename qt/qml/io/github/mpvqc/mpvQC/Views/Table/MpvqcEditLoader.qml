@@ -17,8 +17,6 @@ Loader {
     readonly property url editCommentPopup: Qt.resolvedUrl("MpvqcEditCommentPopup.qml")
     readonly property url editTimePopup: Qt.resolvedUrl("MpvqcEditTimePopup.qml")
 
-    readonly property bool isEditingCommentType: active && source === editCommentTypeMenu
-
     signal closed
 
     function startEditingTime(index: int, time: int, coordinates: point): void {

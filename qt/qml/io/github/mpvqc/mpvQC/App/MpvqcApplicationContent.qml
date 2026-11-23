@@ -92,10 +92,6 @@ Item {
         }
     }
 
-    MpvqcNewCommentMenuClickGuard {
-        menu: _commentMenu
-    }
-
     MouseArea {
         anchors.fill: parent
         cursorShape: undefined
