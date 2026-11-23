@@ -223,6 +223,6 @@ TestCase {
     TestHelpers {
         id: it
 
-        testCase: testCase
+        suite: testCase
     }
 }

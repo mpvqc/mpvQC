@@ -225,6 +225,6 @@ TestCase {
     TestHelpers {
         id: _helpers
 
-        testCase: testCase
+        suite: testCase
     }
 }

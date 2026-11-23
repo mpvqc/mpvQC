@@ -12,22 +12,22 @@ import io.github.mpvqc.mpvQC.Python
 QtObject {
     id: root
 
-    required property TestCase testCase
+    required property TestCase suite
 
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
     readonly property MpvqcTestSettings settings: MpvqcTestSettings {}
 
     readonly property var menu: QtObject {
         function trigger(control: Item, menuName: string, itemName: string): void {
-            const menu = root.testCase.findChild(control, menuName);
-            root.testCase.verify(menu, `${menuName} not found`);
+            const menu = root.suite.findChild(control, menuName);
+            root.suite.verify(menu, `${menuName} not found`);
             menu.open();
-            root.testCase.tryVerify(() => menu.opened);
+            root.suite.tryVerify(() => menu.opened);
 
-            const item = root.testCase.findChild(menu, itemName);
-            root.testCase.verify(item, `${itemName} not found`);
-            root.testCase.mouseClick(item);
-            root.testCase.tryVerify(() => !menu.opened);
+            const item = root.suite.findChild(menu, itemName);
+            root.suite.verify(item, `${itemName} not found`);
+            root.suite.mouseClick(item);
+            root.suite.tryVerify(() => !menu.opened);
         }
 
         function triggerSubItem(control: Item, parentMenuName: string, submenuName: string, itemObjectName: string): void {
@@ -41,35 +41,35 @@ QtObject {
         function openNewCommentMenu(control: Item): QtObject {
             const tableView = root.find.tableView(control);
             tableView.forceActiveFocus();
-            root.testCase.keyClick(Qt.Key_E);
+            root.suite.keyClick(Qt.Key_E);
             return _waitForNewCommentMenu(control);
         }
 
         function openNewCommentMenuViaRightClick(control: Item): QtObject {
-            const inputArea = root.testCase.findChild(control, "playerInputArea");
-            root.testCase.verify(inputArea, "playerInputArea not found");
-            root.testCase.tryVerify(() => inputArea.width > 0 && inputArea.height > 0);
-            root.testCase.mouseClick(inputArea, inputArea.width / 2, inputArea.height / 2, Qt.RightButton);
+            const inputArea = root.suite.findChild(control, "playerInputArea");
+            root.suite.verify(inputArea, "playerInputArea not found");
+            root.suite.tryVerify(() => inputArea.width > 0 && inputArea.height > 0);
+            root.suite.mouseClick(inputArea, inputArea.width / 2, inputArea.height / 2, Qt.RightButton);
             return _waitForNewCommentMenu(control);
         }
 
         function _waitForNewCommentMenu(control: Item): QtObject {
-            const menu = root.testCase.findChild(control, "newCommentMenu");
-            root.testCase.verify(menu, "newCommentMenu not found");
-            root.testCase.tryVerify(() => menu.opened);
+            const menu = root.suite.findChild(control, "newCommentMenu");
+            root.suite.verify(menu, "newCommentMenu not found");
+            root.suite.tryVerify(() => menu.opened);
             return menu;
         }
 
         function _triggerSubItemMatching(control: Item, parentMenuName: string, submenuName: string, predicate: var, description: string): void {
-            const parent = root.testCase.findChild(control, parentMenuName);
-            root.testCase.verify(parent, `${parentMenuName} not found`);
+            const parent = root.suite.findChild(control, parentMenuName);
+            root.suite.verify(parent, `${parentMenuName} not found`);
             parent.open();
-            root.testCase.tryVerify(() => parent.opened);
+            root.suite.tryVerify(() => parent.opened);
 
-            const submenu = root.testCase.findChild(parent, submenuName);
-            root.testCase.verify(submenu, `${submenuName} not found`);
+            const submenu = root.suite.findChild(parent, submenuName);
+            root.suite.verify(submenu, `${submenuName} not found`);
             submenu.open();
-            root.testCase.tryVerify(() => submenu.opened);
+            root.suite.tryVerify(() => submenu.opened);
 
             let item = null;
             for (let i = 0; i < submenu.count; i++) {
@@ -79,9 +79,9 @@ QtObject {
                     break;
                 }
             }
-            root.testCase.verify(item, `${description} not found`);
-            root.testCase.mouseClick(item);
-            root.testCase.tryVerify(() => !submenu.opened);
+            root.suite.verify(item, `${description} not found`);
+            root.suite.mouseClick(item);
+            root.suite.tryVerify(() => !submenu.opened);
         }
     }
 
@@ -99,9 +99,9 @@ QtObject {
             emitOutcome();
             dialog.close();
             if (name) {
-                root.testCase.tryVerify(() => !root.testCase.findChild(root.testCase, name));
+                root.suite.tryVerify(() => !root.suite.findChild(root.suite, name));
             } else {
-                root.testCase.tryVerify(() => !dialog || !(dialog.opened ?? dialog.visible));
+                root.suite.tryVerify(() => !dialog || !(dialog.opened ?? dialog.visible));
             }
             root.bridge.waitForBackgroundJobs();
         }
@@ -112,35 +112,35 @@ QtObject {
             const tableView = root.find.tableView(control);
             const before = tableView.commentCount;
             tableView.addNewComment(commentType);
-            root.testCase.tryVerify(() => root.find.commentTextArea(control));
+            root.suite.tryVerify(() => root.find.commentTextArea(control));
             root.find.commentTextArea(control).text = text;
-            root.testCase.findChild(control, "editCommentPopup").close();
-            root.testCase.tryVerify(() => tableView.commentCount === before + 1);
-            root.testCase.tryVerify(() => !root.testCase.findChild(control, "editCommentPopup"));
+            root.suite.findChild(control, "editCommentPopup").close();
+            root.suite.tryVerify(() => tableView.commentCount === before + 1);
+            root.suite.tryVerify(() => !root.suite.findChild(control, "editCommentPopup"));
         }
     }
 
     readonly property var find: QtObject {
         function tableView(control: Item): Item {
-            const tv = root.testCase.findChild(control, "tableView");
-            root.testCase.verify(tv, "tableView not found");
+            const tv = root.suite.findChild(control, "tableView");
+            root.suite.verify(tv, "tableView not found");
             return tv;
         }
 
         function commentTextArea(control: Item): Item {
-            return root.testCase.findChild(control, "commentTextArea");
+            return root.suite.findChild(control, "commentTextArea");
         }
 
         function dialogLoader(control: Item): Item {
-            return root.testCase.findChild(control, "dialogLoader");
+            return root.suite.findChild(control, "dialogLoader");
         }
 
         function fileDialogLoader(control: Item): Item {
-            return root.testCase.findChild(control, "fileDialogLoader");
+            return root.suite.findChild(control, "fileDialogLoader");
         }
 
         function messageBoxLoader(control: Item): Item {
-            return root.testCase.findChild(control, "messageBoxLoader");
+            return root.suite.findChild(control, "messageBoxLoader");
         }
 
         // View delegates hang off their view visually only, so findChild walks past them.
@@ -163,23 +163,23 @@ QtObject {
         }
 
         function openedDialog(control: Item, name: string): QtObject {
-            root.testCase.tryVerify(() => {
-                const dlg = root.testCase.findChild(control, name);
+            root.suite.tryVerify(() => {
+                const dlg = root.suite.findChild(control, name);
                 return dlg && (dlg.opened ?? dlg.visible);
             });
-            const dialog = root.testCase.findChild(control, name);
-            root.testCase.verify(dialog, `${name} not found`);
+            const dialog = root.suite.findChild(control, name);
+            root.suite.verify(dialog, `${name} not found`);
             return dialog;
         }
     }
 
     readonly property var expect: QtObject {
         function commentCount(control: Item, expected: int): void {
-            root.testCase.tryVerify(() => root.find.tableView(control).commentCount === expected);
+            root.suite.tryVerify(() => root.find.tableView(control).commentCount === expected);
         }
 
         function commentTypeAt(control: Item, index: int, expected: string): void {
-            root.testCase.tryVerify(() => root.find.tableView(control).commentList.itemAtIndex(index)?.commentType === expected);
+            root.suite.tryVerify(() => root.find.tableView(control).commentList.itemAtIndex(index)?.commentType === expected);
         }
 
         function dialogOpened(control: Item, name: string): void {
@@ -187,34 +187,34 @@ QtObject {
         }
 
         function dialogClosed(control: Item, name: string): void {
-            root.testCase.tryVerify(() => {
-                const dlg = root.testCase.findChild(control, name);
+            root.suite.tryVerify(() => {
+                const dlg = root.suite.findChild(control, name);
                 return !dlg || !(dlg.opened ?? dlg.visible);
             });
         }
 
         function commentListHasFocus(control: Item): void {
-            root.testCase.tryVerify(() => root.find.tableView(control).commentList.activeFocus);
+            root.suite.tryVerify(() => root.find.tableView(control).commentList.activeFocus);
         }
 
         function commentEditorHasFocus(control: Item): void {
-            root.testCase.tryVerify(() => root.find.commentTextArea(control)?.activeFocus);
+            root.suite.tryVerify(() => root.find.commentTextArea(control)?.activeFocus);
         }
 
         function openedVideo(name: string): void {
-            root.testCase.tryVerify(() => root.bridge.openedVideoName() === name);
+            root.suite.tryVerify(() => root.bridge.openedVideoName() === name);
         }
 
         function noOpenedVideo(): void {
-            root.testCase.compare(root.bridge.openedVideoName(), "");
+            root.suite.compare(root.bridge.openedVideoName(), "");
         }
 
         function openedSubtitleCount(count: int): void {
-            root.testCase.tryVerify(() => root.bridge.openedSubtitleCount() === count);
+            root.suite.tryVerify(() => root.bridge.openedSubtitleCount() === count);
         }
 
         function openedSubtitles(names: list<string>): void {
-            root.testCase.tryVerify(() => {
+            root.suite.tryVerify(() => {
                 const opened = root.bridge.openedSubtitleNames();
                 return opened.length === names.length && names.every(n => opened.indexOf(n) >= 0);
             });
@@ -230,8 +230,8 @@ QtObject {
 
     readonly property var imports: QtObject {
         function dropFiles(control: Item, urls: list<var>): void {
-            const dropArea = root.testCase.findChild(control, "fileDropArea");
-            root.testCase.verify(dropArea, "fileDropArea not found");
+            const dropArea = root.suite.findChild(control, "fileDropArea");
+            root.suite.verify(dropArea, "fileDropArea not found");
             dropArea.viewModel.open(urls);
             root.bridge.waitForBackgroundJobs();
         }
@@ -240,7 +240,7 @@ QtObject {
     readonly property var wizard: QtObject {
         function opened(control: Item): QtObject {
             const dlg = root.find.openedDialog(control, "importWizardDialog");
-            const stepView = root.testCase.findChild(dlg.contentItem, "stepView");
+            const stepView = root.suite.findChild(dlg.contentItem, "stepView");
             if (stepView) {
                 stepView.sweepDuration = 0;
             }
@@ -248,20 +248,20 @@ QtObject {
         }
 
         function clickPrimary(dlg: QtObject): void {
-            const btn = root.testCase.findChild(dlg.footer, "primaryButton");
-            root.testCase.verify(btn, "primaryButton not found");
-            root.testCase.mouseClick(btn);
+            const btn = root.suite.findChild(dlg.footer, "primaryButton");
+            root.suite.verify(btn, "primaryButton not found");
+            root.suite.mouseClick(btn);
         }
 
         function clickCancel(dlg: QtObject): void {
-            const btn = root.testCase.findChild(dlg.footer, "cancelButton");
-            root.testCase.verify(btn, "cancelButton not found");
-            root.testCase.mouseClick(btn);
+            const btn = root.suite.findChild(dlg.footer, "cancelButton");
+            root.suite.verify(btn, "cancelButton not found");
+            root.suite.mouseClick(btn);
         }
 
         function advance(dlg: QtObject): void {
             root.wizard.clickPrimary(dlg);
-            root.testCase.waitForRendering(dlg.contentItem);
+            root.suite.waitForRendering(dlg.contentItem);
         }
 
         function pickVideo(dlg: QtObject, index: int): void {
@@ -269,8 +269,8 @@ QtObject {
         }
 
         function pickNoVideo(dlg: QtObject): void {
-            const list = root.testCase.findChild(dlg.contentItem, "videoList");
-            root.testCase.verify(list, "videoList not found");
+            const list = root.suite.findChild(dlg.contentItem, "videoList");
+            root.suite.verify(list, "videoList not found");
             _pickRow(dlg, "videoList", list.count - 1);
         }
 
@@ -279,10 +279,10 @@ QtObject {
         }
 
         function _pickRow(dlg: QtObject, listName: string, index: int): void {
-            const list = root.testCase.findChild(dlg.contentItem, listName);
-            root.testCase.verify(list, `${listName} not found`);
-            root.testCase.tryVerify(() => list.itemAtIndex(index) !== null);
-            root.testCase.mouseClick(list.itemAtIndex(index));
+            const list = root.suite.findChild(dlg.contentItem, listName);
+            root.suite.verify(list, `${listName} not found`);
+            root.suite.tryVerify(() => list.itemAtIndex(index) !== null);
+            root.suite.mouseClick(list.itemAtIndex(index));
         }
     }
 
@@ -290,7 +290,7 @@ QtObject {
         MpvqcApplicationContent {
             anchors.fill: parent
             windowActive: true
-            windowWidth: root.testCase.width
+            windowWidth: root.suite.width
         }
     }
 
@@ -303,17 +303,17 @@ QtObject {
     }
 
     function makeControl(): MpvqcApplicationContent {
-        const control = root.testCase.createTemporaryObject(root._contentComponent, root.testCase);
-        root.testCase.verify(control);
+        const control = root.suite.createTemporaryObject(root._contentComponent, root.suite);
+        root.suite.verify(control);
         return control;
     }
 
     function makeSpy(target, signalName: string): SignalSpy {
-        const spy = root.testCase.createTemporaryObject(root._signalSpy, root.testCase, {
+        const spy = root.suite.createTemporaryObject(root._signalSpy, root.suite, {
             target: target,
             signalName: signalName
         });
-        root.testCase.verify(spy);
+        root.suite.verify(spy);
         return spy;
     }
 }

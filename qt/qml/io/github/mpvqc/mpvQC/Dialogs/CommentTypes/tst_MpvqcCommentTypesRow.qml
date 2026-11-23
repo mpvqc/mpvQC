@@ -19,7 +19,7 @@ TestCase {
     when: windowShown
 
     readonly property TestHelpers helper: TestHelpers {
-        testCase: testCase
+        suite: testCase
     }
 
     readonly property Component _rowComponent: Component {
