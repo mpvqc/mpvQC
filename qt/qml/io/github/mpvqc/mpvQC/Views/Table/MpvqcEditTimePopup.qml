@@ -36,15 +36,13 @@ Popup {
 
     property bool acceptValue: true
 
-    // Workaround for QTBUG-145174: SpinBox.increase() and SpinBox.decrease()
-    // throw "TypeError: … is not a function" in Qt 6.11. Manually clamp instead.
     function decrementValue(): void {
-        _spinBox.value = Math.max(_spinBox.from, _spinBox.value - _spinBox.stepSize);
+        _spinBox.decrease();
         _spinBox.valueModified();
     }
 
     function incrementValue(): void {
-        _spinBox.value = Math.min(_spinBox.to, _spinBox.value + _spinBox.stepSize);
+        _spinBox.increase();
         _spinBox.valueModified();
     }
 
