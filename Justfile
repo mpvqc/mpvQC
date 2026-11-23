@@ -98,7 +98,7 @@ set-build-info:
     # Replace by rename: a running app has the old bundle mmapped
     uv run pyside6-rcc --binary project.qrc -o project.rcc.tmp
     mv project.rcc.tmp project.rcc
-    grep -qxF 'depends QtQml.Models' io/github/mpvqc/mpvQC/Python/qmldir || echo 'depends QtQml.Models' >> io/github/mpvqc/mpvQC/Python/qmldir
+    for module in QtQml.Models QtQuick; do grep -qxF "depends $module" io/github/mpvqc/mpvQC/Python/qmldir || echo "depends $module" >> io/github/mpvqc/mpvQC/Python/qmldir; done
 
 # Remove ALL generated files
 [group('build')]
