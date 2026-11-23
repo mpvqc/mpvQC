@@ -20,7 +20,6 @@ internal MpvqcPlaceholderView MpvqcPlaceholderView.qml
 internal MpvqcSearchBoxDragHandler MpvqcSearchBoxDragHandler.qml
 internal MpvqcSearchBoxLoader MpvqcSearchBoxLoader.qml
 internal MpvqcSearchBoxPopup MpvqcSearchBoxPopup.qml
-internal MpvqcWindowsMenuClickGuard MpvqcWindowsMenuClickGuard.qml
 
 # internal but 'internal singleton' not supported as of now
 singleton MpvqcTableUtility MpvqcTableUtility.qml

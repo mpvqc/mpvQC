@@ -144,8 +144,4 @@ Item {
 
         onLoaded: (item as MpvqcFooterContextMenu).open()
     }
-
-    MpvqcFooterContextMenuClickGuard {
-        menu: _contextMenuLoader.item
-    }
 }

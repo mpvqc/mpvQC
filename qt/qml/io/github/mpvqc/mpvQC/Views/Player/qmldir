@@ -5,7 +5,6 @@
 module io.github.mpvqc.mpvQC.Views.Player
 
 MpvqcNewCommentMenu MpvqcNewCommentMenu.qml
-MpvqcNewCommentMenuClickGuard MpvqcNewCommentMenuClickGuard.qml
 MpvqcPlayerView MpvqcPlayerView.qml
 
 internal MpvqcEmbeddedPlayerWrapper MpvqcEmbeddedPlayerWrapper.qml
