@@ -6,16 +6,12 @@ description: The snapshot pattern for dataflow view models. Use when writing, re
 # Writing view models
 
 A view model that reads service state and hands derived values to QML runs on the **snapshot pattern**, and so does a
-service that consumes upstream signals and hands derived values to consumers. Written any other way the derivation
-smears across the file, every consumed signal grows a public setter, and tests push state in past the seam production
-uses.
+service that consumes upstream signals and hands derived values to consumers.
 
 Out of scope: one-shot commands, and view models that only forward to a service. They stay as they are. Forwarding
 covers slot calls, and it covers service values published unchanged under their QML names, each notify connected
 straight to the service's signal: nothing is derived there, so there is no snapshot to keep. The window controls view
 model is one.
-
-ADR 0006 carries the reasoning and the alternatives that were dropped.
 
 ## The two snapshots
 
@@ -25,7 +21,7 @@ Two frozen dataclasses, both private to the view model in intent:
   reads. Never an embedded service object: the field list is a projection that names the exact dependency set.
 - **Props snapshot** — `<Name>Props`. One field per QML-facing property, holding its value. Props that always
   co-change are one composite field behind one notify, where the consumer dedupes at the sink: the palette view model
-  carries the whole palette that way and hands QML a read-only object over it. ADR 0006 holds the measurements.
+  carries the whole palette that way and hands QML a read-only object over it.
 
 ## The cycle
 
@@ -42,10 +38,7 @@ def _fold_video_loaded(self, value: bool) -> None:
 ```
 
 Services are read exactly once, in `__init__`, to build the first inputs snapshot. Afterwards only signal payloads
-arrive. Payloads are trustworthy because every upstream emits from stored state, coerced and deduped at its own
-boundary, so the initial read and the update path cannot end up disagreeing.
-
-Subscribe to the per-field signals the services already emit.
+arrive. Subscribe to the per-field signals the services already emit.
 
 ### Derive
 
@@ -75,10 +68,8 @@ def _update(self, inputs: FooterInputs) -> None:
         self.timeTextChanged.emit(new.time_text)
 ```
 
-`self._props` is swapped in before the first emission. That makes settled-state reads structural: an observer of any
-notify sees fully consistent state, whatever the connection order.
-
-Each notify then fires exactly when its own field changed, carrying the new value.
+`self._props` is swapped in before the first emission, then each notify fires exactly when its own field changed,
+carrying the new value.
 
 ## Conditional elements
 

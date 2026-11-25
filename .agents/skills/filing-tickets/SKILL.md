@@ -71,7 +71,7 @@ list.
 
 ---
 
-🤖&nbsp;&nbsp;_Written by Claude Opus 5_
+🤖&nbsp;&nbsp;_Written by <model>_
 ````
 
 - **Title**: plain, and it states the change.
@@ -79,21 +79,19 @@ list.
   is wrong, why that is worth anyone's afternoon, and what the code does instead.
 - **Acceptance criteria are how you discharge test 2 of the bar.** Each one checkable by a reader who never saw the
   analysis. A criterion that needs the review report reopened to evaluate is not yet a criterion.
-- **Name the thing, not where it lives.** A symbol, a component, a command — not `label_width_calculator.py:40-41`.
-  Line numbers go stale before anyone picks the ticket up, and this is the rule `GLOSSARY.md` and the ADRs already run
-  on. A code snippet earns its place only where it pins a decision prose cannot — a state machine, a schema, a type
-  shape — trimmed to the decision rather than left as a working demo.
+- **Name the thing, not where it lives.** A symbol, a component, a command — not `label_width_calculator.py:40-41`. Line
+  numbers go stale before anyone picks the ticket up. A code snippet earns its place only where it pins a decision prose
+  cannot — a state machine, a schema, a type shape — trimmed to the decision rather than left as a working demo.
 - **One fresh context window.** A ticket an agent cannot finish in one is an epic, and the work is its children.
 - **Relationships go through the API, never into the prose.** A parent is a sub-issue link, a blocker is a `blocked_by`
-  edge, and `docs/agents/issue-tracker.md` has both calls. The graph moves as tickets close and get reparented, and a
-  sentence in a body does not, so a body that names its own edges is wrong within a week with nothing to catch it.
+  edge, and `docs/agents/issue-tracker.md` has both calls. A body that names its own edges goes stale as the graph
+  moves.
 - **Provenance**: one line at most, at the end of _What to build_ — _"found during an architecture review,
-  2026-08-03"_. The only reason to record a source is to go back and read it, and the source is thrown away.
+  2026-08-03"_.
 - **Platform**: when the work can only be done on one OS, _What to build_ says which.
-- **Footer**: on the private tracker, the body ends with the agent footer, and so does every comment you leave —
-  including the closing one. `docs/agents/issue-tracker.md` has the exact line.
-- **Labels**: one readiness label, and nothing else. Area labels are not used — the body says what a ticket touches
-  better than `python` vs `qml` does, and most work crosses both anyway.
+- **Footer**: every body and comment on the private tracker ends with the agent footer from
+  `docs/agents/issue-tracker.md`, the closing comment included.
+- **Labels**: one readiness label, and nothing else.
 
 | The ticket is                                                                             | Label                                |
 | ----------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -101,24 +99,19 @@ list.
 | An accepted finding, not yet broken down                                                   | `ready-for-human` + `needs-grilling` |
 | Work needing a human for another reason: manual testing, the Windows box, design taste     | `ready-for-human`                    |
 
-An issue **with children carries no readiness label**. An epic is not work — its readiness is whatever its children
-say. That makes a _childless_ issue with no readiness label a filing bug.
+An issue **with children carries no readiness label**: its readiness is whatever its children say. A _childless_ issue
+with no readiness label is a filing bug.
 
-`needs-grilling` is the only qualifier. Add a second one only after wanting it twice: a wrong qualifier is worse than
-none, because it sends the recommendation the wrong way.
+`needs-grilling` is the only qualifier. Add a second one only after wanting it twice.
 
 ## Structure
 
-- **The spec is the epic.** An effort's spec is the parent issue's body, so any agent on any machine gets the whole
-  thing from one `gh issue view`, with no clone.
-- **An epic is not a kind of issue. It is an issue that has children.** No type, no label, no ceremony. A finding filed
-  as a plain ticket becomes an epic the day a grilling session rewrites its body into a spec and hangs sub-issues off
-  it.
+- **An epic is an issue that has children**, and its body is the effort's spec. No type, no label. A plain ticket
+  becomes an epic the day a grilling session rewrites its body into a spec and hangs sub-issues off it.
 - **Three levels is the norm**: epic (the spec) → ticket (planned work) → split (a ticket you _started_ that turned out
   to be two). Level 3 is for decomposition you discover, not decomposition you plan.
-- **The rule that keeps a hierarchy honest**: _finishing the children finishes the parent._ Where that sentence is
-  false it is not a sub-issue. Grouping by topic, or by which afternoon the findings came from, is the mistake to watch
-  for.
+- **A sub-issue passes one test**: _finishing the children finishes the parent._ Grouping by topic, or by which
+  afternoon the findings came from, fails it.
 - **Every filed issue goes on the board.**
 
 ## Declines
@@ -131,42 +124,30 @@ gh issue close <n> --repo mpvqc/internal-tickets --reason "not planned" --commen
 ```
 
 - Only a finding the **user** rejected earns a record. A finding you filtered out yourself under the bar leaves
-  nothing behind, and that is correct: they never saw it, so there is nothing to stop from being re-proposed.
-- **A comment earns its place on the `load-bearing-comments` test alone.** Where the _why_ is a fact from outside the
-  code ("Qt ignores `setColorScheme` from then on"), it was worth writing before any review ran. The review is the
-  occasion, never the justification — a code comment written because a review flagged something is comment sprawl, and
-  comment sprawl is invisible where a closed issue is visible and prunable.
-- Where the same argument keeps coming back and keeps being re-argued, it graduates to an **ADR**. ADRs are numbered
-  and curated, so inflation shows.
+  nothing behind.
+- A decline lives in the tracker. A code comment earns its place on the `load-bearing-comments` test alone, whatever
+  a review flagged.
+- Where the same argument keeps being re-argued, it graduates to an **ADR**.
 
 ## Working a ticket
 
-The board is only worth reading while it tells the truth, so a ticket moves the moment the work does — claim, update,
-close, each at its own moment:
+A ticket moves the moment the work does:
 
-**Claim**: picking up a ticket, set the board `Status` to `In Progress` before starting. That is the claim signal —
-branch names cannot carry it, because many tickets share one branch.
+**Claim**: picking up a ticket, set the board `Status` to `In Progress` before starting. Branch names cannot carry the
+claim, because many tickets share one branch.
 
 **Update**: comment the ticket when the work shifts under it — a decision taken, a dead end hit, scope cut or grown.
 The bar: a reader who opens only the ticket knows where the work stands.
 
-**Close**: a ticket closes with the commit that completes it, not when it is merged. Many tickets land on one feature
-branch, and the branch merges once the user has tested it, sometimes through a different PR, sometimes as a
-cherry-pick. Merge state belongs to the branch rather than to twelve tickets, and it already has a perfect display:
-the open PR list.
-
-The closing comment records **branch and SHA**:
+**Close**: a ticket closes with the commit that completes it, not when its branch merges. The closing comment records
+**branch and SHA**, which stays true after a cherry-pick:
 
 ```bash
 gh issue close <n> --repo mpvqc/internal-tickets --comment "Done on \`appearance-domain\`, \`abc1234\`"
 ```
 
-That stays true after a cherry-pick, because it states something about the past instead of being a pointer that has to
-keep resolving.
-
 **The link runs from the internal ticket out to the public side, and only that way.** Keep internal issue references
-out of public PRs and commit messages: they are plain, permanent text that everyone can read and nobody outside can
-open.
+out of public PRs and commit messages: everyone can read them and nobody outside can open them.
 
 ## Filing a batch
 
@@ -179,10 +160,5 @@ without it you will re-file things that were filed, fixed or declined months ago
 - The user directed this filing.
 - Every finding left through exactly one of the four outlets, and the ones that left through outlet 4 were said out
   loud.
-- Every filed ticket clears all three tests, and its body still stands once the analysis behind it is deleted.
-- Every filed ticket carries the two headings, with acceptance criteria a stranger can check, and every edge it has —
-  parent, blockers — recorded through the API rather than written in the body.
-- Every childless ticket carries exactly one readiness label, and every epic carries none.
-- Every body and every comment you wrote on the private tracker ends with the agent footer.
-- Every filed issue is on the board.
+- Every filed ticket clears all three tests and follows every rule under _The ticket_ and _Structure_.
 - A ticket you picked up is `In Progress` on the board, and a ticket a commit completed is closed with branch and SHA.

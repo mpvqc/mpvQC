@@ -38,8 +38,7 @@ The `None` default is load-bearing. View models, services, tests, and the commen
 without an argument, while Qt passes an invalid index.
 
 In `data()`, bind the sequence about to be indexed to a local, check the index against that local's length, then index
-the same local. Never guard through `rowCount()`. The models that still guard that way predate this rule; don't copy
-them.
+the same local. The check reads that local's length rather than `rowCount()`.
 
 ## Roles
 
@@ -55,13 +54,8 @@ them. The comment `Role` enum is the example: undo steps name the role they chan
 Store the upstream type directly when it already carries the row data, as `ErrorsModel` stores `RejectedDocument` and
 `MpvqcDependencyModel` stores `Dependency`.
 
-Define a private entry type only when the row adds data absent from the upstream type:
-
-- `_SubtitleEntry` adds the checked flag.
-- `_VideoEntry` makes the path optional, so the skip sentinel fits in a row.
-- `_TemplateEntry` carries the mapped URL.
-
-An entry type is a frozen dataclass. Prefer `slots=True`, but it is not required.
+Define a private entry type only when the row adds data absent from the upstream type, as `_SubtitleEntry` adds the
+checked flag. An entry type is a frozen dataclass, `slots=True` preferred.
 
 ## Backend and proxy
 
@@ -135,11 +129,5 @@ construction sits outside the rule.
 
 ## Done when
 
-- Bare strings with no roles sit in a `QStringListModel` behind a plain helper, not in a subclass.
-- Construction, registration, naming, and placement follow the model's ownership boundary.
-- `rowCount`, `data`, roles, row storage, and extra properties follow the list contract.
-- A sorted or filtered QML model has a backend and proxy with one responsibility each.
-- Every structural change runs through its begin/end pair, and every `dataChanged` carries its role list.
-- Every model that changes after construction has a fatal `QAbstractItemModelTester`, and every mutator has a test
-  asserting the exact signal set it emits.
-- Every declaration occupies exactly one ladder rung.
+- Every section above holds for every model the change touches.
+- Every mutator has a test asserting the exact signal set it emits.

@@ -1,9 +1,7 @@
 # Filing a batch
 
-Same bar, same four outlets, applied to N findings — with a dedupe pass in front of everything else.
-
-The dedupe has to live here. A review skill that comes from a marketplace cannot be taught about this tracker, so it
-will re-find the same things forever. Nothing upstream will ever stop it.
+Same bar, same four outlets, applied to N findings — with a dedupe pass in front of everything else. The review skills
+know nothing of this tracker, so they re-find the same things every run.
 
 ## 1. Dedupe on intake
 
@@ -32,8 +30,8 @@ One line per group, before the walkthrough:
 > Skipped 3 already on the backlog: #4, #7, #9.
 > Skipped 3 already declined: #12, #18, #23.
 
-A finding declined in March can be valid in August, because the code moved underneath it. A silent filter hides
-exactly that, so the drops are always spoken.
+A finding declined in March can be valid in August, because the code moved underneath it, so the drops are always
+spoken.
 
 ## 3. Walk through what is left
 
@@ -44,11 +42,8 @@ that fails it is an opinion, and opinions go through outlet 4 rather than into t
 
 All at once, each as its own ordinary ticket in the shape `SKILL.md` describes.
 
-Not an epic with sub-issues. A review is a _source_, not a goal: its findings have nothing in common but the afternoon
-they were found, so "finishing the children finishes the parent" is false and nobody can ever finish the epic. It also
-burns the level you need for splitting one big finding into real work.
-
-No per-review label either. One label per review is unbounded growth.
+Not an epic with sub-issues: a review is a _source_, not a goal, so it fails the sub-issue test under _Structure_ in
+`SKILL.md`. No per-review label either.
 
 ## 5. File the declines
 
@@ -57,8 +52,7 @@ never the ones you dropped in step 1 or filtered out under the bar.
 
 ## 6. Say the report can go
 
-End with it plainly: the report is now safe to delete. Everything worth keeping is in the tracker, which is the thing
-that survives a machine switch. That is the whole point of the pass.
+End with it plainly: the report is now safe to delete, because everything worth keeping is in the tracker.
 
 ## Done when
 
