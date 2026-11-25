@@ -10,7 +10,7 @@ from enum import StrEnum
 from logging.handlers import RotatingFileHandler
 from typing import TYPE_CHECKING, Final, override
 
-from PySide6.QtCore import QtMsgType, qInstallMessageHandler
+from PySide6.QtCore import QLoggingCategory, QtMsgType, qInstallMessageHandler
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -25,6 +25,8 @@ FILE_LOG_MAX_BYTES: Final[int] = 1_000_000
 FILE_LOG_BACKUP_COUNT: Final[int] = 5
 
 _URL_SCHEME_PATTERN: Final = re.compile(r"^\w+:")
+
+MUTED_QT_RULES: Final[str] = "qt.qpa.wayland.textinput.warning=false"
 
 
 class AnsiColor(StrEnum):
@@ -97,7 +99,14 @@ class MpvqcFormatter(logging.Formatter):
 
 def setup_mpvqc_logging() -> None:
     _setup_console_logging()
+    mute_noisy_qt_categories()
     qInstallMessageHandler(_qt_log_handler())
+
+
+def mute_noisy_qt_categories() -> None:
+    # Qt's Wayland text input warns about its own focus bookkeeping, flooding the log file.
+    # QT_LOGGING_RULES still overrides these rules for debugging.
+    QLoggingCategory.setFilterRules(MUTED_QT_RULES)
 
 
 def _setup_console_logging() -> None:

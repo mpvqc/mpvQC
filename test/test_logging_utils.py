@@ -7,8 +7,15 @@ import sys
 from typing import NamedTuple
 
 import pytest
+from PySide6.QtCore import QLoggingCategory
 
-from mpvqc.logging_utils import MpvqcFormatter, attach_file_logging, logger_name_from, use_color
+from mpvqc.logging_utils import (
+    MpvqcFormatter,
+    attach_file_logging,
+    logger_name_from,
+    mute_noisy_qt_categories,
+    use_color,
+)
 
 
 class UseColorTestCase(NamedTuple):
@@ -131,3 +138,25 @@ def test_attach_file_logging_writes_plain_records(tmp_path, isolated_root_logger
     content = log_file.read_text(encoding="utf-8")
     assert "hello-from-file-test" in content
     assert "\033[" not in content
+
+
+@pytest.fixture
+def default_qt_filter_rules():
+    QLoggingCategory.setFilterRules("")
+    yield
+    QLoggingCategory.setFilterRules("")
+
+
+@pytest.mark.usefixtures("default_qt_filter_rules")
+def test_mute_noisy_qt_categories_mutes_wayland_text_input_warnings():
+    # pyrefly: ignore [bad-argument-type]
+    text_input = QLoggingCategory("qt.qpa.wayland.textinput")
+    # pyrefly: ignore [bad-argument-type]
+    other = QLoggingCategory("qt.qpa.wayland")
+    assert text_input.isWarningEnabled()
+
+    mute_noisy_qt_categories()
+
+    assert not text_input.isWarningEnabled()
+    assert text_input.isCriticalEnabled()
+    assert other.isWarningEnabled()
