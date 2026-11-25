@@ -7,82 +7,26 @@ description: Use when about to commit in this repo.
 
 ## The gate
 
-A code review comes before the commit. Run one over the change and settle every finding it reports: fix it, or say why
-it stands. Then commit.
+Run a code review over the working tree against `HEAD`, staged and unstaged, new files included, and settle every
+finding: fix it, or say why it stands. A review from earlier in the session covers only code unchanged since. Only the
+user can waive the review, by asking for the commit, and every commit holds work the user has already seen.
 
-The change isn't committed yet, so the review reads the working tree against `HEAD` — staged and unstaged, new files
-included. Commits already on the branch passed their own gate.
+## Steps
 
-The user asking for the commit is the one way past the gate. That call is theirs. Deciding to commit yourself is not,
-however small the change.
-
-A review already run this session covers the code it read. Code that changed after it is unreviewed.
-
-The user sees the work before it lands, too: every commit is on a change they have already looked at.
-
-## The working tree
-
-`git add` the new files this change brings, and only those. `just fmt` reads the working tree, but only for files git
-already tracks, so a file that was never added is invisible and every hook passes without having read it. A file git
-already tracks is read whether or not its changes are staged.
-
-Leave everything else where it is. The tree can hold new or already-staged files belonging to other work, and they
-stay out of this commit.
-
-Now run `just build-develop`. It rewrites the pyside6 project file list in `pyproject.toml` from what is on disk, and
-nothing else does: a file this change adds, removes, or renames leaves that list stale, and nothing warns. The rewrite
-belongs in this commit. It has to run before the formatter, which is what formats the list it wrote.
-
-Then run `just fmt`. It has to come back clean, not merely run. It works over the whole repo and several of its hooks
-rewrite files in place, so check what it touched: a fix that lands outside this change is someone else's, and it stays
-out of the commit too.
-
-## Docs a change can strand
-
-Docs go stale quietly, so check the ones your change reaches:
-
-| What you changed          | What to update                |
-| ------------------------- | ----------------------------- |
-| A domain term, new or renamed | `GLOSSARY.md`              |
-| An architectural decision | a new ADR under `docs/adr/`   |
-| Setup steps or commands   | `docs/development.md`         |
-| The layer split           | `docs/architecture.md`        |
-| An environment variable   | `docs/configuration.md`       |
-| How translations are handled | `docs/internationalization.md` |
-| The release steps         | `docs/releasing.md`           |
-| The QC document format    | `docs/document-format/`       |
-
-Agent-facing rules live in `AGENTS.md` and the skills beside this one. A rule that changed belongs there too.
-
-## The message
-
-[Conventional Commits](https://www.conventionalcommits.org/) format, 50/72 where it fits.
-
-The body says why, not what. The diff already shows what. No bullet list of individual changes.
-
-Plain, everyday English, the casual register of an open source log: common words and short sentences a non-native
-reader follows on the first pass. When the work came from a plan, the message stands without it: a reader who never
-saw the plan still understands it.
-
-Modest claims: the message promises only what you verified. A change that narrows a symptom narrows it; "fixes" is
-for behaviour you watched fail and then pass.
-
-Faults are behaviour, not blame: say what the code did and stop there. No author, no culprit commit, no project at
-fault, no talk of reporting anything upstream.
-
-## After
-
-A ticket this commit completes gets its closing comment now — see the `filing-tickets` skill.
-
-When a larger chunk of work is done, offer to push, and to write the manual checks with the `manual-checks` skill.
+1. `git add` the new files this change brings, and nothing else. `just fmt` skips untracked files, and other work in
+   the tree stays out of this commit.
+2. Run `just build-develop`. It regenerates the file list in `pyproject.toml`, which goes stale silently when a file is
+   added, removed, or renamed. The rewrite belongs in this commit.
+3. Run `just fmt` until it comes back clean. Its hooks rewrite files across the repo; rewrites outside this change
+   stay out of the commit.
+4. Update the docs the change reaches: `GLOSSARY.md` for a domain term, the guide under `docs/` that covers what
+   changed, `AGENTS.md` or the skills for an agent-facing rule.
+5. Write the message with `commit-conventions`: Conventional Commits, 50/72. Claim only what you verified; "fixes" is
+   for behaviour you watched fail and then pass. Say what the code did, with no author, culprit commit, or upstream
+   project to blame.
+6. Close the ticket this commit completes, per `filing-tickets`.
+7. When a larger chunk of work is done, offer to push and to write the manual checks with `manual-checks`.
 
 ## Done when
 
-- The change was code reviewed, or the user asked for the commit.
-- Every finding the review reported is fixed or answered.
-- The new files this change brings are added, and nothing else is.
-- `just build-develop` ran, and the file list it rewrote in `pyproject.toml` is in the commit.
-- `just fmt` came back clean, and whatever it rewrote outside this change stayed out of the commit.
-- Each doc in the table that the change reaches now describes what the code does.
-- The message claims only what was verified, in everyday words, and names no culprit.
-- A ticket this commit completes is closed.
+Every step ran, and the commit holds exactly this change and its `pyproject.toml` rewrite.

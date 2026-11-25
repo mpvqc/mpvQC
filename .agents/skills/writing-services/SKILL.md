@@ -10,29 +10,24 @@ model through the seam `writing-models` describes under "Service seam".
 
 ## Placement and naming
 
+A bound class with an area belongs in that area's slice. A bound class every feature writes and none owns, holding a
+fact and no logic, is a top-level helper under `mpvqc/`, and so is an unbound mechanism. A pure rule several areas
+mean belongs in `mpvqc.shared`. There is no core, common, infra, or platform package; a module fitting none of these
+homes stops the work until the user revisits the rule.
+
 A service the inject container binds carries the `Service` suffix wherever it lives: `ImportService` inside the
 importing slice, `SessionService` in `mpvqc.session`. Everything the container does not bind names itself plainly, as
-`WindowButtonDetector` does — the window slice's backend builds it in a factory, so it wears no suffix. A model the
-container binds keeps its model name, `CommentStore` being the one.
-
-A bound class with an area belongs in that area's slice. A bound class every feature writes and none owns, holding
-a fact and no logic of its own, sits at the top level of `mpvqc/` as a helper. An unbound mechanism is a top-level
-helper. A pure rule several areas mean belongs in the shared vocabulary. There is no core, common, infra, or platform
-package; a module fitting none of these stops the work until the placement rule is revisited (ADR 0012).
-
-No service is QML-registered, so none wears the `Mpvqc` prefix that ADR 0009 governs.
+`WindowButtonDetector` does. A model the container binds keeps its model name, `CommentStore` being the one. No
+service is QML-registered, so none wears the `Mpvqc` prefix.
 
 ## Class or function
 
-Logic takes one of two shapes, and picking between them is the whole decision (ADR 0012):
+Picking the shape is the whole decision:
 
 - **A container-bound class** where there is state, Qt lifecycle, or a substitution seam worth re-binding: a
   `QObject` with signals, `inject.attr` collaborators, mutable state it owns.
-- **A plain module-level function over frozen dataclasses** where the logic is pure: `make_plan` over a `ScanResult`,
-  `render_v1` over an `ExportSnapshot`. It is importable and callable with no container and no service instance.
-
-Nothing is injected for uniformity: a pure function stays a function, and vocabulary several areas mean moves out to
-`mpvqc.shared` instead.
+- **A plain module-level function over frozen dataclasses** where the logic is pure, such as `make_plan` over a
+  `ScanResult`. It is callable with no container and no service instance.
 
 ## Background work
 
@@ -74,12 +69,9 @@ Reach for the runner rather than a `QThreadPool`, a lock, or a queued signal of 
 
 ## Done when
 
-- Every module follows the placement rule above.
-- Every container-bound service carries the `Service` suffix, and nothing the container leaves alone carries it.
-- The shape matches the logic: state or Qt lifecycle in a bound class, purity in a module-level function over frozen
-  dataclasses.
-- Every pure function is callable without configuring the container or constructing a service.
+- Every module sits in its home under the placement rule, and the `Service` suffix marks exactly the container-bound
+  classes.
+- The shape matches the logic, and every pure function runs without the container.
 - Off-GUI-thread work runs through a `SerialJobRunner` the owner builds from an optional executor.
 - Every `on_result` matches both `Ok` and `Err`, and the failure branch handles or logs the error.
 - Everything the work body reads was captured on the GUI thread before it was handed over.
-- The touched code's own test module passes under `just test-python`.

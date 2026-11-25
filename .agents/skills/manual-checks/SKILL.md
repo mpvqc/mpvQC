@@ -19,8 +19,6 @@ An item earns its place when all three hold:
 - No automated test covers it.
 - A human can see it hold or fail in one action.
 
-The branch decides the list. A check that was worth running last month but sits outside this diff belongs to no one.
-
 ## Steps
 
 ### 1. Read the diff
@@ -64,9 +62,8 @@ about another because the failure is platform-flavoured: fonts, compositors, nat
 
 Group each heading by area, and skip a platform no subagent reached: a Linux-only branch gets no Windows heading.
 
-Lead every heading with its emoji, so the user finds their machine by shape before they read a word: 🌐 Anywhere,
-🪟 Windows, 🐧 Linux desktop, 🧱 Linux tiling. A platform the catalogue grows later picks up its own emoji and keeps
-it from then on.
+Lead every heading with its emoji: 🌐 Anywhere, 🪟 Windows, 🐧 Linux desktop, 🧱 Linux tiling. A platform the
+catalogue grows later picks up its own emoji and keeps it.
 
 Name an area after the thing the user touches: `Window controls`, `Video resize`, `Overlays`. Not after the module.
 
@@ -102,8 +99,8 @@ leaves behind is still an item, marked `Known and accepted:`.
 
 Boxes ship unchecked. The user ticks them.
 
-Done when every item passes the blast radius filter and sits where the fork call puts it: shared items once under
-🌐, forked items once per platform, and no behaviour written both shared and forked.
+Done when every item passes the blast radius filter and sits where the fork call puts it, and no behaviour is
+written both shared and forked.
 
 ### 5. Place it
 
